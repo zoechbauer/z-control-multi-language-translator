@@ -1,0 +1,11 @@
+<div>
+  <p>Variante 1 der Übersetzung</p>
+  <input type="text" [(ngModel)]="germanWord" placeholder="Deutsches Wort" />
+  <button (click)="translate()">Übersetzen</button>
+
+  <div *ngIf="translations">
+    <p>Englisch: {{ translations!["en"] }}</p>
+    <p>Französisch: {{ translations!["fr"] }}</p>
+    <p>Spanisch: {{ translations!["es"] }}</p>
+  </div>
+</div>

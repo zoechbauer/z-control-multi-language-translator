@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { TranslationService } from '../services/translation';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -7,7 +9,5 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class Tab1Page {
-
-  constructor() {}
-
+    constructor() {}
 }
