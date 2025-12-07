@@ -8,7 +8,7 @@ interface LibreTranslateResponse {
 }
 
 @Injectable({ providedIn: 'root' })
-export class TranslationService {
+export class TranslationLibreTranslateService {
   private baseUrl = 'https://de.libretranslate.com'; // ggf. eigene Instanz
 
   constructor(private http: HttpClient) {}

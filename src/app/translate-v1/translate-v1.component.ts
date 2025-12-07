@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TranslationService } from '../services/translation';
+import { TranslationLibreTranslateService } from '../services/translation-libre-translate.service';
 
 @Component({
   selector: 'app-translate-v1',
@@ -9,10 +9,10 @@ import { TranslationService } from '../services/translation';
   standalone: false,
 })
 export class TranslateV1Component implements OnInit {
-  germanWord: string = "";
+  germanWord: string = '';
   translations: { [lang: string]: string } | null = null;
 
-  constructor(private translationService: TranslationService) {}
+  constructor(private translationService: TranslationLibreTranslateService) {}
 
   ngOnInit() {
     this.germanWord = '';
