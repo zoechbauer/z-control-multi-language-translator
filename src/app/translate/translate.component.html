@@ -1,0 +1,58 @@
+<ion-grid>
+  <ion-row>
+    <ion-col
+      size="4"
+      offset="4"
+      size-xs="12"
+      offset-xs="0"
+      size-sm="10"
+      offset-sm="1"
+      size-md="4"
+      offset-md="4"
+    >
+      <ion-card class="translation-card">
+        <ion-card-header>
+          <ion-card-title>Text in mehrere Sprachen übersetzen</ion-card-title>
+          <ion-card-subtitle>
+            <div>Basis Sprache: {{ defaultSourceLang }}</div>
+            <ion-select
+              [(ngModel)]="languages"
+              aria-label="Fruit"
+              placeholder="Wählen Sie die Sprachen aus"
+              [multiple]="true"
+            >
+              <ion-select-option value="en">Englisch</ion-select-option>
+              <ion-select-option value="fr">Französisch</ion-select-option>
+              <ion-select-option value="es">Spanisch</ion-select-option>
+            </ion-select>
+          </ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+              <ion-input
+                label="Text"
+                type="text"
+                [(ngModel)]="word"
+                placeholder="in Basis Sprache eingeben"
+              />
+        </ion-card-content>
+        <ion-button fill="clear" (click)="translate()">Übersetzen</ion-button>
+        <ion-button fill="clear" (click)="clear()">Löschen</ion-button>
+      </ion-card>
+      <ion-card *ngIf="translations.length > 0" class="translation-card">
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="3"><strong>Sprache</strong></ion-col>
+              <ion-col size="9"><strong>Übersetzter Text</strong></ion-col>
+            </ion-row>
+            <ion-row *ngFor="let translation of translations">
+              <ion-col size="3">{{ translation.language }}</ion-col>
+              <ion-col size="9">{{ translation.translatedText }}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

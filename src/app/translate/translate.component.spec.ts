@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { TranslateV1Component } from './translate-v1.component';
+import { TranslateComponent } from './translate.component';
 
-describe('TranslateV1Component', () => {
-  let component: TranslateV1Component;
-  let fixture: ComponentFixture<TranslateV1Component>;
+describe('TranslateComponent', () => {
+  let component: TranslateComponent;
+  let fixture: ComponentFixture<TranslateComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TranslateV1Component ],
-      imports: [IonicModule.forRoot()]
+      declarations: [TranslateComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TranslateV1Component);
+    fixture = TestBed.createComponent(TranslateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
