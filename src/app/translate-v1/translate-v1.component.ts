@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { TranslationLibreTranslateService } from '../services/translation-libre-translate.service';
+import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
+
 
 @Component({
   selector: 'app-translate-v1',
@@ -12,7 +13,7 @@ export class TranslateV1Component implements OnInit {
   germanWord: string = '';
   translations: { [lang: string]: string } | null = null;
 
-  constructor(private translationService: TranslationLibreTranslateService) {}
+  constructor(private translationService: TranslationGoogleTranslateService) {}
 
   ngOnInit() {
     this.germanWord = '';
@@ -26,6 +27,7 @@ export class TranslateV1Component implements OnInit {
     this.translationService
       .translateWordFromGerman(this.germanWord)
       .subscribe((result) => {
+        console.log('Translation Result:', result);
         this.translations = result;
       });
   }
