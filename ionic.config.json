@@ -1,5 +1,5 @@
 {
-  "name": "translator",
+  "name": "multi-language-translator",
   "integrations": {
     "capacitor": {}
   },
