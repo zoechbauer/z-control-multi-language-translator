@@ -1,7 +1,8 @@
 // translation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, map, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface GoogleTranslateResponse {
   data: {
@@ -11,10 +12,10 @@ interface GoogleTranslateResponse {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationGoogleTranslateService {
-  private readonly GOOGLE_TRANSLATE_API_KEY = 'secret key do not commit' // copy key from .env.local
+  private readonly GOOGLE_TRANSLATE_API_KEY = environment.googleTranslate.apiKey;
   private readonly GOOGLE_TRANSLATE_API_URL = `https://translation.googleapis.com/language/translate/v2?key=${this.GOOGLE_TRANSLATE_API_KEY}`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   translateWord(
     word: string,

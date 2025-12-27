@@ -1,0 +1,6 @@
+-- Open PowerShell and run
+.\backup_non_committed_files.ps1
+
+-- if you get script errors run 
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\backup_non_committed_files.ps1 
