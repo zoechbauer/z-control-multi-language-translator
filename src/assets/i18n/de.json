@@ -1,11 +1,44 @@
 {
+  "------ tabs page": "-------",
+  "TABS": {
+    "TRANSLATE": "Übersetzen",
+    "SETTINGS": "Einstellungen"
+  },
+
   "------ translate page": "-------",
-  "TRANSLATE": "Übersetzen",
+  "TRANSLATE": {
+    "CARD": {
+      "TITLE": "Text in mehrere Sprachen übersetzen",
+      "LABEL": {
+        "BASE_LANGUAGE": "Basissprache",
+        "SELECT_TARGET_LANGUAGES": "Zielsprache(n) auswählen"
+      },
+      "PLACEHOLDER": {
+        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein"
+      },
+      "BUTTON": {
+        "TRANSLATE": "Übersetzen",
+        "CLEAR": "Löschen"
+      }
+    },
+    "CARD_RESULTS": {
+      "LABEL": {
+        "LANGUAGE": "Sprache",
+        "TRANSLATED_TEXT": "Übersetzter Text"
+      }
+    }
+  },
 
   "------ settings page": "-------",
-  "SETTINGS": "Einstellungen",
-  "LANGUAGE": "Sprache",
-  "LANGUAGE_EN": "Englisch",
-  "LANGUAGE_DE": "Deutsch",
-  "SETTINGS_TITLE": "Einstellungen"
+  "SETTINGS": {
+    "TITLE": "Einstellungen",
+    "LANGUAGE": {
+      "LANGUAGE": "Sprache",
+      "LANGUAGE_EN": "Englisch",
+      "LANGUAGE_DE": "Deutsch",
+      "TOOLTIPS": {
+        "CHANGE_LANGUAGE": "Sprache ändern"
+      }
+    }
+  }
 }

@@ -1,11 +1,44 @@
 {
+  "------ tabs page": "-------",
+  "TABS": {
+    "TRANSLATE": "Translate",
+    "SETTINGS": "Settings"
+  },
+
   "------ translate page": "-------",
-  "TRANSLATE": "Translate",
+  "TRANSLATE": {
+    "CARD": {
+      "TITLE": "Translate text in multiple languages",
+      "LABEL": {
+        "BASE_LANGUAGE": "Base Language",
+        "SELECT_TARGET_LANGUAGES": "Select Target Language(s)"
+      },
+      "PLACEHOLDER": {
+        "INPUT_TEXT": "Enter text in base language"
+      },
+      "BUTTON": {
+        "TRANSLATE": "Translate",
+        "CLEAR": "Clear"
+      }
+    },
+    "CARD_RESULTS": {
+      "LABEL": {
+        "LANGUAGE": "Language",
+        "TRANSLATED_TEXT": "Translated Text"
+      }
+    }
+  },
 
   "------ settings page": "-------",
-  "SETTINGS": "Settings",
-  "LANGUAGE": "Language",
-  "LANGUAGE_EN": "English",
-  "LANGUAGE_DE": "German",
-  "SETTINGS_TITLE": "Settings"
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "LANGUAGE": {
+      "LANGUAGE": "Language",
+      "LANGUAGE_EN": "English",
+      "LANGUAGE_DE": "German",
+      "TOOLTIPS": {
+        "CHANGE_LANGUAGE": "Change the language"
+      }
+    }
+  }
 }

@@ -1,24 +1,24 @@
-<ion-header>
+<ion-header>  
   <ion-toolbar>
-    <ion-title>{{ "SETTINGS_TITLE" | translate }}</ion-title>
+    <ion-title>{{ "SETTINGS.TITLE" | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-item>
     <ion-select
-      label="{{ 'LANGUAGE' | translate }}"
+      label="{{ 'SETTINGS.LANGUAGE.LANGUAGE' | translate }}"
       label-placement="stacked"
       [(ngModel)]="lang"
       (ionChange)="onLanguageChange($event)"
       interface="popover"
-      title="{{ 'TOOLTIP_SETTINGS.CHANGE_LANGUAGE' | translate }}"
+      title="{{ 'SETTINGS.LANGUAGE.TOOLTIPS.CHANGE_LANGUAGE' | translate }}"
     >
       <ion-select-option value="en">{{
-        "LANGUAGE_EN" | translate
+        "SETTINGS.LANGUAGE.LANGUAGE_EN" | translate
       }}</ion-select-option>
       <ion-select-option value="de">{{
-        "LANGUAGE_DE" | translate
+        "SETTINGS.LANGUAGE.LANGUAGE_DE" | translate
       }}</ion-select-option>
     </ion-select>
   </ion-item>

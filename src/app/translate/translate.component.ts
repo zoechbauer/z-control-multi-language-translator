@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 
@@ -18,28 +19,31 @@ interface Translation {
   standalone: false,
 })
 export class TranslateComponent implements OnInit {
-  word: string = '';
+  text: string = '';
   defaultSourceLang: string = 'de';
   translations: Translation[] = [];
   languages: string[] = [];
 
-  constructor(private translationService: TranslationGoogleTranslateService) {}
+  constructor(
+    public translate: TranslateService,
+    private readonly translationService: TranslationGoogleTranslateService
+  ) {}
 
   ngOnInit() {
-    this.word = '';
+    this.text = '';
     this.setLanguages();
     this.getDefaultSourceLang();
   }
 
-  translate(): void {
-    if (!this.word.trim()) {
+  translateText(): void {
+    if (!this.text.trim()) {
       return;
     }
     this.translations = [];
 
     this.languages.forEach((translateToLang) => {
       this.translationService
-        .translateWord(this.word, this.defaultSourceLang, translateToLang)
+        .translateText(this.text, this.defaultSourceLang, translateToLang)
         .subscribe((result) => {
           console.log('Translation Result:', result);
 
@@ -52,7 +56,7 @@ export class TranslateComponent implements OnInit {
   }
 
   clear(): void {
-    this.word = '';
+    this.text = '';
     this.translations = [];
   }
 

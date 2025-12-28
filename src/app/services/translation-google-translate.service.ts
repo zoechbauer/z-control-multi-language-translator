@@ -17,7 +17,7 @@ export class TranslationGoogleTranslateService {
 
   constructor(private readonly http: HttpClient) {}
 
-  translateWord(
+  translateText(
     word: string,
     source: string = 'de',
     target: string = 'en'
