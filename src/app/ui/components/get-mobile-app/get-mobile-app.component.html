@@ -1,0 +1,139 @@
+<app-logo [type]="LogoType.Copyright"></app-logo>
+
+<ng-container *ngIf="lang === 'de'; else englishTemplate">
+  <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+</ng-container>
+
+<!-- E N G L I S H   T E M P L A T E -->
+
+<ng-template #englishTemplate>
+  <h5>
+    <ion-icon name="cloud-download"></ion-icon>
+    Download the native Android app
+  </h5>
+  <p>
+    Use the native z-control multi-language translator app, available in the
+    <strong>Google Play Store</strong>.
+  </p>
+
+  <h5>
+    <ion-icon name="mail-outline" class="margin-right"></ion-icon>
+    <b>Test installation only possible:</b>
+  </h5>
+  <p>
+    Since only
+    {{
+      maxFreeTranslateCharsLengthPerYear | number : "1.0-0" : "de"
+    }}
+    characters can be translated for free per year using the
+    <i>Google Translate API</i>, I cannot roll out the app globally.
+  </p>
+  <p>
+    However, you can install the app as a test version. I need your feedback.
+    Please send me your email address via
+    <b>Feedback to z-control</b> so I can add you to the test group. After that,
+    you can install the test version of the app via the Google Play Store.
+  </p>
+
+  <h6>
+    <ion-icon name="rocket"></ion-icon>
+    Advantageous features:
+  </h6>
+  <ul>
+    <li>
+      <strong>Available everywhere:</strong> You can use the app anywhere.
+    </li>
+    <li>
+      <strong>Voice control:</strong> Use the speech-to-text function for faster
+      text input
+    </li>
+  </ul>
+
+  <p>
+    <ion-icon name="checkmark"></ion-icon>
+    <strong>100% Free</strong> •
+    <ion-icon name="lock-closed"></ion-icon>
+    <strong>No Registration Required</strong> •
+    <ion-icon name="phone-portrait"></ion-icon>
+    <strong>Optimized for Mobile</strong>
+  </p>
+
+  <div class="button-wrapper">
+    <ion-button
+      href="https://play.google.com/store/apps/details?id=at.zcontrol.zoe.qrcodeapp"
+      target="_blank"
+      color="primary"
+      class="download-button"
+      title="{{ 'TOOLTIP_DOWNLOAD.GET_MOBILE_APP' | translate }}"
+    >
+      <ion-icon name="logo-google-playstore" slot="start"></ion-icon>
+      Download for Android
+    </ion-button>
+  </div>
+</ng-template>
+
+<!-- G E R M A N   T E M P L A T E -->
+
+<ng-template #germanTemplate>
+  <h5>
+    <ion-icon name="cloud-download"></ion-icon>
+    Laden Sie die native Android-App herunter
+  </h5>
+  <p>
+    Verwenden Sie die native z-control Multi-Sprachen-Übersetzer App, die im
+    <strong>Google Play Store</strong> verfügbar ist.
+  </p>
+
+  <h5>
+    <ion-icon name="mail-outline" class="margin-right"></ion-icon>
+    <b>Nur Test-Installation möglich:</b>
+  </h5>
+  <p>
+    Da mittels <i>Google Translate API</i> jährlich nur
+    {{ maxFreeTranslateCharsLengthPerYear | number : "1.0-0" : "de" }} Zeichen
+    kostenlos übersetzt werden können, kann ich die App nicht global ausrollen.
+  </p>
+  <p>
+    Sie können jedoch die App als Testversion installieren. Ich benötige hier
+    Ihr Feedback. Senden Sie mir bitte Ihre e-mail Adresse mittels
+    <b>Feedback an z-control</b> zu, damit ich Sie in die Testgruppe eintragen
+    kann. Danach können Sie die Testversion der App über den Google Play Store
+    installieren.
+  </p>
+
+  <h6>
+    <ion-icon name="rocket"></ion-icon>
+    Vorteilhafte Funktionen:
+  </h6>
+  <ul>
+    <li>
+      <strong>Überall verfügbar:</strong> Sie können die App überall verwenden.
+    </li>
+    <li>
+      <strong>Sprachsteuerung:</strong> Verwenden Sie die
+      Sprach-zu-Text-Funktion für eine schnellere Texteingabe
+    </li>
+  </ul>
+
+  <p>
+    <ion-icon name="checkmark"></ion-icon>
+    <strong>100% kostenlos</strong> •
+    <ion-icon name="lock-closed"></ion-icon>
+    <strong>Keine Registrierung erforderlich</strong> •
+    <ion-icon name="phone-portrait"></ion-icon>
+    <strong>Für Mobilgeräte optimiert</strong>
+  </p>
+
+  <div class="button-wrapper">
+    <ion-button
+      href="https://play.google.com/store/apps/details?id=at.zcontrol.zoe.qrcodeapp"
+      target="_blank"
+      color="primary"
+      class="download-button"
+      title="{{ 'TOOLTIP_DOWNLOAD.GET_MOBILE_APP' | translate }}"
+    >
+      <ion-icon name="logo-google-playstore" slot="start"></ion-icon>
+      Für Android herunterladen
+    </ion-button>
+  </div>
+</ng-template>

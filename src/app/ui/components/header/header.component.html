@@ -1,0 +1,54 @@
+<ion-header
+  class="app-header"
+  [class.landscape]="!utilsService.isPortrait"
+>
+  <ion-toolbar color="primary" [class.landscape]="!utilsService.isPortrait">
+    <ion-buttons slot="start">
+      <app-logo
+        [type]="LogoType.Company"
+        (click)="goToSettingsAndOpenFeedback()"
+        (keydown.enter)="goToSettingsAndOpenFeedback()"
+        (keydown.space)="goToSettingsAndOpenFeedback()"
+        title="{{ 'TOOLTIP_HEADER.OPEN_FEEDBACK' | translate }}"
+      ></app-logo>
+    </ion-buttons>
+    <ion-title *ngIf="onTranslateTab">
+      <b>{{ !isLargeScreen ? "Translate" : "z-control Multi Language Translator" }}</b>
+    </ion-title>
+    <ion-title *ngIf="onSettingsTab">
+      <ion-title>{{ "SETTINGS.TITLE" | translate }}</ion-title>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        *ngIf="isLargeScreen && onTranslateTab"
+        (click)="goToSettings()"
+        (keydown.enter)="goToSettings()"
+        (keydown.space)="goToSettings()"
+        title = "{{ 'TOOLTIP_HEADER.GOTO_SETTINGS' | translate }}"
+        fill="clear"
+      >
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+      <ion-button
+        *ngIf="isLargeScreen && onSettingsTab"
+        (click)="goToTranslate()"
+        (keydown.enter)="goToTranslate()"
+        (keydown.space)="goToTranslate()"
+        title = "{{ 'TOOLTIP_HEADER.GOTO_QR_CODE' | translate }}"
+        fill="clear"
+      >
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </ion-button>
+      <ion-button
+        class="icon-color"
+        fill="clear"
+        (click)="openHelpModal()"
+        (keydown.enter)="openHelpModal()"
+        (keydown.space)="openHelpModal()"
+        title = "{{ 'TOOLTIP_HEADER.OPEN_HELP' | translate }}"
+      >
+        <ion-icon slot="icon-only" name="help"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

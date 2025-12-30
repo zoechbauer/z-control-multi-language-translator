@@ -11,7 +11,7 @@
       "TITLE": "Translate text in multiple languages",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
-        "SELECT_TARGET_LANGUAGES": "Select Target Language(s)"
+        "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)"
       },
       "PLACEHOLDER": {
         "INPUT_TEXT": "Enter text in base language"
@@ -32,12 +32,34 @@
   "------ settings page": "-------",
   "SETTINGS": {
     "TITLE": "Settings",
+    "FEEDBACK": "Feedback",
+    "INFORMATIONS": "Informations",
+    "MULTI_LANGUAGE_TRANSLATOR_APP": "z-control Multi Language Translator App",
+    "TOOLTIPS": {
+      "OPEN_ACCORDION": "Einstellungen öffnen",
+      "CLOSE_ACCORDION": "Einstellungen schließen"
+    },
     "LANGUAGE": {
-      "LANGUAGE": "Language",
-      "LANGUAGE_EN": "English",
-      "LANGUAGE_DE": "German",
+      "ACCORDION": "Change Language",
+      "LABEL": {
+        "LANG": "Language"
+      },
+      "SELECT": {
+        "EN": "English",
+        "DE": "German"
+      },
       "TOOLTIPS": {
         "CHANGE_LANGUAGE": "Change the language"
+      }
+    },
+    "TARGET_LANGUAGES": {
+      "ACCORDION": "Select Target Languages",
+      "LABEL": {
+        "BASE_LANG": "Base Language",
+        "TARGET_LANG": "Select Target Language(s)"
+      },
+      "TOOLTIPS": {
+        "SELECT_TARGET_LANG": "Select target languages for translation from the base language"
       }
     }
   }

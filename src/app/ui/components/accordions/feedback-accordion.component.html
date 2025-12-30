@@ -1,0 +1,40 @@
+<ion-accordion value="z-control" id="z-control">
+  <ion-item slot="header" color="light">
+    <ion-label>{{ "FEEDBACK_TO" | translate }} z-control</ion-label>
+  </ion-item>
+  <div class="ion-padding ion-text-center" slot="content" title="">
+    <app-logo [type]="LogoType.Copyright"></app-logo>
+    <app-footer></app-footer>
+
+    <ng-container *ngIf="lang === 'de'; else englishTemplate">
+      <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+    </ng-container>
+
+    <!-- E N G L I S H   T E M P L A T E -->
+
+    <ng-template #englishTemplate>
+      <div class="notes">
+        <p>Note</p>
+        <p>
+          If you would like to send us feedback, questions, or suggestions,
+          simply click on the "z-control Support & Feedback" link. Your email
+          program will open automatically, allowing you to contact us directly.
+        </p>
+      </div>
+    </ng-template>
+
+    <!-- G E R M A N   T E M P L A T E -->
+
+    <ng-template #germanTemplate>
+      <div class="notes">
+        <p>Hinweis</p>
+        <p>
+          Wenn Sie uns Feedback, Fragen oder Vorschläge senden möchten, klicken
+          Sie einfach auf den Link „z-control Support & Feedback“. Ihr
+          E-Mail-Programm öffnet sich automatisch, sodass Sie uns direkt
+          kontaktieren können.
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</ion-accordion>

@@ -1,0 +1,16 @@
+<div class="logo-copyright" *ngIf="type === LogoType.Copyright">
+  <img
+    class="logo"
+    src="assets/icon/z-control-multi-language-translator-logo-32px.png"
+    alt="copyright z-control Multi Language Translator"
+  />
+  <span class="copyright">{{ leftLogoText }} {{ rightLogoText }}</span>
+</div>
+<div class="logo-company" *ngIf="type === LogoType.Company">
+  <img
+    class="logo"
+    src="assets/icon/z-control-multi-language-translator-logo-32px.png"
+    alt="z-control Multi Language Translator"
+  />
+  <span class="company">{{ rightLogoText }}</span>
+</div>

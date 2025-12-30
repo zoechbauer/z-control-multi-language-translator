@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button
+        fill="clear"
+        (click)="scrollToTop()"
+        (keydown.enter)="scrollToTop()"
+        (keydown.space)="scrollToTop()"
+      >
+        <ion-icon name="arrow-up-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Release Notes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        class="button-color"
+        (click)="closeModal()"
+        (keydown.enter)="closeModal()"
+      >
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" #content>
+  <div class="ion-text-center">
+    <ion-spinner color="primary" *ngIf="showSpinner"></ion-spinner>
+  </div>
+
+  <markdown [data]="markdown" *ngIf="!showSpinner"></markdown>
+</ion-content>

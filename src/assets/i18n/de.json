@@ -11,7 +11,7 @@
       "TITLE": "Text in mehrere Sprachen übersetzen",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
-        "SELECT_TARGET_LANGUAGES": "Zielsprache(n) auswählen"
+        "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)"
       },
       "PLACEHOLDER": {
         "INPUT_TEXT": "Geben Sie Text in der Basissprache ein"
@@ -32,12 +32,34 @@
   "------ settings page": "-------",
   "SETTINGS": {
     "TITLE": "Einstellungen",
+    "FEEDBACK": "Feedback",
+    "INFORMATIONS": "Informationen",
+    "MULTI_LANGUAGE_TRANSLATOR_APP": "z-control Multi-Sprachen-Übersetzer App",
+    "TOOLTIPS": {
+      "OPEN_ACCORDION": "Einstellungen öffnen",
+      "CLOSE_ACCORDION": "Einstellungen schließen"
+    },
     "LANGUAGE": {
-      "LANGUAGE": "Sprache",
-      "LANGUAGE_EN": "Englisch",
-      "LANGUAGE_DE": "Deutsch",
+      "ACCORDION": "Sprache ändern",
+      "LABEL": {
+        "LANG": "Sprache"
+      },
+      "SELECT": {
+        "EN": "Englisch",
+        "DE": "Deutsch"
+      },
       "TOOLTIPS": {
         "CHANGE_LANGUAGE": "Sprache ändern"
+      }
+    },
+    "TARGET_LANGUAGES": {
+      "ACCORDION": "Zielsprachen auswählen",
+      "LABEL": {
+        "BASE_LANG": "Basissprache",
+        "TARGET_LANG": "Zielsprache(n) auswählen"
+      },
+      "TOOLTIPS": {
+        "SELECT_TARGET_LANG": "Übersetzung von Basis- in Zielsprachen auswählen"
       }
     }
   }

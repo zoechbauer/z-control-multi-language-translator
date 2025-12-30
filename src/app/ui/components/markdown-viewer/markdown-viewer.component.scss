@@ -1,0 +1,92 @@
+ion-header {
+  ion-toolbar {
+    --background: var(--ion-color-primary) !important;
+    --color: #fff !important;
+
+    ion-title,
+    ion-button,
+    ion-icon {
+      color: #fff !important;
+    }
+
+    // scroll-to-top button
+    ion-buttons[slot="start"] {
+      ion-button {
+        ion-icon {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
+
+:host {
+  ::ng-deep {
+    // stylelint-disable-next-line selector-type-no-unknown
+    markdown {
+      line-height: 1.5 !important;
+      display: block;
+
+      // Main title (h1) - blue color
+      h1 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--ion-color-primary);
+      }
+
+      // Version headers (h2) - blue color
+      h2 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--ion-color-primary);
+      }
+
+      // Category headers (h3) like "🐛 Fixes", "🚀 Improvements" - blue color
+      h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--ion-color-primary);
+      }
+
+      // Other headers (h4, h5, h6) - default color
+      h4,
+      h5,
+      h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--ion-text-color);
+      }
+
+      p {
+        margin-bottom: 1rem;
+        color: var(--ion-text-color);
+      }
+
+      ul,
+      ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        color: var(--ion-text-color);
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+        color: var(--ion-text-color);
+      }
+
+      // Bold text - keep bold but use default text color
+      strong {
+        color: var(--ion-text-color);
+        font-weight: 600;
+      }
+
+      code {
+        background-color: var(--ion-color-step-100);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}

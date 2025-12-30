@@ -1,0 +1,68 @@
+<ion-accordion value="language" id="language">
+  <ion-item slot="header" color="light">
+    <ion-label>{{ "SETTINGS.LANGUAGE.ACCORDION" | translate }}</ion-label>
+  </ion-item>
+  <div class="ion-padding" slot="content" title="">
+    <ion-item>
+      <ion-select
+        label='{{ "SETTINGS.LANGUAGE.LABEL.LANG" | translate }}'
+        label-placement="stacked"
+        [(ngModel)]="lang"
+        (ionChange)="onLanguageChange($event)"
+        interface="popover"
+        title="{{ 'SETTINGS.LANGUAGE.TOOLTIPS.CHANGE_LANGUAGE' | translate }}"
+      >
+        <ion-select-option value="en">{{
+          "SETTINGS.LANGUAGE.SELECT.EN" | translate
+        }}</ion-select-option>
+        <ion-select-option value="de">{{
+          "SETTINGS.LANGUAGE.SELECT.DE" | translate
+        }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ng-container *ngIf="lang === 'de'; else englishTemplate">
+      <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+    </ng-container>
+
+    <!-- E N G L I S H   T E M P L A T E -->
+
+    <ng-template #englishTemplate>
+      <div class="notes">
+        <p>Note</p>
+        <p>
+          The app language is either <b>German</b> or <b>English</b> depending
+          on your device's language setting.
+        </p>
+        <p>
+          If a language other than German or English is set, the app will be
+          displayed in English.
+        </p>
+        <p>
+          You can change the language at any time. The change takes effect
+          immediately.
+        </p>
+      </div>
+    </ng-template>
+
+    <!-- G E R M A N   T E M P L A T E -->
+
+    <ng-template #germanTemplate>
+      <div class="notes">
+        <p>Hinweis</p>
+        <p>
+          Die verwendete Sprache ist entweder <b>Deutsch</b> oder
+          <b>Englisch</b> je nachdem welche Sprache am Handy eingestellt wurde.
+        </p>
+        <p>
+          Wurde eine andere Sprache als Deutsch oder Englisch eingestellt, wird
+          die App in Englisch angezeigt.
+        </p>
+        <p>
+          Sie können jederzeit die Sprache ändern. Die Änderung ist sofort
+          wirksam.
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</ion-accordion>

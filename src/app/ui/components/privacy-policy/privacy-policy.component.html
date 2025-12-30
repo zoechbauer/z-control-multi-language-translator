@@ -1,0 +1,67 @@
+<app-logo [type]="LogoType.Copyright"></app-logo>
+
+<ng-container *ngIf="lang === 'de'; else englishTemplate">
+  <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+</ng-container>
+
+<!-- E N G L I S H   T E M P L A T E -->
+
+<ng-template #englishTemplate>
+  <div class="additional-margin-right">
+    <p>
+      This app does not store any data on a server. All data is stored
+      exclusively locally on your device. The app des not use any external
+      services or libraries that share data with third parties. Your data
+      remains private and secure on your device.
+    </p>
+    <p>
+      You can find the complete privacy policy on the z-control website
+      <a
+        class="external-link"
+        href="https://z-control-4070.web.app/privacy/basic/en"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="{{ 'TOOLTIP_PRIVACY.OPEN_POLICY' | translate }}"
+        >Privacy Policy
+        <ion-icon name="open-outline"></ion-icon>
+      </a>
+    </p>
+    <p class="small-text">
+      <i
+        >Note: The link will open in your browser – afterwards, please return to
+        the z-control QR Code Generator app.</i
+      >
+    </p>
+  </div>
+</ng-template>
+
+<!-- G E R M A N   T E M P L A T E -->
+
+<ng-template #germanTemplate>
+  <div class="additional-margin-right">
+    <p>
+      Diese App speichert keine Daten auf einem Server. Alle Daten werden
+      ausschließlich lokal auf Ihrem Gerät gespeichert. Die App verwendet keine
+      externen Dienste oder Bibliotheken, die Daten mit Dritten teilen. Ihre
+      Daten bleiben privat und sicher auf Ihrem Gerät.
+    </p>
+    <p>
+      Die vollständige Datenschutzerklärung finden Sie auf der z-control-Website
+      <a
+        class="external-link"
+        href="https://z-control-4070.web.app/privacy/basic/de"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="{{ 'TOOLTIP_PRIVACY.OPEN_POLICY' | translate }}"
+        >Datenschutzerklärung
+        <ion-icon name="open-outline"></ion-icon>
+      </a>
+    </p>
+    <p class="small-text">
+      <i
+        >Hinweis: Der Link öffnet sich in Ihrem Browser – wechseln Sie
+        anschließend zurück zur z-control QR-Code-Generator-App.</i
+      >
+    </p>
+  </div>
+</ng-template>

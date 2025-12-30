@@ -6,15 +6,18 @@ import {
 } from '@angular/common/http';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { IonicStorageModule } from '@ionic/storage-angular';
 import {
   provideTranslateHttpLoader,
 } from '@ngx-translate/http-loader';
 
 import { addIcons } from 'ionicons';
-import { languageOutline, settingsOutline } from 'ionicons/icons';
+import { arrowForwardOutline, languageOutline, mailOutline, settingsOutline } from 'ionicons/icons';
 addIcons({
   'settings-outline': settingsOutline,
   'language-outline': languageOutline,
+  'arrow-forward-outline': arrowForwardOutline,
+  'mail-outline': mailOutline
 });
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,6 +28,7 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
     TranslateModule.forRoot({

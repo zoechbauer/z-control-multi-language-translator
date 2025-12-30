@@ -1,0 +1,63 @@
+<app-logo [type]="LogoType.Copyright"></app-logo>
+
+<ng-container *ngIf="lang === 'de'; else englishTemplate">
+  <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+</ng-container>
+
+<!-- E N G L I S H   T E M P L A T E -->
+
+<ng-template #englishTemplate>
+  <div class="additional-margin-right">
+    <p>
+      The app is <b>open source</b>, and the source code is available on
+      <a
+        class="external-link"
+        href="https://github.com/zoechbauer/z-control-qr-code-generator"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="{{ 'TOOLTIP_DOWNLOAD.GET_SOURCE' | translate }}"
+        >GitHub
+        <ion-icon
+          name="open-outline"
+          style="vertical-align: text-bottom; margin-left: 2px"
+        ></ion-icon> </a
+      >, so you can review how the app works and how your data is handled at any
+      time.
+    </p>
+    <p class="small-text">
+      <i
+        >Note: The link will open in your browser – afterwards, please return to
+        the z-control QR Code Generator app.</i
+      >
+    </p>
+  </div>
+</ng-template>
+
+<!-- G E R M A N   T E M P L A T E -->
+
+<ng-template #germanTemplate>
+  <div class="additional-margin-right">
+    <p>
+      Die App ist <b>open source</b>, und der Quellcode ist verfügbar unter
+      <a
+        class="external-link"
+        href="https://github.com/zoechbauer/z-control-qr-code-generator"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="{{ 'TOOLTIP_DOWNLOAD.GET_SOURCE' | translate }}"
+        >GitHub
+        <ion-icon
+          name="open-outline"
+          style="vertical-align: text-bottom; margin-left: 2px"
+        ></ion-icon> </a
+      >, sodass Sie jederzeit überprüfen können, wie die App funktioniert und
+      wie Ihre Daten verarbeitet werden.
+    </p>
+    <p class="small-text">
+      <i
+        >Hinweis: Der Link öffnet sich in Ihrem Browser – wechseln Sie
+        anschließend zurück zur z-control QR-Code-Generator-App.</i
+      >
+    </p>
+  </div>
+</ng-template>

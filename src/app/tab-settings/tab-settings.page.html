@@ -1,15 +1,85 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Tab Einstellungen </ion-title>
-  </ion-toolbar>
-</ion-header>
+<div id="toast-anchor-settings">
+  <app-header [currentTab]="Tab.Settings"></app-header>
+</div>
+<ion-content
+  #content
+  class="qr-settings-content"
+  [class.landscape]="!utilsService.isPortrait"
+>
+  <ion-accordion-group
+    [value]="openAccordion"
+    (ionValueChange)="onAccordionGroupChange($event, content)"
+    title="{{this.showAllAccordions ? ('SETTINGS.TOOLTIPS.OPEN_ACCORDION' | translate) : ('SETTINGS.TOOLTIPS.CLOSE_ACCORDION' | translate) }}"
+  >
+    <!-- Show all accordions and section title  -->
+    @if (showAllAccordions && !openAccordion) {
+    <h5 class="ion-text-center settings-section-title" title="">
+      {{'SETTINGS.TITLE' | translate}}
+    </h5>
+    <app-language-accordion></app-language-accordion>
+    <app-target-languages-accordion></app-target-languages-accordion>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab Einstellungen</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <h5 class="ion-text-center settings-section-title" title="">
+      {{ "SETTINGS.FEEDBACK" | translate }}
+    </h5>
+    <app-feedback-accordion></app-feedback-accordion>
 
-  <app-settings></app-settings>
+    <h5 class="ion-text-center settings-section-title" title="">
+      {{ "SETTINGS.MULTI_LANGUAGE_TRANSLATOR_APP" | translate }}<br />{{
+      "SETTINGS.INFORMATIONS" | translate }}
+    </h5>
+    <app-privacy-policy-accordion></app-privacy-policy-accordion>
+    <app-change-log-accordion
+      [versionInfo]="versionInfo"
+    ></app-change-log-accordion>
+    @if(!isNative) {
+    <app-get-mobile-app-accordion></app-get-mobile-app-accordion>
+    }
+    <app-get-source-accordion></app-get-source-accordion>
+    }
+
+    <!-- Show only the opened accordion  -->
+    @if (!showAllAccordions && openAccordion) { @switch (openAccordion) { @case
+    ('language') {
+    <app-language-accordion
+      [lang]="selectedLanguage || 'en'"
+      (ionChange)="onLanguageChange($event)"
+    ></app-language-accordion>
+    } @case ('target-languages') {
+    <app-target-languages-accordion
+      [lang]="selectedLanguage || 'en'"
+      (ionChange)="onTargetLanguagesChange($event)"
+    ></app-target-languages-accordion>
+    } @case ('z-control') {
+    <app-feedback-accordion
+      [lang]="selectedLanguage || 'en'"
+    ></app-feedback-accordion>
+    } @case ('privacy-policy') {
+    <app-privacy-policy-accordion
+      [selectedLanguage]="selectedLanguage || 'en'"
+    ></app-privacy-policy-accordion>
+    } @case ('change-log') {
+    <app-change-log-accordion
+      [lang]="selectedLanguage || 'en'"
+      [versionInfo]="versionInfo"
+      (ionChange)="openChangelog()"
+    ></app-change-log-accordion>
+    } @case ('get-mobile-app') {
+    <app-get-mobile-app-accordion
+      [selectedLanguage]="selectedLanguage || 'en'"
+    ></app-get-mobile-app-accordion>
+    } @case ('get-source-code') {
+    <app-get-source-accordion
+      [selectedLanguage]="selectedLanguage || 'en'"
+    ></app-get-source-accordion>
+    } }
+    <!-- Button to show all accordions -->
+    <div class="ion-padding ion-text-center accordion-close-button">
+      <ion-button (click)="showAll()" expand="block">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        {{ 'CLOSE' | translate }}
+      </ion-button>
+    </div>
+    }
+  </ion-accordion-group>
 </ion-content>

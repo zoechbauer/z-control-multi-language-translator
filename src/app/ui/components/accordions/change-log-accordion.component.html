@@ -1,0 +1,59 @@
+<ion-accordion value="change-log" id="change-log">
+  <ion-item slot="header" color="light" class="accordion-margin-top">
+    <ion-label>{{ versionInfo }}</ion-label>
+  </ion-item>
+  <div class="ion-padding" slot="content" title="">
+    <div class="version-info ion-text-center">
+      <p class="version">{{ versionInfo }}</p>
+      <div class="button-wrapper ion-text-center">
+        <ion-button
+          color="primary"
+          (click)="openChangelog()"
+          (keydown.enter)="openChangelog()"
+          title="{{ 'TOOLTIP_CHANGELOG.OPEN_RELEASE_NOTES' | translate }}"
+        >
+          <ion-icon name="list-outline" slot="start"></ion-icon>
+          Release Notes
+        </ion-button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="lang === 'de'; else englishTemplate">
+      <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+    </ng-container>
+
+    <!-- E N G L I S H   T E M P L A T E -->
+
+    <ng-template #englishTemplate>
+      <div class="notes">
+        <p>Note</p>
+        <p>
+          You can find all new features, improvements, and bug fixes of the
+          <b>z-control Multi Language Translator App</b> since the start of the test
+          phase in the release notes.
+        </p>
+        <p>
+          If you want to read the release notes, simply click the "Release
+          Notes" button.
+        </p>
+      </div>
+    </ng-template>
+
+    <!-- G E R M A N   T E M P L A T E -->
+
+    <ng-template #germanTemplate>
+      <div class="notes">
+        <p>Hinweis</p>
+        <p>
+          Sie finden alle neuen Funktionen, Verbesserungen und Fehlerbehebungen
+          der <b>z-control Multi-Sprachen-Übersetzer-App</b> seit Beginn der Testphase
+          in den Release Notes
+        </p>
+        <p>
+          Wenn Sie die Release Notes in <b>Englisch</b> lesen möchten, klicken
+          Sie einfach auf die Schaltfläche "Release Notes".
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</ion-accordion>

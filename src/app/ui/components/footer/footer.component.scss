@@ -1,0 +1,41 @@
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+
+  ion-icon {
+    margin-right: 5px;
+  }
+
+  .footer-email {
+    font-size: 1.2em;
+    word-break: break-all;
+    margin: 25px 0 25px 0;
+
+    ion-icon {
+      margin-bottom: -3px;
+    }
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+
+    &.small {
+      font-size: 0.8em;
+    }
+  }
+}
+
+.footer-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.95em;
+
+  &:hover {
+    color: inherit;
+    text-decoration: underline;
+  }
+}

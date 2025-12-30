@@ -35,3 +35,190 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+
+ion-app {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 16px;
+}
+
+#toast-anchor-translation,
+#toast-anchor-settings {
+  margin: 0;
+  padding: 0;
+}
+
+.web-app ion-header {
+  margin-top: -25px !important;
+}
+
+ion-header {
+  margin-right: 0;
+  padding-right: 0;
+
+  ion-toolbar {
+    --background: var(--ion-color-primary) !important;
+    --color: #fff !important;
+    padding-right: 0;
+
+    ion-title,
+    ion-button,
+    ion-icon {
+      color: #fff !important;
+    }
+  }
+}
+
+ion-tab-bar {
+  padding-bottom: var(--safe-area-bottom-fix, 44px);
+  display: flex;
+
+  &.hide-ion-tab-bar {
+    display: none;
+  }
+}
+
+// Compatibility styles for legacy Android versions (e.g., Android 11)
+ion-header ion-toolbar:first-of-type {
+  padding-top: var(--safe-area-top, 24px);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000000 !important; /* dark splash color for mobile */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff !important; /* light splash color for mobile */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  ion-toolbar {
+    --background: #ffffff !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  // exclude tablets
+  .native-app {
+    .buttons-last-slot {
+      margin-right: 36px;
+    }
+
+    .notes,
+    .additional-margin-right {
+      margin-right: 24px;
+    }
+  }
+}
+
+.app-header,
+.qr-code-content,
+.qr-settings-content {
+  &.landscape {
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+    // content ends horizontally before navigation bar in landscape mode
+    max-width: calc(100vw - var(--safe-area-right-fix, 65px));
+    overflow-x: auto !important;
+  }
+}
+
+.change-log-modal,
+.manual-instructions-modal {
+  // Modal ends vertically above navigation bar in portrait mode
+  max-height: calc(100vh - var(--safe-area-bottom-fix, 44px)) !important;
+  overflow-y: auto !important;
+
+  &.landscape {
+    // Modal ends horizontally before navigation bar in landscape mode
+    max-width: calc(100vw - var(--safe-area-right-fix, 65px));
+    overflow-x: auto !important;
+    max-height: 100vh !important;
+    margin-right: 24px;
+  }
+
+  &:has(app-help-modal) {
+    --border-width: 0;
+  }
+
+  // height of help page & release notes in web app
+  &.desktop {
+    --height: 90vh;
+    --max-height: 90vh;
+  }
+}
+
+// alert border styling - must be global like modal
+.copy-success-alert .alert-wrapper,
+.show-mobile-web-email-options .alert-wrapper {
+  border: 2px solid var(--ion-color-medium);
+  border-radius: 10px;
+}
+
+ion-title {
+  text-align: center;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  font-size: 1.1rem;
+}
+
+.qr-settings-content {
+  .settings-section-title {
+    color: var(--ion-color-primary);
+    font-size: 0.8em;
+  }
+
+  .accordion-margin-top {
+    padding-top: 10px;
+  }
+
+  .version-info {
+    .version {
+      font-size: 0.8em;
+      margin: 0px;
+    }
+  }
+
+  .button-wrapper {
+    text-align: center;
+    margin: 5px 0;
+
+    ion-button {
+      margin: 0 auto;
+    }
+  }
+
+  .accordion-close-button {
+    opacity: 0.8;
+  }
+
+  .small-text {
+    font-size: 0.8em;
+  }
+
+  .notes {
+    font-size: 0.8em;
+    margin-top: 32px;
+    text-align: left;
+  }
+
+  .input-item-count-margin-top {
+    margin-top: -16px;
+    z-index: 1;
+    background: transparent;
+  }
+
+  .additional-right-margin {
+    margin-right: 36px;
+  }
+}
+

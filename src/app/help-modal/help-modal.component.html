@@ -1,0 +1,492 @@
+<ng-container *ngIf="selectedLanguage === 'de'; else englishTemplate">
+  <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+</ng-container>
+
+<!-- *********************************** -->
+<!-- E N G L I S H   T E M P L A T E -->
+<!-- *********************************** -->
+
+<ng-template #englishTemplate>
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>
+        <span *ngIf="!isPortrait"
+          >Help – z-control Multi Language Translator</span
+        >
+        <span *ngIf="isPortrait">Help – Translator</span>
+      </ion-title>
+      <ion-buttons slot="start">
+        <ion-button
+          fill="clear"
+          (click)="scrollToTop()"
+          (keydown.enter)="scrollToTop()"
+          (keydown.space)="scrollToTop()"
+        >
+          <ion-icon name="arrow-up-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <ion-button
+          class="button-color"
+          (click)="dismissModal()"
+          (keydown.enter)="dismissModal()"
+          (keydown.space)="dismissModal()"
+        >
+          <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="ion-padding">
+    <div id="toc" class="ion-padding">
+      <h5 class="ion-text-center toc-title">Table of Contents</h5>
+      <ol class="table-of-contents">
+        <li>
+          <a href="#" (click)="utilsService.scrollTo('general-usage', $event)"
+            >General Usage</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('what-can-the-app-do', $event)"
+            >What can the app do?</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('how-to-use-the-app', $event)"
+            >How to use the app?</a
+          >
+        </li>
+        <li *ngIf="isNative">
+          <a href="#" (click)="utilsService.scrollTo('web-version', $event)"
+            >Using the Web Version</a
+          >
+        </li>
+        <li>
+          <a href="#" (click)="utilsService.scrollTo('technical-info', $event)"
+            >Technical Information</a
+          >
+        </li>
+        <li class="toc-increase-margin-top">
+          <a href="#" (click)="utilsService.scrollTo('troubleshooting', $event)"
+            >Troubleshooting & Problem Solving</a
+          >
+        </li>
+      </ol>
+    </div>
+
+    <h3 id="general-usage">General Usage</h3>
+    <ol>
+      <li>
+        <b>What is this app for?</b>
+        <p>
+          Easily translate your text into multiple languages using Google
+          Translate.
+        </p>
+      </li>
+      <li>
+        <b>How do I switch between Translation and Settings?</b>
+        <p>
+          <b>On mobile (portrait):</b> Use the tabs at the bottom to switch
+          between Translate and Settings.<br />
+          <b>On tablet/desktop/landscape:</b> Use the navigation button in the
+          top right of the header.
+        </p>
+      </li>
+      <li>
+        <b>How do I change the app language?</b>
+        <p>
+          Use the "Select Language" option in Settings to switch between English
+          and German. Changes take effect immediately.
+        </p>
+      </li>
+      <li>
+        <b>How do I switch between Dark and Light Mode?</b>
+        <p>
+          The app follows your device’s system settings. Change your device’s
+          theme to switch modes.
+        </p>
+      </li>
+      <li>
+        <b>How can I provide feedback or contact support?</b>
+        <p>
+          In Settings, click the logo in the header to open the feedback
+          section. Use the “z-control Support & Feedback” link to send us an
+          email.
+        </p>
+      </li>
+    </ol>
+
+    <h3 id="what-can-the-app-do">What can the app do?</h3>
+    <p>
+      <b
+        >Your text is translated into selected languages using Google
+        Translate.</b
+      >
+      You can enter up to {{ maxInputLength }} characters per translation (due
+      to Google API limits and quota).
+    </p>
+    <p><b>Limitations:</b></p>
+    <ul>
+      <li>
+        Shared quota: {{ maxFreeTranslateCharsLengthPerYear | number }} characters/year for all users. If exceeded,
+        translations may be temporarily unavailable.
+      </li>
+      <li>
+        Google Translate may return errors for very long or complex texts.
+      </li>
+      <li>Formatting (bold, italics, line breaks) may not be preserved.</li>
+      <li>
+        Translations are processed by Google servers; your text is not stored by
+        this app.
+      </li>
+    </ul>
+
+    <h3 id="how-to-use-the-app">How to use the app?</h3>
+    <h5>App Structure & Navigation</h5>
+    <ul>
+      <li>
+        <b>Translate:</b> Enter text and translate it into your chosen
+        languages.
+      </li>
+      <li><b>Settings:</b> Select languages and view app information.</li>
+    </ul>
+    <p><b>Navigation:</b></p>
+    <ul>
+      <li *ngIf="isNative"><b>Mobile (portrait):</b> Use the bottom tabs.</li>
+      <li>
+        <b>Tablet/desktop/landscape:</b> Use the top-right navigation button.
+      </li>
+    </ul>
+    <h5>Translating Text</h5>
+    <ol>
+      <li>Go to <b>Translate</b> and enter your text.</li>
+      <li>Press <b>Translate</b> to see results in your selected languages.</li>
+      <li>Use <b>Settings</b> to manage your language preferences.</li>
+    </ol>
+    <h5>Managing Settings</h5>
+    <ul>
+      <li>Select your base language (English or German).</li>
+      <li>Choose up to {{ maxTargetLanguages }} target languages.</li>
+      <li>Send feedback to z-control.</li>
+      <li>View privacy policy, app version, and release notes.</li>
+      <li *ngIf="!isNative">Install the mobile app (web only).</li>
+      <li>Access the source code to see how your data is handled.</li>
+    </ul>
+    <p>
+      You can switch between Translate and Settings at any time. Your entered
+      text remains when switching.
+    </p>
+
+    <div *ngIf="isNative">
+      <h3 id="web-version">Using the Web Version</h3>
+      <p>
+        <b>The web version offers the same features and is accessible at</b>
+        <a
+          class="external-link"
+          href="https://z-control-qr-code.web.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://z-control-qr-code.web.app
+          <ion-icon
+            name="open-outline"
+            style="vertical-align: text-bottom; margin-left: 2px"
+          ></ion-icon>
+        </a>
+      </p>
+      <p>Use your browser for a full keyboard experience.</p>
+    </div>
+
+    <h3 id="technical-info">Technical Information</h3>
+    <p>(TODO) Details about the Google Translate API.</p>
+    <p *ngIf="isNative">
+      <b>Voice input:</b> If enabled on your device, tap the microphone icon on
+      your keyboard to use voice input.
+    </p>
+
+    <h3 id="troubleshooting">Troubleshooting & Problem Solving</h3>
+    <ol>
+      <li *ngIf="isNative">
+        <b>The keyboard covers input fields (mobile):</b>
+        <p>
+          Enable the floating keyboard (tap the three dots above the keyboard,
+          select "Modes", then "Floating keyboard").
+        </p>
+      </li>
+      <li>
+        <b>Is my data private?</b>
+        <p>
+          Yes, all data is stored locally on your device. Nothing is sent to
+          external servers.
+        </p>
+      </li>
+    </ol>
+    <p class="empty-last-item"></p>
+  </ion-content>
+</ng-template>
+
+<!-- *********************************** -->
+<!-- G E R M A N   T E M P L A T E       -->
+<!-- *********************************** -->
+
+<ng-template #germanTemplate>
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>
+        <span *ngIf="!isPortrait"
+          >Hilfe – z-control Multi Sprachen Übersetzer</span
+        >
+        <span *ngIf="isPortrait">Hilfe – Übersetzer</span>
+      </ion-title>
+      <ion-buttons slot="start">
+        <ion-button
+          fill="clear"
+          (click)="scrollToTop()"
+          (keydown.enter)="scrollToTop()"
+          (keydown.space)="scrollToTop()"
+        >
+          <ion-icon name="arrow-up-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <ion-button
+          class="button-color"
+          (click)="dismissModal()"
+          (keydown.enter)="dismissModal()"
+          (keydown.space)="dismissModal()"
+        >
+          <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="ion-padding">
+    <div id="toc-DE" class="ion-padding">
+      <h5 class="ion-text-center toc-title">Inhaltsverzeichnis</h5>
+      <ol class="table-of-contents">
+        <li>
+          <a href="#" (click)="utilsService.scrollTo('general-usage', $event)"
+            >Allgemeine Nutzung</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('what-can-the-app-do', $event)"
+            >Was kann die App?</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('how-to-use-the-app', $event)"
+            >Wie benutzt man die App?</a
+          >
+        </li>
+        <li *ngIf="isNative">
+          <a href="#" (click)="utilsService.scrollTo('web-version', $event)"
+            >Web-Version verwenden</a
+          >
+        </li>
+        <li>
+          <a href="#" (click)="utilsService.scrollTo('technical-info', $event)"
+            >Technische Informationen</a
+          >
+        </li>
+        <li class="toc-increase-margin-top">
+          <a href="#" (click)="utilsService.scrollTo('troubleshooting', $event)"
+            >Fehlerbehebung & Problemlösung</a
+          >
+        </li>
+      </ol>
+    </div>
+
+    <h3 id="general-usage-DE">Allgemeine Nutzung</h3>
+    <ol>
+      <li>
+        <b>Wofür ist diese App?</b>
+        <p>
+          Übersetzen Sie Ihren Text einfach in mehrere Sprachen mit Google
+          Translate.
+        </p>
+      </li>
+      <li>
+        <b>Wie wechsle ich zwischen Übersetzung und Einstellungen?</b>
+        <p>
+          <b>Auf Mobilgeräten im Hochformat:</b> Verwenden Sie die Tabs am
+          unteren Bildschirmrand, um zwischen Übersetzen und Einstellungen zu
+          wechseln.
+        </p>
+        <p>
+          <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Nutzen Sie die
+          Schaltfläche oben rechts in der Kopfzeile, um zwischen Übersetzen und
+          Einstellungen zu wechseln.
+        </p>
+      </li>
+      <li>
+        <b>Wie ändere ich die App-Sprache?</b>
+        <p>
+          Verwenden Sie die Option "Sprache auswählen" in den Einstellungen, um
+          zwischen Englisch und Deutsch zu wechseln. Die Änderung wird sofort
+          übernommen.
+        </p>
+      </li>
+      <li>
+        <b>Wie wechsle ich zwischen Dunkel- und Hellmodus?</b>
+        <p>
+          Die App folgt den Systemeinstellungen Ihres Geräts. Ändern Sie das
+          Thema Ihres Geräts ("Dunkles Design", "Helles Design")in den
+          Systemeinstellungen Ihres Gerätes.
+        </p>
+      </li>
+      <li>
+        <b>Wie kann ich Feedback geben oder den Support kontaktieren?</b>
+        <p>
+          Sie können uns Feedback, Fragen oder Vorschläge über den E-Mail-Link
+          in den „Einstellungen“ senden. Klicken Sie auf das Logo in der
+          Kopfzeile, um den Feedback-Bereich zu öffnen. Verwenden Sie den Link
+          „z-control Support & Feedback“, um uns eine E-Mail zu senden.
+        </p>
+      </li>
+    </ol>
+
+    <h3 id="what-can-the-app-do-DE">Was kann die App?</h3>
+    <p>
+      <b>
+        Ihr Text wird mit Google Translate in die ausgewählten Sprachen
+        übersetzt.
+      </b>
+      Sie können bis zu {{ maxInputLength }} Zeichen pro Übersetzung eingeben
+      (aufgrund von Google API-Beschränkungen und Kontingent).
+    </p>
+    <p><b>Einschränkungen:</b></p>
+    <ul>
+      <li>
+        Gemeinsames Jahreskontingent: {{ maxFreeTranslateCharsLengthPerYear | number:'1.0-0':'de' }} Zeichen für alle Nutzer. Bei
+        Überschreitung sind Übersetzungen vorübergehend nicht verfügbar.
+      </li>
+      <li>
+        Google Translate kann bei sehr langen oder komplexen Texten Fehler
+        zurückgeben.
+      </li>
+      <li>
+        Formatierungen (fett, kursiv, Zeilenumbrüche) werden möglicherweise
+        nicht beibehalten.
+      </li>
+      <li>
+        Übersetzungen werden von Google-Servern verarbeitet; Ihr Text wird von
+        dieser App nicht gespeichert.
+      </li>
+    </ul>
+
+    <h3 id="how-to-use-the-app-DE">Wie benutzt man die App?</h3>
+    <h5>App-Struktur & Navigation</h5>
+    <ul>
+      <li>
+        <b>Übersetzen:</b> Geben Sie Text ein und übersetzen Sie ihn in Ihre
+        gewählten Sprachen.
+      </li>
+      <li>
+        <b>Einstellungen:</b> Wählen Sie Sprachen aus und sehen Sie
+        App-Informationen.
+      </li>
+    </ul>
+    <p><b>Navigation:</b></p>
+    <ul>
+      <li *ngIf="isNative">
+        <b>Auf Mobilgeräten im Hochformat:</b> Verwenden Sie die Tabs am unteren
+        Bildschirmrand, um zwischen Übersetzen und Einstellungen zu wechseln.
+      </li>
+      <li>
+        <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Nutzen Sie die
+        Schaltfläche oben rechts in der Kopfzeile, um zwischen Übersetzen und
+        Einstellungen zu wechseln.
+      </li>
+    </ul>
+    <h5>Text übersetzen</h5>
+    <ol>
+      <li>Gehen Sie zu <b>Übersetzen</b> und geben Sie Ihren Text ein.</li>
+      <li>
+        Drücken Sie <b>Übersetzen</b>, um die Ergebnisse in Ihren ausgewählten
+        Sprachen zu sehen.
+      </li>
+      <li>
+        Verwenden Sie <b>Einstellungen</b>, um Ihre Sprachpräferenzen zu
+        verwalten.
+      </li>
+    </ol>
+    <h5>Einstellungen verwalten</h5>
+    <ul>
+      <li>Wählen Sie Ihre Basissprache (Englisch oder Deutsch).</li>
+      <li>Wählen Sie bis zu {{ maxTargetLanguages }} Zielsprachen.</li>
+      <li>Senden Sie Feedback an z-control.</li>
+      <li>
+        Sehen Sie Datenschutzrichtlinie, App-Version und Versionshinweise.
+      </li>
+      <li *ngIf="!isNative">Installieren Sie die mobile App (nur Web).</li>
+      <li>
+        Greifen Sie auf den Quellcode zu, um zu sehen, wie Ihre Daten
+        verarbeitet werden.
+      </li>
+    </ul>
+    <p>
+      Sie können jederzeit zwischen Übersetzen und Einstellungen wechseln. Ihr
+      eingegebener Text bleibt beim Wechsel erhalten.
+    </p>
+
+    <div *ngIf="isNative">
+      <h3 id="web-version-DE">Web-Version verwenden</h3>
+      <p>
+        <b
+          >Die Web-Version bietet die gleichen Funktionen und ist erreichbar
+          unter</b
+        >
+        <a
+          class="external-link"
+          href="https://z-control-qr-code.web.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://z-control-qr-code.web.app
+          <ion-icon
+            name="open-outline"
+            style="vertical-align: text-bottom; margin-left: 2px"
+          ></ion-icon>
+        </a>
+      </p>
+      <p>Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.</p>
+    </div>
+
+    <h3 id="technical-info-DE">Technische Informationen</h3>
+    <p>(TODO) Details zur Google Translate API.</p>
+    <p *ngIf="isNative">
+      <b>Spracheingabe:</b> Wenn auf Ihrem Gerät aktiviert, tippen Sie auf das
+      Mikrofon-Symbol auf Ihrer Tastatur, um die Spracheingabe zu verwenden.
+    </p>
+
+    <h3 id="troubleshooting-DE">Fehlerbehebung & Problemlösung</h3>
+    <ol>
+      <li *ngIf="isNative">
+        <b>Die Tastatur verdeckt Eingabefelder (Handy):</b>
+        <p>
+          Aktivieren Sie die schwebende Tastatur (tippen Sie auf die drei Punkte
+          über der Tastatur, wählen Sie "Modi" und dann "Schwebende Tastatur").
+        </p>
+      </li>
+      <li>
+        <b>Ist meine Daten privat?</b>
+        <p>
+          Ja, alle Daten werden lokal auf Ihrem Gerät gespeichert. Es wird
+          nichts an externe Server gesendet.
+        </p>
+      </li>
+    </ol>
+    <p class="empty-last-item"></p>
+  </ion-content>
+</ng-template>
