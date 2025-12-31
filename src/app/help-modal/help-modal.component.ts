@@ -42,9 +42,9 @@ export class HelpModalComponent implements OnInit, OnDestroy {
   selectedLanguage: string = 'de';
   isPortrait = this.utilsService.isPortrait;
   // TODO: Adjust maxInputLength based on environment settings
-  maxInputLength = 100;
+  maxInputLength = 30;
   // TODO: Adjust maxTargetLanguages based on environment settings
-  maxTargetLanguages = 3;
+  maxTargetLanguages = 5;
   // TODO: Adjust maxFreeTranslateCharsLengthPerYear based on environment settings
   maxFreeTranslateCharsLengthPerYear = 500000;
 

@@ -9,11 +9,11 @@
         (click)="goToSettingsAndOpenFeedback()"
         (keydown.enter)="goToSettingsAndOpenFeedback()"
         (keydown.space)="goToSettingsAndOpenFeedback()"
-        title="{{ 'TOOLTIP_HEADER.OPEN_FEEDBACK' | translate }}"
+        title="{{ 'HEADER.TOOLTIP.OPEN_FEEDBACK' | translate }}"
       ></app-logo>
     </ion-buttons>
     <ion-title *ngIf="onTranslateTab">
-      <b>{{ !isLargeScreen ? "Translate" : "z-control Multi Language Translator" }}</b>
+      <b>{{ !isLargeScreen ? ('HEADER.CURRENT_PAGE.TRANSLATE_SHORT' | translate) : ('HEADER.CURRENT_PAGE.TRANSLATE_LONG' | translate:{countTargetLanguages: selectedTargetLanguages.length}) }}</b>
     </ion-title>
     <ion-title *ngIf="onSettingsTab">
       <ion-title>{{ "SETTINGS.TITLE" | translate }}</ion-title>
@@ -24,7 +24,7 @@
         (click)="goToSettings()"
         (keydown.enter)="goToSettings()"
         (keydown.space)="goToSettings()"
-        title = "{{ 'TOOLTIP_HEADER.GOTO_SETTINGS' | translate }}"
+        title = "{{ 'HEADER.TOOLTIP.GOTO_SETTINGS' | translate }}"
         fill="clear"
       >
         <ion-icon name="settings-outline"></ion-icon>
@@ -34,7 +34,7 @@
         (click)="goToTranslate()"
         (keydown.enter)="goToTranslate()"
         (keydown.space)="goToTranslate()"
-        title = "{{ 'TOOLTIP_HEADER.GOTO_QR_CODE' | translate }}"
+        title = "{{ 'HEADER.TOOLTIP.GOTO_TRANSLATE' | translate }}"
         fill="clear"
       >
         <ion-icon name="qr-code-outline"></ion-icon>
@@ -45,7 +45,7 @@
         (click)="openHelpModal()"
         (keydown.enter)="openHelpModal()"
         (keydown.space)="openHelpModal()"
-        title = "{{ 'TOOLTIP_HEADER.OPEN_HELP' | translate }}"
+        title = "{{ 'HEADER.TOOLTIP.OPEN_HELP' | translate }}"
       >
         <ion-icon slot="icon-only" name="help"></ion-icon>
       </ion-button>

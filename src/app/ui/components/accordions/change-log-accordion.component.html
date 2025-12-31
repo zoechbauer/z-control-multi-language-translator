@@ -1,6 +1,6 @@
 <ion-accordion value="change-log" id="change-log">
   <ion-item slot="header" color="light" class="accordion-margin-top">
-    <ion-label>{{ versionInfo }}</ion-label>
+    <ion-label>{{ 'SETTINGS.RELEASE-NOTES.ACCORDION' | translate:{ versionInfo: versionInfo } }}</ion-label>
   </ion-item>
   <div class="ion-padding" slot="content" title="">
     <div class="version-info ion-text-center">
@@ -10,7 +10,7 @@
           color="primary"
           (click)="openChangelog()"
           (keydown.enter)="openChangelog()"
-          title="{{ 'TOOLTIP_CHANGELOG.OPEN_RELEASE_NOTES' | translate }}"
+          title="{{ 'SETTINGS.RELEASE-NOTES.TOOLTIPS.OPEN_RELEASE_NOTES' | translate }}"
         >
           <ion-icon name="list-outline" slot="start"></ion-icon>
           Release Notes

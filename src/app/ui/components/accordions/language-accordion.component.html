@@ -5,7 +5,7 @@
   <div class="ion-padding" slot="content" title="">
     <ion-item>
       <ion-select
-        label='{{ "SETTINGS.LANGUAGE.LABEL.LANG" | translate }}'
+        label="{{ 'SETTINGS.LANGUAGE.LABEL.LANG' | translate }}"
         label-placement="stacked"
         [(ngModel)]="lang"
         (ionChange)="onLanguageChange($event)"
@@ -61,6 +61,13 @@
         <p>
           Sie können jederzeit die Sprache ändern. Die Änderung ist sofort
           wirksam.
+        </p>
+        <p>
+          <strong
+            >Diese ausgewählte Sprache ist auch die Basissprache für die
+            Übersetzung. Die Übersetzung erfolgt von der Basissprache in die
+            ausgewählten Zielsprachen.</strong
+          >
         </p>
       </div>
     </ng-template>

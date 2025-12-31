@@ -1,4 +1,29 @@
 {
+  "------ global": "-------",
+  "APP": {
+    "NAME": "z-control Multi-Sprachen-Übersetzer"
+  },
+  "------ header page": "-------",
+  "HEADER": {
+    "CURRENT_PAGE": { 
+      "TRANSLATE_LONG": "Übersetzen in {{countTargetLanguages}} Sprache(n)",
+      "TRANSLATE_SHORT": "Übersetzen",
+      "SETTINGS": "Einstellungen "
+    },
+    "TOOLTIP": {
+      "OPEN_FEEDBACK": "Feedback-Seite öffnen",
+      "OPEN_HELP": "Hilfeseite öffnen",
+      "GOTO_TRANSLATE": "Zur Übersetzungsseite wechseln",
+      "GOTO_SETTINGS": "Zur Einstellungsseite wechseln"
+    }
+  },
+  "------ footer page": "-------",
+  "FOOTER": {
+    "COUNTRY": "Österreich",
+    "TOOLTIP": {
+      "CONTACT_SUPPORT": "Kontaktieren Sie den Support von z-control per Mail"
+    }
+  },
   "------ tabs page": "-------",
   "TABS": {
     "TRANSLATE": "Übersetzen",
@@ -8,13 +33,13 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "TITLE": "Text in mehrere Sprachen übersetzen",
+      "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in mehrere von Ihnen ausgewählte Sprachen (maximal {{maxTargetLanguages}}) übersetzen lassen.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein"
+        "INPUT_TEXT": "Geben Sie Text in Basissprache ein"
       },
       "BUTTON": {
         "TRANSLATE": "Übersetzen",
@@ -23,7 +48,6 @@
     },
     "CARD_RESULTS": {
       "LABEL": {
-        "LANGUAGE": "Sprache",
         "TRANSLATED_TEXT": "Übersetzter Text"
       }
     }
@@ -32,15 +56,16 @@
   "------ settings page": "-------",
   "SETTINGS": {
     "TITLE": "Einstellungen",
-    "FEEDBACK": "Feedback",
     "INFORMATIONS": "Informationen",
-    "MULTI_LANGUAGE_TRANSLATOR_APP": "z-control Multi-Sprachen-Übersetzer App",
+    "BUTTON": {
+      "CLOSE": "Zurück zu Einstellungen"
+    },
     "TOOLTIPS": {
       "OPEN_ACCORDION": "Einstellungen öffnen",
       "CLOSE_ACCORDION": "Einstellungen schließen"
     },
     "LANGUAGE": {
-      "ACCORDION": "Sprache ändern",
+      "ACCORDION": "Sprache / Basissprache ändern",
       "LABEL": {
         "LANG": "Sprache"
       },
@@ -60,6 +85,34 @@
       },
       "TOOLTIPS": {
         "SELECT_TARGET_LANG": "Übersetzung von Basis- in Zielsprachen auswählen"
+      }
+    },
+    "FEEDBACK": {
+      "ACCORDION": "Feedback an z-control senden",
+      "SEPARATOR": "Feedback"
+    },
+    "PRIVACY": {
+      "ACCORDION": "Datenschutz-Bestimmungen",
+      "TOOLTIPS": {
+        "OPEN_POLICY": "Datenschutzrichtlinie in einem neuen Tab öffnen"
+      }
+    },
+    "RELEASE-NOTES": {
+      "ACCORDION": "App Version {{versionInfo}} - Versionshinweise",
+      "TOOLTIPS": {
+        "OPEN_RELEASE_NOTES": "Release-Notes (Changelog) öffnen — nach Kategorien gruppiert und es werden zuerst die neuesten Einträge angezeigt."
+      }
+    },
+    "MOBILE-APP": {
+      "ACCORDION": "Mobile App installieren",
+      "TOOLTIPS": {
+        "DOWNLOAD": "Download der nativen Android-App aus dem Google Play Store"
+      }
+    },
+    "SOURCE": {
+      "ACCORDION": "Quellcode abrufen",
+      "TOOLTIPS": {
+        "DOWNLOAD": "GitHub-Repository in einem neuen Tab öffnen — Quellcode, Lizenz, Changelog und Dokumentation anzeigen."
       }
     }
   }

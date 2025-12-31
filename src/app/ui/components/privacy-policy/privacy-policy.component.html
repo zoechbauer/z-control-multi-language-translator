@@ -1,5 +1,7 @@
 <app-logo [type]="LogoType.Copyright"></app-logo>
 
+<h1>TODO: new privacy policy content, because now it's linked to QR Code Generator app</h1>
+
 <ng-container *ngIf="lang === 'de'; else englishTemplate">
   <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
 </ng-container>
@@ -21,7 +23,7 @@
         href="https://z-control-4070.web.app/privacy/basic/en"
         target="_blank"
         rel="noopener noreferrer"
-        title="{{ 'TOOLTIP_PRIVACY.OPEN_POLICY' | translate }}"
+        title="{{ 'SETTINGS.PRIVACY.TOOLTIPS.OPEN_POLICY' | translate }}"
         >Privacy Policy
         <ion-icon name="open-outline"></ion-icon>
       </a>
@@ -52,7 +54,7 @@
         href="https://z-control-4070.web.app/privacy/basic/de"
         target="_blank"
         rel="noopener noreferrer"
-        title="{{ 'TOOLTIP_PRIVACY.OPEN_POLICY' | translate }}"
+        title="{{ 'SETTINGS.PRIVACY.TOOLTIPS.OPEN_POLICY' | translate }}"
         >Datenschutzerklärung
         <ion-icon name="open-outline"></ion-icon>
       </a>

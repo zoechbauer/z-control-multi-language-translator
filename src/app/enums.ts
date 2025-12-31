@@ -1,6 +1,6 @@
 export enum Tab {
   Settings = 'settings',
-  Translate = 'translate',
+  Translate = 'translation',
 }
 
 export enum LogoType {

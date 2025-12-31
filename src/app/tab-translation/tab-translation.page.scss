@@ -1,9 +1,22 @@
-ion-card-title {
-  text-align: center;
-  font-size: 17px;
-}
+.translation-content {
+  .translation-card {
+    ion-card-title {
+      text-align: center;
+      font-size: 17px;
+    }
 
-ion-card-header {
-  margin-bottom: 0;
-  padding-bottom: 0;
-}   
+    ion-card-header {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    ion-icon {
+      vertical-align: middle;
+      font-size: 1.2em;
+    }
+
+    .larger-font {
+      font-size: 1.4em;
+    }
+  }
+}

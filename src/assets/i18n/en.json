@@ -1,4 +1,29 @@
 {
+  "------ global": "-------",
+  "APP": {
+    "NAME": "z-control Multi Language Translator"
+  },
+  "------ header page": "-------",
+  "HEADER": {
+    "CURRENT_PAGE": {
+      "TRANSLATE_LONG": "Translate into {{countTargetLanguages}} language(s)",
+      "TRANSLATE_SHORT": "Translate",
+      "SETTINGS": "Settings"
+    },
+    "TOOLTIP": {
+      "OPEN_FEEDBACK": "Open feedback page",
+      "OPEN_HELP": "Open help page",
+      "GOTO_TRANSLATE": "Go to translate page",
+      "GOTO_SETTINGS": "Go to settings page"
+    }
+  },
+  "------ footer page": "-------",
+  "FOOTER": {
+    "COUNTRY": "Austria",
+    "TOOLTIP": {
+      "CONTACT_SUPPORT": "Contact z-control support via email"
+    }
+  },
   "------ tabs page": "-------",
   "TABS": {
     "TRANSLATE": "Translate",
@@ -8,7 +33,7 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "TITLE": "Translate text in multiple languages",
+      "INFO": "You can translate a text of up to {{maxInputLength}} characters into multiple selected languages (maximum {{maxTargetLanguages}}).",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)"
@@ -23,7 +48,6 @@
     },
     "CARD_RESULTS": {
       "LABEL": {
-        "LANGUAGE": "Language",
         "TRANSLATED_TEXT": "Translated Text"
       }
     }
@@ -32,15 +56,16 @@
   "------ settings page": "-------",
   "SETTINGS": {
     "TITLE": "Settings",
-    "FEEDBACK": "Feedback",
     "INFORMATIONS": "Informations",
-    "MULTI_LANGUAGE_TRANSLATOR_APP": "z-control Multi Language Translator App",
+    "BUTTON": {
+      "CLOSE": "Back to Settings"
+    },
     "TOOLTIPS": {
-      "OPEN_ACCORDION": "Einstellungen öffnen",
-      "CLOSE_ACCORDION": "Einstellungen schließen"
+      "OPEN_ACCORDION": "Open settings",
+      "CLOSE_ACCORDION": "Close settings"
     },
     "LANGUAGE": {
-      "ACCORDION": "Change Language",
+      "ACCORDION": "Change Language / Base Language",
       "LABEL": {
         "LANG": "Language"
       },
@@ -60,6 +85,34 @@
       },
       "TOOLTIPS": {
         "SELECT_TARGET_LANG": "Select target languages for translation from the base language"
+      }
+    },
+    "FEEDBACK": {
+      "ACCORDION": "Send feedback to z-control",
+      "SEPARATOR": "Feedback"
+    },
+    "PRIVACY": {
+      "ACCORDION": "Privacy Policy",
+      "TOOLTIPS": {
+        "OPEN_POLICY": "Open privacy policy in a new tab"
+      }
+    },
+    "RELEASE-NOTES": {
+      "ACCORDION": "App Version {{versionInfo}} - Release Notes",
+      "TOOLTIPS": {
+        "OPEN_RELEASE_NOTES": "Open release notes (changelog) — grouped by categories and showing the newest entries first."
+      }
+    },
+    "MOBILE-APP": {
+      "ACCORDION": "Install Mobile App",
+      "TOOLTIPS": {
+        "DOWNLOAD": "Download the native Android app from the Google Play Store"
+      }
+    },
+    "SOURCE": {
+      "ACCORDION": "Get Source Code",
+      "TOOLTIPS": {
+        "DOWNLOAD": "Open GitHub repository in a new tab — view source code, license, changelog, and documentation."
       }
     }
   }

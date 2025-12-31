@@ -14,9 +14,7 @@ import {
   IonGrid,
   IonInput,
   IonRow,
-  IonSelect,
-  IonSelectOption,
-} from '@ionic/angular/standalone';
+  IonIcon } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
@@ -38,7 +36,7 @@ interface Translation {
   selector: 'app-tab-translation',
   templateUrl: 'tab-translation.page.html',
   styleUrls: ['tab-translation.page.scss'],
-  imports: [
+  imports: [IonIcon, 
     IonButton,
     IonCard,
     IonCardHeader,
@@ -48,10 +46,9 @@ interface Translation {
     IonCol,
     IonContent,
     IonGrid,
+    IonIcon,
     IonInput,
     IonRow,
-    IonSelect,
-    IonSelectOption,
     TranslateModule,
     CommonModule,
     FormsModule,
@@ -66,6 +63,10 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   translations: Translation[] = [];
   selectedLanguages: string[] = [];
   selectedLanguagesString = '';
+    // TODO: Adjust maxInputLength based on environment settings
+  maxInputLength = 30;
+  // TODO: Adjust maxTargetLanguages based on environment settings
+  maxTargetLanguages = 5;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -85,11 +86,12 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.localStorage.loadTargetLanguages();
   }
 
-  get maxInputLength(): number {
-    // TODO move to environment settings
-    // return environment.maxInputLength ?? 20;
-    return 20;
-  }
+  // TODO move to const file
+  // get maxInputLength(): number {
+  //   // TODO move to environment settings
+  //   // return environment.maxInputLength ?? 20;
+  //   return 20;
+  // }
 
   translateText(): void {
     if (!this.text.trim()) {

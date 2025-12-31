@@ -11,6 +11,7 @@
     (ionValueChange)="onAccordionGroupChange($event, content)"
     title="{{this.showAllAccordions ? ('SETTINGS.TOOLTIPS.OPEN_ACCORDION' | translate) : ('SETTINGS.TOOLTIPS.CLOSE_ACCORDION' | translate) }}"
   >
+  <H6 class="ion-text-center">{{'APP.NAME' | translate}}</H6>
     <!-- Show all accordions and section title  -->
     @if (showAllAccordions && !openAccordion) {
     <h5 class="ion-text-center settings-section-title" title="">
@@ -20,13 +21,12 @@
     <app-target-languages-accordion></app-target-languages-accordion>
 
     <h5 class="ion-text-center settings-section-title" title="">
-      {{ "SETTINGS.FEEDBACK" | translate }}
+      {{ "SETTINGS.FEEDBACK.SEPARATOR" | translate }}
     </h5>
     <app-feedback-accordion></app-feedback-accordion>
 
     <h5 class="ion-text-center settings-section-title" title="">
-      {{ "SETTINGS.MULTI_LANGUAGE_TRANSLATOR_APP" | translate }}<br />{{
-      "SETTINGS.INFORMATIONS" | translate }}
+      {{ "SETTINGS.INFORMATIONS" | translate }}
     </h5>
     <app-privacy-policy-accordion></app-privacy-policy-accordion>
     <app-change-log-accordion
@@ -75,9 +75,9 @@
     } }
     <!-- Button to show all accordions -->
     <div class="ion-padding ion-text-center accordion-close-button">
-      <ion-button (click)="showAll()" expand="block">
+      <ion-button (click)="showAll()" expand="block" title="{{ 'SETTINGS.TOOLTIPS.CLOSE_ACCORDION' | translate }}">
         <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-        {{ 'CLOSE' | translate }}
+        {{ 'SETTINGS.BUTTON.CLOSE' | translate }}
       </ion-button>
     </div>
     }

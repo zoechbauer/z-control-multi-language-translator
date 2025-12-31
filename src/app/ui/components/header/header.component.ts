@@ -33,6 +33,7 @@ import { LogoComponent } from '../logo/logo.component';
 })
 export class HeaderComponent {
   @Input() currentTab!: Tab;
+  @Input() selectedTargetLanguages: string[] = [];
   LogoType = LogoType;
   Tab = Tab;
 

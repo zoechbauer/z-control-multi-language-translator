@@ -125,7 +125,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
       minor: environment.version.minor,
       date: environment.version.date,
     };
-    return `App Version ${major}.${minor} (${date})`;
+    return `${major}.${minor} (${date})`;
   }
 
   openHelpModal() {
