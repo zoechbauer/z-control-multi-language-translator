@@ -1,5 +1,8 @@
-  <div id="toast-anchor-translation">
-  <app-header [currentTab]="Tab.Translate" [selectedTargetLanguages]="selectedLanguages"></app-header>
+<div id="toast-anchor-translation">
+  <app-header
+    [currentTab]="Tab.Translate"
+    [selectedTargetLanguages]="selectedLanguages"
+  ></app-header>
 </div>
 <ion-content
   #content
@@ -8,48 +11,46 @@
 >
   <ion-card class="translation-card">
     <ion-card-header>
-      <ion-card-title
-        >{{ 'APP.NAME' | translate }}</ion-card-title
-      >
+      <ion-card-title>{{ 'APP.NAME' | translate }}</ion-card-title>
       <p>
         {{ 'TRANSLATE.CARD.INFO' | translate:{ maxInputLength: maxInputLength,
         maxTargetLanguages: maxTargetLanguages } }}
       </p>
       <ion-card-subtitle>
         <div>
-          {{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}: {{
-          defaultSourceLang }}
+          <strong>{{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}</strong
+          >: {{ baseLangString }}
         </div>
         <div>
-          {{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate }}: {{
-          selectedLanguagesString }}
+          <strong
+            >{{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate
+            }}</strong
+          >:<br />
+          <span [innerHTML]="getTargetLanguageNames()"></span>
         </div>
-        <!-- <ion-select
-              [(ngModel)]="selectedLanguages"
-              aria-label="Sprachen auswählen"
-              label="{{ 'TRANSLATE.CARD.LABEL.SELECT_TARGET_LANGUAGES' | translate }}"
-              label-placement="stacked"
-              [multiple]="true"
-            >
-              <ion-select-option value="en">Englisch</ion-select-option>
-              <ion-select-option value="fr">Französisch</ion-select-option>
-              <ion-select-option value="es">Spanisch</ion-select-option>
-            </ion-select> -->
       </ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
-      <ion-input
-        type="text"
+      <ion-textarea
         class="larger-font"
         [(ngModel)]="text"
         placeholder="{{ 'TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT' | translate }}"
-      />
+        fill="outline"
+        rows="3"
+        maxlength="{{ maxInputLength }}"
+        [counter]="true"
+        [disabled]="textareaDisabled"
+        (ionInput)="onTextareaInput()"
+      ></ion-textarea>
     </ion-card-content>
-    <ion-button fill="clear" (click)="translateText()"
+    <ion-button
+      fill="clear"
+      (click)="translateText()"
+      [disabled]="translateBtnDisabled"
       >{{ 'TRANSLATE.CARD.BUTTON.TRANSLATE' | translate }}</ion-button
     >
-    <ion-button fill="clear" (click)="clear()"
+    <ion-button fill="clear" (click)="clear()" [disabled]="clearBtnDisabled"
       >{{ 'TRANSLATE.CARD.BUTTON.CLEAR' | translate }}</ion-button
     >
   </ion-card>

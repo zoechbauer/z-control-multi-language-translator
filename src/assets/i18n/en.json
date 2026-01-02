@@ -78,7 +78,7 @@
       }
     },
     "TARGET_LANGUAGES": {
-      "ACCORDION": "Select Target Languages",
+      "ACCORDION": "Change Target Languages",
       "LABEL": {
         "BASE_LANG": "Base Language",
         "TARGET_LANG": "Select Target Language(s)"

@@ -12,16 +12,21 @@ import {
   IonCol,
   IonContent,
   IonGrid,
-  IonInput,
   IonRow,
-  IonIcon } from '@ionic/angular/standalone';
+  IonIcon,
+  IonTextarea
+} from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { Tab } from '../enums';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
-import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
+import {
+  GoogleLanguage,
+  TranslationGoogleTranslateService,
+} from '../services/translation-google-translate.service';
+import { AppConstants } from '../shared/app.constants';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -36,7 +41,8 @@ interface Translation {
   selector: 'app-tab-translation',
   templateUrl: 'tab-translation.page.html',
   styleUrls: ['tab-translation.page.scss'],
-  imports: [IonIcon, 
+  imports: [
+    IonIcon,
     IonButton,
     IonCard,
     IonCardHeader,
@@ -47,8 +53,8 @@ interface Translation {
     IonContent,
     IonGrid,
     IonIcon,
-    IonInput,
     IonRow,
+    IonTextarea,
     TranslateModule,
     CommonModule,
     FormsModule,
@@ -57,24 +63,32 @@ interface Translation {
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
   Tab = Tab;
-  // TODO use IonTextArea - see tab-qr.page.ts
   text: string = '';
-  defaultSourceLang: string = 'de';
+  baseLang: string = 'de';
+  baseLangString: string = 'Deutsch (de)';
   translations: Translation[] = [];
   selectedLanguages: string[] = [];
-  selectedLanguagesString = '';
-    // TODO: Adjust maxInputLength based on environment settings
-  maxInputLength = 30;
-  // TODO: Adjust maxTargetLanguages based on environment settings
-  maxTargetLanguages = 5;
+  textareaDisabled: boolean = false;
+  translateBtnDisabled: boolean = false;
+  clearBtnDisabled: boolean = false;
+
+  private supportedLanguages: GoogleLanguage[] = [];
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
     public translate: TranslateService,
     public localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
-    private readonly translationService: TranslationGoogleTranslateService
+    private readonly googleTranslateService: TranslationGoogleTranslateService
   ) {}
+
+  get maxInputLength(): number {
+    return AppConstants.maxInputLength;
+  }
+
+  get maxTargetLanguages(): number {
+    return AppConstants.maxTargetLanguages;
+  }
 
   ngOnInit() {
     this.text = '';
@@ -84,24 +98,26 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       this.setupSubscriptions();
     });
     this.localStorage.loadTargetLanguages();
+    this.loadSupportedLanguages(this.baseLang);
+    this.initFormControls();  
   }
 
-  // TODO move to const file
-  // get maxInputLength(): number {
-  //   // TODO move to environment settings
-  //   // return environment.maxInputLength ?? 20;
-  //   return 20;
-  // }
+  onTextareaInput(): void {
+    const hasText = this.text.trim().length > 0;
+    this.translateBtnDisabled = !hasText;
+    this.clearBtnDisabled = !hasText;
+  }
 
   translateText(): void {
     if (!this.text.trim()) {
       return;
-    }
+    } 
+    this.disableFormControls();
     this.translations = [];
 
-    this.selectedLanguages.forEach((translateToLang) => {
-      this.translationService
-        .translateText(this.text, this.defaultSourceLang, translateToLang)
+    this.selectedLanguages.forEach((translateToLang: string) => {
+      this.googleTranslateService
+        .translateText(this.text, this.baseLang, translateToLang)
         .subscribe((result) => {
           // Defensive: result may be undefined/null or not have the key
           const translatedText = result?.[translateToLang] ?? '';
@@ -109,17 +125,25 @@ export class TabTranslationPage implements OnInit, OnDestroy {
             language: translateToLang,
             translatedText,
           });
+          this.translations.sort((a, b) =>
+            a.language.localeCompare(b.language)
+          );
         });
     });
   }
 
   clear(): void {
-    this.text = '';
-    this.translations = [];
+    this.initFormControls();
+  }
+
+  getTargetLanguageNames(): string {
+    return this.googleTranslateService.getLanguageNamesStringWithLineBreaks(
+      this.supportedLanguages,
+      this.selectedLanguages
+    );
   }
 
   private setupEventListeners(): void {
-    // Single resize listener
     window.addEventListener('resize', () => {
       this.utilsService.showOrHideIonTabBar();
     });
@@ -130,12 +154,34 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       this.localStorage.selectedLanguage$.subscribe((lang) => {
         this.translate.use(lang);
         this.translate.setDefaultLang(lang);
+        this.baseLang = lang;
       }),
       this.localStorage.targetLanguages$.subscribe((langs) => {
         this.selectedLanguages = langs;
-        this.selectedLanguagesString = langs.join(', ');
       })
     );
+  }
+
+  private initFormControls(): void {
+    this.textareaDisabled = false;
+    this.clearBtnDisabled = true;
+    this.translateBtnDisabled = true;
+    this.translations = [];
+    this.text = '';
+  }
+
+    private disableFormControls(): void {
+    this.textareaDisabled = true;
+    this.clearBtnDisabled = false;
+    this.translateBtnDisabled = true;
+  }
+
+  private loadSupportedLanguages(lang: string): void {
+    this.googleTranslateService
+      .getSupportedLanguagesWithLangCodeInName(lang)
+      .subscribe((langs) => {
+        this.supportedLanguages = langs;
+      });
   }
 
   ngOnDestroy(): void {

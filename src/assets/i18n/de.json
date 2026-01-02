@@ -39,7 +39,7 @@
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Geben Sie Text in Basissprache ein"
+        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein"
       },
       "BUTTON": {
         "TRANSLATE": "Übersetzen",
@@ -78,7 +78,7 @@
       }
     },
     "TARGET_LANGUAGES": {
-      "ACCORDION": "Zielsprachen auswählen",
+      "ACCORDION": "Zielsprachen ändern",
       "LABEL": {
         "BASE_LANG": "Basissprache",
         "TARGET_LANG": "Zielsprache(n) auswählen"

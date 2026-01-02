@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
 import { LogoType } from 'src/app/enums';
+import { AppConstants } from 'src/app/shared/app.constants';
 @Component({
   selector: 'app-get-mobile-app',
   templateUrl: './get-mobile-app.component.html',
@@ -15,10 +16,10 @@ import { LogoType } from 'src/app/enums';
 export class GetMobileAppComponent {
   @Input() lang: string | undefined = 'en';
   LogoType = LogoType;
-  // TODO: Adjust maxFreeTranslateCharsLengthPerYear based on environment settings
-  maxFreeTranslateCharsLengthPerYear = 500000;
 
   constructor() {}
 
-  
+  get maxTranslateCharsLengthPerMonth(): number {
+    return AppConstants.maxFreeTranslateCharsPerMonth;
+  }
 }

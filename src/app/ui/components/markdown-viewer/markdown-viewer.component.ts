@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MarkdownComponent } from 'ngx-markdown';
+import { Component, Input, OnInit, ViewChild, SecurityContext } from '@angular/core';
+import { MarkdownComponent, MarkdownService, SANITIZE } from 'ngx-markdown';
 import {
   IonContent,
   IonHeader,
@@ -34,7 +34,11 @@ import { UtilsService } from 'src/app/services/utils.service';
     IonSpinner,
     NgIf,
   ],
-  providers: [ModalController],
+  providers: [
+    ModalController,
+    MarkdownService,
+    { provide: SANITIZE, useValue: SecurityContext.HTML },
+  ],
 })
 export class MarkdownViewerComponent implements OnInit {
   @Input() fullChangeLogPath!: string;

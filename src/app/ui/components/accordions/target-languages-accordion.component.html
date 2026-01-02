@@ -1,28 +1,33 @@
 <ion-accordion value="target-languages" id="target-languages">
   <ion-item slot="header" color="light">
     <ion-label>
-      {{ "SETTINGS.TARGET_LANGUAGES.ACCORDION" | translate }}
-      <ion-icon name="arrow-forward-outline"></ion-icon>
-      {{ targetLanguages.join(', ') }}
+      {{ "SETTINGS.TARGET_LANGUAGES.ACCORDION" | translate }}:<br /><br />
+      <span [innerHTML]="getTargetLanguageNames()"></span>
     </ion-label>
   </ion-item>
   <div class="ion-padding" slot="content" title="">
     <ion-item>
-      <ion-label>{{ 'SETTINGS.TARGET_LANGUAGES.LABEL.BASE_LANG' | translate }}: {{ lang }}</ion-label>
+      <ion-label
+        >{{ "SETTINGS.TARGET_LANGUAGES.LABEL.BASE_LANG" | translate }}:
+        {{ baseLanguageName }}</ion-label
+      >
     </ion-item>
     <ion-item>
       <ion-select
-        [(ngModel)]="targetLanguages"
+        [(ngModel)]="selectedTargetLanguageCodes"
         aria-label="Sprachen auswählen"
         label="{{ 'SETTINGS.TARGET_LANGUAGES.LABEL.TARGET_LANG' | translate }}"
         label-placement="stacked"
-        title="{{ 'SETTINGS.TARGET_LANGUAGES.TOOLTIPS.SELECT_TARGET_LANG' | translate }}"
+        title="{{
+          'SETTINGS.TARGET_LANGUAGES.TOOLTIPS.SELECT_TARGET_LANG' | translate
+        }}"
         [multiple]="true"
       >
-        <ion-select-option value="en">Englisch</ion-select-option>
-        <ion-select-option value="fr">Französisch</ion-select-option>
-        <ion-select-option value="es">Spanisch</ion-select-option>
-        <ion-select-option value="de">Deutsch</ion-select-option>
+        <ion-select-option
+          *ngFor="let lang of targetLanguages"
+          [value]="lang.language"
+          >{{ lang.name }}</ion-select-option
+        >
       </ion-select>
     </ion-item>
 
@@ -41,8 +46,8 @@
         </p>
 
         <p>
-          You can change the base language under <i>Change Language / Base Language</i> in the
-          settings.
+          You can change the base language under
+          <i>Change Language / Base Language</i> in the settings.
         </p>
         <p><strong>Please select the desired target languages.</strong></p>
       </div>
@@ -55,15 +60,17 @@
         <p>Hinweis</p>
         <p>
           Sie können von der Basissprache in bis zu maximal
-          {{ maxTargetLanguages }} Zielsprachen gleichzeitig den Text
-          übersetzen lassen.
+          {{ maxTargetLanguages }} Zielsprachen gleichzeitig den Text übersetzen
+          lassen.
         </p>
 
         <p>
-          Die Basissprache können Sie unter <i>Sprache / Basissprache ändern</i> in den
-          Einstellungen ändern.
+          Die Basissprache können Sie unter
+          <i>Sprache / Basissprache ändern</i> in den Einstellungen ändern.
         </p>
-        <p><strong>Bitte wählen Sie die gewünschten Zielsprachen aus.</strong></p>
+        <p>
+          <strong>Bitte wählen Sie die gewünschten Zielsprachen aus.</strong>
+        </p>
       </div>
     </ng-template>
   </div>

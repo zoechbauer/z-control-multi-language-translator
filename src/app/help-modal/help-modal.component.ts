@@ -2,10 +2,6 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-
-import { LocalStorageService } from '../services/local-storage.service';
-import { UtilsService } from './../services/utils.service';
-import { environment } from 'src/environments/environment';
 import {
   IonToolbar,
   IonTitle,
@@ -17,6 +13,9 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
+import { LocalStorageService } from '../services/local-storage.service';
+import { UtilsService } from './../services/utils.service';
+import { AppConstants } from '../shared/app.constants';
 @Component({
   selector: 'app-help-modal',
   templateUrl: './help-modal.component.html',
@@ -41,13 +40,6 @@ export class HelpModalComponent implements OnInit, OnDestroy {
   };
   selectedLanguage: string = 'de';
   isPortrait = this.utilsService.isPortrait;
-  // TODO: Adjust maxInputLength based on environment settings
-  maxInputLength = 30;
-  // TODO: Adjust maxTargetLanguages based on environment settings
-  maxTargetLanguages = 5;
-  // TODO: Adjust maxFreeTranslateCharsLengthPerYear based on environment settings
-  maxFreeTranslateCharsLengthPerYear = 500000;
-
   private langSub?: Subscription;
 
   constructor(
@@ -56,6 +48,16 @@ export class HelpModalComponent implements OnInit, OnDestroy {
     private readonly translate: TranslateService,
     private readonly localStorage: LocalStorageService
   ) {}
+
+  get maxInputLength() {
+    return AppConstants.maxInputLength;
+  }
+  get maxTargetLanguages() {
+    return AppConstants.maxTargetLanguages;
+  }
+  get maxFreeTranslateCharsLengthPerYear() {
+    return AppConstants.maxFreeTranslateCharsPerMonth;
+  }
 
   get isNative(): boolean {
     return this.utilsService.isNative;
