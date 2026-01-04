@@ -1,3 +1,5 @@
-<ion-app>
-  <ion-router-outlet></ion-router-outlet>
-</ion-app>
+<div [class.web-app-width]="!isNativeApp">
+  <ion-app>
+    <ion-router-outlet></ion-router-outlet>
+  </ion-app>
+</div>

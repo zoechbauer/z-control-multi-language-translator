@@ -1,24 +1,22 @@
-import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
     path: 'tabs',
-    component: TabsPage,
+    loadComponent: () => import('./tabs.page').then(m => m.TabsPage),
     children: [
       {
         path: 'tab-translation',
-        loadChildren: () =>
-          import('../tab-translation/tab-translation.module').then(
-            (m) => m.TabTranslationPageModule
+        loadComponent: () =>
+          import('../tab-translation/tab-translation.page').then(
+            (m) => m.TabTranslationPage
           ),
       },
       {
         path: 'tab-settings',
-        loadChildren: () =>
-          import('../tab-settings/tab-settings.module').then(
-            (m) => m.TabSettingsPageModule
+        loadComponent: () =>
+          import('../tab-settings/tab-settings.page').then(
+            (m) => m.TabSettingsPage
           ),
       },
       {
@@ -35,7 +33,4 @@ const routes: Routes = [
   },
 ];
 
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-})
-export class TabsPageRoutingModule {}
+export const TabsPageRoutingModule = RouterModule.forChild(routes);
