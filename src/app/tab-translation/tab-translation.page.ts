@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton,
@@ -14,7 +13,7 @@ import {
   IonGrid,
   IonRow,
   IonIcon,
-  IonTextarea
+  IonTextarea,
 } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 
@@ -55,10 +54,9 @@ interface Translation {
     IonIcon,
     IonRow,
     IonTextarea,
-    TranslateModule,
-    CommonModule,
     FormsModule,
     HeaderComponent,
+    TranslatePipe
   ],
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
@@ -99,7 +97,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     });
     this.localStorage.loadTargetLanguages();
     this.loadSupportedLanguages(this.baseLang);
-    this.initFormControls();  
+    this.initFormControls();
   }
 
   onTextareaInput(): void {
@@ -111,7 +109,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   translateText(): void {
     if (!this.text.trim()) {
       return;
-    } 
+    }
     this.disableFormControls();
     this.translations = [];
 
@@ -170,7 +168,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.text = '';
   }
 
-    private disableFormControls(): void {
+  private disableFormControls(): void {
     this.textareaDisabled = true;
     this.clearBtnDisabled = false;
     this.translateBtnDisabled = true;

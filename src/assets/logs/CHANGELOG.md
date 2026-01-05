@@ -2,6 +2,15 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.3] – 2026-01-04
+
+### ✨ New Features & Improvements
+
+- The app is now fully installable on Android devices using Android Studio, making mobile access seamless.
+- Enhanced layout and responsive styling for a consistent, polished experience across phones, tablets, and web browsers.
+- Added a comprehensive installation guide to help users set up the z-control Multi Language Translator app on Android devices step by step.
+- Included detailed documentation on Google Cloud Translation API pricing to help users understand potential costs and plan accordingly.
+
 ## [0.2] – 2026-01-02
 
 ### ✨ New Features
@@ -11,7 +20,6 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 - Button states and feedback have been improved for smoother translation.
 - The app now uses a centralized configuration for input limits and target languages.
 - The license has been updated to MIT for open-source transparency.
-
 
 ## [0.1] – 2025-12-31
 

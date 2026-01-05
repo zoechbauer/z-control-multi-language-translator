@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  IonTabs,
+  IonTabBar,
+  IonLabel,
+  IonIcon,
+  IonTabButton,
+} from '@ionic/angular/standalone';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -11,9 +15,11 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
   imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
+    IonTabs,
+    IonTabBar,
+    IonLabel,
+    IonIcon,
+    IonTabButton,
     TranslateModule,
   ],
 })

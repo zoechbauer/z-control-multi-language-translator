@@ -1,9 +1,11 @@
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
-const routes: Routes = [
+import { TabsPage } from './tabs.page';
+
+export const routes: Routes = [
   {
     path: 'tabs',
-    loadComponent: () => import('./tabs.page').then(m => m.TabsPage),
+    component: TabsPage,
     children: [
       {
         path: 'tab-translation',
@@ -21,16 +23,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/tab-translation',
+        redirectTo: 'tab-translation',
         pathMatch: 'full',
       },
     ],
   },
-  {
+    {
     path: '',
     redirectTo: '/tabs/tab-translation',
     pathMatch: 'full',
   },
 ];
-
-export const TabsPageRoutingModule = RouterModule.forChild(routes);

@@ -36,14 +36,31 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
+.web-app-width {
+  ion-router-outlet {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
 
 ion-app {
   width: 100%;
-  // TODO use max-width only for web app? 
-  max-width: 500px;
   margin: 0 auto;
   box-sizing: border-box;
   padding: 0 16px;
+}
+
+ion-header {
+  --ion-safe-area-top: env(safe-area-inset-top);
+}
+
+ion-tab-bar {
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
+}
+
+body.native-app {
+  --ion-safe-area-top: env(safe-area-inset-top);
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
 }
 
 #toast-anchor-translation,
@@ -52,9 +69,10 @@ ion-app {
   padding: 0;
 }
 
-.web-app ion-header {
-  margin-top: -25px !important;
-}
+// TODO delete if not needed anymore
+// .web-app ion-header {
+//   margin-top: -25px !important;
+// }
 
 ion-header {
   margin-right: 0;
@@ -222,4 +240,3 @@ ion-title {
     margin-right: 36px;
   }
 }
-

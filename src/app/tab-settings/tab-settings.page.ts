@@ -2,8 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { IonContent, IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 import { LocalStorageService } from '../services/local-storage.service';
 import { environment } from 'src/environments/environment';
@@ -24,8 +22,6 @@ import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-
   imports: [
     IonicModule,
     TranslateModule,
-    CommonModule,
-    FormsModule,
     HeaderComponent,
     LanguageAccordionComponent,
     TargetLanguagesAccordionComponent,

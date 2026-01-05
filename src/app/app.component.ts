@@ -1,6 +1,7 @@
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Capacitor } from '@capacitor/core';
 import { Component, Renderer2 } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { SafeAreaInsets } from './services/safe-area-insets';
@@ -9,7 +10,7 @@ import { SafeAreaInsets } from './services/safe-area-insets';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  standalone: false,
+  imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
   isNativeApp = Capacitor.isNativePlatform();
@@ -21,7 +22,23 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  initializeApp() {
+    initializeApp() {
+    if (this.isNativeApp) {
+      this.renderer.addClass(document.body, 'native-app');
+      
+      // initialize StatusBar before Ionic initialization
+      StatusBar.setOverlaysWebView({ overlay: false });
+      StatusBar.show();
+      
+      SplashScreen.hide();
+      this.safeAreaInsets.setSafeAreaInsetsFix();
+    } else {
+      this.renderer.addClass(document.body, 'web-app');
+    }
+  }
+
+  // TODO check what is needed and move it to initializeApp, delete unused code
+  private initializeApp_Check() {
     if (this.isNativeApp) {
       this.renderer.addClass(document.body, 'native-app');
 
