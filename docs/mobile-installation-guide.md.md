@@ -15,9 +15,9 @@ If you have already installed the z-control QR Code Generator App, your device i
   ```sh
   npm install --save @capacitor/core
   ```
-- Install Capacitor Android v7 (compatible with your current setup):
+- Install Capacitor Android v8 (compatible with your current setup):
   ```sh
-  npm install --save @capacitor/android@7
+  npm install --save @capacitor/android@8
   ```
 - **Set your appId and appName in capacitor.config.ts before building for mobile:**
   ```typescript
@@ -28,7 +28,7 @@ If you have already installed the z-control QR Code Generator App, your device i
   };
   export default config;
   ```
-- **TODO:** Upgrade to Capacitor Android version 8 later if needed.
+- **Info:** I started with Capacitor Android version 7 and upgraded to version 8. But here I got a lot of problems with the Android Gradle Plugin and Kotlin versions. So I recommend starting directly with Capacitor Android version 8 to avoid these issues.
 
 ---
 
@@ -90,7 +90,7 @@ npx cap add android
 
 - If you see a warning about installing apps from unknown sources, allow installation for this source in your device settings.
 - If the app does not appear, ensure your device is selected in Android Studio and USB debugging is enabled.
-- If you see `[error] android platform has not been added yet.`, run `npm install --save @capacitor/android@7` and then `npx cap add android` as shown above.
+- If you see `[error] android platform has not been added yet.`, run `npm install --save @capacitor/android@8` and then `npx cap add android` as shown above.
 
 ---
 

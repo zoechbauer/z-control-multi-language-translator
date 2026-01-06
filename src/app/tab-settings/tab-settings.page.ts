@@ -86,6 +86,8 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {
+    console.log('onAccordionGroupChange - event.detail.value', event.detail.value);
+    
     this.openAccordion = event.detail.value;
     this.showAllAccordions = this.openAccordion == null;
   }

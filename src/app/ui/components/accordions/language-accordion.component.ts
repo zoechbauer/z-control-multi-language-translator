@@ -19,7 +19,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import {
-  GoogleLanguage,
   TranslationGoogleTranslateService,
 } from 'src/app/services/translation-google-translate.service';
 

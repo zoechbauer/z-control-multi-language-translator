@@ -2,6 +2,20 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.4] – 2026-01-06
+
+### ✨ Improvements
+
+- Expanded documentation with a detailed, step-by-step guide for cleaning and rebuilding the Android project in Android Studio, helping users ensure a clean build environment and resolve build issues.
+- Enhanced the troubleshooting section with a clear solution for the "invalid source release: 21" error during Android builds, including instructions for updating Gradle settings for Java 17 compatibility.
+- Updated the mobile installation guide with additional tips and clarifications to help users successfully install the app on Android devices.
+- Upgraded Capacitor and related dependencies to their latest versions for improved stability and performance.
+
+### 🐛 Bug Fixes
+
+- Fixed an issue where accordions on the Settings page would not open or close on mobile devices when the app was installed via Android Studio. Accordions now expand and collapse as expected.
+- Removed unused modules left over from the previous commit, streamlining the codebase and improving performance.
+
 ## [0.3] – 2026-01-04
 
 ### ✨ New Features & Improvements
