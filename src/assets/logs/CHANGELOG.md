@@ -2,6 +2,17 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.5] – 2026-01-10
+
+### ✨ Improvements
+
+- Replaced the ion-select component with a custom Language Multi-Select, enabling users to quickly filter and search for languages by name or code, and to view only selected languages for a smoother experience.
+- Added a clear visual indicator (red placeholder text) in the translation textarea when no target languages are selected, guiding users to choose at least one target language before translating.
+- The base language is now automatically excluded from the list of target languages when changed in settings, preventing redundant translations and ensuring Google Translate only translates into different languages.
+- Standardized the language input property in all Accordion components to `lang` for consistency across the codebase.
+- Accordion components no longer assign a default value to the language input; the parent component must now explicitly provide the language context.
+- Refactored language and target language selection logic to use centralized configuration constants and RxJS BehaviorSubjects, improving maintainability and reducing code duplication.
+
 ## [0.4] – 2026-01-06
 
 ### ✨ Improvements

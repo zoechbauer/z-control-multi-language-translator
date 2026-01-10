@@ -22,7 +22,7 @@ import { PrivacyPolicyComponent } from './../privacy-policy/privacy-policy.compo
   ],
 })
 export class PrivacyPolicyAccordionComponent {
-  @Input() selectedLanguage: string | undefined = 'en';
+  @Input() lang!: string;
   LogoType = LogoType;
 
   constructor(public translate: TranslateService) {}

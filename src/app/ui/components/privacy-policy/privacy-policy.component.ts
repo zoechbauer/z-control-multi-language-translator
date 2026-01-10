@@ -14,7 +14,7 @@ import { LogoType } from 'src/app/enums';
   imports: [IonIcon, NgIf, NgTemplateOutlet, LogoComponent, TranslateModule],
 })
 export class PrivacyPolicyComponent {
-  @Input() lang: string | undefined = 'en';
+  @Input() lang!: string;
   LogoType = LogoType;
 
   constructor() {}

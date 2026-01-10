@@ -15,16 +15,14 @@ import {
   IonIcon,
   IonTextarea,
 } from '@ionic/angular/standalone';
+import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { Tab } from '../enums';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
-import {
-  GoogleLanguage,
-  TranslationGoogleTranslateService,
-} from '../services/translation-google-translate.service';
+import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 import { AppConstants } from '../shared/app.constants';
 
 interface TranslationResult {
@@ -56,7 +54,8 @@ interface Translation {
     IonTextarea,
     FormsModule,
     HeaderComponent,
-    TranslatePipe
+    TranslatePipe,
+    AsyncPipe,
   ],
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
@@ -70,7 +69,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   translateBtnDisabled: boolean = false;
   clearBtnDisabled: boolean = false;
 
-  private supportedLanguages: GoogleLanguage[] = [];
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -95,9 +93,13 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.localStorage.initializeServicesAsync(this.translate).then(() => {
       this.setupSubscriptions();
     });
-    this.localStorage.loadTargetLanguages();
-    this.loadSupportedLanguages(this.baseLang);
     this.initFormControls();
+  }
+
+  getTranslationPlaceholder(): string {
+    return this.selectedLanguages.length === 0
+      ? this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.NO_TARGET_LANGUAGES')
+      : this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT');
   }
 
   onTextareaInput(): void {
@@ -134,11 +136,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.initFormControls();
   }
 
-  getTargetLanguageNames(): string {
-    return this.googleTranslateService.getLanguageNamesStringWithLineBreaks(
-      this.supportedLanguages,
-      this.selectedLanguages
-    );
+  getTextareaRows(): string {
+    return this.utilsService.isNative && this.utilsService.isPortrait ? '5' : '3';
   }
 
   private setupEventListeners(): void {
@@ -154,8 +153,12 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         this.translate.setDefaultLang(lang);
         this.baseLang = lang;
       }),
+      this.localStorage.selectedLanguageName$.subscribe((name) => {
+        this.baseLangString = name;
+      }),
       this.localStorage.targetLanguages$.subscribe((langs) => {
         this.selectedLanguages = langs;
+        this.setCssClasses();
       })
     );
   }
@@ -168,18 +171,21 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.text = '';
   }
 
+  private setCssClasses(): void {
+    const textarea = document.querySelector('ion-textarea');
+    if (textarea) {
+      if (this.selectedLanguages.length === 0) {
+        textarea.classList.add('no-target-languages');
+      } else {
+        textarea.classList.remove('no-target-languages');
+      }
+    }
+  }
+
   private disableFormControls(): void {
     this.textareaDisabled = true;
     this.clearBtnDisabled = false;
     this.translateBtnDisabled = true;
-  }
-
-  private loadSupportedLanguages(lang: string): void {
-    this.googleTranslateService
-      .getSupportedLanguagesWithLangCodeInName(lang)
-      .subscribe((langs) => {
-        this.supportedLanguages = langs;
-      });
   }
 
   ngOnDestroy(): void {

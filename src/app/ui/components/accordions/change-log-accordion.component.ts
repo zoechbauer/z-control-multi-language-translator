@@ -25,7 +25,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class ChangeLogAccordionComponent {
   @Input() versionInfo!: string;
-  @Input() lang: string = 'en';
+  @Input() lang!: string;
   @Output() ionChange = new EventEmitter<void>();
 
   constructor(public translate: TranslateService) {}

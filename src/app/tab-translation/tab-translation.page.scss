@@ -21,6 +21,12 @@
 
     ion-textarea {
       margin-top: 16px;
+
+      &.no-target-languages {
+        min-height: 100px;
+        --placeholder-color: var(--ion-color-danger);
+        font-size: 1em;
+      }
     }
   }
 }

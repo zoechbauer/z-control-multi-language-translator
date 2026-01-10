@@ -33,13 +33,14 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "INFO": "You can translate a text of up to {{maxInputLength}} characters into multiple selected languages (maximum {{maxTargetLanguages}}).",
+      "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Enter text in base language"
+        "INPUT_TEXT": "Enter text in base language",
+        "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)"
       },
       "BUTTON": {
         "TRANSLATE": "Translate",
@@ -83,8 +84,28 @@
         "BASE_LANG": "Base Language",
         "TARGET_LANG": "Select Target Language(s)"
       },
+      "PLACEHOLDER": {
+        "SELECT_TARGET_LANG": "Please select"
+      },
       "TOOLTIPS": {
         "SELECT_TARGET_LANG": "Select target languages for translation from the base language"
+      },
+      "MODAL": {
+        "TITLE": "Select Target Language(s)",
+        "SUB_TITLE": "{{selectedLanguages}} of maximum {{maxTargetLanguages}} selected",
+        "SEARCH": {
+          "PLACEHOLDER": "Search languages...",
+          "TOOLTIPS": {
+            "FILTER_SELECTED": "Show only selected languages",
+            "CLEAR_FILTER": "Clear filter and show all target languages",
+            "FILTER": "Filter languages",
+            "SELECT_TARGET_LANG": "Select target language",
+            "DESELECT_TARGET_LANG": "Deselect target language"
+          }
+        },
+        "BUTTON": {
+          "CLOSE": "Close"
+        }
       }
     },
     "FEEDBACK": {

@@ -21,7 +21,7 @@ import { GetSourceCodeComponent } from '../get-source-code/get-source-code.compo
   ],
 })
 export class GetSourceAccordionComponent {
-  @Input() selectedLanguage!: string;
+  @Input() lang!: string;
 
   constructor(public translate: TranslateService) {}
 

@@ -14,7 +14,7 @@ import { AppConstants } from 'src/app/shared/app.constants';
   imports: [IonIcon, LogoComponent, IonButton, NgIf, NgTemplateOutlet, TranslateModule, DecimalPipe],
 })
 export class GetMobileAppComponent {
-  @Input() lang: string | undefined = 'en';
+  @Input() lang!: string;
   LogoType = LogoType;
 
   constructor() {}

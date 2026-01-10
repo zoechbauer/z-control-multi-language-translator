@@ -13,7 +13,7 @@ import { LogoType } from 'src/app/enums';
   imports: [IonIcon, LogoComponent, NgIf, NgTemplateOutlet, TranslateModule],
 })
 export class GetSourceCodeComponent  {
-  @Input() lang: string = 'en';
+  @Input() lang!: string;
   LogoType = LogoType;
 
   constructor() { }

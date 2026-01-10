@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonAccordion,
   IonItem,
   IonLabel,
-  IonSelect,
-  IonSelectOption,
+  ModalController,
+  IonIcon,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -17,34 +17,35 @@ import {
 } from 'src/app/services/translation-google-translate.service';
 import { AppConstants } from 'src/app/shared/app.constants';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LanguageMultiSelectComponent } from '../language-multi-select/language-multi-select.component';
 
 @Component({
   selector: 'app-target-languages-accordion',
   templateUrl: './target-languages-accordion.component.html',
   standalone: true,
   imports: [
+    IonIcon,
     IonAccordion,
     IonItem,
     IonLabel,
-    IonSelect,
-    IonSelectOption,
     TranslateModule,
     CommonModule,
     FormsModule,
   ],
 })
 export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
-  @Input() lang?: string;
+  @Input() lang!: string;
+  @Output() ionChange = new EventEmitter<string[]>();
 
   targetLanguages: GoogleLanguage[] = [];
   selectedTargetLanguageCodes: string[] = [];
-  baseLanguageName: string = '';
-  private subscriptions: Subscription[] = [];
+  private readonly subscriptions: Subscription[] = [];
 
   constructor(
     public translate: TranslateService,
-    private readonly localStorage: LocalStorageService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService
+    public readonly localStorage: LocalStorageService,
+    private readonly googleTranslateService: TranslationGoogleTranslateService,
+    private readonly modalController: ModalController
   ) {}
 
   get maxTargetLanguages(): number {
@@ -52,20 +53,29 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadBaseLanguageName(this.lang);
     this.loadSelectedTargetLanguages();
     this.loadSupportedLanguagesWithoutBaseLanguage();
   }
 
-  getTargetLanguageNames(): string {
-    return this.googleTranslateService.getLanguageNamesStringWithLineBreaks(
-      this.targetLanguages,
-      this.selectedTargetLanguageCodes
-    );
+  async openLanguageSelect(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: LanguageMultiSelectComponent,
+      componentProps: {
+        baseLang: this.lang,
+        allLanguages: this.targetLanguages,
+        selectedCodes: this.selectedTargetLanguageCodes,
+        maxSelection: this.maxTargetLanguages,
+      },
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss<string[]>();
+    if (data) {
+      this.selectedTargetLanguageCodes = data;
+      this.ionChange.emit(this.selectedTargetLanguageCodes);
+    }
   }
 
   private loadSelectedTargetLanguages(): void {
-    this.localStorage.loadTargetLanguages();
     this.subscriptions.push(
       this.localStorage.targetLanguages$.subscribe((langs: string[]) => {
         this.selectedTargetLanguageCodes = langs;
@@ -76,26 +86,11 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
   private loadSupportedLanguagesWithoutBaseLanguage(): void {
     this.subscriptions.push(
       this.googleTranslateService
-        .getSupportedLanguagesWithLangCodeInName(this.lang || 'en')
+        .getSupportedLanguagesWithLangCodeInName(this.lang)
         .subscribe((langs) => {
           this.targetLanguages = langs.filter(
             (lang) => lang.language !== this.lang
           );
-
-          console.log(
-            'Filtered target languages:',
-            this.targetLanguages.filter((lang) => lang.name.startsWith('Chine'))
-          );
-        })
-    );
-  }
-
-  private loadBaseLanguageName(langCode: string | undefined): void {
-    this.subscriptions.push(
-      this.googleTranslateService
-        .getBaseLanguageName(langCode)
-        .subscribe((name) => {
-          this.baseLanguageName = name;
         })
     );
   }

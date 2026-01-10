@@ -2,33 +2,30 @@
   <ion-item slot="header" color="light">
     <ion-label>
       {{ "SETTINGS.TARGET_LANGUAGES.ACCORDION" | translate }}:<br /><br />
-      <span [innerHTML]="getTargetLanguageNames()"></span>
+      <span
+        [innerHTML]="localStorage.targetLanguagesNameWithLineBreaks$ | async"
+      ></span>
     </ion-label>
   </ion-item>
   <div class="ion-padding" slot="content" title="">
     <ion-item>
       <ion-label
         >{{ "SETTINGS.TARGET_LANGUAGES.LABEL.BASE_LANG" | translate }}:
-        {{ baseLanguageName }}</ion-label
+        {{ localStorage.selectedLanguageName$ | async }}</ion-label
       >
     </ion-item>
-    <ion-item>
-      <ion-select
-        [(ngModel)]="selectedTargetLanguageCodes"
-        aria-label="Sprachen auswählen"
-        label="{{ 'SETTINGS.TARGET_LANGUAGES.LABEL.TARGET_LANG' | translate }}"
-        label-placement="stacked"
-        title="{{
-          'SETTINGS.TARGET_LANGUAGES.TOOLTIPS.SELECT_TARGET_LANG' | translate
-        }}"
-        [multiple]="true"
-      >
-        <ion-select-option
-          *ngFor="let lang of targetLanguages"
-          [value]="lang.language"
-          >{{ lang.name }}</ion-select-option
-        >
-      </ion-select>
+    <ion-item
+      button
+      (click)="openLanguageSelect()"
+      title="{{
+        'SETTINGS.TARGET_LANGUAGES.TOOLTIPS.SELECT_TARGET_LANG' | translate
+      }}"
+      style="font-weight: 700"
+    >
+      <ion-label>{{
+        "SETTINGS.TARGET_LANGUAGES.LABEL.TARGET_LANG" | translate
+      }}</ion-label>
+      <ion-icon slot="end" name="caret-down-outline"></ion-icon>
     </ion-item>
 
     <ng-container *ngIf="lang === 'de'; else englishTemplate">
@@ -41,8 +38,8 @@
       <div class="notes">
         <p>Note</p>
         <p>
-          You can translate text from the base language into up to a maximum of
-          {{ maxTargetLanguages }} target languages simultaneously.
+          You can translate text from the base language into up to a <strong>maximum of
+          {{ maxTargetLanguages }} target languages</strong> simultaneously.
         </p>
 
         <p>
@@ -59,8 +56,8 @@
       <div class="notes">
         <p>Hinweis</p>
         <p>
-          Sie können von der Basissprache in bis zu maximal
-          {{ maxTargetLanguages }} Zielsprachen gleichzeitig den Text übersetzen
+          Sie können von der Basissprache in bis zu <strong>maximal
+          {{ maxTargetLanguages }} Zielsprachen </strong> gleichzeitig den Text übersetzen
           lassen.
         </p>
 

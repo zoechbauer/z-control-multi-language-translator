@@ -16,6 +16,7 @@
         {{ 'TRANSLATE.CARD.INFO' | translate:{ maxInputLength: maxInputLength,
         maxTargetLanguages: maxTargetLanguages } }}
       </p>
+      @if (localStorage.targetLanguagesNameWithLineBreaks$) {
       <ion-card-subtitle>
         <div>
           <strong>{{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}</strong
@@ -26,21 +27,23 @@
             >{{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate
             }}</strong
           >:<br />
-          <span [innerHTML]="getTargetLanguageNames()"></span>
+          <span
+            [innerHTML]="localStorage.targetLanguagesNameWithLineBreaks$ | async"
+          ></span>
         </div>
       </ion-card-subtitle>
+      }
     </ion-card-header>
-
     <ion-card-content>
       <ion-textarea
         class="larger-font"
         [(ngModel)]="text"
-        placeholder="{{ 'TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT' | translate }}"
+        [placeholder]="getTranslationPlaceholder()"
         fill="outline"
-        rows="3"
+        rows="{{ getTextareaRows() }}"
         maxlength="{{ maxInputLength }}"
         [counter]="true"
-        [disabled]="textareaDisabled"
+        [readonly]="textareaDisabled"
         (ionInput)="onTextareaInput()"
       ></ion-textarea>
     </ion-card-content>

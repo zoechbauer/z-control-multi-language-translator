@@ -1,7 +1,8 @@
 // translation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, firstValueFrom, map, of, tap } from 'rxjs';
+
 import { environment } from '../../environments/environment';
 
 interface GoogleTranslateResponse {
@@ -20,6 +21,7 @@ export class TranslationGoogleTranslateService {
   private readonly GOOGLE_TRANSLATE_API_KEY =
     environment.googleTranslate.apiKey;
   private readonly GOOGLE_TRANSLATE_API_URL = `https://translation.googleapis.com/language/translate/v2?key=${this.GOOGLE_TRANSLATE_API_KEY}`;
+  private supportedLanguagesCache: { [lang: string]: GoogleLanguage[] } = {};
 
   constructor(private readonly http: HttpClient) {}
 
@@ -27,15 +29,18 @@ export class TranslationGoogleTranslateService {
    * Translates a given word or phrase from the source language to the target language using Google Translate API.
    *
    * @param word The text to translate.
-   * @param source The source language code (default: 'de').
-   * @param target The target language code (default: 'en').
+   * @param source The source language code.
+   * @param target The target language code.
    * @returns An Observable emitting an object with the target language code as key and the translated text as value.
    */
   translateText(
     word: string,
-    source: string = 'de',
-    target: string = 'en'
+    source: string,
+    target: string
   ): Observable<Record<string, string>> {
+    if (!source || !target) {
+      throw new Error('Source and target languages must be provided');
+    }
     return this.http
       .post<GoogleTranslateResponse>(`${this.GOOGLE_TRANSLATE_API_URL}`, {
         q: word,
@@ -52,12 +57,21 @@ export class TranslationGoogleTranslateService {
   }
 
   /**
-   * Returns all supported languages with names formatted as "Name (code)", sorted alphabetically.
-   * The returned name includes the language code in parentheses.
+   * Fetches all supported languages from Google Translate API, formats each as "Name (code)",
+   * sorts them alphabetically, and caches the result.
+   *
+   * @param targetLang The language code for the display names.
+   * @returns Observable emitting an array of GoogleLanguage objects with formatted names.
    */
   getSupportedLanguagesWithLangCodeInName(
-    targetLang: string = 'en'
+    targetLang: string
   ): Observable<GoogleLanguage[]> {
+    if (!targetLang) {
+      throw new Error('targetLang must be provided');
+    }
+    if (this.supportedLanguagesCache[targetLang]?.length > 0) {
+      return of(this.supportedLanguagesCache[targetLang]);
+    }
     const url = `https://translation.googleapis.com/language/translate/v2/languages?key=${this.GOOGLE_TRANSLATE_API_KEY}&target=${targetLang}`;
     return this.http.get<any>(url).pipe(
       map((resp) => resp.data.languages as GoogleLanguage[]),
@@ -68,23 +82,29 @@ export class TranslationGoogleTranslateService {
             name: `${lang.name} (${lang.language})`,
           }))
           .sort((a, b) => a.name.localeCompare(b.name))
-      )
+      ),
+      tap((langs) => {
+        this.supportedLanguagesCache[targetLang] = langs;
+      })
     );
   }
 
   /**
-   * Returns a string of language names (with codes) separated by <br/> tags, filtered by the provided language codes.
+   * Formats an array of GoogleLanguage objects as a string, with each language name (with code)
+   * separated by <br/> tags, filtered by the provided language codes.
    *
    * @param supportedLanguages Array of supported GoogleLanguage objects.
    * @param targetLangCodes Array of language codes to include in the output.
    * @returns A string of language names separated by <br/> tags, or an empty string if input is invalid.
    */
-  getLanguageNamesStringWithLineBreaks(
+  formatLanguageNamesWithLineBreaks(
     supportedLanguages: GoogleLanguage[],
     targetLangCodes: string[]
   ): string {
     if (!supportedLanguages || !Array.isArray(targetLangCodes)) {
-      return '';
+      throw new Error(
+        'supportedLanguages and targetLangCodes must be provided'
+      );
     }
     return supportedLanguages
       .filter((lang) => targetLangCodes.includes(lang.language))
@@ -93,12 +113,44 @@ export class TranslationGoogleTranslateService {
   }
 
   /**
+   * Returns a formatted string of language names (with codes) separated by <br/> tags,
+   * for the given language codes in the base language. If the supported languages are not yet cached,
+   * fetches them first before formatting.
+   *
+   * @param baseLang The base language code for the display names.
+   * @param targetLangCodes Array of language codes to include in the output.
+   * @returns Promise resolving to a string of language names separated by <br/>, or an empty string if input is invalid.
+   */
+  async getFormattedTargetLanguageNamesForCodes(
+    baseLang: string,
+    targetLangCodes: string[]
+  ): Promise<string> {
+    if (!baseLang) {
+      throw new Error('baseLang must be provided');
+    }
+    if (!this.supportedLanguagesCache[baseLang] || this.supportedLanguagesCache[baseLang].length === 0) {
+      // Fetch supported languages if not already cached
+      await firstValueFrom(
+        this.getSupportedLanguagesWithLangCodeInName(baseLang)
+      );
+    }
+    // Use cached or newly fetched supported languages
+    return this.formatLanguageNamesWithLineBreaks(
+      this.supportedLanguagesCache[baseLang],
+      targetLangCodes
+    );
+  }
+
+  /**
    * Retrieves the display name (with language code) for the specified base language code.
    *
-   * @param baseLang The language code to look up (default: 'en').
+   * @param baseLang The language code to look up.
    * @returns An Observable emitting the language name with code in parentheses, or an empty string if not found.
    */
-  getBaseLanguageName(baseLang: string = 'en'): Observable<string> {
+  getBaseLanguageName(baseLang: string): Observable<string> {
+    if (!baseLang) {
+      throw new Error('baseLang must be provided');
+    }
     return this.getSupportedLanguagesWithLangCodeInName(baseLang).pipe(
       map((langs: GoogleLanguage[]) => {
         return langs.find((lang) => baseLang === lang.language)?.name || '';

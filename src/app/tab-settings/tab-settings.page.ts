@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { IonContent, IonicModule } from '@ionic/angular';
 
 import { LocalStorageService } from '../services/local-storage.service';
@@ -15,13 +15,14 @@ import { GetSourceAccordionComponent } from '../ui/components/accordions/get-sou
 import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/privacy-policy-accordion.component';
 import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
 import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
+import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 
 @Component({
   selector: 'app-tab-settings',
   templateUrl: './tab-settings.page.html',
   imports: [
     IonicModule,
-    TranslateModule,
+    TranslatePipe,
     HeaderComponent,
     LanguageAccordionComponent,
     TargetLanguagesAccordionComponent,
@@ -29,13 +30,14 @@ import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-
     ChangeLogAccordionComponent,
     GetSourceAccordionComponent,
     PrivacyPolicyAccordionComponent,
-    GetMobileAppAccordionComponent
+    GetMobileAppAccordionComponent,
   ],
 })
 export class TabSettingsPage implements OnInit, OnDestroy {
   openAccordion: string | null = null;
   showAllAccordions = true;
-  selectedLanguage?: string;
+  selectedLanguage!: string;
+  selectedLanguageName?: string;
   LogoType = LogoType;
   Tab = Tab;
   private readonly subscriptions: Subscription[] = [];
@@ -43,7 +45,8 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   constructor(
     public translate: TranslateService,
     public readonly localStorage: LocalStorageService,
-    public readonly utilsService: UtilsService
+    public readonly utilsService: UtilsService,
+    private readonly googleTranslateService: TranslationGoogleTranslateService
   ) {}
 
   ngOnInit() {
@@ -61,6 +64,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
         this.translate.use(lang);
         this.translate.setDefaultLang(lang);
         this.selectedLanguage = lang;
+        this.localStorage.loadTargetLanguages();
       })
     );
     this.subscriptions.push(
@@ -86,8 +90,6 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {
-    console.log('onAccordionGroupChange - event.detail.value', event.detail.value);
-    
     this.openAccordion = event.detail.value;
     this.showAllAccordions = this.openAccordion == null;
   }
@@ -98,11 +100,19 @@ export class TabSettingsPage implements OnInit, OnDestroy {
       this.localStorage.saveSelectedLanguage(lang);
       this.translate.use(lang);
       this.translate.setDefaultLang(lang);
+      this.removeBaseLangFromTargetLanguages(lang);
     }
-  }  
-  
-  onTargetLanguagesChange(event: any) {
-    const languages = event.detail?.value;
+  }
+
+  private removeBaseLangFromTargetLanguages(baseLang: string) {
+    const targetLangs = this.localStorage.targetLanguagesSubject.getValue();
+    if (targetLangs.includes(baseLang)) {
+      const updatedLangs = targetLangs.filter((lang) => lang !== baseLang);
+      this.localStorage.saveTargetLanguages(updatedLangs);
+    }
+  }
+
+  onTargetLanguagesChange(languages: string[]) {
     if (languages) {
       this.localStorage.saveTargetLanguages(languages);
     }

@@ -2,26 +2,29 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import { addIcons } from 'ionicons';
-import { 
-  arrowForwardOutline,
+import {
   arrowBackOutline,
-  languageOutline,
-  mailOutline,
-  settingsOutline,
-  listOutline,
-  logoGooglePlaystore,
-  help,
+  arrowForwardOutline,
   arrowUpOutline,
+  caretDownOutline,
+  checkboxOutline,
+  checkmarkOutline,
   closeOutline,
+  cloudDownloadOutline,
+  helpOutline,
+  languageOutline,
+  listOutline,
+  locationOutline,
+  lockClosedOutline,
+  logoGooglePlaystore,
+  mailOutline,
   openOutline,
   personOutline,
-  locationOutline,
-  cloudDownloadOutline,
-  rocketOutline,
-  checkmarkOutline,
-  lockClosedOutline,
   phonePortraitOutline,
-  qrCodeOutline
+  qrCodeOutline,
+  rocketOutline,
+  settingsOutline,
+  trashOutline,
 } from 'ionicons/icons';
 
 import { AppComponent } from './app/app.component';
@@ -29,25 +32,28 @@ import { appConfig } from './app/app.config';
 
 // Register Ionicons used in the application
 addIcons({
-  'settings-outline': settingsOutline,
-  'language-outline': languageOutline,
-  'arrow-forward-outline': arrowForwardOutline,
   'arrow-back-outline': arrowBackOutline,
-  'mail-outline': mailOutline,
-  'list-outline': listOutline,
-  'logo-google-playstore': logoGooglePlaystore,
-  'help': help,
+  'arrow-forward-outline': arrowForwardOutline,
   'arrow-up-outline': arrowUpOutline,
+  'caret-down-outline': caretDownOutline,
+  'checkbox-outline': checkboxOutline,
+  'checkmark-outline': checkmarkOutline,
   'close-outline': closeOutline,
+  'cloud-download': cloudDownloadOutline,
+  'help-outline': helpOutline,
+  'language-outline': languageOutline,
+  'list-outline': listOutline,
+  'location-outline': locationOutline,
+  'lock-closed': lockClosedOutline,
+  'logo-google-playstore': logoGooglePlaystore,
+  'mail-outline': mailOutline,
   'open-outline': openOutline,
   'person-outline': personOutline,
-  'location-outline': locationOutline,
-  'cloud-download': cloudDownloadOutline,
-  'rocket': rocketOutline,
-  'checkmark': checkmarkOutline,
-  'lock-closed': lockClosedOutline,
   'phone-portrait': phonePortraitOutline,
-  'qr-code-outline': qrCodeOutline
+  'qr-code-outline': qrCodeOutline,
+  'rocket-outline': rocketOutline,
+  'settings-outline': settingsOutline,
+  'trash-outline': trashOutline,
 });
 
 // Register German locale data for number/date pipes

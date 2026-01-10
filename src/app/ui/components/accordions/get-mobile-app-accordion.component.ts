@@ -21,7 +21,7 @@ import { GetMobileAppComponent } from '../get-mobile-app/get-mobile-app.componen
   ],
 })
 export class GetMobileAppAccordionComponent {
-  @Input() selectedLanguage: string = 'en';
+  @Input() lang!: string;
 
   constructor(public translate: TranslateService) {}
 }

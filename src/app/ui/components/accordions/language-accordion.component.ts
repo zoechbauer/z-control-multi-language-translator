@@ -3,8 +3,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnDestroy,
-  OnInit,
   Output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -16,11 +14,8 @@ import {
   IonSelectOption,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
-import {
-  TranslationGoogleTranslateService,
-} from 'src/app/services/translation-google-translate.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-language-accordion',
@@ -37,36 +32,13 @@ import {
     FormsModule,
   ],
 })
-export class LanguageAccordionComponent implements OnInit, OnDestroy {
+export class LanguageAccordionComponent {
   @Input() lang?: string;
   @Output() ionChange = new EventEmitter<string>();
 
-  baseLanguageName: string = '';
-  private subscription?: Subscription;
-
   constructor(
     public translate: TranslateService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService
+    public localStorage: LocalStorageService,
   ) {}
 
-  ngOnInit() {
-    this.loadBaseLanguageName();
-  }
-
-  onLanguageChange(event: any) {
-    this.loadBaseLanguageName();
-  }
-
-  private loadBaseLanguageName() {
-    this.subscription = this.googleTranslateService
-      .getBaseLanguageName(this.lang)
-      .subscribe((name) => {
-        this.baseLanguageName = name;
-        this.ionChange.emit(this.baseLanguageName);
-      });
-  }
-
-  ngOnDestroy() {
-    this.subscription?.unsubscribe();
-  }
 }

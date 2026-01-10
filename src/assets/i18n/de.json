@@ -5,7 +5,7 @@
   },
   "------ header page": "-------",
   "HEADER": {
-    "CURRENT_PAGE": { 
+    "CURRENT_PAGE": {
       "TRANSLATE_LONG": "Übersetzen in {{countTargetLanguages}} Sprache(n)",
       "TRANSLATE_SHORT": "Übersetzen",
       "SETTINGS": "Einstellungen "
@@ -33,13 +33,14 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in mehrere von Ihnen ausgewählte Sprachen (maximal {{maxTargetLanguages}}) übersetzen lassen.",
+      "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein"
+        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein",
+        "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern"
       },
       "BUTTON": {
         "TRANSLATE": "Übersetzen",
@@ -83,8 +84,28 @@
         "BASE_LANG": "Basissprache",
         "TARGET_LANG": "Zielsprache(n) auswählen"
       },
+      "PLACEHOLDER": {
+        "SELECT_TARGET_LANG": "Bitte wählen"
+      },
       "TOOLTIPS": {
-        "SELECT_TARGET_LANG": "Übersetzung von Basis- in Zielsprachen auswählen"
+        "SELECT_TARGET_LANG": "Übersetzung von Basissprache in Zielsprachen auswählen"
+      },
+      "MODAL": {
+        "TITLE": "Zielsprache(n) auswählen",
+        "SUB_TITLE": "{{selectedLanguages}} von maximal {{maxTargetLanguages}} ausgewählt",
+        "SEARCH": {
+          "PLACEHOLDER": "Sprachen s  uchen...",
+          "TOOLTIPS": {
+            "FILTER_SELECTED": "Nur ausgewählte Sprachen anzeigen",
+            "CLEAR_FILTER": "Filter löschen und alle Zielsprachen anzeigen",
+            "FILTER": "Sprachen filtern",
+            "SELECT_TARGET_LANG": "Zielsprache auswählen",
+            "DESELECT_TARGET_LANG": "Zielsprache entfernen"
+          }
+        },
+        "BUTTON": {
+          "CLOSE": "Schließen"
+        }
       }
     },
     "FEEDBACK": {

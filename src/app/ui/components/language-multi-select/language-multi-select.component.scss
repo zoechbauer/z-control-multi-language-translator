@@ -1,0 +1,19 @@
+ion-title {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.searchbar-toolbar {
+  padding: 0 16px;
+
+  .checkbox-icon,
+  .trash-icon {
+    font-size: 2rem;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+}
+
+.button-has-icon-only {
+  font-size: 2rem;
+}

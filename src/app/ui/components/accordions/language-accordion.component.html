@@ -1,7 +1,7 @@
 <ion-accordion value="language" id="language">
   <ion-item slot="header" color="light">
     <ion-label>{{ "SETTINGS.LANGUAGE.ACCORDION" | translate }}:<br /><br />
-      <span>{{baseLanguageName}}</span> </ion-label>
+      <span>{{localStorage.selectedLanguageName$ | async}}</span> </ion-label>
   </ion-item>
   <div class="ion-padding" slot="content" title="">
     <ion-item>
@@ -9,7 +9,6 @@
         label="{{ 'SETTINGS.LANGUAGE.LABEL.LANG' | translate }}"
         label-placement="stacked"
         [(ngModel)]="lang"
-        (ionChange)="onLanguageChange($event)"
         interface="popover"
         title="{{ 'SETTINGS.LANGUAGE.TOOLTIPS.CHANGE_LANGUAGE' | translate }}"
       >

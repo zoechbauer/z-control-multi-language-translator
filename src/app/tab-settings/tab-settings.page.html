@@ -18,9 +18,11 @@
       {{'SETTINGS.TITLE' | translate}}
     </h5>
     @if (selectedLanguage) {
-    <app-language-accordion [lang]="selectedLanguage"></app-language-accordion>
+    <app-language-accordion
+      [lang]="selectedLanguage"
+    ></app-language-accordion>
     } @if (selectedLanguage) {
-    <div style="margin-top: 16px;">
+    <div style="margin-top: 16px">
       <app-target-languages-accordion
         [lang]="selectedLanguage"
       ></app-target-languages-accordion>
@@ -48,35 +50,35 @@
     @if (!showAllAccordions && openAccordion) { @switch (openAccordion) { @case
     ('language') {
     <app-language-accordion
-      [lang]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
       (ionChange)="onLanguageChange($event)"
     ></app-language-accordion>
     } @case ('target-languages') {
     <app-target-languages-accordion
-      [lang]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
       (ionChange)="onTargetLanguagesChange($event)"
     ></app-target-languages-accordion>
     } @case ('z-control') {
     <app-feedback-accordion
-      [lang]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
     ></app-feedback-accordion>
     } @case ('privacy-policy') {
     <app-privacy-policy-accordion
-      [selectedLanguage]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
     ></app-privacy-policy-accordion>
     } @case ('change-log') {
     <app-change-log-accordion
-      [lang]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
       [versionInfo]="versionInfo"
       (ionChange)="openChangelog()"
     ></app-change-log-accordion>
     } @case ('get-mobile-app') {
     <app-get-mobile-app-accordion
-      [selectedLanguage]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
     ></app-get-mobile-app-accordion>
     } @case ('get-source-code') {
     <app-get-source-accordion
-      [selectedLanguage]="selectedLanguage || 'en'"
+      [lang]="selectedLanguage"
     ></app-get-source-accordion>
     } }
     <!-- Button to show all accordions -->

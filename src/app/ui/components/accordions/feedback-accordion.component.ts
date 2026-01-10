@@ -26,7 +26,7 @@ import { FooterComponent } from '../footer/footer.component';
   ],
 })
 export class FeedbackAccordionComponent {
-  @Input() lang: string = 'en';
+  @Input() lang!: string;
   LogoType = LogoType;
 
   constructor(public translate: TranslateService) {}
