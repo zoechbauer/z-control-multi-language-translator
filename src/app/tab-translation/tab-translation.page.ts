@@ -19,11 +19,13 @@ import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
-import { Tab } from '../enums';
+import { Tab, ToastAnchor } from '../enums';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 import { AppConstants } from '../shared/app.constants';
+import { ToastService } from '../services/toast.service';
+import { TextSpeechService } from '../services/text-to-speach.service';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -75,7 +77,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     public translate: TranslateService,
     public localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService
+    private readonly googleTranslateService: TranslationGoogleTranslateService,
+    private readonly toastService: ToastService,
+    private readonly ttsService: TextSpeechService
   ) {}
 
   get maxInputLength(): number {
@@ -130,6 +134,24 @@ export class TabTranslationPage implements OnInit, OnDestroy {
           );
         });
     });
+    this.toastService.showToast(
+      this.translate.instant('TRANSLATE.CARD_RESULTS.TOAST.TEXT_TRANSLATED'),
+      ToastAnchor.TRANSLATE_PAGE
+    );
+  }
+
+  async speak(text: string, lang: string) {
+    try {
+      await this.ttsService.speak(text, lang);
+    } catch (err) {
+      this.toastService.showToast(
+        this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED'
+        ),
+        ToastAnchor.TRANSLATE_PAGE
+      );
+      console.error('TTS error:', err);
+    }
   }
 
   clear(): void {
@@ -137,7 +159,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   getTextareaRows(): string {
-    return this.utilsService.isNative && this.utilsService.isPortrait ? '5' : '3';
+    return this.utilsService.isNative && this.utilsService.isPortrait
+      ? '5'
+      : '3';
   }
 
   private setupEventListeners(): void {

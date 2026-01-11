@@ -59,6 +59,7 @@ ion-content {
   ul {
     margin-left: 1em;
     padding-left: 1em;
+    margin-bottom: 16px;
   }
 
   .quick-tip {
@@ -100,6 +101,22 @@ ion-content {
 
     tr:nth-child(even) {
       background: #fafafa;
+    }
+  }
+
+  ul.no-list-style {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  ul.no-list-style-inside {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+    margin-top: 16px;
+    margin-bottom: 16px;
     }
   }
 }

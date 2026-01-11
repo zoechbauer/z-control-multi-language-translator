@@ -32,7 +32,12 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **clean-android-build-step-by-step.md**  
   Detailed guide for performing a clean Android build, including cleaning artifacts, syncing assets, and rebuilding in Android Studio.
 
-## D. Google Translation API
+## D. Features
+
+- **text-to-speech-integration.md**  
+  Guide to adding text-to-speech (TTS) functionality for translated text, using the browser's free Web Speech API. Includes implementation steps, cost considerations, and usage notes.
+
+## E. Google Translation API
 
 - **google-cloud-translation-api-pricing.md**  
   Overview of Google Cloud Translation API pricing, including the free tier, paid usage, and links to official documentation.

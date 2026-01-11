@@ -2,6 +2,17 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.6] – 2026-01-11
+
+### ✨ New Features
+
+- Added text-to-speech (TTS) functionality for translated text using the browser's built-in Web Speech API. Users can now listen to translations directly within the app by clicking a button next to each translated text.
+- Added toast notifications to inform users when text has been successfully translated and when TTS is not supported in their browser.
+
+### ✨ Improvements
+
+- Enhanced the help page with clear instructions on using the new text-to-speech feature and selecting target languages. The documentation was streamlined to better guide users through the app's key functions. The styling of the help page was also improved for better readability.
+
 ## [0.5] – 2026-01-10
 
 ### ✨ Improvements

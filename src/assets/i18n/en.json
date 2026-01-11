@@ -50,6 +50,10 @@
     "CARD_RESULTS": {
       "LABEL": {
         "TRANSLATED_TEXT": "Translated Text"
+      },
+      "TOAST": {
+        "SPEAK_NOT_SUPPORTED": "Text-to-Speech is not supported in this browser.",
+        "TEXT_TRANSLATED": "Text has been translated."
       }
     }
   },
@@ -79,7 +83,7 @@
       }
     },
     "TARGET_LANGUAGES": {
-      "ACCORDION": "Change Target Languages",
+      "ACCORDION": "Select / Change Target Languages",
       "LABEL": {
         "BASE_LANG": "Base Language",
         "TARGET_LANG": "Select Target Language(s)"

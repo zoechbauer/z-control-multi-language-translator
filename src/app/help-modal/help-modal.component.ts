@@ -55,7 +55,7 @@ export class HelpModalComponent implements OnInit, OnDestroy {
   get maxTargetLanguages() {
     return AppConstants.maxTargetLanguages;
   }
-  get maxFreeTranslateCharsLengthPerYear() {
+  get maxFreeTranslateCharsLengthPerMonth() {
     return AppConstants.maxFreeTranslateCharsPerMonth;
   }
 

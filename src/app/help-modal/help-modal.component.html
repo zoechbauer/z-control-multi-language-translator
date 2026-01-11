@@ -43,11 +43,6 @@
       <h5 class="ion-text-center toc-title">Table of Contents</h5>
       <ol class="table-of-contents">
         <li>
-          <a href="#" (click)="utilsService.scrollTo('general-usage', $event)"
-            >General Usage</a
-          >
-        </li>
-        <li>
           <a
             href="#"
             (click)="utilsService.scrollTo('what-can-the-app-do', $event)"
@@ -71,7 +66,7 @@
             >Technical Information</a
           >
         </li>
-        <li class="toc-increase-margin-top">
+        <li *ngIf="isNative" class="toc-increase-margin-top">
           <a href="#" (click)="utilsService.scrollTo('troubleshooting', $event)"
             >Troubleshooting & Problem Solving</a
           >
@@ -79,113 +74,174 @@
       </ol>
     </div>
 
-    <h3 id="general-usage">General Usage</h3>
-    <ol>
+    <h3 id="what-can-the-app-do">What can the app do?</h3>
+    <b>What is this app for?</b>
+    <p>
+      <strong>
+        You can enter a text of up to 100 characters and have it easily
+        translated into up to 5 selected languages using
+        <i>Google Translate</i>.
+      </strong>
+      The base language (English or German) as well as the target languages can
+      be freely selected in the settings.
+    </p>
+    <p>
+      The app is ideal for travelers, language learners, or anyone who wants to
+      quickly translate texts into different languages. Translate your desired
+      texts into your favorite languages to improve your language skills or to
+      communicate better abroad.
+    </p>
+    <p><b>Highlights:</b></p>
+    <ul class="no-list-style-inside">
       <li>
-        <b>What is this app for?</b>
+        <strong>Simultaneous translation</strong> of your text into multiple
+        favorite languages. This keeps you flexible and allows you to practice
+        and use several languages in parallel.
+      </li>
+      <li>
+        Have the <strong>translated texts read aloud</strong>. This makes
+        understanding easier and supports learning.
+      </li>
+      <li>
+        Google Translate can <strong>automatically complete</strong> incomplete
+        texts in the target languages.
+      </li>
+      <li>
+        Translations are processed on Google servers; your text is not stored by
+        this app.
+      </li>
+    </ul>
+    <p><b>Limitations:</b></p>
+    <ul class="no-list-style-inside">
+      <li>
+        <strong>
+          Shared free monthly quota:
+          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
+          characters for all users.
+        </strong>
+        If this quota is exceeded, costs will be incurred for <i>z-control</i>.
         <p>
-          Easily translate your text into multiple languages using Google
-          Translate.
+          For this reason, the selection is limited to a maximum of 5 target
+          languages so that the shared monthly quota is not used up too quickly.
+        </p>
+        <p>
+          <strong>
+            The use of the Google Translate API is subject to a fee. Therefore,
+            the quota was introduced. The app will notify you in good time
+            before the limit is reached and will prevent further translations
+            once the quota for the current month has been used up.
+          </strong>
+        </p>
+        <p>
+          <strong>
+            Reading out the translations via the text-to-speech API is free and
+            unlimited. You can have the translations read aloud as often as you
+            like without affecting the monthly quota.
+          </strong>
+        </p>
+      </li>
+      <li>For complex texts, Google Translate may return errors.</li>
+      <li>Formatting (bold, italic, line breaks) may not be preserved.</li>
+    </ul>
+
+    <h3 id="how-to-use-the-app">How do I use the app?</h3>
+    <ul class="no-list-style">
+      <li>
+        <b>First launch of the app</b>
+        <p>
+          When you open the app for the first time, your device's system
+          language (English or German) is automatically set as the base
+          language. You are taken directly to the translation page, where a
+          message appears indicating that no target languages have been selected
+          yet. Please go to the settings and select at least one target language
+          to use the translation feature.
+        </p>
+        <p>
+          Set your preferred base language and choose at least one target
+          language to start translating.
         </p>
       </li>
       <li>
-        <b>How do I switch between Translation and Settings?</b>
-        <p>
-          <b>On mobile (portrait):</b> Use the tabs at the bottom to switch
-          between Translate and Settings.<br />
-          <b>On tablet/desktop/landscape:</b> Use the navigation button in the
-          top right of the header.
-        </p>
+        <b>How do I switch between translation and settings?</b>
+        <ul class="no-list-style-inside">
+          <li>
+            <b>On mobile devices in portrait mode:</b> Use the tabs at the
+            bottom of the screen to switch between translation and settings.
+          </li>
+          <li>
+            <b>On tablets, desktop PCs or in landscape mode:</b> Use the button
+            at the top right of the header to switch between translation and
+            settings.
+          </li>
+        </ul>
       </li>
       <li>
         <b>How do I change the app language?</b>
         <p>
-          Use the "Select Language" option in Settings to switch between English
-          and German. Changes take effect immediately.
+          In the settings, select the "Select language" option to switch between
+          English and German. The change is applied immediately.
         </p>
-      </li>
-      <li>
-        <b>How do I switch between Dark and Light Mode?</b>
         <p>
-          The app follows your device’s system settings. Change your device’s
-          theme to switch modes.
+          When the selected base language is changed, the list of target
+          languages is automatically updated to exclude the base language.
         </p>
       </li>
       <li>
-        <b>How can I provide feedback or contact support?</b>
+        <b>How do I select the target languages?</b>
         <p>
-          In Settings, click the logo in the header to open the feedback
-          section. Use the “z-control Support & Feedback” link to send us an
-          email.
+          In the settings, select "Select / Change target languages" to set at
+          least 1 and up to {{ maxTargetLanguages }} target languages. The
+          change is applied immediately.
+        </p>
+        <p>This is how the target language selection works:</p>
+        <ol>
+          <li>Click on "Select / Change target languages" in the settings.</li>
+          <li>The already selected languages are displayed.</li>
+          <li>
+            To change the selection, click on the selection box "Select target
+            language(s)".
+          </li>
+          <li>
+            A list of available languages opens from which you can select your
+            target languages.
+          </li>
+          <li>
+            The header of the list shows the number of selected languages and
+            the language codes.
+          </li>
+          <li>
+            You can filter the list to show only selected languages, search for
+            languages, or reset the filter to see all languages.
+          </li>
+          <li>
+            Click the X at the top right to close the list and apply the
+            selection.
+          </li>
+        </ol>
+      </li>
+      <li>
+        <b>How do I switch between dark and light mode?</b>
+        <p>
+          The app follows your device's system settings. Change your device's
+          theme ("Dark theme", "Light theme") in the system settings. The change
+          is applied immediately.
         </p>
       </li>
-    </ol>
-
-    <h3 id="what-can-the-app-do">What can the app do?</h3>
-    <p>
-      <b
-        >Your text is translated into selected languages using Google
-        Translate.</b
-      >
-      You can enter up to {{ maxInputLength }} characters per translation (due
-      to Google API limits and quota).
-    </p>
-    <p><b>Limitations:</b></p>
-    <ul>
       <li>
-        Shared quota: {{ maxFreeTranslateCharsLengthPerYear | number }} characters/year for all users. If exceeded,
-        translations may be temporarily unavailable.
-      </li>
-      <li>
-        Google Translate may return errors for very long or complex texts.
-      </li>
-      <li>Formatting (bold, italics, line breaks) may not be preserved.</li>
-      <li>
-        Translations are processed by Google servers; your text is not stored by
-        this app.
+        <b>How can I give feedback or contact support?</b>
+        <p>
+          You can send us feedback, questions or suggestions via the email link
+          in the settings. Click on the logo in the header to open the feedback
+          area. Use the "z-control Support & Feedback" link to send us an email.
+        </p>
       </li>
     </ul>
-
-    <h3 id="how-to-use-the-app">How to use the app?</h3>
-    <h5>App Structure & Navigation</h5>
-    <ul>
-      <li>
-        <b>Translate:</b> Enter text and translate it into your chosen
-        languages.
-      </li>
-      <li><b>Settings:</b> Select languages and view app information.</li>
-    </ul>
-    <p><b>Navigation:</b></p>
-    <ul>
-      <li *ngIf="isNative"><b>Mobile (portrait):</b> Use the bottom tabs.</li>
-      <li>
-        <b>Tablet/desktop/landscape:</b> Use the top-right navigation button.
-      </li>
-    </ul>
-    <h5>Translating Text</h5>
-    <ol>
-      <li>Go to <b>Translate</b> and enter your text.</li>
-      <li>Press <b>Translate</b> to see results in your selected languages.</li>
-      <li>Use <b>Settings</b> to manage your language preferences.</li>
-    </ol>
-    <h5>Managing Settings</h5>
-    <ul>
-      <li>Select your base language (English or German).</li>
-      <li>Choose up to {{ maxTargetLanguages }} target languages.</li>
-      <li>Send feedback to z-control.</li>
-      <li>View privacy policy, app version, and release notes.</li>
-      <li *ngIf="!isNative">Install the mobile app (web only).</li>
-      <li>Access the source code to see how your data is handled.</li>
-    </ul>
-    <p>
-      You can switch between Translate and Settings at any time. Your entered
-      text remains when switching.
-    </p>
 
     <div *ngIf="isNative">
       <h3 id="web-version">Using the Web Version</h3>
       <p>
-        <b>The web version offers the same features and is accessible at</b>
+        The web version offers the same functions and is available at (TODO:
+        update link)
         <a
           class="external-link"
           href="https://z-control-qr-code.web.app"
@@ -200,32 +256,76 @@
         </a>
       </p>
       <p>Use your browser for a full keyboard experience.</p>
+      <p>
+        Unfortunately, you will not be able to use the great advantages of voice
+        input.
+      </p>
     </div>
 
     <h3 id="technical-info">Technical Information</h3>
-    <p>(TODO) Details about the Google Translate API.</p>
-    <p *ngIf="isNative">
-      <b>Voice input:</b> If enabled on your device, tap the microphone icon on
-      your keyboard to use voice input.
+    <p><strong>Information about the Google Translate API.</strong></p>
+    <p>
+      The <i>Google Cloud Translation API</i> (often also called "Google
+      Translate API") is a web service that allows applications to automatically
+      translate text between many languages. It is based on Google's neural
+      machine translation and is mainly used to make websites, apps or internal
+      tools multilingual.
     </p>
-
-    <h3 id="troubleshooting">Troubleshooting & Problem Solving</h3>
-    <ol>
-      <li *ngIf="isNative">
-        <b>The keyboard covers input fields (mobile):</b>
-        <p>
-          Enable the floating keyboard (tap the three dots above the keyboard,
-          select "Modes", then "Floating keyboard").
-        </p>
-      </li>
+    <p>
+      <strong>The Google Cloud Translation API Basic variant was used.</strong>
+      This is the simpler entry-level option for text translations, accessible
+      via v2 client libraries or REST calls.
+    </p>
+    <p><strong>Main features</strong></p>
+    <ul class="no-list-style">
+      <li>Supports over 100 languages</li>
+      <li>Automatic language detection</li>
+      <li>Translation of single or multiple text strings in one request</li>
+      <li>HTML formatting is supported</li>
       <li>
-        <b>Is my data private?</b>
-        <p>
-          Yes, all data is stored locally on your device. Nothing is sent to
-          external servers.
-        </p>
+        Authentication primarily via API key, which makes it easier to get
+        started, unlike service accounts in the Advanced version.
       </li>
-    </ol>
+      <li>Billing per character per translation, with a free monthly quota.</li>
+    </ul>
+
+    <div *ngIf="isNative">
+      <h3 id="troubleshooting">Troubleshooting & Problem Solving</h3>
+      <ul class="no-list-style">
+        <li>
+          <p><b>No microphone is shown in the keyboard (mobile):</b></p>
+          <p>
+            Example: How to enable voice input on a Samsung Galaxy A33 device:
+          </p>
+          <ol>
+            <li>Open your device's system settings</li>
+            <li>Go to "General management"</li>
+            <li>Tap on "Samsung keyboard settings"</li>
+            <li>
+              Select the "Voice input" option (or similar depending on UI
+              version)
+            </li>
+            <li>
+              Select "Samsung voice input" or "Google voice input" to enable it,
+              or "None" to disable voice input, i.e. no microphone icon will be
+              shown in the keyboard.
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p><b>The keyboard covers input fields (mobile):</b></p>
+          <p>
+            Example: How to enable the "Floating Keyboard" on a Samsung Galaxy
+            A33 device:
+          </p>
+          <ol>
+            <li>Tap the three dots above the keyboard</li>
+            <li>Select "Modes"</li>
+            <li>Select "Floating keyboard"</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
     <p class="empty-last-item"></p>
   </ion-content>
 </ng-template>
@@ -271,11 +371,6 @@
       <h5 class="ion-text-center toc-title">Inhaltsverzeichnis</h5>
       <ol class="table-of-contents">
         <li>
-          <a href="#" (click)="utilsService.scrollTo('general-usage-DE', $event)"
-            >Allgemeine Nutzung</a
-          >
-        </li>
-        <li>
           <a
             href="#"
             (click)="utilsService.scrollTo('what-can-the-app-do-DE', $event)"
@@ -286,7 +381,7 @@
           <a
             href="#"
             (click)="utilsService.scrollTo('how-to-use-the-app-DE', $event)"
-            >Wie benutzt man die App?</a
+            >Wie bediene ich die App?</a
           >
         </li>
         <li *ngIf="isNative">
@@ -295,158 +390,202 @@
           >
         </li>
         <li>
-          <a href="#" (click)="utilsService.scrollTo('technical-info-DE', $event)"
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('technical-info-DE', $event)"
             >Technische Informationen</a
           >
         </li>
-        <li class="toc-increase-margin-top">
-          <a href="#" (click)="utilsService.scrollTo('troubleshooting-DE', $event)"
+        <li class="toc-increase-margin-top" *ngIf="isNative">
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('troubleshooting-DE', $event)"
             >Fehlerbehebung & Problemlösung</a
           >
         </li>
       </ol>
     </div>
 
-    <h3 id="general-usage-DE">Allgemeine Nutzung</h3>
-    <ol>
+    <h3 id="what-can-the-app-do-DE">Was kann die App?</h3>
+    <b>Wofür ist diese App gedacht?</b>
+    <p>
+      <strong>
+        Sie können einen Text mit bis zu 100 Zeichen eingeben und ihn ganz
+        einfach in bis zu 5 ausgewählten Sprachen mit
+        <i>Google Translate</i> übersetzen lassen.
+      </strong>
+      Die Basissprache (Englisch oder Deutsch) sowie die Zielsprachen können Sie
+      in den Einstellungen frei wählen.
+    </p>
+    <p>
+      Die App eignet sich ideal für Reisende, Sprachlernende oder alle, die
+      schnell Texte in verschiedene Sprachen übersetzen möchten. Übersetzen Sie
+      Ihre gewünschten Texte in Ihre Lieblingssprachen, um Ihre Sprachkenntnisse
+      zu verbessern oder sich im Ausland besser zu verständigen.
+    </p>
+    <p><b>Highlights:</b></p>
+    <ul class="no-list-style-inside">
       <li>
-        <b>Wofür ist diese App?</b>
+        <strong>Gleichzeitige Übersetzung</strong> Ihres Textes in mehrere
+        Lieblingssprachen. So bleiben Sie flexibel und können verschiedene
+        Sprachen parallel trainieren und nutzen.
+      </li>
+      <li>
+        Lassen Sie sich die <strong>übersetzten Texte vorlesen</strong>. Das
+        erleichtert das Verständnis und unterstützt beim Lernen.
+      </li>
+      <li>
+        Google Translate kann unvollständige Texte in den Übersetzungssprachen
+        <strong>automatisch ergänzen</strong>.
+      </li>
+      <li>
+        Die Übersetzungen werden auf Google-Servern verarbeitet; Ihr Text wird
+        von dieser App nicht gespeichert.
+      </li>
+    </ul>
+    <p><b>Einschränkungen:</b></p>
+    <ul class="no-list-style-inside">
+      <li>
+        <strong>
+          Gemeinsames kostenloses Monatskontingent:
+          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
+          Zeichen für alle Nutzer.
+        </strong>
+        Wird dieses Kontingent überschritten, entstehen für
+        <i>z-control</i> Kosten.
         <p>
-          Übersetzen Sie Ihren Text einfach in mehrere Sprachen mit Google
-          Translate.
+          Daher ist die Auswahl auf maximal 5 Zielsprachen begrenzt, damit das
+          gemeinsame Monatskontingent nicht zu schnell aufgebraucht wird.
+        </p>
+        <p>
+          <strong>
+            Die Nutzung der Google Translate API ist kostenpflichtig. Deshalb
+            wurde das Kontingent eingeführt. Die App informiert Sie rechtzeitig
+            vor Erreichen des Limits und verhindert weitere Übersetzungen,
+            sobald das Kontingent im aktuellen Monat ausgeschöpft ist.
+          </strong>
+        </p>
+        <p>
+          <strong>
+            Das Vorlesen der Übersetzungen per Text-to-Speech API ist kostenlos
+            und unbegrenzt möglich. Sie können sich die Übersetzungen beliebig
+            oft anhören, ohne das Monatskontingent zu belasten.
+          </strong>
+        </p>
+      </li>
+      <li>Bei komplexen Texten kann Google Translate Fehler zurückgeben.</li>
+      <li>
+        Formatierungen (fett, kursiv, Zeilenumbrüche) werden eventuell nicht
+        übernommen.
+      </li>
+    </ul>
+
+    <h3 id="how-to-use-the-app-DE">Wie benutze ich die App?</h3>
+    <ul class="no-list-style">
+      <li>
+        <b>Erster Aufruf der App</b>
+        <p>
+          Beim ersten Öffnen der App wird automatisch die Systemsprache Ihres
+          Geräts (Englisch oder Deutsch) als Basissprache übernommen. Sie
+          gelangen direkt zur Übersetzungsseite, auf der ein Hinweis erscheint,
+          dass noch keine Zielsprachen ausgewählt wurden. Bitte wählen Sie in
+          den Einstellungen mindestens eine Zielsprache aus, um die
+          Übersetzungsfunktion nutzen zu können.
+        </p>
+        <p>
+          Legen Sie Ihre gewünschte Basissprache fest und wählen Sie mindestens
+          eine Zielsprache, um mit dem Übersetzen zu beginnen.
         </p>
       </li>
       <li>
         <b>Wie wechsle ich zwischen Übersetzung und Einstellungen?</b>
-        <p>
-          <b>Auf Mobilgeräten im Hochformat:</b> Verwenden Sie die Tabs am
-          unteren Bildschirmrand, um zwischen Übersetzen und Einstellungen zu
-          wechseln.
-        </p>
-        <p>
-          <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Nutzen Sie die
-          Schaltfläche oben rechts in der Kopfzeile, um zwischen Übersetzen und
-          Einstellungen zu wechseln.
-        </p>
+        <ul class="no-list-style-inside">
+          <li>
+            <b>Auf Mobilgeräten im Hochformat:</b> Nutzen Sie die Tabs am
+            unteren Bildschirmrand, um zwischen Übersetzen und Einstellungen zu
+            wechseln.
+          </li>
+          <li>
+            <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Verwenden Sie
+            die Schaltfläche oben rechts in der Kopfzeile, um zwischen
+            Übersetzen und Einstellungen zu wechseln.
+          </li>
+        </ul>
       </li>
       <li>
         <b>Wie ändere ich die App-Sprache?</b>
         <p>
-          Verwenden Sie die Option "Sprache auswählen" in den Einstellungen, um
+          Wählen Sie in den Einstellungen die Option "Sprache auswählen", um
           zwischen Englisch und Deutsch zu wechseln. Die Änderung wird sofort
           übernommen.
         </p>
+        <p>
+          Wenn die ausgewählte Basissprache geändert wird, wird die Liste der
+          Zielsprachen automatisch aktualisiert, um die Basissprache
+          auszuschließen.
+        </p>
+      </li>
+      <li>
+        <b>Wie wähle ich die Zielsprachen aus?</b>
+        <p>
+          Wählen Sie in den Einstellungen "Zielsprachen auswählen / ändern", um
+          mindestens 1 und maximal {{ maxTargetLanguages }} Zielsprachen
+          festzulegen. Die Änderung wird sofort übernommen.
+        </p>
+        <p>So funktioniert die Zielsprachen-Auswahl:</p>
+        <ol>
+          <li>
+            Klicken Sie auf "Zielsprachen auswählen / ändern" in den
+            Einstellungen.
+          </li>
+          <li>Die bereits ausgewählten Sprachen werden angezeigt.</li>
+          <li>
+            Um die Auswahl zu ändern, klicken Sie auf die Auswahlbox
+            "Zielsprache(n) auswählen".
+          </li>
+          <li>
+            Es öffnet sich eine Liste mit verfügbaren Sprachen, aus der Sie Ihre
+            Zielsprachen wählen können.
+          </li>
+          <li>
+            Im Listenkopf sehen Sie die Anzahl der ausgewählten Sprachen und die
+            Sprachcodes.
+          </li>
+          <li>
+            Sie können die Liste filtern, um nur ausgewählte Sprachen
+            anzuzeigen, nach Sprachen suchen oder den Filter zurücksetzen, um
+            alle Sprachen zu sehen.
+          </li>
+          <li>
+            Mit Klick auf das X oben rechts schließen Sie die Liste und
+            übernehmen die Auswahl.
+          </li>
+        </ol>
       </li>
       <li>
         <b>Wie wechsle ich zwischen Dunkel- und Hellmodus?</b>
         <p>
           Die App folgt den Systemeinstellungen Ihres Geräts. Ändern Sie das
-          Thema Ihres Geräts ("Dunkles Design", "Helles Design")in den
-          Systemeinstellungen Ihres Gerätes.
+          Design Ihres Geräts ("Dunkles Design", "Helles Design") in den
+          Systemeinstellungen. Die Änderung wird sofort übernommen.
         </p>
       </li>
       <li>
         <b>Wie kann ich Feedback geben oder den Support kontaktieren?</b>
         <p>
           Sie können uns Feedback, Fragen oder Vorschläge über den E-Mail-Link
-          in den „Einstellungen“ senden. Klicken Sie auf das Logo in der
-          Kopfzeile, um den Feedback-Bereich zu öffnen. Verwenden Sie den Link
-          „z-control Support & Feedback“, um uns eine E-Mail zu senden.
+          in den Einstellungen senden. Klicken Sie auf das Logo in der
+          Kopfzeile, um den Feedback-Bereich zu öffnen. Über den Link „z-control
+          Support & Feedback“ können Sie uns eine E-Mail senden.
         </p>
       </li>
-    </ol>
-
-    <h3 id="what-can-the-app-do-DE">Was kann die App?</h3>
-    <p>
-      <b>
-        Ihr Text wird mit Google Translate in die ausgewählten Sprachen
-        übersetzt.
-      </b>
-      Sie können bis zu {{ maxInputLength }} Zeichen pro Übersetzung eingeben
-      (aufgrund von Google API-Beschränkungen und Kontingent).
-    </p>
-    <p><b>Einschränkungen:</b></p>
-    <ul>
-      <li>
-        Gemeinsames Jahreskontingent: {{ maxFreeTranslateCharsLengthPerYear | number:'1.0-0':'de' }} Zeichen für alle Nutzer. Bei
-        Überschreitung sind Übersetzungen vorübergehend nicht verfügbar.
-      </li>
-      <li>
-        Google Translate kann bei sehr langen oder komplexen Texten Fehler
-        zurückgeben.
-      </li>
-      <li>
-        Formatierungen (fett, kursiv, Zeilenumbrüche) werden möglicherweise
-        nicht beibehalten.
-      </li>
-      <li>
-        Übersetzungen werden von Google-Servern verarbeitet; Ihr Text wird von
-        dieser App nicht gespeichert.
-      </li>
     </ul>
-
-    <h3 id="how-to-use-the-app-DE">Wie benutzt man die App?</h3>
-    <h5>App-Struktur & Navigation</h5>
-    <ul>
-      <li>
-        <b>Übersetzen:</b> Geben Sie Text ein und übersetzen Sie ihn in Ihre
-        gewählten Sprachen.
-      </li>
-      <li>
-        <b>Einstellungen:</b> Wählen Sie Sprachen aus und sehen Sie
-        App-Informationen.
-      </li>
-    </ul>
-    <p><b>Navigation:</b></p>
-    <ul>
-      <li *ngIf="isNative">
-        <b>Auf Mobilgeräten im Hochformat:</b> Verwenden Sie die Tabs am unteren
-        Bildschirmrand, um zwischen Übersetzen und Einstellungen zu wechseln.
-      </li>
-      <li>
-        <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Nutzen Sie die
-        Schaltfläche oben rechts in der Kopfzeile, um zwischen Übersetzen und
-        Einstellungen zu wechseln.
-      </li>
-    </ul>
-    <h5>Text übersetzen</h5>
-    <ol>
-      <li>Gehen Sie zu <b>Übersetzen</b> und geben Sie Ihren Text ein.</li>
-      <li>
-        Drücken Sie <b>Übersetzen</b>, um die Ergebnisse in Ihren ausgewählten
-        Sprachen zu sehen.
-      </li>
-      <li>
-        Verwenden Sie <b>Einstellungen</b>, um Ihre Sprachpräferenzen zu
-        verwalten.
-      </li>
-    </ol>
-    <h5>Einstellungen verwalten</h5>
-    <ul>
-      <li>Wählen Sie Ihre Basissprache (Englisch oder Deutsch).</li>
-      <li>Wählen Sie bis zu {{ maxTargetLanguages }} Zielsprachen.</li>
-      <li>Senden Sie Feedback an z-control.</li>
-      <li>
-        Sehen Sie Datenschutzrichtlinie, App-Version und Versionshinweise.
-      </li>
-      <li *ngIf="!isNative">Installieren Sie die mobile App (nur Web).</li>
-      <li>
-        Greifen Sie auf den Quellcode zu, um zu sehen, wie Ihre Daten
-        verarbeitet werden.
-      </li>
-    </ul>
-    <p>
-      Sie können jederzeit zwischen Übersetzen und Einstellungen wechseln. Ihr
-      eingegebener Text bleibt beim Wechsel erhalten.
-    </p>
 
     <div *ngIf="isNative">
       <h3 id="web-version-DE">Web-Version verwenden</h3>
       <p>
-        <b
-          >Die Web-Version bietet die gleichen Funktionen und ist erreichbar
-          unter</b
-        >
+        Die Web-Version bietet die gleichen Funktionen und ist erreichbar unter
+        (TODO: Link anpassen)
         <a
           class="external-link"
           href="https://z-control-qr-code.web.app"
@@ -461,32 +600,84 @@
         </a>
       </p>
       <p>Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.</p>
+      <p>
+        Leider können Sie dann die großen Vorteile der Spracheingabe nicht
+        nutzen.
+      </p>
     </div>
 
     <h3 id="technical-info-DE">Technische Informationen</h3>
-    <p>(TODO) Details zur Google Translate API.</p>
-    <p *ngIf="isNative">
-      <b>Spracheingabe:</b> Wenn auf Ihrem Gerät aktiviert, tippen Sie auf das
-      Mikrofon-Symbol auf Ihrer Tastatur, um die Spracheingabe zu verwenden.
+    <p><strong>Informationen zur Google Translate API.</strong></p>
+    <p>
+      Die <i>Google Cloud Translation API</i> (oft auch „Google Translate API“
+      genannt) ist ein Webdienst, mit dem Anwendungen Text automatisiert
+      zwischen vielen Sprachen übersetzen können. Sie basiert auf Googles
+      neuronaler maschineller Übersetzung und wird vor allem genutzt, um
+      Websites, Apps oder interne Tools mehrsprachig zu machen.
     </p>
-
-    <h3 id="troubleshooting-DE">Fehlerbehebung & Problemlösung</h3>
-    <ol>
-      <li *ngIf="isNative">
-        <b>Die Tastatur verdeckt Eingabefelder (Handy):</b>
-        <p>
-          Aktivieren Sie die schwebende Tastatur (tippen Sie auf die drei Punkte
-          über der Tastatur, wählen Sie "Modi" und dann "Schwebende Tastatur").
-        </p>
+    <p>
+      <strong
+        >Es wurde die Google Cloud Translation API Basic-Variante
+        verwendet.</strong
+      >
+      Diese ist die einfachere Einstiegsoption für Textübersetzungen, die über
+      v2-Clientbibliotheken oder REST-Aufrufe zugänglich ist.
+    </p>
+    <p><strong>Hauptmerkmale</strong></p>
+    <ul class="no-list-style">
+      <li>Unterstützt über 100 Sprachen</li>
+      <li>Automatische Spracherkennung</li>
+      <li>Übersetzung einzelner oder mehrerer Textstrings in einer Anfrage</li>
+      <li>HTML-Formatierung wird unterstützt</li>
+      <li>
+        Authentifizierung primär über API-Schlüssel, was den Einstieg
+        erleichtert, im Gegensatz zu Dienstkonten in der Advanced-Version.
       </li>
       <li>
-        <b>Ist meine Daten privat?</b>
-        <p>
-          Ja, alle Daten werden lokal auf Ihrem Gerät gespeichert. Es wird
-          nichts an externe Server gesendet.
-        </p>
+        Abrechnung nach Zeichen pro Übersetzung, mit monatlichem kostenlosen
+        Kontingent.
       </li>
-    </ol>
+    </ul>
+
+    <div *ngIf="isNative">
+      <h3 id="troubleshooting-DE">Fehlerbehebung & Problemlösung</h3>
+      <ul class="no-list-style">
+        <li>
+          <p><b>Es wird kein Mikrofon in Tastaturangezeigt (Handy):</b></p>
+          <p>
+            Beispiel: So aktivieren Sie die Spracheingabe auf einem Samsung
+            Galaxy A33 Gerät:
+          </p>
+          <ol>
+            <li>Öffnen Sie die Systemeinstellungen Ihres Geräts</li>
+            <li>Gehen Sie zu "Allgemeine Verwaltung"</li>
+            <li>Tippen Sie auf "Samsung Tastatur-Einstellungen"</li>
+            <li>
+              Wählen Sie den Punkt "Spracheingabe" (oder ähnlich je nach
+              UI-Version)
+            </li>
+            <li>
+              Wählen Sie "Samsung-Spracheingabe" oder "Google Spracheingabe" um
+              sie zu aktivieren, oder "Keine" um die Spracheingabe zu
+              deaktivieren, d.h. kein Mikrofon-Symbol in der Tastatur angezeigt
+              wird.
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p><b>Die Tastatur verdeckt Eingabefelder (Handy):</b></p>
+          <p>
+            Beispiel: So aktivieren Sie die "Schwebende Tastatur" auf einem
+            Samsung Galaxy A33 Gerät:
+          </p>
+          <ol>
+            <li>Tippen Sie auf die drei Punkte über der Tastatur</li>
+            <li>Wählen Sie "Modi"</li>
+            <li>Wählen Sie "Schwebende Tastatur"</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
     <p class="empty-last-item"></p>
   </ion-content>
 </ng-template>

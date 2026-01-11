@@ -50,6 +50,10 @@
     "CARD_RESULTS": {
       "LABEL": {
         "TRANSLATED_TEXT": "Übersetzter Text"
+      },
+      "TOAST": {
+        "SPEAK_NOT_SUPPORTED": "Text-to-Speech wird in diesem Browser nicht unterstützt.",
+        "TEXT_TRANSLATED": "Text wurde übersetzt."
       }
     }
   },
@@ -79,7 +83,7 @@
       }
     },
     "TARGET_LANGUAGES": {
-      "ACCORDION": "Zielsprachen ändern",
+      "ACCORDION": "Zielsprachen auswählen / ändern",
       "LABEL": {
         "BASE_LANG": "Basissprache",
         "TARGET_LANG": "Zielsprache(n) auswählen"
@@ -94,7 +98,7 @@
         "TITLE": "Zielsprache(n) auswählen",
         "SUB_TITLE": "{{selectedLanguages}} von maximal {{maxTargetLanguages}} ausgewählt",
         "SEARCH": {
-          "PLACEHOLDER": "Sprachen s  uchen...",
+          "PLACEHOLDER": "Sprachen suchen...",
           "TOOLTIPS": {
             "FILTER_SELECTED": "Nur ausgewählte Sprachen anzeigen",
             "CLEAR_FILTER": "Filter löschen und alle Zielsprachen anzeigen",

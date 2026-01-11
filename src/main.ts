@@ -25,6 +25,7 @@ import {
   rocketOutline,
   settingsOutline,
   trashOutline,
+  volumeHighOutline,
 } from 'ionicons/icons';
 
 import { AppComponent } from './app/app.component';
@@ -54,6 +55,7 @@ addIcons({
   'rocket-outline': rocketOutline,
   'settings-outline': settingsOutline,
   'trash-outline': trashOutline,
+  'volume-high-outline': volumeHighOutline,
 });
 
 // Register German locale data for number/date pipes
