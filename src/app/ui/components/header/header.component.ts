@@ -54,6 +54,10 @@ export class HeaderComponent {
     return this.currentTab === Tab.Settings;
   }
 
+  get hideTabsBar(): boolean {
+    return !this.utilsService.isShowIonTabBar;
+  }
+
   goToSettings() {
     this.utilsService.navigateToTab(Tab.Settings);
   }

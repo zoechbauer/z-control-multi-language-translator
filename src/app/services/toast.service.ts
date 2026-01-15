@@ -46,7 +46,7 @@ export class ToastService {
       position: this.getToastPosition(),
       buttons: [
         {
-          icon: 'close',
+          icon: 'close-outline',
           role: 'cancel',
         },
       ],

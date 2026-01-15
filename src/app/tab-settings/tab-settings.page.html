@@ -3,7 +3,7 @@
 </div>
 <ion-content
   #content
-  class="qr-settings-content"
+  class="settings-content"
   [class.landscape]="!utilsService.isPortrait"
 >
   <ion-accordion-group
@@ -18,9 +18,7 @@
       {{'SETTINGS.TITLE' | translate}}
     </h5>
     @if (selectedLanguage) {
-    <app-language-accordion
-      [lang]="selectedLanguage"
-    ></app-language-accordion>
+    <app-language-accordion [lang]="selectedLanguage"></app-language-accordion>
     } @if (selectedLanguage) {
     <div style="margin-top: 16px">
       <app-target-languages-accordion
@@ -28,6 +26,7 @@
       ></app-target-languages-accordion>
     </div>
     }
+    <app-text-to-speech-accordion></app-text-to-speech-accordion>
     <h5 class="ion-text-center settings-section-title" title="">
       {{ "SETTINGS.FEEDBACK.SEPARATOR" | translate }}
     </h5>
@@ -58,10 +57,15 @@
       [lang]="selectedLanguage"
       (ionChange)="onTargetLanguagesChange($event)"
     ></app-target-languages-accordion>
-    } @case ('z-control') {
-    <app-feedback-accordion
+    } @case ('text-to-speech') {
+    <app-text-to-speech-accordion
       [lang]="selectedLanguage"
-    ></app-feedback-accordion>
+      [isNative]="isNative"
+      [(ngModel)]="textToSpeechValues"
+      (ngModelChange)="onChangeTtsValue($event)"
+      ></app-text-to-speech-accordion>
+    } @case ('z-control') {
+    <app-feedback-accordion [lang]="selectedLanguage"></app-feedback-accordion>
     } @case ('privacy-policy') {
     <app-privacy-policy-accordion
       [lang]="selectedLanguage"

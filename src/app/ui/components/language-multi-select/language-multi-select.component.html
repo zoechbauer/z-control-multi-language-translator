@@ -30,6 +30,7 @@
       name="checkbox-outline"
       slot="start"
       (click)="filterSelectedLanguages()"
+      (keydown.enter)="filterSelectedLanguages()"
       title="{{
         'SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.FILTER_SELECTED' | translate
       }}"
@@ -50,6 +51,7 @@
       name="trash-outline"
       slot="end"
       (click)="clearSearch(searchbar)"
+      (keydown.enter)="clearSearch(searchbar)"
       title="{{
         'SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.CLEAR_FILTER' | translate
       }}"

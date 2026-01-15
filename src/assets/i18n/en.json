@@ -36,24 +36,28 @@
       "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
-        "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)"
+        "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)",
+        "ENTER_TEXT": "Enter text"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Enter text in base language",
+        "INPUT_TEXT": "Enter text in {{baseLanguage}}",
         "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)"
       },
       "BUTTON": {
         "TRANSLATE": "Translate",
-        "CLEAR": "Clear"
+        "CLEAR": "Clear",
+        "TOGGLE_CARD_INPUT": "back to input",
+        "TOGGLE_CARD_RESULTS": "to translation"
       }
     },
     "CARD_RESULTS": {
       "LABEL": {
+        "ENTERED_TEXT": "Entered Text",
         "TRANSLATED_TEXT": "Translated Text"
       },
       "TOAST": {
         "SPEAK_NOT_SUPPORTED": "Text-to-Speech is not supported in this browser.",
-        "TEXT_TRANSLATED": "Text has been translated."
+        "TEXT_TRANSLATED_SIMULATION": "Simulation is being used."
       }
     }
   },
@@ -110,6 +114,21 @@
         "BUTTON": {
           "CLOSE": "Close"
         }
+      }
+    },
+    "TEXT_TO_SPEECH": {
+      "ACCORDION": "Text-to-Speech Settings",
+      "LABEL": {
+        "TTS_RATE": "Speech Rate",
+        "TTS_PITCH": "Pitch"
+      },
+      "TOOLTIPS": {
+        "TTS_RATE": "Adjust the speech rate of the text-to-speech output (default is 1).",
+        "TTS_PITCH": "Adjust the pitch of the text-to-speech output (default is 1).",
+        "RESET_TTS": "Reset speech output settings"
+      },
+      "BUTTON": {
+        "RESET_TTS": "reset"
       }
     },
     "FEEDBACK": {

@@ -15,7 +15,9 @@ import { GetSourceAccordionComponent } from '../ui/components/accordions/get-sou
 import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/privacy-policy-accordion.component';
 import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
 import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
-import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
+import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
+import { TextSpeechService } from '../services/text-to-speach.service';
+import { TextToSpeechValues } from '../shared/interfaces';
 
 @Component({
   selector: 'app-tab-settings',
@@ -31,6 +33,7 @@ import { TranslationGoogleTranslateService } from '../services/translation-googl
     GetSourceAccordionComponent,
     PrivacyPolicyAccordionComponent,
     GetMobileAppAccordionComponent,
+    TextToSpeechAccordionComponent
   ],
 })
 export class TabSettingsPage implements OnInit, OnDestroy {
@@ -40,13 +43,14 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   selectedLanguageName?: string;
   LogoType = LogoType;
   Tab = Tab;
+  textToSpeechValues!: TextToSpeechValues;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
     public translate: TranslateService,
     public readonly localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService
+    private readonly textToSpeechService: TextSpeechService
   ) {}
 
   ngOnInit() {
@@ -70,6 +74,11 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.utilsService.logoClicked$.subscribe(() => {
         this.openFeedbackAccordion();
+      })
+    );
+    this.subscriptions.push(
+      this.localStorage.textToSpeechValues$.subscribe((ttsValues: TextToSpeechValues) => {
+        this.textToSpeechValues = ttsValues;
       })
     );
   }
@@ -118,6 +127,11 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     }
   }
 
+  onChangeTtsValue(values: any) {
+    console.log('onChangeTtsValue values:', values);
+    this.localStorage.saveTextToSpeechValues(values);
+  }
+
   showAll() {
     this.openAccordion = null;
     this.showAllAccordions = true;
@@ -134,10 +148,6 @@ export class TabSettingsPage implements OnInit, OnDestroy {
       date: environment.version.date,
     };
     return `${major}.${minor} (${date})`;
-  }
-
-  openHelpModal() {
-    this.utilsService.openHelpModal();
   }
 
   ngOnDestroy(): void {

@@ -18,8 +18,8 @@ Add a button next to each translation in your template:
 
 ```html
 <ion-row>
-  <ion-col class="larger-font" size="2"> {{ translation.language }} </ion-col>
-  <ion-col class="larger-font" size="8"> {{ translation.translatedText }} </ion-col>
+  <ion-col size="2"> {{ translation.language }} </ion-col>
+  <ion-col size="8"> {{ translation.translatedText }} </ion-col>
   <ion-col size="2">
     <ion-button fill="clear" size="small" (click)="speak(translation.translatedText, translation.language)">
       <ion-icon name="volume-high-outline"></ion-icon>

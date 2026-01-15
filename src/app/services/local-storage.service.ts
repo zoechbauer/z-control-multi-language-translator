@@ -3,10 +3,12 @@ import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
+import { TextToSpeechValues } from '../shared/interfaces';
 
 enum LocalStorage {
   SelectedLanguage = 'selectedLanguage',
   TargetLanguages = 'targetLanguages',
+  TextToSpeechValues = 'textToSpeechValues',
 }
 
 @Injectable({
@@ -28,6 +30,10 @@ export class LocalStorageService {
   targetLanguagesNameWithLineBreaks$ =
     this.targetLanguagesNameWithLineBreaksSubject.asObservable();
 
+    textToSpeechValuesSubject = new BehaviorSubject<TextToSpeechValues>(
+      this.getDefaultTextToSpeechValues()
+    );
+    textToSpeechValues$ = this.textToSpeechValuesSubject.asObservable();
   constructor(
     private readonly storage: Storage,
     private readonly googleTranslateService: TranslationGoogleTranslateService
@@ -38,7 +44,7 @@ export class LocalStorageService {
   }
 
   /**
-   * Initializes storage and loads selected language, with fallback to defaults on error.
+   * Initializes storage and loads selected language, target languages, and text-to-speech values.
    */
   async initializeServicesAsync(
     translate: import('@ngx-translate/core').TranslateService
@@ -48,6 +54,7 @@ export class LocalStorageService {
       const lang = await this.loadSelectedOrDefaultLanguage();
       await this.setSelectedOrDefaultLanguageName(lang);
       await this.loadTargetLanguages();
+      await this.loadTextToSpeechValues();
     } catch (error) {
       console.error('App initialization failed:', error);
       await this.initializeWithDefaults(translate);
@@ -66,11 +73,6 @@ export class LocalStorageService {
     } catch (fallbackError) {
       console.error('Critical: Even defaults failed:', fallbackError);
     }
-  }
-
-  getMobileDefaultLanguage(): string {
-    const lang = navigator.language.split('-')[0]; // e.g. "de-DE" -> "de"
-    return /(de|en)/gi.test(lang) ? lang : 'en';
   }
 
   async loadSelectedOrDefaultLanguage(): Promise<string> {
@@ -145,6 +147,27 @@ export class LocalStorageService {
     }
   }
 
+  async loadTextToSpeechValues(): Promise<TextToSpeechValues> {
+    const ttsValues = await this.storage.get(LocalStorage.TextToSpeechValues);
+    if (ttsValues) {
+      this.textToSpeechValuesSubject.next(JSON.parse(ttsValues));
+      return JSON.parse(ttsValues);
+    } else {
+      const defaultValues = this.getDefaultTextToSpeechValues();
+      await this.saveTextToSpeechValues(defaultValues);
+      return defaultValues;
+    }
+  }
+
+  async saveTextToSpeechValues(values: TextToSpeechValues) {
+    try {
+      await this.storage.set(LocalStorage.TextToSpeechValues, JSON.stringify(values));
+      this.textToSpeechValuesSubject.next(values);
+    } catch (error) {
+      console.error('Error saving text-to-speech values:', error);
+    }
+  }
+
   private async setTargetLanguageNames(baseLang: string, langs: string[]) {
     const targetLanguagesName: string =
       await this.googleTranslateService.getFormattedTargetLanguageNamesForCodes(
@@ -152,5 +175,17 @@ export class LocalStorageService {
         langs
       );
     this.targetLanguagesNameWithLineBreaksSubject.next(targetLanguagesName);
+  }
+
+  private getMobileDefaultLanguage(): string {
+    const lang = navigator.language.split('-')[0]; // e.g. "de-DE" -> "de"
+    return /(de|en)/gi.test(lang) ? lang : 'en';
+  }
+
+  private getDefaultTextToSpeechValues(): TextToSpeechValues {
+    return {
+      rate: 50,
+      pitch: 50,
+    };
   }
 }

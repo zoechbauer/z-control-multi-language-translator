@@ -1,4 +1,8 @@
-<div [class.web-app-width]="!isNativeApp">
+<div
+  [class.web-app-width]="!isNativeApp"
+  [class.native-app-height-show-tabs-bar]="isNativeApp && showTabsBar"
+  [class.native-app-height-hide-tabs-bar]="isNativeApp && !showTabsBar"
+>
   <ion-app>
     <ion-router-outlet></ion-router-outlet>
   </ion-app>

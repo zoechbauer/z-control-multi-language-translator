@@ -1,7 +1,7 @@
 // translation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, firstValueFrom, map, of, tap } from 'rxjs';
+import { Observable, firstValueFrom, map, of, pipe, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
@@ -24,6 +24,10 @@ export class TranslationGoogleTranslateService {
   private supportedLanguagesCache: { [lang: string]: GoogleLanguage[] } = {};
 
   constructor(private readonly http: HttpClient) {}
+
+  // Set to true in environment.ts to simulate translations without making actual API calls
+  // This helps to save the free quota during development and layout testing
+  static readonly SIMULATE_TRANSLATION = environment.app.simulateTranslation;
 
   /**
    * Translates a given word or phrase from the source language to the target language using Google Translate API.
@@ -54,6 +58,26 @@ export class TranslationGoogleTranslateService {
           return { [target]: translatedText };
         })
       );
+  }
+
+  /**
+   * Simulates the Translation of a given word or phrase from the source language to the target language.
+   * This function is for testing layout improvement to avoid network calls which reduces the free language API quota.
+   * @param word The text to translate.
+   * @param source The source language code.
+   * @param target The target language code.
+   * @returns An Observable emitting an object with the target language code as key and the translated text as value.
+   */
+  simulateTranslateText(
+    word: string,
+    source: string,
+    target: string
+  ): Observable<Record<string, string>> {
+    if (!source || !target) {
+      throw new Error('Source and target languages must be provided');
+    }
+    const translatedText = "This simulated translation helps to improve the app's layout without making actual network calls.";
+    return of({ [target]: translatedText });
   }
 
   /**

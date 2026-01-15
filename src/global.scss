@@ -43,19 +43,17 @@
   }
 }
 
+.native-app-height-hide-tabs-bar {
+  ion-router-outlet {
+    height: calc(100vh - 44px);
+  }
+}
+
 ion-app {
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
   padding: 0 16px;
-}
-
-ion-header {
-  --ion-safe-area-top: env(safe-area-inset-top);
-}
-
-ion-tab-bar {
-  --ion-safe-area-bottom: env(safe-area-inset-bottom);
 }
 
 body.native-app {
@@ -68,11 +66,6 @@ body.native-app {
   margin: 0;
   padding: 0;
 }
-
-// TODO delete if not needed anymore
-// .web-app ion-header {
-//   margin-top: -25px !important;
-// }
 
 ion-header {
   margin-right: 0;
@@ -138,8 +131,8 @@ ion-header ion-toolbar:first-of-type {
 }
 
 .app-header,
-.qr-code-content,
-.qr-settings-content {
+.translation-content,
+.settings-content {
   &.landscape {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -190,7 +183,7 @@ ion-title {
   font-size: 1.1rem;
 }
 
-.qr-settings-content {
+.settings-content {
   .settings-section-title {
     color: var(--ion-color-primary);
     font-size: 0.8em;

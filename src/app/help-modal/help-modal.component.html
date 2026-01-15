@@ -56,9 +56,12 @@
             >How to use the app?</a
           >
         </li>
-        <li *ngIf="isNative">
-          <a href="#" (click)="utilsService.scrollTo('web-version', $event)"
-            >Using the Web Version</a
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('web-version', $event)"
+            class="toc-link-normal-height"
+            >Mobile Version versus Web Version</a
           >
         </li>
         <li>
@@ -67,7 +70,10 @@
           >
         </li>
         <li *ngIf="isNative" class="toc-increase-margin-top">
-          <a href="#" (click)="utilsService.scrollTo('troubleshooting', $event)"
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('troubleshooting', $event)"
+            class="toc-link-normal-height"
             >Troubleshooting & Problem Solving</a
           >
         </li>
@@ -80,7 +86,7 @@
       <strong>
         You can enter a text of up to 100 characters and have it easily
         translated into up to 5 selected languages using
-        <i>Google Translate</i>.
+        <i>Google Translate and have it read aloud.</i>.
       </strong>
       The base language (English or German) as well as the target languages can
       be freely selected in the settings.
@@ -148,18 +154,38 @@
     <ul class="no-list-style">
       <li>
         <b>First launch of the app</b>
-        <p>
-          When you open the app for the first time, your device's system
-          language (English or German) is automatically set as the base
-          language. You are taken directly to the translation page, where a
-          message appears indicating that no target languages have been selected
-          yet. Please go to the settings and select at least one target language
-          to use the translation feature.
-        </p>
-        <p>
-          Set your preferred base language and choose at least one target
-          language to start translating.
-        </p>
+        <ul class="no-list-style-inside">
+          <li>
+            When you open the app for the first time, your device's system
+            language (English or German) is automatically set as the base
+            language. You are taken directly to the translation page, where a
+            message appears indicating that no target languages have been
+            selected yet. Please go to the settings and select at least one
+            target language to use the translation feature.
+          </li>
+          <li>
+            Set your preferred base language and choose at least one target
+            language to start translating.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p><b>Performing the translation</b></p>
+        <ol>
+          <li>Enter the text to be translated into the input field.</li>
+          <li>Click the "Translate" button to start the translation.</li>
+          <li>
+            The translations in the selected target languages will be displayed.
+          </li>
+          <li>
+            Click the speaker icon next to a translation to have the text read
+            aloud.
+          </li>
+          <li>
+            Use the "back to input" button to return to the input form and,
+            after pressing the "Delete" button, start a new translation.
+          </li>
+        </ol>
       </li>
       <li>
         <b>How do I switch between translation and settings?</b>
@@ -219,6 +245,17 @@
           </li>
         </ol>
       </li>
+      <li *ngIf="isNative">
+        <p>
+          <b>How do I change the speed and pitch for speech output?</b>
+        </p>
+        <ol>
+          <li>Go to the settings.</li>
+          <li>Click on Speech Output Settings.</li>
+          <li>Change the values for speed and pitch as you wish.</li>
+          <li>You can find more details in the Speech Output Settings.</li>
+        </ol>
+      </li>
       <li>
         <b>How do I switch between dark and light mode?</b>
         <p>
@@ -237,11 +274,10 @@
       </li>
     </ul>
 
-    <div *ngIf="isNative">
-      <h3 id="web-version">Using the Web Version</h3>
+    <div>
+      <h3 id="web-version">Mobile Version versus Web Version</h3>
       <p>
-        The web version offers the same functions and is available at (TODO:
-        update link)
+        The web version is available at (TODO: Update link)
         <a
           class="external-link"
           href="https://z-control-qr-code.web.app"
@@ -255,11 +291,17 @@
           ></ion-icon>
         </a>
       </p>
-      <p>Use your browser for a full keyboard experience.</p>
-      <p>
-        Unfortunately, you will not be able to use the great advantages of voice
-        input.
-      </p>
+      <p>Advantages of the mobile version:</p>
+      <ul class="no-list-style-inside">
+        <li>Take advantage of voice input via your device's keyboard.</li>
+        <li>
+          You can adjust the speed and pitch of the voice input in the settings.
+        </li>
+      </ul>
+      <p>Advantages of the web version:</p>
+      <ul class="no-list-style-inside">
+        <li>Use your browser for a full keyboard experience.</li>
+      </ul>
     </div>
 
     <h3 id="technical-info">Technical Information</h3>
@@ -384,9 +426,12 @@
             >Wie bediene ich die App?</a
           >
         </li>
-        <li *ngIf="isNative">
-          <a href="#" (click)="utilsService.scrollTo('web-version-DE', $event)"
-            >Web-Version verwenden</a
+        <li>
+          <a
+            href="#"
+            (click)="utilsService.scrollTo('web-version-DE', $event)"
+            class="toc-link-normal-height"
+            >Mobile-Version versus Web-Version</a
           >
         </li>
         <li>
@@ -400,6 +445,7 @@
           <a
             href="#"
             (click)="utilsService.scrollTo('troubleshooting-DE', $event)"
+            class="toc-link-normal-height"
             >Fehlerbehebung & Problemlösung</a
           >
         </li>
@@ -412,7 +458,7 @@
       <strong>
         Sie können einen Text mit bis zu 100 Zeichen eingeben und ihn ganz
         einfach in bis zu 5 ausgewählten Sprachen mit
-        <i>Google Translate</i> übersetzen lassen.
+        <i>Google Translate</i> übersetzen und vorlesen lassen.
       </strong>
       Die Basissprache (Englisch oder Deutsch) sowie die Zielsprachen können Sie
       in den Einstellungen frei wählen.
@@ -484,31 +530,63 @@
     <ul class="no-list-style">
       <li>
         <b>Erster Aufruf der App</b>
-        <p>
-          Beim ersten Öffnen der App wird automatisch die Systemsprache Ihres
-          Geräts (Englisch oder Deutsch) als Basissprache übernommen. Sie
-          gelangen direkt zur Übersetzungsseite, auf der ein Hinweis erscheint,
-          dass noch keine Zielsprachen ausgewählt wurden. Bitte wählen Sie in
-          den Einstellungen mindestens eine Zielsprache aus, um die
-          Übersetzungsfunktion nutzen zu können.
-        </p>
-        <p>
-          Legen Sie Ihre gewünschte Basissprache fest und wählen Sie mindestens
-          eine Zielsprache, um mit dem Übersetzen zu beginnen.
-        </p>
+        <ul class="no-list-style-inside">
+          <li>
+            Beim ersten Öffnen der App wird automatisch die Systemsprache Ihres
+            Geräts (Englisch oder Deutsch) als Basissprache übernommen. Sie
+            gelangen direkt zur Übersetzungsseite, auf der ein Hinweis
+            erscheint, dass noch keine Zielsprachen ausgewählt wurden. Bitte
+            wählen Sie in den Einstellungen mindestens eine Zielsprache aus, um
+            die Übersetzungsfunktion nutzen zu können.
+          </li>
+          <li>
+            Legen Sie Ihre gewünschte Basissprache fest und wählen Sie
+            mindestens eine Zielsprache, um mit dem Übersetzen zu beginnen.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p><b>Durchführen der Übersetzung</b></p>
+        <ol>
+          <li>Geben Sie den zu übersetzenden Text in das Eingabefeld ein.</li>
+          <li>
+            Klicken Sie auf die Schaltfläche "Übersetzen", um die Übersetzung zu
+            starten.
+          </li>
+          <li>
+            Die Übersetzungen in den ausgewählten Zielsprachen werden angezeigt.
+          </li>
+          <li>
+            Klicken Sie auf das Lautsprechersymbol neben einer Übersetzung, um
+            sich den Text vorlesen zu lassen.
+          </li>
+          <li>
+            Mit der Schaltfläche "zurück zur Eingabe" wechseln Sie zurück zur
+            Eingabmaske und können nach Drücken der Schaltfläche "Löschen" eine
+            neue Übersetzung starten.
+          </li>
+        </ol>
       </li>
       <li>
         <b>Wie wechsle ich zwischen Übersetzung und Einstellungen?</b>
         <ul class="no-list-style-inside">
-          <li>
+          <li *ngIf="this.utilsService.isShowIonTabBar">
             <b>Auf Mobilgeräten im Hochformat:</b> Nutzen Sie die Tabs am
             unteren Bildschirmrand, um zwischen Übersetzen und Einstellungen zu
             wechseln.
           </li>
-          <li>
+          <li *ngIf="this.utilsService.isShowIonTabBar">
             <b>Auf Tablets, Desktop-PCs oder im Querformat:</b> Verwenden Sie
             die Schaltfläche oben rechts in der Kopfzeile, um zwischen
-            Übersetzen und Einstellungen zu wechseln.
+            Übersetzen <ion-icon name="language-outline"></ion-icon> und
+            Einstellungen <ion-icon name="settings-outline"></ion-icon> zu
+            wechseln.
+          </li>
+          <li *ngIf="!this.utilsService.isShowIonTabBar">
+            Verwenden Sie die Schaltfläche oben rechts in der Kopfzeile, um
+            zwischen Übersetzen
+            <ion-icon name="language-outline"></ion-icon> und Einstellungen
+            <ion-icon name="settings-outline"></ion-icon> zu wechseln.
           </li>
         </ul>
       </li>
@@ -562,6 +640,22 @@
           </li>
         </ol>
       </li>
+      <li *ngIf="isNative">
+        <p>
+          <b
+            >Wie ändere ich Geschwindigkeit und Tonhöhe bei der Sprachausgabe?</b
+          >
+        </p>
+        <ol>
+          <li>Wechseln Sie in die Einstellungen.</li>
+          <li>Klicken Sie auf Sprachausgabe Einstellungen.</li>
+          <li>
+            Ändern Sie die Werte für Geschwindigkeit und Tonhöhe nach Ihren
+            Wünschen.
+          </li>
+          <li>Details finden Sie bei den Sprachausgabe Einstellungen.</li>
+        </ol>
+      </li>
       <li>
         <b>Wie wechsle ich zwischen Dunkel- und Hellmodus?</b>
         <p>
@@ -581,11 +675,10 @@
       </li>
     </ul>
 
-    <div *ngIf="isNative">
-      <h3 id="web-version-DE">Web-Version verwenden</h3>
+    <div>
+      <h3 id="web-version-DE">Mobile-Version versus Web-Version</h3>
       <p>
-        Die Web-Version bietet die gleichen Funktionen und ist erreichbar unter
-        (TODO: Link anpassen)
+        Die Web-Version ist erreichbar unter (TODO: Link anpassen)
         <a
           class="external-link"
           href="https://z-control-qr-code.web.app"
@@ -599,11 +692,23 @@
           ></ion-icon>
         </a>
       </p>
-      <p>Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.</p>
-      <p>
-        Leider können Sie dann die großen Vorteile der Spracheingabe nicht
-        nutzen.
-      </p>
+      <p>Vorteile der mobilen Version:</p>
+      <ul class="no-list-style-inside">
+        <li>
+          Nutzen Sie die Vorteile der Spracheingabe über die Tastatur Ihres
+          Geräts.
+        </li>
+        <li>
+          Sie können die Geschwindigkeit und Tonhöhe der Spracheingabe in den
+          Einstellungenanpassen.
+        </li>
+      </ul>
+      <p>Vorteile der Web-Version:</p>
+      <ul class="no-list-style-inside">
+        <li>
+          Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.
+        </li>
+      </ul>
     </div>
 
     <h3 id="technical-info-DE">Technische Informationen</h3>

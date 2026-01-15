@@ -14,6 +14,7 @@ import {
   IonRow,
   IonIcon,
   IonTextarea,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -41,6 +42,7 @@ interface Translation {
   templateUrl: 'tab-translation.page.html',
   styleUrls: ['tab-translation.page.scss'],
   imports: [
+    IonLabel,
     IonIcon,
     IonButton,
     IonCard,
@@ -70,6 +72,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   textareaDisabled: boolean = false;
   translateBtnDisabled: boolean = false;
   clearBtnDisabled: boolean = false;
+  cardInputVisible: boolean = true;
+  cardResultsVisible: boolean = false;
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -90,6 +94,12 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     return AppConstants.maxTargetLanguages;
   }
 
+  get toggleButtonLabel(): string {
+    return this.cardInputVisible
+      ? this.translate.instant('TRANSLATE.CARD.BUTTON.TOGGLE_CARD_RESULTS')
+      : this.translate.instant('TRANSLATE.CARD.BUTTON.TOGGLE_CARD_INPUT');
+  }
+
   ngOnInit() {
     this.text = '';
     this.utilsService.showOrHideIonTabBar();
@@ -103,13 +113,27 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   getTranslationPlaceholder(): string {
     return this.selectedLanguages.length === 0
       ? this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.NO_TARGET_LANGUAGES')
-      : this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT');
+      : this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT', {
+          baseLanguage: this.baseLangString.substring(
+            0,
+            this.baseLangString.indexOf(' (')
+          ),
+        });
   }
 
   onTextareaInput(): void {
     const hasText = this.text.trim().length > 0;
     this.translateBtnDisabled = !hasText;
     this.clearBtnDisabled = !hasText;
+  }
+
+  translateTextOrSimulate(): void {
+    if (TranslationGoogleTranslateService.SIMULATE_TRANSLATION) {
+      this.simulateTranslateText();
+    } else {
+      this.translateText();
+    }
+    this.toggleCard();
   }
 
   translateText(): void {
@@ -134,8 +158,36 @@ export class TabTranslationPage implements OnInit, OnDestroy {
           );
         });
     });
+  }
+
+  simulateTranslateText(): void {
+    if (!this.text.trim()) {
+      return;
+    }
+    this.disableFormControls();
+    this.translations = [];
+
+    this.selectedLanguages.forEach((translateToLang: string) => {
+      this.googleTranslateService
+        .simulateTranslateText(this.text, this.baseLang, translateToLang)
+        .subscribe((result) => {
+          // Defensive: result may be undefined/null or not have the key
+          const translatedText = result?.[translateToLang] ?? '';
+          this.translations.push({
+            language: translateToLang,
+            translatedText,
+          });
+          this.translations.sort((a, b) =>
+            a.language.localeCompare(b.language)
+          );
+          // For simulation, we just set some dummy text
+          this.text = translatedText;
+        });
+    });
     this.toastService.showToast(
-      this.translate.instant('TRANSLATE.CARD_RESULTS.TOAST.TEXT_TRANSLATED'),
+      this.translate.instant(
+        'TRANSLATE.CARD_RESULTS.TOAST.TEXT_TRANSLATED_SIMULATION'
+      ),
       ToastAnchor.TRANSLATE_PAGE
     );
   }
@@ -160,8 +212,13 @@ export class TabTranslationPage implements OnInit, OnDestroy {
 
   getTextareaRows(): string {
     return this.utilsService.isNative && this.utilsService.isPortrait
-      ? '5'
-      : '3';
+      ? '3'
+      : '2';
+  }
+
+  toggleCard(): void {
+    this.cardInputVisible = !this.cardInputVisible;
+    this.cardResultsVisible = !this.cardResultsVisible;
   }
 
   private setupEventListeners(): void {
@@ -193,6 +250,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.translateBtnDisabled = true;
     this.translations = [];
     this.text = '';
+    this.cardInputVisible = true;
+    this.cardResultsVisible = false;
   }
 
   private setCssClasses(): void {

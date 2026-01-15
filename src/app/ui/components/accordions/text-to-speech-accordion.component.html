@@ -1,0 +1,105 @@
+<ion-accordion value="text-to-speech" id="text-to-speech">
+  <ion-item slot="header" color="light" class="accordion-margin-top">
+    <ion-label>{{ "SETTINGS.TEXT_TO_SPEECH.ACCORDION" | translate }}</ion-label>
+  </ion-item>
+
+  <div class="ion-padding" slot="content" title="">
+    <div class="ion-text-center">
+      <ion-label>
+        {{ getTtsRateLabel() }}
+      </ion-label>
+      <ion-range
+        *ngIf="ngModel"
+        labelPlacement="stacked"
+        [value]="ngModel.rate"
+        (ionChange)="onChangeTtsRate($event)"
+        [disabled]="!isNative"
+        style="margin: 20px 45px 35px 45px"
+      >
+        <div name="arrow-back-outline" slot="start">0</div>
+        <div name="arrow-forward-outline" slot="end">100</div>
+      </ion-range>
+      <ion-label>
+        {{ getTtsPitchLabel() }}
+      </ion-label>
+      <ion-range
+        *ngIf="ngModel"
+        labelPlacement="stacked"
+        [value]="ngModel.pitch"
+        (ionChange)="onChangeTtsPitch($event)"
+        [disabled]="!isNative"
+        style="margin: 20px 45px 35px 45px"
+      >
+        <div name="arrow-back-outline" slot="start">0</div>
+        <div name="arrow-forward-outline" slot="end">100</div>
+      </ion-range>
+      <ion-button
+        (click)="resetTtsSettings()"
+        [disabled]="!isNative"
+        color="primary"
+        title="{{ 'SETTINGS.TEXT_TO_SPEECH.TOOLTIPS.RESET_TTS' | translate }}"
+      >
+        <ion-icon name="reload-outline" slot="start"></ion-icon>
+        {{ "SETTINGS.TEXT_TO_SPEECH.BUTTON.RESET_TTS" | translate }}
+      </ion-button>
+    </div>
+
+    <ng-container *ngIf="lang === 'de'; else englishTemplate">
+      <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+    </ng-container>
+
+    <!-- E N G L I S H   T E M P L A T E -->
+
+    <ng-template #englishTemplate>
+      <div class="notes">
+        <p style="font-weight: bold">
+          Diese Einstellungen sind leider nur auf mobilen Geräten verfügbar
+          (Telefone und Tablets).
+        </p>
+        <p>
+          Here you can adjust the speed and pitch settings for the speech output
+          of translations.
+        </p>
+        <p>
+          Change the sliders, switch back to the translation view, and have the
+          translated texts read aloud.
+        </p>
+        <p>
+          If the changes are not suitable, come back here and adjust the
+          sliders. Repeat this until you are satisfied with the result.
+        </p>
+        <p>
+          The <i>Reset</i> button resets the settings to their default values.
+        </p>
+      </div>
+    </ng-template>
+
+    <!-- G E R M A N   T E M P L A T E -->
+
+    <ng-template #germanTemplate>
+      <div class="notes">
+        <p style="font-weight: bold">
+          Diese Einstellungen sind leider nur auf mobilen Geräten verfügbar
+          (Telefone und Tablets).
+        </p>
+        <p>
+          Hier können Sie die Geschwindigkeits- und Tonhöhen-Einstellungen für
+          die Sprach-Ausgabe der Übersetzungen anpassen.
+        </p>
+        <p>
+          Ändern Sie die Regler, wechseln Sie zurück zur Übersetzungsansicht,
+          und lassen sich die übersetzten Texte vorlesen.
+        </p>
+        <p>
+          Falls die Änderungen nicht passen, wechseln Sie wieder hierher und
+          passen die Regler an. Wiederholen Sie dies, bis Sie mit dem Ergebnis
+          zufrieden sind.
+        </p>
+        <p>
+          Die <i>Zurücksetzen</i>-Taste setzt die Einstellungen auf die
+          Standardwerte zurück.
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</ion-accordion>

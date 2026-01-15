@@ -9,7 +9,51 @@
   class="translation-content"
   [class.landscape]="!utilsService.isPortrait"
 >
-  <ion-card class="translation-card">
+  @if(translations.length > 0) {
+  <div class="sticky-toggle-btn">
+    <ion-button
+      fill="clear"
+      (click)="toggleCard()"
+      [disabled]="clearBtnDisabled"
+      (keydown.enter)="toggleCard()"
+      >{{ toggleButtonLabel }}</ion-button
+    >
+    @if(cardResultsVisible) {
+    <ion-card class="translation-results-card-entered-text">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="2"
+              ><ion-icon name="language-outline"></ion-icon>
+            </ion-col>
+            <ion-col size="10"
+              ><strong
+                >{{ 'TRANSLATE.CARD_RESULTS.LABEL.ENTERED_TEXT' | translate
+                }}</strong
+              ></ion-col
+            >
+          </ion-row>
+          <ion-row>
+            <ion-col size="2">{{ baseLang }}</ion-col>
+            <ion-col size="8">{{ text }}</ion-col>
+            <ion-col size="2">
+              <ion-button
+                fill="clear"
+                size="small"
+                (click)="speak(text, baseLang)"
+                (keydown.enter)="speak(text, baseLang)"
+              >
+                <ion-icon name="volume-high-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    }
+  </div>
+  } @if(cardInputVisible) {
+  <ion-card class="translation-input-card">
     <ion-card-header>
       <ion-card-title>{{ 'APP.NAME' | translate }}</ion-card-title>
       <p>
@@ -22,7 +66,7 @@
           <strong>{{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}</strong
           >: {{ baseLangString }}
         </div>
-        <div>
+        <div class="selected-target-languages">
           <strong
             >{{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate
             }}</strong
@@ -36,8 +80,9 @@
     </ion-card-header>
     <ion-card-content>
       <ion-textarea
-        class="larger-font"
         [(ngModel)]="text"
+        labelPlacement="stacked"
+        label="{{ 'TRANSLATE.CARD.LABEL.ENTER_TEXT' | translate }}"
         [placeholder]="getTranslationPlaceholder()"
         fill="outline"
         rows="{{ getTextareaRows() }}"
@@ -49,16 +94,21 @@
     </ion-card-content>
     <ion-button
       fill="clear"
-      (click)="translateText()"
+      (click)="translateTextOrSimulate()"
       [disabled]="translateBtnDisabled"
+      (keydown.enter)="translateTextOrSimulate()"
       >{{ 'TRANSLATE.CARD.BUTTON.TRANSLATE' | translate }}</ion-button
     >
-    <ion-button fill="clear" (click)="clear()" [disabled]="clearBtnDisabled"
+    <ion-button
+      fill="clear"
+      (click)="clear()"
+      [disabled]="clearBtnDisabled"
+      (keydown.enter)="clear()"
       >{{ 'TRANSLATE.CARD.BUTTON.CLEAR' | translate }}</ion-button
     >
   </ion-card>
-  @if(translations.length > 0) {
-  <ion-card class="translation-card">
+  } @if(translations.length > 0 && cardResultsVisible) {
+  <ion-card class="translation-results-card">
     <ion-card-content>
       <ion-grid>
         <ion-row>
@@ -74,10 +124,10 @@
         </ion-row>
         @for (translation of translations; track translation.language) {
         <ion-row>
-          <ion-col class="larger-font" size="2"
+          <ion-col size="2"
             >{{ translation.language }}</ion-col
           >
-          <ion-col class="larger-font" size="8"
+          <ion-col size="8"
             >{{ translation.translatedText }}</ion-col
           >
           <ion-col size="2">
@@ -85,6 +135,7 @@
               fill="clear"
               size="small"
               (click)="speak(translation.translatedText, translation.language)"
+              (keydown.enter)="speak(translation.translatedText, translation.language)"
             >
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>

@@ -2,6 +2,24 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.7] – 2026-01-15
+
+### ✨ New Features
+ - Added a Privacy Policy to the landing page with localized content in English and German, providing clear information about data handling and user privacy.
+ Updated the Settings page links to direct users to the new, app-specific Privacy Policy and enhanced the data privacy information provided.
+- The visibility of the Tab Bar can now be configured via environment files. When the Tab Bar is hidden, header buttons are provided for navigation between the Translate and Settings pages.
+- Added a simulated translation mode that can be enabled via configuration in the environment files. This mode allows developers to test the app's layout and functionality without consuming API quota by simulating translations. The functionality is the same as the real translation but returns a fixed translation text for each target language.
+- On the Translation page, you can now control the visibility of the translation input card and results card with a toggle button. This allows you to hide the input card when not needed, providing a cleaner and more focused interface.
+
+### 🚀 Improvements
+
+- Updated copyright year in the app footer from 2025 to 2026.
+- Changed placeholder text in the translation textarea to dynamically include the name of the selected base language, providing clearer context for users.
+- Added keyboard accessibility to the text-to-speech button next to each translated text, allowing users to activate TTS using the Enter key for improved usability.
+- Disabled the TTS rate and pitch sliders in the Text-to-Speech settings accordion when the app is running on web browsers, as these settings are only applicable to native mobile platforms.
+- Updated the user help documentation to include instructions on using the new features, such as the privacy policy, Tab Bar visibility settings, simulated translation mode, and toggling input/results cards.
+- Some minor styling adjustments were made to improve the overall look and feel of the app.
+
 ## [0.6] – 2026-01-11
 
 ### ✨ New Features
@@ -9,13 +27,13 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 - Added text-to-speech (TTS) functionality for translated text using the browser's built-in Web Speech API. Users can now listen to translations directly within the app by clicking a button next to each translated text.
 - Added toast notifications to inform users when text has been successfully translated and when TTS is not supported in their browser.
 
-### ✨ Improvements
+### 🚀 Improvements
 
 - Enhanced the help page with clear instructions on using the new text-to-speech feature and selecting target languages. The documentation was streamlined to better guide users through the app's key functions. The styling of the help page was also improved for better readability.
 
 ## [0.5] – 2026-01-10
 
-### ✨ Improvements
+### 🚀 Improvements
 
 - Replaced the ion-select component with a custom Language Multi-Select, enabling users to quickly filter and search for languages by name or code, and to view only selected languages for a smoother experience.
 - Added a clear visual indicator (red placeholder text) in the translation textarea when no target languages are selected, guiding users to choose at least one target language before translating.
@@ -26,7 +44,7 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 
 ## [0.4] – 2026-01-06
 
-### ✨ Improvements
+### 🚀 Improvements
 
 - Expanded documentation with a detailed, step-by-step guide for cleaning and rebuilding the Android project in Android Studio, helping users ensure a clean build environment and resolve build issues.
 - Enhanced the troubleshooting section with a clear solution for the "invalid source release: 21" error during Android builds, including instructions for updating Gradle settings for Java 17 compatibility.

@@ -36,24 +36,28 @@
       "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
-        "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)"
+        "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
+        "ENTER_TEXT": "Text eingeben"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Geben Sie Text in der Basissprache ein",
+        "INPUT_TEXT": "Geben Sie Text in {{baseLanguage}} ein",
         "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern"
       },
       "BUTTON": {
         "TRANSLATE": "Übersetzen",
-        "CLEAR": "Löschen"
+        "CLEAR": "Löschen",
+        "TOGGLE_CARD_INPUT": "zurück zu Eingabe",
+        "TOGGLE_CARD_RESULTS": "zu Übersetzung"
       }
     },
     "CARD_RESULTS": {
       "LABEL": {
+        "ENTERED_TEXT": "Eingegebener Text",
         "TRANSLATED_TEXT": "Übersetzter Text"
       },
-      "TOAST": {
+      "TOAST": {  
         "SPEAK_NOT_SUPPORTED": "Text-to-Speech wird in diesem Browser nicht unterstützt.",
-        "TEXT_TRANSLATED": "Text wurde übersetzt."
+        "TEXT_TRANSLATED_SIMULATION": "Simulation wird verwendet."
       }
     }
   },
@@ -110,6 +114,21 @@
         "BUTTON": {
           "CLOSE": "Schließen"
         }
+      }
+    },
+    "TEXT_TO_SPEECH": {
+      "ACCORDION": "Sprachausgabe Einstellungen",
+      "LABEL": {
+        "TTS_RATE": "Sprechgeschwindigkeit",
+        "TTS_PITCH": "Stimmlage"
+      },
+      "TOOLTIPS": {
+        "TTS_RATE": "Passen Sie die Sprechgeschwindigkeit der Text-to-Speech-Ausgabe an (Standard ist 1).",
+        "TTS_PITCH": "Passen Sie die Stimmlage der Text-to-Speech-Ausgabe an (Standard ist 1).",
+        "RESET_TTS": "Spracheausgabe Einstellungen zurücksetzen"
+      },
+      "BUTTON": {
+        "RESET_TTS": "zurücksetzen"
       }
     },
     "FEEDBACK": {

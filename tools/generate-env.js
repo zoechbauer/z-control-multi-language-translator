@@ -1,4 +1,5 @@
 // simple generator: reads process.env or .env.local and writes environment.ts/.prod.ts
+// add new variables in function makeEnv()
 const fs = require("fs");
 const path = require("path");
 
@@ -45,6 +46,10 @@ function makeEnv(prod = false) {
       maxFreeTranslateCharsPerMonth: Number(
         v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000")
       ),
+      textToSpeechMinValue: Number(v("TEXT_TO_SPEECH_MIN_VALUE", "0.5")),
+      textToSpeechMaxValue: Number(v("TEXT_TO_SPEECH_MAX_VALUE", "2.0")),
+      showTabsBar: v("SHOW_TABS_BAR", "false").toLowerCase() === "true",
+      simulateTranslation: v("SIMULATE_TRANSLATION", "false").toLowerCase() === "true",
     },
     googleTranslate: {
       apiKey: v("GOOGLE_TRANSLATE_API_KEY", ""),

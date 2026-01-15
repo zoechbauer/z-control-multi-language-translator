@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  EventEmitter,
   Input,
-  Output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -34,7 +32,6 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 })
 export class LanguageAccordionComponent {
   @Input() lang?: string;
-  @Output() ionChange = new EventEmitter<string>();
 
   constructor(
     public translate: TranslateService,

@@ -43,7 +43,7 @@ export class LogoComponent implements OnInit, OnChanges {
     this.rightLogoText = '';
 
     if (this.type === LogoType.Copyright) {
-      this.leftLogoText = '© 2025';
+      this.leftLogoText = '© 2026';
       this.rightLogoText = 'z-control';
     } else {
       // show company only on landscape mode

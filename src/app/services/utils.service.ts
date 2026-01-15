@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 
 import { HelpModalComponent } from '../help-modal/help-modal.component';
 import { Tab } from '../enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
-import { Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,13 @@ export class UtilsService {
     return Capacitor.isNativePlatform();
   }
 
+  get isShowIonTabBar(): boolean {
+    if (!environment.app.showTabsBar) {
+      return false;
+    }
+    return this.isSmallScreen;
+  }
+
   navigateToTab(tab: Tab): void {
     this.router.navigate([`/tabs/tab-${tab}`]);
   }
@@ -62,7 +70,7 @@ export class UtilsService {
   }
 
   showOrHideIonTabBar(): void {
-    if (this.isSmallScreen) {
+    if (this.isShowIonTabBar) {
       this.showIonTabBar();
     } else {
       this.hideIonTabBar();

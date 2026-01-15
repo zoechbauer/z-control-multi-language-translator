@@ -1,7 +1,5 @@
 <app-logo [type]="LogoType.Copyright"></app-logo>
 
-<h1>TODO: new privacy policy content, because now it's linked to QR Code Generator app</h1>
-
 <ng-container *ngIf="lang === 'de'; else englishTemplate">
   <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
 </ng-container>
@@ -11,16 +9,25 @@
 <ng-template #englishTemplate>
   <div class="additional-margin-right">
     <p>
-      This app does not store any data on a server. All data is stored
-      exclusively locally on your device. The app des not use any external
-      services or libraries that share data with third parties. Your data
-      remains private and secure on your device.
+      The translation is done via the
+      <i>Google Translate API</i> in the cloud. The translated texts are neither
+      stored nor shared.
+    </p>
+    <p>
+      We store the number of translated characters in
+      <i>Google Firebase</i> to temporarily stop the translation function once
+      the monthly free quota is reached. This prevents unexpected costs for the
+      <i>z-control Multi Language Translator App</i>.
+    </p>
+    <p>
+      The app does not use any external services or libraries that share data
+      with third parties. Your data remains private and secure on your device.
     </p>
     <p>
       You can find the complete privacy policy on the z-control website
       <a
         class="external-link"
-        href="https://z-control-4070.web.app/privacy/basic/en"
+        href="https://z-control-4070.web.app/privacy/multi-language-translator/en"
         target="_blank"
         rel="noopener noreferrer"
         title="{{ 'SETTINGS.PRIVACY.TOOLTIPS.OPEN_POLICY' | translate }}"
@@ -42,16 +49,27 @@
 <ng-template #germanTemplate>
   <div class="additional-margin-right">
     <p>
-      Diese App speichert keine Daten auf einem Server. Alle Daten werden
-      ausschließlich lokal auf Ihrem Gerät gespeichert. Die App verwendet keine
-      externen Dienste oder Bibliotheken, die Daten mit Dritten teilen. Ihre
-      Daten bleiben privat und sicher auf Ihrem Gerät.
+      Die Übersetzung erfolgt über die
+      <i>Google Translate API</i> in der Cloud. Die übersetzten Texte werden
+      weder gespeichert noch weitergegeben.
+    </p>
+    <p>
+      Wir speichern die Anzahl der übersetzten Zeichen in
+      <i>Google Firebase</i>, um die Übersetzungsfunktion temporär zu stoppen,
+      sobald das monatliche kostenlose Kontingent erreicht ist. So vermeiden
+      wir, dass für die
+      <i>z-control Multi-Sprachen-Übersetzer App</i> unerwartete Kosten
+      entstehen.
+    </p>
+    <p>
+      Die App verwendet keine externen Dienste oder Bibliotheken, die Daten mit
+      Dritten teilen. Ihre Daten bleiben privat und sicher auf Ihrem Gerät.
     </p>
     <p>
       Die vollständige Datenschutzerklärung finden Sie auf der z-control-Website
       <a
         class="external-link"
-        href="https://z-control-4070.web.app/privacy/basic/de"
+        href="https://z-control-4070.web.app/privacy/multi-language-translator/de"
         target="_blank"
         rel="noopener noreferrer"
         title="{{ 'SETTINGS.PRIVACY.TOOLTIPS.OPEN_POLICY' | translate }}"

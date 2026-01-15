@@ -5,6 +5,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { SafeAreaInsets } from './services/safe-area-insets';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { SafeAreaInsets } from './services/safe-area-insets';
 })
 export class AppComponent {
   isNativeApp = Capacitor.isNativePlatform();
+  showTabsBar = environment.app.showTabsBar;
 
   constructor(
     private readonly renderer: Renderer2,
@@ -22,23 +24,7 @@ export class AppComponent {
     this.initializeApp();
   }
 
-    initializeApp() {
-    if (this.isNativeApp) {
-      this.renderer.addClass(document.body, 'native-app');
-      
-      // initialize StatusBar before Ionic initialization
-      StatusBar.setOverlaysWebView({ overlay: false });
-      StatusBar.show();
-      
-      SplashScreen.hide();
-      this.safeAreaInsets.setSafeAreaInsetsFix();
-    } else {
-      this.renderer.addClass(document.body, 'web-app');
-    }
-  }
-
-  // TODO check what is needed and move it to initializeApp, delete unused code
-  private initializeApp_Check() {
+  initializeApp() {
     if (this.isNativeApp) {
       this.renderer.addClass(document.body, 'native-app');
 
@@ -48,7 +34,7 @@ export class AppComponent {
 
       StatusBar.setOverlaysWebView({ overlay: false });
 
-      // don't use utilsService.isDarkMode here to avoid broken layout
+// don't use utilsService.isDarkMode here to avoid broken layout
       const isDarkMode = window.matchMedia(
         '(prefers-color-scheme: dark)'
       ).matches;
