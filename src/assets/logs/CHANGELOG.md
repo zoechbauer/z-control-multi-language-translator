@@ -2,9 +2,16 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.8] – YYYY-MM-DD
+
+### 🚀 New Features
+
+- Introduced SystemBarsService to manage status and navigation bar styles, and integrated the capgo-capacitor-navigation-bar dependency for enhanced control over system UI elements.
+
 ## [0.7] – 2026-01-15
 
 ### ✨ New Features
+
  - Added a Privacy Policy to the landing page with localized content in English and German, providing clear information about data handling and user privacy.
  Updated the Settings page links to direct users to the new, app-specific Privacy Policy and enhanced the data privacy information provided.
 - The visibility of the Tab Bar can now be configured via environment files. When the Tab Bar is hidden, header buttons are provided for navigation between the Translate and Settings pages.
