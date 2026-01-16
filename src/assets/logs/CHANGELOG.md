@@ -8,6 +8,10 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 
 - Introduced SystemBarsService to manage status and navigation bar styles, and integrated the capgo-capacitor-navigation-bar dependency for enhanced control over system UI elements.
 
+### 🚀 Improvements
+
+- On mobile devices, the translation page does not display the translation input card when in landscape mode, optimizing screen space for better usability.
+
 ## [0.7] – 2026-01-15
 
 ### ✨ New Features

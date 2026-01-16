@@ -14,7 +14,6 @@ import {
   IonRow,
   IonIcon,
   IonTextarea,
-  IonLabel,
 } from '@ionic/angular/standalone';
 import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -42,7 +41,6 @@ interface Translation {
   templateUrl: 'tab-translation.page.html',
   styleUrls: ['tab-translation.page.scss'],
   imports: [
-    IonLabel,
     IonIcon,
     IonButton,
     IonCard,
@@ -98,6 +96,13 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     return this.cardInputVisible
       ? this.translate.instant('TRANSLATE.CARD.BUTTON.TOGGLE_CARD_RESULTS')
       : this.translate.instant('TRANSLATE.CARD.BUTTON.TOGGLE_CARD_INPUT');
+  }
+
+  get showTranslationResultEnteredTextCard(): boolean {
+    return (
+      this.cardResultsVisible &&
+      (!this.utilsService.isNative || this.utilsService.isPortrait)
+    );
   }
 
   ngOnInit() {
