@@ -34,3 +34,8 @@ export class AppConstants {
     return  this._ttsDefault;
   }
 }
+
+export class FireStoreConstants {
+  static readonly COLLECTION_TRANSLATIONS = 'MLT_translations_statistics';
+  static readonly DOCUMENT_TOTALS = 'total_statistics'; 
+}

@@ -12,9 +12,14 @@ export class ToastService {
   constructor(
     public translate: TranslateService,
     private readonly toastController: ToastController,
-    private readonly utilsService: UtilsService
+    private readonly utilsService: UtilsService,
   ) {}
 
+  /**
+   * Shows a toast with a translated message, typically used for disabled actions.
+   * @param toastMsg The translation key or message to display
+   * @param anchorId Optional anchor ID for positioning the toast
+   */
   async showDisabledToast(toastMsg: string, anchorId?: ToastAnchor) {
     const translatedMsg = this.translate.instant(toastMsg);
 
@@ -36,7 +41,7 @@ export class ToastService {
 
   async showToastMessage(
     translatedToastMessage: string,
-    anchorId?: ToastAnchor
+    anchorId?: ToastAnchor,
   ) {
     const toastOptions: any = {
       message: translatedToastMessage,

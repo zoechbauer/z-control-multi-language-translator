@@ -122,7 +122,7 @@
       <li>
         <strong>
           Shared free monthly quota:
-          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
+          {{ maxFreeTranslateCharsLengthPerMonth | number: "1.0-0" : "de" }}
           characters for all users.
         </strong>
         If this quota is exceeded, costs will be incurred for <i>z-control</i>.
@@ -145,6 +145,14 @@
             like without affecting the monthly quota.
           </strong>
         </p>
+        <strong>
+          In the web application, all languages are supported for
+          text-to-speech. In the web application, all languages are supported
+          for the read-aloud function. However, in the mobile application, not
+          all languages are available. If a selected target language is not
+          available, the read-aloud function for that language is automatically
+          hidden.
+        </strong>
       </li>
       <li>For complex texts, Google Translate may return errors.</li>
       <li>Formatting (bold, italic, line breaks) may not be preserved.</li>
@@ -301,6 +309,10 @@
       <p>Advantages of the web version:</p>
       <ul class="no-list-style-inside">
         <li>Use your browser for a full keyboard experience.</li>
+        <li>
+          In the web version, all languages are supported for speech output,
+          whereas in the mobile version not all languages are available.
+        </li>
       </ul>
     </div>
 
@@ -494,7 +506,7 @@
       <li>
         <strong>
           Gemeinsames kostenloses Monatskontingent:
-          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
+          {{ maxFreeTranslateCharsLengthPerMonth | number: "1.0-0" : "de" }}
           Zeichen für alle Nutzer.
         </strong>
         Wird dieses Kontingent überschritten, entstehen für
@@ -516,6 +528,16 @@
             Das Vorlesen der Übersetzungen per Text-to-Speech API ist kostenlos
             und unbegrenzt möglich. Sie können sich die Übersetzungen beliebig
             oft anhören, ohne das Monatskontingent zu belasten.
+          </strong>
+        </p>
+        <p>
+          <strong>
+            In der Web-Anwendung werden alle Sprachen zum Vorlesen unterstützt.
+            In der Web-Anwendung werden alle Sprachen für die Vorlesefunktion
+            unterstützt. In der mobilen Anwendung sind jedoch nicht alle
+            Sprachen verfügbar. Ist eine ausgewählte Zielsprache nicht
+            verfügbar, wird die Vorlesefunktion für diese Sprache automatisch
+            ausgeblendet.
           </strong>
         </p>
       </li>
@@ -643,7 +665,8 @@
       <li *ngIf="isNative">
         <p>
           <b
-            >Wie ändere ich Geschwindigkeit und Tonhöhe bei der Sprachausgabe?</b
+            >Wie ändere ich Geschwindigkeit und Tonhöhe bei der
+            Sprachausgabe?</b
           >
         </p>
         <ol>
@@ -707,6 +730,11 @@
       <ul class="no-list-style-inside">
         <li>
           Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.
+        </li>
+        <li>
+          In der Web-Version werden alle Sprachen für die Sprachausgabe
+          unterstützt, während in der mobilen Version nicht alle Sprachen
+          verfügbar sind.
         </li>
       </ul>
     </div>

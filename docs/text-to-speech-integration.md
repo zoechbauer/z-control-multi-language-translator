@@ -93,4 +93,13 @@ export class TtsService {
 
 ---
 
+## Capacitor & Vulnerabilities Compatibility Note
+
+- The plugin `@capacitor-community/text-to-speech@^6.1.0` requires Capacitor 8.x.x. This project must use matching versions for all Capacitor packages (e.g., `@capacitor/core`, `@capacitor/android`, `@capacitor/cli` at 8.0.0) for compatibility.
+- Do **not** downgrade `@capacitor/cli` to resolve npm audit warnings, as this will break compatibility with the TTS plugin and other Capacitor 8 plugins.
+- If you see high severity vulnerabilities (e.g., in `tar`), do **not** use `npm audit fix --force` if it suggests downgrading Capacitor. Wait for an upstream fix from Capacitor or the affected package maintainers.
+- The current setup is correct for TTS and Capacitor 8. Keeping all Capacitor packages at the same major version is best practice.
+
+---
+
 For more details, see the implementation in `tab-translation.page.html`, `tab-translation.page.ts`, and `services/tts.service.ts`.

@@ -13,13 +13,19 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class UtilsService {
+  /**
+   * Emits when the logo is clicked (used for feedback or navigation triggers).
+   */
   logoClickedSub = new Subject<boolean>();
+  /**
+   * Observable for logo click events.
+   */
   logoClicked$ = this.logoClickedSub.asObservable();
   private currentModal: HTMLIonModalElement | null = null;
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly router: Router
+    private readonly router: Router,
   ) {
     window.addEventListener('orientationchange', () => {
       if (this.currentModal) {
@@ -28,32 +34,53 @@ export class UtilsService {
     });
   }
 
+  /**
+   * Returns true if the user's system prefers dark mode.
+   */
   get isDarkMode(): boolean {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
+  /**
+   * Returns true if the device is in portrait orientation.
+   */
   get isPortrait(): boolean {
     return window.matchMedia('(orientation: portrait)').matches;
   }
 
+  /**
+   * Returns true if the device is a small screen (mobile, portrait).
+   */
   get isSmallScreen(): boolean {
     const isMobileWidth = window.innerWidth <= 768;
     return isMobileWidth && this.isPortrait;
   }
 
+  /**
+   * Returns true if the device is a small device (mobile, short height, portrait).
+   */
   get isSmallDevice(): boolean {
     const isMobileHeight = window.innerHeight <= 640;
     return isMobileHeight && this.isPortrait;
   }
 
+  /**
+   * Returns true if the app is running on a desktop (not native platform).
+   */
   get isDesktop(): boolean {
     return !Capacitor.isNativePlatform();
   }
 
+  /**
+   * Returns true if the app is running on a native platform (Capacitor/Cordova).
+   */
   get isNative(): boolean {
     return Capacitor.isNativePlatform();
   }
 
+  /**
+   * Returns true if the IonTabBar should be shown (based on config and screen size).
+   */
   get isShowIonTabBar(): boolean {
     if (!environment.app.showTabsBar) {
       return false;
@@ -61,14 +88,26 @@ export class UtilsService {
     return this.isSmallScreen;
   }
 
+  /**
+   * Navigates to the specified tab.
+   * @param tab The tab to navigate to
+   */
   navigateToTab(tab: Tab): void {
     this.router.navigate([`/tabs/tab-${tab}`]);
   }
 
+  /**
+   * Navigates to the specified tab with query parameters.
+   * @param tab The tab to navigate to
+   * @param params Query parameters to include
+   */
   navigateToTabWithParams(tab: Tab, params: any): void {
     this.router.navigate([`/tabs/tab-${tab}`], { queryParams: params });
   }
 
+  /**
+   * Shows or hides the IonTabBar based on current settings.
+   */
   showOrHideIonTabBar(): void {
     if (this.isShowIonTabBar) {
       this.showIonTabBar();
@@ -91,7 +130,16 @@ export class UtilsService {
     }
   }
 
-  async openHelpModal() {
+  /**
+   * Opens the help modal dialog displaying the HelpModalComponent.
+   *
+   * This method creates and presents a modal containing the HelpModalComponent.
+   * It also sets the currentModal reference and applies appropriate classes for
+   * landscape/desktop orientation.
+   *
+   * @returns {Promise<void>} A promise that resolves when the modal is presented.
+   */
+  async openHelpModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: HelpModalComponent,
     });
@@ -100,6 +148,9 @@ export class UtilsService {
     return await modal.present();
   }
 
+  /**
+   * Opens the changelog modal dialog.
+   */
   async openChangelog() {
     const modal = await this.modalController.create({
       component: MarkdownViewerComponent,
@@ -158,6 +209,10 @@ export class UtilsService {
     }
   }
 
+  /**
+   * Scrolls smoothly to the element with the given ID (no event parameter).
+   * @param elementId The element ID
+   */
   scrollToElement(elementId: string): void {
     const element = document.getElementById(elementId);
     if (element) {
@@ -168,6 +223,10 @@ export class UtilsService {
     }
   }
 
+  /**
+   * Scrolls smoothly to the element with the given ID, adjusting for tab bar and navigation bar height.
+   * @param elementId The element ID
+   */
   scrollToElementUsingTabBar(elementId: string): void {
     const element = document.getElementById(elementId);
     if (element) {
@@ -179,5 +238,15 @@ export class UtilsService {
         element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       element.scrollTo({ top: y, behavior: 'smooth' });
     }
+  }
+
+  /**
+   * Returns the current year and month as a string in the format 'YYYY-MM'.
+   */
+  getCurrentYearMonth(): string {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${year}-${month}`;
   }
 }

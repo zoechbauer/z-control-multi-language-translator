@@ -43,13 +43,20 @@ function makeEnv(prod = false) {
       name: v("APP_NAME", "My App"),
       maxTargetLanguages: Number(v("MAX_TARGET_LANGUAGES", "3")),
       maxInputLength: Number(v("MAX_INPUT_LENGTH", "100")),
+      maxFreeTranslateCharsPerMonthForUser: Number(
+        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH_FOR_USER", "10000")
+      ),
       maxFreeTranslateCharsPerMonth: Number(
         v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000")
+      ),
+      maxFreeTranslateCharsBufferPerMonth: Number(
+        v("MAX_FREE_TRANSLATE_CHARS_BUFFER_PER_MONTH", "5000")
       ),
       textToSpeechMinValue: Number(v("TEXT_TO_SPEECH_MIN_VALUE", "0.5")),
       textToSpeechMaxValue: Number(v("TEXT_TO_SPEECH_MAX_VALUE", "2.0")),
       showTabsBar: v("SHOW_TABS_BAR", "false").toLowerCase() === "true",
-      simulateTranslation: v("SIMULATE_TRANSLATION", "false").toLowerCase() === "true",
+      simulateTranslation:
+        v("SIMULATE_TRANSLATION", "false").toLowerCase() === "true",
     },
     googleTranslate: {
       apiKey: v("GOOGLE_TRANSLATE_API_KEY", ""),

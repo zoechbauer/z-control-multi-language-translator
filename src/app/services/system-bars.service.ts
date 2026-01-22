@@ -13,6 +13,10 @@ export class SystemBarsService {
   private readonly lightBgColor = '#fefefe'; // almost white
   private readonly darkBgColor = '#000000';
 
+  /**
+   * Sets the status bar and navigation bar colors and styles based on the dark mode setting.
+   * @param isDarkMode Whether dark mode is enabled
+   */
   async setBars(isDarkMode: boolean): Promise<void> {
     const bgColor = isDarkMode ? this.darkBgColor : this.lightBgColor;
     const statusStyle = isDarkMode ? Style.Light : Style.Dark;
@@ -29,6 +33,10 @@ export class SystemBarsService {
     });
   }
 
+  /**
+   * Returns whether the user's system prefers dark mode.
+   * @returns True if dark mode is preferred, false otherwise
+   */
   async getCurrentIsDarkMode(): Promise<boolean> {
     return globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
   }

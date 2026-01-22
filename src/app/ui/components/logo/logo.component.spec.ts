@@ -29,7 +29,7 @@ describe('LogoComponent', () => {
 
       (component as any).setLogoText();
 
-      expect(component.leftLogoText).toBe('© 2025');
+      expect(component.leftLogoText).toBe('© 2026');
       expect(component.rightLogoText).toBe('z-control');
     });
 

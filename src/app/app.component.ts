@@ -4,9 +4,11 @@ import { Component, OnInit, Renderer2 } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { StatusBar } from '@capacitor/status-bar';
 
-import { SafeAreaInsets } from './services/safe-area-insets';
+import { SafeAreaInsetsService } from './services/safe-area-insets.service';
 import { environment } from 'src/environments/environment';
 import { SystemBarsService } from './services/system-bars.service';
+import { FirebaseFirestoreService } from './services/firebase-firestore.service';
+import { TextSpeechService } from './services/text-to-speach.service';
 
 @Component({
   selector: 'app-root',
@@ -20,8 +22,10 @@ export class AppComponent implements OnInit {
 
   constructor(
     private readonly renderer: Renderer2,
-    private readonly safeAreaInsets: SafeAreaInsets,
-    private readonly systemBars: SystemBarsService
+    private readonly safeAreaInsets: SafeAreaInsetsService,
+    private readonly systemBars: SystemBarsService,
+    private readonly firestoreService: FirebaseFirestoreService,
+    private readonly textSpeechService: TextSpeechService,
   ) {}
 
   ngOnInit() {
@@ -40,32 +44,11 @@ export class AppComponent implements OnInit {
       await this.systemBars.setBars(isDarkMode);
 
       StatusBar.show();
-
-      // // don't use utilsService.isDarkMode here to avoid broken layout
-      // const isDarkMode = window.matchMedia(
-      //   '(prefers-color-scheme: dark)'
-      // ).matches;
-
-      // StatusBar.setOverlaysWebView({ overlay: false });
-
-      // const primaryColor = '#3880ff';
-      // if (isDarkMode) {
-      //   StatusBar.setBackgroundColor({ color: primaryColor });
-      //   StatusBar.setStyle({ style: Style.Light });
-      // } else {
-      //   StatusBar.setBackgroundColor({ color: primaryColor });
-      //   StatusBar.setStyle({ style: Style.Dark });
-      // }
-      // StatusBar.show();
-
-      // const navColorLight = '#ffffff';
-      // const navColorDark = '#000000';
-      // NavigationBar.setNavigationBarColor({
-      //   color: isDarkMode ? navColorDark : navColorLight,
-      //   darkButtons: !isDarkMode,
-      // });
     } else {
       this.renderer.addClass(document.body, 'web-app');
     }
+
+    this.firestoreService.init();
+    this.textSpeechService.init();
   }
 }

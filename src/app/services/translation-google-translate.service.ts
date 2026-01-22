@@ -1,9 +1,11 @@
 // translation.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, firstValueFrom, map, of, pipe, tap } from 'rxjs';
+import { TranslateService, Translation } from '@ngx-translate/core';
+import { Observable, firstValueFrom, forkJoin, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { FirebaseFirestoreService } from './firebase-firestore.service';
 
 interface GoogleTranslateResponse {
   data: {
@@ -23,11 +25,50 @@ export class TranslationGoogleTranslateService {
   private readonly GOOGLE_TRANSLATE_API_URL = `https://translation.googleapis.com/language/translate/v2?key=${this.GOOGLE_TRANSLATE_API_KEY}`;
   private supportedLanguagesCache: { [lang: string]: GoogleLanguage[] } = {};
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly translate: TranslateService,
+    private readonly firestoreService: FirebaseFirestoreService
+  ) {}
 
   // Set to true in environment.ts to simulate translations without making actual API calls
   // This helps to save the free quota during development and layout testing
   static readonly SIMULATE_TRANSLATION = environment.app.simulateTranslation;
+
+  /**
+   * Translates the given text from the base language to each of the selected target languages using the provided translation function.
+   *
+   * @param translateFunction - A function that translates text from the base language to a target language, returning an Observable of a record mapping language codes to translated text.
+   * @param text - The text to be translated.
+   * @param baseLang - The source language code.
+   * @param selectedLanguages - An array of target language codes to translate the text into.
+   * @returns An Observable emitting an array of Translation objects, each containing the language code and the translated text, sorted by language code.
+   */
+  getTranslations(
+    translateFunction: (
+      text: string,
+      baseLang: string,
+      translateToLang: string
+    ) => Observable<Record<string, string>>,
+    text: string,
+    baseLang: string,
+    selectedLanguages: string[]
+  ): Observable<Translation[]> {
+    const translations$ = selectedLanguages.map((translateToLang: string) =>
+      translateFunction(text, baseLang, translateToLang).pipe(
+        map((result) => ({
+          language: translateToLang,
+          translatedText: result?.[translateToLang] ?? '',
+        }))
+      )
+    );
+
+    return forkJoin(translations$).pipe(
+      map((results: Translation[]) =>
+        results.sort((a, b) => a.language.localeCompare(b.language))
+      )
+    );
+  }
 
   /**
    * Translates a given word or phrase from the source language to the target language using Google Translate API.
@@ -53,6 +94,11 @@ export class TranslationGoogleTranslateService {
         format: 'text',
       })
       .pipe(
+        tap(() => {
+          console.log(
+            `Translated "${word}" from ${source} to ${target} using Google Translate API.`
+          );
+        }),
         map((resp) => {
           const translatedText = resp.data.translations[0].translatedText;
           return { [target]: translatedText };
@@ -76,8 +122,12 @@ export class TranslationGoogleTranslateService {
     if (!source || !target) {
       throw new Error('Source and target languages must be provided');
     }
-    const translatedText = "This simulated translation helps to improve the app's layout without making actual network calls.";
-    return of({ [target]: translatedText });
+    console.log(
+      `Simulating translation of "${word}" from ${source} to ${target}`
+    );
+    return of({
+      [target]: this.translate.instant('TRANSLATE.CARD_RESULTS.SIMULATION.OUTPUT'),
+    });
   }
 
   /**
@@ -109,6 +159,7 @@ export class TranslationGoogleTranslateService {
       ),
       tap((langs) => {
         this.supportedLanguagesCache[targetLang] = langs;
+        console.log('Cached supported languages for', targetLang, langs);
       })
     );
   }
@@ -152,7 +203,10 @@ export class TranslationGoogleTranslateService {
     if (!baseLang) {
       throw new Error('baseLang must be provided');
     }
-    if (!this.supportedLanguagesCache[baseLang] || this.supportedLanguagesCache[baseLang].length === 0) {
+    if (
+      !this.supportedLanguagesCache[baseLang] ||
+      this.supportedLanguagesCache[baseLang].length === 0
+    ) {
       // Fetch supported languages if not already cached
       await firstValueFrom(
         this.getSupportedLanguagesWithLangCodeInName(baseLang)

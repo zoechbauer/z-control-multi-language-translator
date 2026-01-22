@@ -7,6 +7,9 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **coding-guidelines.md**  
   Clean code principles and best practices for naming, functions, error handling, formatting, and testing.
 
+- **standalone-config.md**  
+  Guide to using Angular's standalone components and ApplicationConfig for centralized provider management without NgModules.
+
 - **capacitor-8-upgrade-checklist.md**  
   Step-by-step instructions for upgrading from Capacitor 7 to 8, including dependency updates, Gradle configuration, and Kotlin fixes.
 
@@ -32,15 +35,20 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **clean-android-build-step-by-step.md**  
   Detailed guide for performing a clean Android build, including cleaning artifacts, syncing assets, and rebuilding in Android Studio.
 
-## D. Features
+## D. Google Translation API
+
+- **google-cloud-translation-api-pricing.md**  
+  Overview of Google Cloud Translation API pricing, including the free tier, paid usage, and links to official documentation.
+
+## E. Text to Speech API
 
 - **text-to-speech-integration.md**  
   Guide to adding text-to-speech (TTS) functionality for translated text, using the browser's free Web Speech API. Includes implementation steps, cost considerations, and usage notes.
 
-## E. Google Translation API
+## F. Google Firebase API
 
-- **google-cloud-translation-api-pricing.md**  
-  Overview of Google Cloud Translation API pricing, including the free tier, paid usage, and links to official documentation.
+- **firebase-config-enviroment-files.md**  
+  Instructions for managing Firebase configuration using environment files to keep credentials out of source control. Includes local setup, usage, and security notes.
 
 ---
 
@@ -50,5 +58,7 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **Installation:** Use the installation guide for setting up the app on Android devices.
 - **Troubleshooting:** Refer to these documents for resolving build, runtime, and deployment issues.
 - **Google Translation API:** Review API pricing before enabling cloud translation features.
+- **Text to Speech API:** Follow the TTS integration guide to add speech capabilities.
+- **Google Firebase API:** Use the Firebase config guide to manage environment-specific settings securely.
 
 Each document is self-contained and addresses a specific aspect of the app's development or deployment. For further details, open the relevant markdown file in this folder.

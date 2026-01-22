@@ -26,6 +26,9 @@ import { TranslationGoogleTranslateService } from '../services/translation-googl
 import { AppConstants } from '../shared/app.constants';
 import { ToastService } from '../services/toast.service';
 import { TextSpeechService } from '../services/text-to-speach.service';
+import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
+import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils-service';
+import { environment } from 'src/environments/environment';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -79,9 +82,11 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     public translate: TranslateService,
     public localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
+    public readonly ttsService: TextSpeechService,
     private readonly googleTranslateService: TranslationGoogleTranslateService,
     private readonly toastService: ToastService,
-    private readonly ttsService: TextSpeechService
+    private readonly firestoreService: FirebaseFirestoreService,
+    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
   ) {}
 
   get maxInputLength(): number {
@@ -105,25 +110,45 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     );
   }
 
+  isContingentExceeded: boolean = false;
+
+  private async updateIsContingentExceeded() {
+    // for testing isContingentExceeded uncomment these 2 lines
+    // this.isContingentExceeded = true;
+    // return;
+
+    if (environment.app.simulateTranslation) {
+      this.isContingentExceeded = false;
+      return;
+    }
+
+    try {
+      this.isContingentExceeded =
+        await this.firestoreUtilsService.isContingentExceeded();
+    } catch {
+      this.isContingentExceeded = false;
+    }
+  }
+
   ngOnInit() {
-    this.text = '';
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
     this.localStorage.initializeServicesAsync(this.translate).then(() => {
       this.setupSubscriptions();
+      this.updateIsContingentExceeded().then(() => {
+        this.initFormControls();
+        this.getTranslationPlaceholder();
+      });
     });
-    this.initFormControls();
   }
 
   getTranslationPlaceholder(): string {
-    return this.selectedLanguages.length === 0
-      ? this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.NO_TARGET_LANGUAGES')
-      : this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT', {
-          baseLanguage: this.baseLangString.substring(
-            0,
-            this.baseLangString.indexOf(' (')
-          ),
-        });
+    return this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT', {
+      baseLanguage: this.baseLangString.substring(
+        0,
+        this.baseLangString.indexOf(' ('),
+      ),
+    });
   }
 
   onTextareaInput(): void {
@@ -132,69 +157,90 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.clearBtnDisabled = !hasText;
   }
 
-  translateTextOrSimulate(): void {
+  async translateTextOrSimulate(): Promise<void> {
+    await this.updateIsContingentExceeded();
+
+    // Early exit if no text or no target languages
+    if (!this.text.trim() || this.selectedLanguages.length === 0) {
+      this.toastService.showToast(
+        this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES',
+        ),
+        ToastAnchor.TRANSLATE_PAGE,
+      );
+      return;
+    }
+
     if (TranslationGoogleTranslateService.SIMULATE_TRANSLATION) {
       this.simulateTranslateText();
-    } else {
-      this.translateText();
+      this.toggleCard();
+      return;
     }
+
+    if (this.isContingentExceeded) {
+      this.simulateTranslationOnContingentExceeded();
+      this.toggleCard();
+      return;
+    }
+
+    this.firestoreUtilsService.updateTranslationStatistics(
+      this.text,
+      this.selectedLanguages.length,
+    );
+    this.translateText();
     this.toggleCard();
   }
 
-  translateText(): void {
-    if (!this.text.trim()) {
-      return;
-    }
-    this.disableFormControls();
-    this.translations = [];
-
-    this.selectedLanguages.forEach((translateToLang: string) => {
-      this.googleTranslateService
-        .translateText(this.text, this.baseLang, translateToLang)
-        .subscribe((result) => {
-          // Defensive: result may be undefined/null or not have the key
-          const translatedText = result?.[translateToLang] ?? '';
-          this.translations.push({
-            language: translateToLang,
-            translatedText,
-          });
-          this.translations.sort((a, b) =>
-            a.language.localeCompare(b.language)
-          );
-        });
-    });
-  }
-
-  simulateTranslateText(): void {
-    if (!this.text.trim()) {
-      return;
-    }
-    this.disableFormControls();
-    this.translations = [];
-
-    this.selectedLanguages.forEach((translateToLang: string) => {
-      this.googleTranslateService
-        .simulateTranslateText(this.text, this.baseLang, translateToLang)
-        .subscribe((result) => {
-          // Defensive: result may be undefined/null or not have the key
-          const translatedText = result?.[translateToLang] ?? '';
-          this.translations.push({
-            language: translateToLang,
-            translatedText,
-          });
-          this.translations.sort((a, b) =>
-            a.language.localeCompare(b.language)
-          );
-          // For simulation, we just set some dummy text
-          this.text = translatedText;
-        });
-    });
+  private simulateTranslationOnContingentExceeded(): void {
     this.toastService.showToast(
       this.translate.instant(
-        'TRANSLATE.CARD_RESULTS.TOAST.TEXT_TRANSLATED_SIMULATION'
+        'TRANSLATE.CARD_RESULTS.TOAST.CONTINGENT_EXCEEDED',
       ),
-      ToastAnchor.TRANSLATE_PAGE
+      ToastAnchor.TRANSLATE_PAGE,
     );
+    this.simulateTranslateText();
+  }
+
+  private translateText(): void {
+    if (!this.text.trim()) {
+      return;
+    }
+    this.disableFormControls();
+
+    this.googleTranslateService
+      .getTranslations(
+        this.googleTranslateService.translateText.bind(
+          this.googleTranslateService,
+        ),
+        this.text,
+        this.baseLang,
+        this.selectedLanguages,
+      )
+      .subscribe((results: Translation[]) => {
+        this.translations = results;
+      });
+  }
+
+  private simulateTranslateText(): void {
+    if (!this.text.trim()) {
+      return;
+    }
+    this.disableFormControls();
+
+    this.googleTranslateService
+      .getTranslations(
+        this.googleTranslateService.simulateTranslateText.bind(
+          this.googleTranslateService,
+        ),
+        this.text,
+        this.baseLang,
+        this.selectedLanguages,
+      )
+      .subscribe((results: Translation[]) => {
+        this.translations = results;
+        this.text =
+          this.translate.instant('TRANSLATE.CARD_RESULTS.SIMULATION.INPUT');
+      });
   }
 
   async speak(text: string, lang: string) {
@@ -203,9 +249,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     } catch (err) {
       this.toastService.showToast(
         this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED'
+          'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED',
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TRANSLATE_PAGE,
       );
       console.error('TTS error:', err);
     }
@@ -217,7 +263,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
 
   getTextareaRows(): string {
     return this.utilsService.isNative && this.utilsService.isPortrait
-      ? '3'
+      ? '4'
       : '2';
   }
 
@@ -244,30 +290,19 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       }),
       this.localStorage.targetLanguages$.subscribe((langs) => {
         this.selectedLanguages = langs;
-        this.setCssClasses();
-      })
+        this.initFormControls();
+      }),
     );
   }
 
   private initFormControls(): void {
-    this.textareaDisabled = false;
+    this.textareaDisabled = this.selectedLanguages.length === 0;
     this.clearBtnDisabled = true;
     this.translateBtnDisabled = true;
     this.translations = [];
     this.text = '';
     this.cardInputVisible = true;
     this.cardResultsVisible = false;
-  }
-
-  private setCssClasses(): void {
-    const textarea = document.querySelector('ion-textarea');
-    if (textarea) {
-      if (this.selectedLanguages.length === 0) {
-        textarea.classList.add('no-target-languages');
-      } else {
-        textarea.classList.remove('no-target-languages');
-      }
-    }
   }
 
   private disableFormControls(): void {

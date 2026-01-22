@@ -124,11 +124,11 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   onTargetLanguagesChange(languages: string[]) {
     if (languages) {
       this.localStorage.saveTargetLanguages(languages);
+      this.textToSpeechService.updateTtsSupportedLanguagesMap(this.utilsService.isNative, languages);
     }
   }
 
   onChangeTtsValue(values: any) {
-    console.log('onChangeTtsValue values:', values);
     this.localStorage.saveTextToSpeechValues(values);
   }
 

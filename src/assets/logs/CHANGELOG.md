@@ -2,22 +2,29 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
-## [0.8] – YYYY-MM-DD
+## [0.8] – 2026-01-22
 
 ### 🚀 New Features
 
-- Introduced SystemBarsService to manage status and navigation bar styles, and integrated the capgo-capacitor-navigation-bar dependency for enhanced control over system UI elements.
+- Added SystemBarsService for advanced control of status and navigation bar styles, integrating the capgo-capacitor-navigation-bar dependency for a more seamless and customizable system UI experience.
+- Integrated Firebase, enabling analytics and additional Firebase services. The app now supports environment-based configuration for secure management of Firebase credentials.
+- Introduced user translation statistics tracking with Firebase Firestore, recording the number of characters translated per user each month for improved usage insights.
+- Users are now notified when the free monthly translation character limit is reached, with a clear warning toast and feedback when attempting to translate beyond the quota.
+- Added simulated transalation mode when the monthly quota is exceeded, allowing users to continue using the app's features without consuming additional quota. Simulated translations return a fixed text response.
 
 ### 🚀 Improvements
 
-- On mobile devices, the translation page does not display the translation input card when in landscape mode, optimizing screen space for better usability.
+- On mobile devices, the translation input card is now hidden in landscape mode to maximize available screen space and enhance usability.
+- The UI now displays a clear message at the top of the screen when no target languages are selected, guiding users to select at least one language before translating.
+- Translation logic has been refactored to use centralized configuration constants and RxJS BehaviorSubjects, improving maintainability and reducing code duplication.
+- Updated all dependencies to their latest versions for greater stability and performance.
 
 ## [0.7] – 2026-01-15
 
 ### ✨ New Features
 
- - Added a Privacy Policy to the landing page with localized content in English and German, providing clear information about data handling and user privacy.
- Updated the Settings page links to direct users to the new, app-specific Privacy Policy and enhanced the data privacy information provided.
+- Added a Privacy Policy to the landing page with localized content in English and German, providing clear information about data handling and user privacy.
+  Updated the Settings page links to direct users to the new, app-specific Privacy Policy and enhanced the data privacy information provided.
 - The visibility of the Tab Bar can now be configured via environment files. When the Tab Bar is hidden, header buttons are provided for navigation between the Translate and Settings pages.
 - Added a simulated translation mode that can be enabled via configuration in the environment files. This mode allows developers to test the app's layout and functionality without consuming API quota by simulating translations. The functionality is the same as the real translation but returns a fixed translation text for each target language.
 - On the Translation page, you can now control the visibility of the translation input card and results card with a toggle button. This allows you to hide the input card when not needed, providing a cleaner and more focused interface.

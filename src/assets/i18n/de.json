@@ -34,14 +34,15 @@
   "TRANSLATE": {
     "CARD": {
       "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
+      "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern",
+      "CONTINGENT_EXCEEDED": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar. Alle anderen Funktionen können weiterhin genutzt werden. Ab dem nächsten Monat steht Ihnen wieder das volle Kontingent zur Verfügung.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
         "ENTER_TEXT": "Text eingeben"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Geben Sie Text in {{baseLanguage}} ein",
-        "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern"
+        "INPUT_TEXT": "Geben Sie Text in {{baseLanguage}} ein"
       },
       "BUTTON": {
         "TRANSLATE": "Übersetzen",
@@ -55,9 +56,15 @@
         "ENTERED_TEXT": "Eingegebener Text",
         "TRANSLATED_TEXT": "Übersetzter Text"
       },
-      "TOAST": {  
-        "SPEAK_NOT_SUPPORTED": "Text-to-Speech wird in diesem Browser nicht unterstützt.",
-        "TEXT_TRANSLATED_SIMULATION": "Simulation wird verwendet."
+      "TOAST": {
+        "SPEAK_NOT_SUPPORTED": "Für diese Sprache ist aktuell keine Sprachausgabe auf diesem Gerät verfügbar.",
+        "TEXT_TRANSLATED_SIMULATION": "Simulation wird verwendet.",
+        "CONTINGENT_EXCEEDED": "Übersetzungskontingent überschritten. Bitte versuchen Sie es im nächsten Monat erneut. Sie verwenden derzeit die Simulationsfunktion.",
+        "NO_TEXT_OR_LANGUAGES": "Kein Text oder keine Zielsprache(n) zum Übersetzen ausgewählt."
+      },
+      "SIMULATION": {
+        "INPUT": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar.",
+        "OUTPUT": "Alle anderen Funktionen können weiterhin genutzt werden. Ab dem nächsten Monat steht Ihnen wieder das volle Kontingent zur Verfügung."
       }
     }
   },

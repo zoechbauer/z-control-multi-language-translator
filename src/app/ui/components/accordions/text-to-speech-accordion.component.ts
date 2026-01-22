@@ -11,7 +11,7 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AppConstants } from 'src/app/shared/app.constants';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { TextToSpeechValues } from 'src/app/shared/interfaces';
 
 @Component({
@@ -37,26 +37,25 @@ export class TextToSpeechAccordionComponent {
   @Input() ngModel!: TextToSpeechValues;
   @Output() ngModelChange = new EventEmitter<TextToSpeechValues>();
 
-  constructor(public translate: TranslateService) {}
+  constructor(
+    public translate: TranslateService,
+    private readonly localStorageService: LocalStorageService,
+  ) {}
 
   getTtsRateLabel(): string {
     return this.ngModel?.rate
       ? `${this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE'
+          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE',
         )} : ${this.ngModel.rate}`
-      : this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE'
-        );
+      : this.translate.instant('SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE');
   }
 
-    getTtsPitchLabel(): string {
+  getTtsPitchLabel(): string {
     return this.ngModel?.pitch
       ? `${this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH'
+          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH',
         )} : ${this.ngModel.pitch}`
-      : this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH'
-        );
+      : this.translate.instant('SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH');
   }
 
   onChangeTtsRate(event: RangeCustomEvent) {
@@ -70,10 +69,11 @@ export class TextToSpeechAccordionComponent {
   }
 
   resetTtsSettings() {
+    const defaultValues = this.localStorageService.getDefaultTextToSpeechValues();
     this.ngModel = {
       ...this.ngModel,
-      rate: AppConstants.textToSpeechDefaultValue,
-      pitch: AppConstants.textToSpeechDefaultValue,
+      rate: defaultValues.rate,
+      pitch: defaultValues.pitch,
     };
     this.ngModelChange.emit(this.ngModel);
   }

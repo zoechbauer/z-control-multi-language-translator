@@ -34,14 +34,15 @@
   "TRANSLATE": {
     "CARD": {
       "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
+      "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)",
+      "CONTINGENT_EXCEEDED": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month. All other functions can still be used. The full quota will be available again from next month.",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)",
         "ENTER_TEXT": "Enter text"
       },
       "PLACEHOLDER": {
-        "INPUT_TEXT": "Enter text in {{baseLanguage}}",
-        "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)"
+        "INPUT_TEXT": "Enter text in {{baseLanguage}}"
       },
       "BUTTON": {
         "TRANSLATE": "Translate",
@@ -56,8 +57,14 @@
         "TRANSLATED_TEXT": "Translated Text"
       },
       "TOAST": {
-        "SPEAK_NOT_SUPPORTED": "Text-to-Speech is not supported in this browser.",
-        "TEXT_TRANSLATED_SIMULATION": "Simulation is being used."
+        "SPEAK_NOT_SUPPORTED": "Speech output is currently not available for this language on this device.",
+        "TEXT_TRANSLATED_SIMULATION": "Simulation is being used.",
+        "CONTINGENT_EXCEEDED": "Translation quota exceeded. Please try again next month.",
+        "NO_TEXT_OR_LANGUAGES": "No text or target language(s) selected for translation."
+      },
+      "SIMULATION": {
+        "INPUT": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month.",
+        "OUTPUT": "All other functions can still be used. The full quota will be available again from next month."
       }
     }
   },

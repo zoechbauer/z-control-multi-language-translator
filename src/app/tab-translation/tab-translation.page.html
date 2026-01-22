@@ -9,7 +9,12 @@
   class="translation-content"
   [class.landscape]="!utilsService.isPortrait"
 >
-  @if(translations.length > 0) {
+  @if(selectedLanguages.length === 0) {
+  <div class="no-languages-selected">
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES' | translate }}
+  </div>
+  } @if(translations.length > 0) {
+  <!-- show switch buttons for input/results cards -->
   <div class="sticky-toggle-btn">
     <ion-button
       fill="clear"
@@ -18,41 +23,9 @@
       (keydown.enter)="toggleCard()"
       >{{ toggleButtonLabel }}</ion-button
     >
-    @if(showTranslationResultEnteredTextCard) {
-    <ion-card class="translation-results-card-entered-text">
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="2"
-              ><ion-icon name="language-outline"></ion-icon>
-            </ion-col>
-            <ion-col size="10"
-              ><strong
-                >{{ 'TRANSLATE.CARD_RESULTS.LABEL.ENTERED_TEXT' | translate
-                }}</strong
-              ></ion-col
-            >
-          </ion-row>
-          <ion-row>
-            <ion-col size="2">{{ baseLang }}</ion-col>
-            <ion-col size="8">{{ text }}</ion-col>
-            <ion-col size="2">
-              <ion-button
-                fill="clear"
-                size="small"
-                (click)="speak(text, baseLang)"
-                (keydown.enter)="speak(text, baseLang)"
-              >
-                <ion-icon name="volume-high-outline"></ion-icon>
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-content>
-    </ion-card>
-    }
   </div>
   } @if(cardInputVisible) {
+  <!-- show input card before translation results-->
   <ion-card class="translation-input-card">
     <ion-card-header>
       <ion-card-title>{{ 'APP.NAME' | translate }}</ion-card-title>
@@ -107,11 +80,46 @@
       >{{ 'TRANSLATE.CARD.BUTTON.CLEAR' | translate }}</ion-button
     >
   </ion-card>
+  } @if(translations.length > 0 && showTranslationResultEnteredTextCard) {
+  <!-- show translation results with entered text card before translation results-->
+  <ion-card class="translation-results-card-entered-text">
+    <ion-card-content>
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col size="2"
+            ><ion-icon name="language-outline"></ion-icon>
+          </ion-col>
+          <ion-col size="10"
+            ><strong
+              >{{ 'TRANSLATE.CARD_RESULTS.LABEL.ENTERED_TEXT' | translate
+              }}</strong
+            ></ion-col
+          >
+        </ion-row>
+        <ion-row class="translated-row">
+          <ion-col size="2">{{ baseLang }}</ion-col>
+          <ion-col size="8">{{ text }}</ion-col>
+          <ion-col size="2">
+            <ion-button
+              class="speak-btn"
+              fill="clear"
+              size="medium"
+              (click)="speak(text, baseLang)"
+              (keydown.enter)="speak(text, baseLang)"
+            >
+              <ion-icon name="volume-high-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
   } @if(translations.length > 0 && cardResultsVisible) {
+  <!-- show translation results without entered text card -->
   <ion-card class="translation-results-card">
     <ion-card-content>
       <ion-grid>
-        <ion-row>
+        <ion-row class="header-row">
           <ion-col size="2"
             ><ion-icon name="language-outline"></ion-icon>
           </ion-col>
@@ -123,27 +131,30 @@
           >
         </ion-row>
         @for (translation of translations; track translation.language) {
-        <ion-row>
-          <ion-col size="2"
-            >{{ translation.language }}</ion-col
-          >
-          <ion-col size="8"
-            >{{ translation.translatedText }}</ion-col
-          >
+        <ion-row class="translated-row">
+          <ion-col size="2">{{ translation.language }}</ion-col>
+          <ion-col size="8">{{ translation.translatedText }}</ion-col>
           <ion-col size="2">
+            @if(ttsService.ttsSupportedLanguagesMap[translation.language]) {
             <ion-button
+              class="speak-btn"
               fill="clear"
-              size="small"
+              size="medium"
               (click)="speak(translation.translatedText, translation.language)"
               (keydown.enter)="speak(translation.translatedText, translation.language)"
             >
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
+            }
           </ion-col>
         </ion-row>
         }
       </ion-grid>
     </ion-card-content>
   </ion-card>
+  } @if(isContingentExceeded) {
+  <div class="contingent-exceeded">
+    {{ 'TRANSLATE.CARD.CONTINGENT_EXCEEDED' | translate }}
+  </div>
   }
 </ion-content>

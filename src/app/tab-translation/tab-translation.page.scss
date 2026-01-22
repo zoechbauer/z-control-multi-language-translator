@@ -14,8 +14,29 @@
     }
   }
 
+  div.no-languages-selected {
+    margin: 16px;
+    padding: 16px;
+    border: 2px dashed var(--ion-color-danger);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1em;
+    color: var(--ion-color-danger);
+  }
+
+  div.contingent-exceeded {
+    margin: 16px;
+    padding: 16px;
+    border: 2px dashed var(--ion-color-danger);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--ion-color-danger);
+  }
+
   .translation-input-card,
-  .translation-results-card {
+  .translation-results-card,
+  .translation-results-card-entered-text {
     ion-card-title {
       text-align: center;
       font-size: 17px;
@@ -26,9 +47,24 @@
       padding-bottom: 0;
     }
 
-    ion-icon {
-      vertical-align: middle;
-      font-size: 1.2em;
+    .header-row {
+      ion-icon {
+        font-size: 1.4em;
+        margin-bottom: -2px;
+        margin-left: -3px;
+      }
+    }
+
+    .translated-row {
+      margin-bottom: 20px;
+
+      .speak-btn {
+        margin-top: -8px !important;
+
+        ion-icon {
+          font-size: 1.3em;
+        }
+      }
     }
 
     .selected-target-languages {
@@ -37,12 +73,6 @@
 
     ion-textarea {
       margin-top: 32px;
-
-      &.no-target-languages {
-        min-height: 100px;
-        --placeholder-color: var(--ion-color-danger);
-        font-size: 1em;
-      }
     }
   }
 }
