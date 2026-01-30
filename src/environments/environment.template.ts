@@ -17,6 +17,8 @@ export const environment = {
     textToSpeechMaxValue: __TEXT_TO_SPEECH_MAX_VALUE__,
     showTabsBar: __SHOW_TABS_BAR__,
     simulateTranslation: __SIMULATE_TRANSLATION__,
+    myMobileUid: '_MY_MOBILE_UID_',
+    myWebChromeUid: '_MY_WEB_CHROME_UID_',
   },
   googleTranslate: {
     apiKey: '__GOOGLE_TRANSLATE_API_KEY__',

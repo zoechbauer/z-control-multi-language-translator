@@ -1,0 +1,125 @@
+<app-logo [type]="LogoType.Copyright"></app-logo>
+
+<div class="statistics-container">
+  <ng-container *ngIf="isLoading">
+    <ion-spinner name="dots"></ion-spinner>
+    <span>Loading statistics...</span>
+  </ng-container>
+  <ng-container *ngIf="!isLoading">
+    <!-- Segment 1: Global Stop Flag -->
+    <div class="stat-segment">
+      <h3>Global Translation Status</h3>
+      <p>
+        <strong>Translation stopped for all users:</strong>
+        <span [class.stopped]="isStopped">{{ isStopped ? "Yes" : "No" }}</span>
+      </p>
+    </div>
+
+    <!-- Segment 2: Total Contingent -->
+    <div class="stat-segment">
+      <h3>Total Contingent (All Users)</h3>
+      <p>
+        <strong>Used:</strong> {{ totalCharCount | number }} /
+        {{ totalLimit | number }}
+      </p>
+      <p><strong>Buffer:</strong> {{ totalBuffer | number }}</p>
+      <p>
+        <strong>Remaining:</strong>
+        <span [class.exceeded]="totalRemaining === 0">{{
+          totalRemaining | number
+        }}</span>
+      </p>
+    </div>
+
+    <!-- Segment 3: User Contingent -->
+    <div class="stat-segment">
+      <h3>Your Contingent</h3>
+      <p>
+        <strong>Used:</strong> {{ userCharCount | number }} /
+        {{ userLimit | number }}
+      </p>
+      <p>
+        <strong>Remaining:</strong>
+        <span [class.exceeded]="userRemaining === 0">{{
+          userRemaining | number
+        }}</span>
+      </p>
+    </div>
+
+    <!-- Segment 4: User Statistics Table -->
+    <div class="stat-segment">
+      <h3>User Statistics</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Used Chars</th>
+            <th>Remaining Chars</th>
+            <th>Platform</th>
+            <th>Last Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let userStat of displayedUserStatistics">
+            <td>{{ userStat.label }}</td>
+            <td>{{ userStat.charCount | number }}</td>
+            <td>{{ userStat.remaining | number }}</td>
+            <td>{{ userStat.platform }}</td>
+            <td>{{ userStat.lastUpdated }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <!-- do not remove - for debugging purposes only: -->
+        <p>Original values</p>
+        <pre>{{ userStatistics | json }}</pre>
+        <p>Displayed values</p>
+        <pre>{{ displayedUserStatistics | json }}</pre>
+        <p>User Mapping</p>
+        <pre>{{ users | json }}</pre>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-container *ngIf="lang === 'de'; else englishTemplate">
+  <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>
+</ng-container>
+
+<!-- E N G L I S H   T E M P L A T E -->
+
+<ng-template #englishTemplate>
+  <div class="additional-margin-right">
+    <p></p>
+    <p class="small-text"></p>
+  </div>
+</ng-template>
+
+<!-- G E R M A N   T E M P L A T E -->
+
+<ng-template #germanTemplate>
+  <div class="additional-margin-right">
+    <p>
+      TODOs Statistiken anzeigen: Formeln und Werte siehe
+      FirebaseFirestoreUtilsService.isContingentExceeded
+    </p>
+    <ul>
+      <li>Wurde die Übersetzung gestoppt?</li>
+      <li>
+        Gesamtanzahl der durchgeführten übersetzen Zeichen und Defintionen.
+        Wieviele Zeichen sind noch im Kontingent enthalten?
+      </li>
+      <li>Anzahl der Benutzer und definiertes Kontingent je Benutzer</li>
+      <li>
+        Tabelle mit uid der einzelnen Benutzer, verbrauchtes Kontingent und
+        restliches Kontingent
+      </li>
+    </ul>
+    <p class="small-text">
+      <i
+        >Hinweis: Der Programmierer kann die definierten Einschränkungen und die
+        verwendeten Daten von Kontingen einsehen .</i
+      >
+    </p>
+  </div>
+</ng-template>

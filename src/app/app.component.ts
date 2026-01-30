@@ -9,6 +9,8 @@ import { environment } from 'src/environments/environment';
 import { SystemBarsService } from './services/system-bars.service';
 import { FirebaseFirestoreService } from './services/firebase-firestore.service';
 import { TextSpeechService } from './services/text-to-speach.service';
+import { LocalStorageService } from './services/local-storage.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -21,11 +23,13 @@ export class AppComponent implements OnInit {
   showTabsBar = environment.app.showTabsBar;
 
   constructor(
+    private readonly translate: TranslateService,
     private readonly renderer: Renderer2,
     private readonly safeAreaInsets: SafeAreaInsetsService,
     private readonly systemBars: SystemBarsService,
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly textSpeechService: TextSpeechService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   ngOnInit() {
@@ -48,7 +52,8 @@ export class AppComponent implements OnInit {
       this.renderer.addClass(document.body, 'web-app');
     }
 
-    this.firestoreService.init();
-    this.textSpeechService.init();
+    await this.localStorageService.initializeServicesAsync(this.translate);
+    await this.firestoreService.init();
+    await this.textSpeechService.init();
   }
 }

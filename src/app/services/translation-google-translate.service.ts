@@ -5,7 +5,6 @@ import { TranslateService, Translation } from '@ngx-translate/core';
 import { Observable, firstValueFrom, forkJoin, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { FirebaseFirestoreService } from './firebase-firestore.service';
 
 interface GoogleTranslateResponse {
   data: {
@@ -28,7 +27,6 @@ export class TranslationGoogleTranslateService {
   constructor(
     private readonly http: HttpClient,
     private readonly translate: TranslateService,
-    private readonly firestoreService: FirebaseFirestoreService
   ) {}
 
   // Set to true in environment.ts to simulate translations without making actual API calls

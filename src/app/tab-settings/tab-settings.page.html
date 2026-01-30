@@ -43,7 +43,9 @@
     <app-get-mobile-app-accordion></app-get-mobile-app-accordion>
     }
     <app-get-source-accordion></app-get-source-accordion>
-    }
+    @if(isProgrammerDevice) {
+    <app-get-statistics-accordion></app-get-statistics-accordion>
+    } }
 
     <!-- Show only the opened accordion  -->
     @if (!showAllAccordions && openAccordion) { @switch (openAccordion) { @case
@@ -63,7 +65,7 @@
       [isNative]="isNative"
       [(ngModel)]="textToSpeechValues"
       (ngModelChange)="onChangeTtsValue($event)"
-      ></app-text-to-speech-accordion>
+    ></app-text-to-speech-accordion>
     } @case ('z-control') {
     <app-feedback-accordion [lang]="selectedLanguage"></app-feedback-accordion>
     } @case ('privacy-policy') {
@@ -84,6 +86,10 @@
     <app-get-source-accordion
       [lang]="selectedLanguage"
     ></app-get-source-accordion>
+    } @case ('get-statistics') {
+    <app-get-statistics-accordion
+      [lang]="selectedLanguage"
+    ></app-get-statistics-accordion>
     } }
     <!-- Button to show all accordions -->
     <div class="ion-padding ion-text-center accordion-close-button">

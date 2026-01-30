@@ -27,7 +27,7 @@ export class UtilsService {
     private readonly modalController: ModalController,
     private readonly router: Router,
   ) {
-    window.addEventListener('orientationchange', () => {
+    globalThis.addEventListener('orientationchange', () => {
       if (this.currentModal) {
         this.setModalLandscapeClasses(this.currentModal);
       }
@@ -38,14 +38,14 @@ export class UtilsService {
    * Returns true if the user's system prefers dark mode.
    */
   get isDarkMode(): boolean {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
   /**
    * Returns true if the device is in portrait orientation.
    */
   get isPortrait(): boolean {
-    return window.matchMedia('(orientation: portrait)').matches;
+    return globalThis.matchMedia('(orientation: portrait)').matches;
   }
 
   /**
@@ -170,7 +170,7 @@ export class UtilsService {
           'manual-instructions-modal',
           'change-log-modal',
           'desktop',
-          'landscape'
+          'landscape',
         );
         switch (modal.component) {
           case HelpModalComponent:
@@ -181,7 +181,7 @@ export class UtilsService {
             break;
           default:
             console.error(
-              'Unknown modal component for setting landscape class'
+              'Unknown modal component for setting landscape class',
             );
         }
         if (this.isDesktop) {
@@ -248,5 +248,29 @@ export class UtilsService {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     return `${year}-${month}`;
+  }
+
+  /**
+   * Checks if the given Firebase UID matches the programmer's device UID from the environment config.
+   * @param firebaseUID The Firebase UID to check
+   * @returns True if the UID matches the programmer's device, false otherwise
+   */
+  isProgrammerDevice(firebaseUID: string | null): boolean {
+    const pgmDevices = environment.app.myDevices.map((deviceObj) => {
+      return Object.values(deviceObj)[0];
+    });
+
+    if (!firebaseUID) {
+      return false;
+    }
+    // TODO remove console.log after testing
+    // console.log(`Programmer devices UIDs: ${pgmDevices}`);
+    // console.log('pgmDevices', environment.app.myDevices);
+    // console.log(
+    //   `Comparing Firebase UID '${firebaseUID}' with pgmr devices '${pgmDevices}'`,
+    // );
+    // console.log('isProgrammerDevice result:', pgmDevices.includes(firebaseUID));
+
+    return pgmDevices.includes(firebaseUID);
   }
 }

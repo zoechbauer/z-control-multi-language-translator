@@ -9,12 +9,22 @@ enum LocalStorage {
   SelectedLanguage = 'selectedLanguage',
   TargetLanguages = 'targetLanguages',
   TextToSpeechValues = 'textToSpeechValues',
+  CurrentUser = 'mlt_currentUser',
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalStorageService {
+  /**
+   * Emits the firestore UID of the user (e.g. anonymous user).
+   */
+  firestoreUidSubject = new BehaviorSubject<string | null>(null);
+  /**
+   * Observable for the firestore UID.
+   */
+  firestoreUid$ = this.firestoreUidSubject.asObservable();
+  /**
   /**
    * Emits the currently selected base language code (e.g. 'en', 'de').
    */
@@ -87,6 +97,7 @@ export class LocalStorageService {
       await this.setSelectedOrDefaultLanguageName(lang);
       await this.loadTargetLanguages();
       await this.loadTextToSpeechValues();
+      await this.loadFirestoreUid();
     } catch (error) {
       console.error('App initialization failed:', error);
       await this.initializeWithDefaults(translate);
@@ -254,5 +265,23 @@ export class LocalStorageService {
       rate: 25, // 50 would be to fast, values: 0 (slow) to 100 (fast)
       pitch: 50, // 50 is normal pitch, values: 0 (low) to 100 (high)
     };
+  }
+
+  async loadFirestoreUid(): Promise<string | null> {
+    const firestoreUid = await this.storage.get(LocalStorage.CurrentUser);
+    console.log('Loaded current user UID from storage:', firestoreUid);
+    if (firestoreUid) {
+      this.firestoreUidSubject.next(firestoreUid);
+      return firestoreUid;
+    }
+    return null;
+  }
+
+  async saveFirestoreUid(uid: string): Promise<void> {
+    try {
+      await this.storage.set(LocalStorage.CurrentUser, uid);
+    } catch (error) {
+      console.error('Error saving current user UID:', error);
+    }
   }
 }

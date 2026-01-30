@@ -44,19 +44,26 @@ function makeEnv(prod = false) {
       maxTargetLanguages: Number(v("MAX_TARGET_LANGUAGES", "3")),
       maxInputLength: Number(v("MAX_INPUT_LENGTH", "100")),
       maxFreeTranslateCharsPerMonthForUser: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH_FOR_USER", "10000")
+        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH_FOR_USER", "10000"),
       ),
       maxFreeTranslateCharsPerMonth: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000")
+        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000"),
       ),
       maxFreeTranslateCharsBufferPerMonth: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_BUFFER_PER_MONTH", "5000")
+        v("MAX_FREE_TRANSLATE_CHARS_BUFFER_PER_MONTH", "5000"),
       ),
       textToSpeechMinValue: Number(v("TEXT_TO_SPEECH_MIN_VALUE", "0.5")),
       textToSpeechMaxValue: Number(v("TEXT_TO_SPEECH_MAX_VALUE", "2.0")),
       showTabsBar: v("SHOW_TABS_BAR", "false").toLowerCase() === "true",
       simulateTranslation:
         v("SIMULATE_TRANSLATION", "false").toLowerCase() === "true",
+      myDevicesUpdateUsermap:
+        v("MY_DEVICES_UPDATE_USERMAP", "false").toLowerCase() === "true",
+      myDevices: [
+        {myGalaxyA33LUid: v("MY_GALAXY_A33_L_UID", "")},
+        {myGalaxyA33Uid: v("MY_GALAXY_A33_UID", "")},
+        {myWebChromeUid: v("MY_WEB_CHROME_UID", "")},
+      ],
     },
     googleTranslate: {
       apiKey: v("GOOGLE_TRANSLATE_API_KEY", ""),
@@ -80,10 +87,10 @@ fs.writeFileSync(path.join(outDir, "environment.ts"), makeEnv(false), "utf8");
 fs.writeFileSync(
   path.join(outDir, "environment.prod.ts"),
   makeEnv(true),
-  "utf8"
+  "utf8",
 );
 console.log(
-  "Generated environment files: src/environments/environment.ts(.prod)."
+  "Generated environment files: src/environments/environment.ts(.prod).",
 );
 
 // optional: replace placeholder in src/index.html if present
@@ -96,7 +103,7 @@ try {
     if (index.includes(placeholder) && measurementId) {
       const replaced = index.replace(
         new RegExp(placeholder, "g"),
-        measurementId
+        measurementId,
       );
       fs.writeFileSync(indexPath, replaced, "utf8");
       console.log("Replaced measurement id placeholder in src/index.html");

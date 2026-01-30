@@ -2,9 +2,33 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.9] – 2026-01-30
+
+### ✨ New Features
+
+- Introduced a user statistics accordion in the settings (for programmer devices), enabling detailed translation statistics display, including total and monthly character counts.
+- Implemented GetStatisticsAccordionComponent and GetStatisticsComponent for fetching and displaying user/global statistics from Firestore.
+- LocalStorageService now manages the Firestore UID for the current user, improving user-specific data handling.
+- TabSettingsPage now conditionally displays the statistics accordion for programmer devices, enhancing role-based UI.
+- UtilsService includes a new method to detect programmer devices.
+- Added and improved translations for statistics in both English and German.
+- Updated environment configuration to support mobile and web device UIDs.
+- Refactored text-to-speech service to log supported languages for better debugging.
+- Cleaned up unused imports and improved code readability across multiple services.
+- Documentation: Added guides for anonymous login and a TODO list for environment and programmer device management.
+- Added temporary console logs for testing contingent limits.
+- Introduced new environment variables and updated generate-env.js for better configuration management.
+
+### 🚀 Improvements
+
+- On mobile devices, the translation input card is now hidden in landscape mode to maximize available screen space and enhance usability.
+- The UI now displays a clear message at the top of the screen when no target languages are selected, guiding users to select at least one language before translating.
+- Translation logic has been refactored to use centralized configuration constants and RxJS BehaviorSubjects, improving maintainability and reducing code duplication.
+- Updated all dependencies to their latest versions for greater stability and performance.
+
 ## [0.8] – 2026-01-22
 
-### 🚀 New Features
+### ✨ New Features
 
 - Added SystemBarsService for advanced control of status and navigation bar styles, integrating the capgo-capacitor-navigation-bar dependency for a more seamless and customizable system UI experience.
 - Integrated Firebase, enabling analytics and additional Firebase services. The app now supports environment-based configuration for secure management of Firebase credentials.

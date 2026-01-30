@@ -165,6 +165,9 @@
       "TOOLTIPS": {
         "DOWNLOAD": "Open GitHub repository in a new tab — view source code, license, changelog, and documentation."
       }
+    },
+    "STATISTICS": {
+      "ACCORDION": "Get Statistics"
     }
   }
 }

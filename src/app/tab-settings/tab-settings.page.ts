@@ -18,6 +18,8 @@ import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
 import { TextSpeechService } from '../services/text-to-speach.service';
 import { TextToSpeechValues } from '../shared/interfaces';
+import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statiscts-accordion.component';
+import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 
 @Component({
   selector: 'app-tab-settings',
@@ -33,7 +35,8 @@ import { TextToSpeechValues } from '../shared/interfaces';
     GetSourceAccordionComponent,
     PrivacyPolicyAccordionComponent,
     GetMobileAppAccordionComponent,
-    TextToSpeechAccordionComponent
+    TextToSpeechAccordionComponent,
+    GetStatisticsAccordionComponent,
   ],
 })
 export class TabSettingsPage implements OnInit, OnDestroy {
@@ -50,14 +53,13 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     public translate: TranslateService,
     public readonly localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
-    private readonly textToSpeechService: TextSpeechService
+    private readonly textToSpeechService: TextSpeechService,
+    private readonly firestoreService: FirebaseFirestoreService,
   ) {}
 
   ngOnInit() {
     this.showAllAccordions = true;
-    this.localStorage.initializeServicesAsync(this.translate).then(() => {
-      this.setupSubscriptions();
-    });
+    this.setupSubscriptions();
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
   }
@@ -69,17 +71,19 @@ export class TabSettingsPage implements OnInit, OnDestroy {
         this.translate.setDefaultLang(lang);
         this.selectedLanguage = lang;
         this.localStorage.loadTargetLanguages();
-      })
+      }),
     );
     this.subscriptions.push(
       this.utilsService.logoClicked$.subscribe(() => {
         this.openFeedbackAccordion();
-      })
+      }),
     );
     this.subscriptions.push(
-      this.localStorage.textToSpeechValues$.subscribe((ttsValues: TextToSpeechValues) => {
-        this.textToSpeechValues = ttsValues;
-      })
+      this.localStorage.textToSpeechValues$.subscribe(
+        (ttsValues: TextToSpeechValues) => {
+          this.textToSpeechValues = ttsValues;
+        },
+      ),
     );
   }
 
@@ -96,6 +100,11 @@ export class TabSettingsPage implements OnInit, OnDestroy {
 
   get isNative(): boolean {
     return this.utilsService.isNative;
+  }
+
+  get isProgrammerDevice(): boolean {
+    const currentUserId = this.firestoreService.getCurrentUserId();
+    return this.utilsService.isProgrammerDevice(currentUserId);
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {
@@ -124,7 +133,10 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   onTargetLanguagesChange(languages: string[]) {
     if (languages) {
       this.localStorage.saveTargetLanguages(languages);
-      this.textToSpeechService.updateTtsSupportedLanguagesMap(this.utilsService.isNative, languages);
+      this.textToSpeechService.updateTtsSupportedLanguagesMap(
+        this.utilsService.isNative,
+        languages,
+      );
     }
   }
 

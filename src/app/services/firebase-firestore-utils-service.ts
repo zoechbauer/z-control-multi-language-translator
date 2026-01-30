@@ -47,7 +47,7 @@ export class FirebaseFirestoreUtilsService {
     // Read all control flags from Firestore
     const flags: FirestoreControlFlags =
       await this.firestoreService.readControlFlags();
-    console.log('**** Control flags from Firestore:', flags);
+    console.log('Control flags from Firestore:', flags);
 
     // 1. If translation is globally stopped for all users
     if (flags.StopTranslationForAllUsers) {

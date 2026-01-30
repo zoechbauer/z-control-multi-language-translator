@@ -4,6 +4,9 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 
 ## A. Programming
 
+- **todo-list.md**  
+  Checklist for updating environment variables and programmer device UIDs, including required steps for Firestore user mapping updates.
+
 - **coding-guidelines.md**  
   Clean code principles and best practices for naming, functions, error handling, formatting, and testing.
 

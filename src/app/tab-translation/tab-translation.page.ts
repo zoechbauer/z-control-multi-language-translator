@@ -133,12 +133,10 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
-    this.localStorage.initializeServicesAsync(this.translate).then(() => {
-      this.setupSubscriptions();
-      this.updateIsContingentExceeded().then(() => {
-        this.initFormControls();
-        this.getTranslationPlaceholder();
-      });
+    this.setupSubscriptions();
+    this.updateIsContingentExceeded().then(() => {
+      this.initFormControls();
+      this.getTranslationPlaceholder();
     });
   }
 
@@ -238,8 +236,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       )
       .subscribe((results: Translation[]) => {
         this.translations = results;
-        this.text =
-          this.translate.instant('TRANSLATE.CARD_RESULTS.SIMULATION.INPUT');
+        this.text = this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.SIMULATION.INPUT',
+        );
       });
   }
 

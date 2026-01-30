@@ -15,6 +15,7 @@ export class TextSpeechService {
    * Key: language code, Value: true if supported, false otherwise.
    */
   get ttsSupportedLanguagesMap(): { [lang: string]: boolean } {
+    console.log('Getting TTS supported languages map:', this._ttsSupportedLanguagesMap);
     return this._ttsSupportedLanguagesMap;
   }
 
@@ -23,6 +24,7 @@ export class TextSpeechService {
    * @param map Object mapping language codes to support status
    */
   set ttsSupportedLanguagesMap(map: { [lang: string]: boolean }) {
+    console.log('Setting TTS supported languages map:', map);
     this._ttsSupportedLanguagesMap = map;
   }
 
@@ -141,6 +143,7 @@ export class TextSpeechService {
     isNative: boolean,
     selectedLanguages: string[],
   ) {
+    console.log('Updating TTS supported languages map for native and selected languages:', isNative, selectedLanguages);
     const map: { [lang: string]: boolean } = {};
     if (isNative) {
       for (const lang of selectedLanguages) {
@@ -153,6 +156,7 @@ export class TextSpeechService {
       }
     }
     this.ttsSupportedLanguagesMap = map;
+    console.log('Updated TTS supported languages map:', this.ttsSupportedLanguagesMap);
   }
 
   /**
