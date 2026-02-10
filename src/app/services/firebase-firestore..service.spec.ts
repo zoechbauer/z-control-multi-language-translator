@@ -1,12 +1,14 @@
 import { signInAnonymously, Auth } from '@angular/fire/auth';
 import { TestBed } from '@angular/core/testing';
-
-import {
-  FirebaseFirestoreService,
-  FirestoreControlFlags,
-} from './firebase-firestore.service';
 import { Firestore } from '@angular/fire/firestore';
+import { Functions } from '@angular/fire/functions';
+import { TranslateService } from '@ngx-translate/core';
+
+import { FirebaseFirestoreService } from './firebase-firestore.service';
 import { UtilsService } from './utils.service';
+import { FirestoreContingentData } from '../shared/firebase-firestore.interfaces';
+import { LocalStorageService } from './local-storage.service';
+import { ToastService } from './toast.service';
 
 describe('FirebaseFirestoreService', () => {
   let service: FirebaseFirestoreService;
@@ -22,7 +24,15 @@ describe('FirebaseFirestoreService', () => {
       utilsService: UtilsService,
       private signInAnonMock: ((auth: Auth) => Promise<any>) | null = null,
     ) {
-      super(auth, firestore, utilsService);
+      super(
+        auth,
+        {} as TranslateService,
+        firestore,
+        {} as Functions,
+        utilsService,
+        {} as LocalStorageService,
+        {} as ToastService,
+      );
     }
     // Override init to use the mock if provided
     override async init() {
@@ -35,7 +45,7 @@ describe('FirebaseFirestoreService', () => {
         } else {
           (this as any).user = (this as any).auth.currentUser;
         }
-        await this.ensureControlFlagsExist();
+        await this.createMissingContingentData();
       } catch (error) {
         // ...existing code...
       }
@@ -115,7 +125,7 @@ describe('FirebaseFirestoreService', () => {
       TestBed.inject(UtilsService),
       getMockSignInAnonymously(),
     );
-    const spy = spyOn(service, 'ensureControlFlagsExist').and.returnValue(
+    const spy = spyOn(service, 'createMissingContingentData').and.returnValue(
       Promise.resolve(),
     );
     authMock.currentUser = null;
@@ -127,21 +137,21 @@ describe('FirebaseFirestoreService', () => {
   // In a real test environment, you would mock Firestore's doc/getDoc/setDoc functions at the import level or use AngularFireTestingModule.
 
   it('should return control flags from Firestore', async () => {
-    const flags: FirestoreControlFlags = { StopTranslationForAllUsers: true };
+    const flags: FirestoreContingentData = { StopTranslationForAllUsers: true };
     // Simulate Firestore returning flags
-    spyOn(service as any, 'readControlFlags').and.returnValue(
+    spyOn(service as any, 'readContingentData').and.returnValue(
       Promise.resolve(flags),
     );
-    const result = await (service as any).readControlFlags();
+    const result = await (service as any).readContingentData();
     expect(result).toEqual(flags);
   });
 
   it('should return empty object if control flags do not exist', async () => {
     // Simulate Firestore returning empty
-    spyOn(service as any, 'readControlFlags').and.returnValue(
+    spyOn(service as any, 'readContingentData').and.returnValue(
       Promise.resolve({}),
     );
-    const result = await (service as any).readControlFlags();
+    const result = await (service as any).readContingentData();
     expect(result).toEqual({});
   });
 

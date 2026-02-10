@@ -2,6 +2,18 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [0.10] – 2026-02-10
+
+### ✨ New Features
+
+### 🚀 Improvements
+
+- Restructured environment configuration for enhanced management of programmer devices.
+- Added `useFirebaseEmulator` option to environment files for seamless switching between Firestore emulator and production database.
+- Relocated device information storage from monthly statistics to user document in userMapping collection, enhancing data organization.
+- Enhanced local testing documentation to clarify Firestore emulator configuration and integration.
+- Refactored Firestore access layer by moving functions to Backend, improving security and separation of concerns.
+
 ## [0.9] – 2026-01-30
 
 ### ✨ New Features

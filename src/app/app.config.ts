@@ -14,7 +14,16 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import {
+  provideFirestore,
+  getFirestore,
+  connectFirestoreEmulator,
+} from '@angular/fire/firestore';
+import {
+  connectFunctionsEmulator,
+  getFunctions,
+  provideFunctions,
+} from '@angular/fire/functions';
 
 import { routes } from './app-routes';
 import { ServicesModule } from './services.module';
@@ -40,6 +49,50 @@ export const appConfig: ApplicationConfig = {
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
+    // DRY: Helper to get emulator host or undefined if not using emulator
+    (() => {
+      const getEmulatorHost = () => {
+        const allowedHosts = ['localhost', '10.0.0.68']; // Add more if needed
+        const host = globalThis.location.hostname;
+        if (
+          allowedHosts.includes(host) &&
+          environment.app.useFirebaseEmulator
+        ) {
+          return host === 'localhost' ? 'localhost' : '10.0.0.68'; // Replace with your IP if needed
+        }
+        return undefined;
+      };
+
+      return [
+        provideFirestore(() => {
+          const firestore = getFirestore();
+          const emulatorHost = getEmulatorHost();
+          console.log(
+            'Initializing Firestore: globalThis.location.hostname:',
+            globalThis.location.hostname,
+          );
+          if (emulatorHost) {
+            console.log(
+              'Connecting to Firestore emulator with host:',
+              emulatorHost,
+            );
+            connectFirestoreEmulator(firestore, emulatorHost, 8080);
+          }
+          return firestore;
+        }),
+        provideFunctions(() => {
+          const functions = getFunctions();
+          const emulatorHost = getEmulatorHost();
+          if (emulatorHost) {
+            console.log(
+              'Connecting to Functions emulator with host:',
+              emulatorHost,
+            );
+            connectFunctionsEmulator(functions, emulatorHost, 5001);
+          }
+          return functions;
+        }),
+      ];
+    })(),
   ],
 };

@@ -17,8 +17,21 @@ export const environment = {
     textToSpeechMaxValue: __TEXT_TO_SPEECH_MAX_VALUE__,
     showTabsBar: __SHOW_TABS_BAR__,
     simulateTranslation: __SIMULATE_TRANSLATION__,
-    myMobileUid: '_MY_MOBILE_UID_',
-    myWebChromeUid: '_MY_WEB_CHROME_UID_',
+    useFirebaseEmulator: __USE_FIREBASE_EMULATOR__,
+    programmerDevices: {
+      updateUsermap: __PROGRAMMER_DEVICES_UPDATE_USERMAP__,
+      devices: [
+        {
+          GalaxyA33LUid: __PROGRAMMER_GALAXY_A33_L_UID__,
+        },
+        {
+          GalaxyA33Uid: __PROGRAMMER_GALAXY_A33_UID__,
+        },
+        {
+          WebChromeUid: __PROGRAMMER_WEB_CHROME_UID__,
+        },
+      ],
+    },
   },
   googleTranslate: {
     apiKey: '__GOOGLE_TRANSLATE_API_KEY__',

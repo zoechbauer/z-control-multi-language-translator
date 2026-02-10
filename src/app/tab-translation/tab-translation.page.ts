@@ -20,15 +20,16 @@ import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { Tab, ToastAnchor } from '../enums';
+import { environment } from 'src/environments/environment';
+import { AppConstants } from '../shared/app.constants';
+import { DeviceInfo } from '../shared/app.interfaces';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
-import { AppConstants } from '../shared/app.constants';
 import { ToastService } from '../services/toast.service';
 import { TextSpeechService } from '../services/text-to-speach.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils-service';
-import { environment } from 'src/environments/environment';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -110,6 +111,10 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     );
   }
 
+  get deviceInfos(): DeviceInfo {
+    return this.utilsService.getDeviceInfo();
+  }
+
   isContingentExceeded: boolean = false;
 
   private async updateIsContingentExceeded() {
@@ -156,6 +161,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   async translateTextOrSimulate(): Promise<void> {
+    // if contingent is exceeded, simulate translation and show toast
     await this.updateIsContingentExceeded();
 
     // Early exit if no text or no target languages
@@ -181,12 +187,46 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.firestoreUtilsService.updateTranslationStatistics(
-      this.text,
-      this.selectedLanguages.length,
-    );
-    this.translateText();
-    this.toggleCard();
+    this.disableFormControls();
+
+    // Call secure cloud function for contingent check, update, and translation
+    try {
+      const translations =
+        await this.googleTranslateService.secureTranslateCloudFunction(
+          this.text,
+          this.baseLang,
+          this.selectedLanguages,
+        );
+        // TODO fehlerfreie übersetzung bei handy
+      console.log(
+        'Translations from secureTranslateCloudFunction:',
+        translations,
+      );
+      if (!translations) {
+        this.simulateTranslationOnContingentExceeded();
+        this.toggleCard();
+        return;
+      }
+      this.translations = Object.entries(translations).map(
+        ([language, translatedText]) => ({
+          language,
+          translatedText: String(translatedText),
+        }),
+      );
+      this.toggleCard();
+    } catch (error: any) {
+      console.error('Translation error:', error); // TODO test
+      if (error?.message?.includes('contingent')) {
+        this.simulateTranslationOnContingentExceeded();
+        this.toggleCard();
+      } else {
+        console.error('Translation error:', error);
+        this.toastService.showToast(
+          this.translate.instant('TRANSLATE.CARD_RESULTS.TOAST.ERROR'),
+          ToastAnchor.TRANSLATE_PAGE,
+        );
+      }
+    }
   }
 
   private simulateTranslationOnContingentExceeded(): void {
@@ -197,26 +237,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       ToastAnchor.TRANSLATE_PAGE,
     );
     this.simulateTranslateText();
-  }
-
-  private translateText(): void {
-    if (!this.text.trim()) {
-      return;
-    }
-    this.disableFormControls();
-
-    this.googleTranslateService
-      .getTranslations(
-        this.googleTranslateService.translateText.bind(
-          this.googleTranslateService,
-        ),
-        this.text,
-        this.baseLang,
-        this.selectedLanguages,
-      )
-      .subscribe((results: Translation[]) => {
-        this.translations = results;
-      });
   }
 
   private simulateTranslateText(): void {

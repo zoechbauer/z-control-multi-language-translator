@@ -1,18 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IonSpinner } from '@ionic/angular/standalone';
-import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgFor, NgIf, NgTemplateOutlet, DecimalPipe, JsonPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { DecimalPipe, JsonPipe } from '@angular/common';
 
 import { LogoComponent } from '../logo/logo.component';
 import { LogoType } from 'src/app/enums';
 import {
   FirebaseFirestoreService,
-  FirestoreControlFlags,
-  UserStatistics,
-  UserType,
 } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
+import { UserStatistics, UserType, FirestoreContingentData } from 'src/app/shared/firebase-firestore.interfaces';
 
 @Component({
   selector: 'app-get-statistics',
@@ -37,7 +34,7 @@ export class GetStatisticsComponent implements OnInit {
 
   // Statistics data
   isLoading = true;
-  controlFlags: FirestoreControlFlags | null = null;
+  contingentData: FirestoreContingentData | null = null;
   isStopped = false;
   totalCharCount = 0;
   totalLimit = 0;
@@ -66,15 +63,15 @@ export class GetStatisticsComponent implements OnInit {
   async init() {
     this.isLoading = true;
     // Read control flags
-    this.controlFlags = await this.firestoreService.readControlFlags();
-    this.isStopped = !!this.controlFlags.StopTranslationForAllUsers;
+    this.contingentData = await this.firestoreService.readContingentData();
+    this.isStopped = !!this.contingentData.StopTranslationForAllUsers;
 
     // Total contingent
     this.totalLimit =
-      this.controlFlags.maxFreeTranslateCharsPerMonth ??
+      this.contingentData.maxFreeTranslateCharsPerMonth ??
       environment.app.maxFreeTranslateCharsPerMonth;
     this.totalBuffer =
-      this.controlFlags.maxFreeTranslateCharsBufferPerMonth ??
+      this.contingentData.maxFreeTranslateCharsBufferPerMonth ??
       environment.app.maxFreeTranslateCharsBufferPerMonth;
     this.totalCharCount = await this.firestoreService.getTotalCharCount();
     this.totalRemaining = Math.max(
@@ -84,28 +81,26 @@ export class GetStatisticsComponent implements OnInit {
 
     // User contingent
     this.userLimit =
-      this.controlFlags.maxFreeTranslateCharsPerMonthForUser ??
+      this.contingentData.maxFreeTranslateCharsPerMonthForUser ??
       environment.app.maxFreeTranslateCharsPerMonthForUser;
     this.userCharCount = await this.firestoreService.getCharCountForUser();
     this.userRemaining = Math.max(0, this.userLimit - this.userCharCount);
 
     // user statistics
     this.userStatistics = await this.firestoreService.getAllUserStatistics();
+    console.log('User Statistics:', this.userStatistics);
 
     this.users = await this.firestoreService.getUsers();
+    console.log('Users:', this.users);
 
     this.displayedUserStatistics = this.userStatistics.map((user) => {
-      const label =
-        this.users.find((u) => u.userId === user.uid)?.name || 'unknown';
+      const userInfo = this.users.find((u) => u.userId === user.uid);
+      const label = userInfo?.name || 'unknown';
+      const platform = userInfo?.deviceInfo?.platform?.toLowerCase().includes('win32')
+        ? 'web'
+        : 'native';
 
       const remaining = this.userLimit - user.charCount;
-
-      let platform = 'web';
-      if (
-        !user.platform?.toLowerCase().includes('win32')
-      ) {
-        platform = 'native';
-      }
 
       let lastUpdated = '';
       if (user.lastUpdated) {

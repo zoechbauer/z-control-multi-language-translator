@@ -57,13 +57,18 @@ function makeEnv(prod = false) {
       showTabsBar: v("SHOW_TABS_BAR", "false").toLowerCase() === "true",
       simulateTranslation:
         v("SIMULATE_TRANSLATION", "false").toLowerCase() === "true",
-      myDevicesUpdateUsermap:
-        v("MY_DEVICES_UPDATE_USERMAP", "false").toLowerCase() === "true",
-      myDevices: [
-        {myGalaxyA33LUid: v("MY_GALAXY_A33_L_UID", "")},
-        {myGalaxyA33Uid: v("MY_GALAXY_A33_UID", "")},
-        {myWebChromeUid: v("MY_WEB_CHROME_UID", "")},
-      ],
+      useFirebaseEmulator:
+        v("USE_FIREBASE_EMULATOR", "false").toLowerCase() === "true",
+      programmerDevices: {
+        updateUsermap:
+          v("PROGRAMMER_DEVICES_UPDATE_USERMAP", "false").toLowerCase() === "true",
+        devices: [
+          { GalaxyA33LUid: v("PROGRAMMER_GALAXY_A33_L_UID", "") },
+          { GalaxyA33Uid: v("PROGRAMMER_GALAXY_A33_UID", "") },
+          { WebChromeUid: v("PROGRAMMER_WEB_CHROME_UID", "") },
+          { WebChromeUid2: v("PROGRAMMER_WEB_CHROME_UID_2", "") },
+        ],
+      },
     },
     googleTranslate: {
       apiKey: v("GOOGLE_TRANSLATE_API_KEY", ""),

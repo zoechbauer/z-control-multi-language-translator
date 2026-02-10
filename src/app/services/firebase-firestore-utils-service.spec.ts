@@ -2,13 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 
-import {
-  FirebaseFirestoreService,
-  FirestoreControlFlags,
-} from './firebase-firestore.service';
+import { FirebaseFirestoreService } from './firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils-service';
 import { UtilsService } from './utils.service';
+import { FirestoreContingentData } from '../shared/firebase-firestore.interfaces';
 
 describe('FirebaseFirestoreUtilsService', () => {
   let service: FirebaseFirestoreUtilsService;
@@ -16,7 +14,7 @@ describe('FirebaseFirestoreUtilsService', () => {
 
   beforeEach(() => {
     firestoreServiceMock = jasmine.createSpyObj('FirebaseFirestoreService', [
-      'readControlFlags',
+      'readContingentData',
       'getCharCountForUser',
       'getTotalCharCount',
       'init',
@@ -37,7 +35,7 @@ describe('FirebaseFirestoreUtilsService', () => {
   });
 
   it('should return true if StopTranslationForAllUsers is true', async () => {
-    firestoreServiceMock.readControlFlags.and.resolveTo({
+    firestoreServiceMock.readContingentData.and.resolveTo({
       StopTranslationForAllUsers: true,
     });
     const result = await service.isContingentExceeded();
@@ -45,7 +43,7 @@ describe('FirebaseFirestoreUtilsService', () => {
   });
 
   it('should return true if total contingent is exceeded', async () => {
-    firestoreServiceMock.readControlFlags.and.resolveTo({});
+    firestoreServiceMock.readContingentData.and.resolveTo({});
     firestoreServiceMock.getTotalCharCount.and.resolveTo(
       environment.app.maxFreeTranslateCharsPerMonth -
         environment.app.maxFreeTranslateCharsBufferPerMonth +
@@ -57,7 +55,7 @@ describe('FirebaseFirestoreUtilsService', () => {
   });
 
   it('should return true if user contingent is exceeded', async () => {
-    firestoreServiceMock.readControlFlags.and.resolveTo({});
+    firestoreServiceMock.readContingentData.and.resolveTo({});
     firestoreServiceMock.getTotalCharCount.and.resolveTo(0);
     firestoreServiceMock.getCharCountForUser.and.resolveTo(
       environment.app.maxFreeTranslateCharsPerMonthForUser + 1,
@@ -67,7 +65,7 @@ describe('FirebaseFirestoreUtilsService', () => {
   });
 
   it('should return false if no contingent is exceeded and translation is not stopped', async () => {
-    firestoreServiceMock.readControlFlags.and.resolveTo({});
+    firestoreServiceMock.readContingentData.and.resolveTo({});
     firestoreServiceMock.getTotalCharCount.and.resolveTo(0);
     firestoreServiceMock.getCharCountForUser.and.resolveTo(0);
     const result = await service.isContingentExceeded();
@@ -75,13 +73,13 @@ describe('FirebaseFirestoreUtilsService', () => {
   });
 
   it('should use Firestore flag values if present', async () => {
-    const flags: FirestoreControlFlags = {
+    const flags: FirestoreContingentData = {
       StopTranslationForAllUsers: false,
       maxFreeTranslateCharsPerMonth: 100,
       maxFreeTranslateCharsBufferPerMonth: 0,
       maxFreeTranslateCharsPerMonthForUser: 10,
     };
-    firestoreServiceMock.readControlFlags.and.resolveTo(flags);
+    firestoreServiceMock.readContingentData.and.resolveTo(flags);
     firestoreServiceMock.getTotalCharCount.and.resolveTo(101);
     firestoreServiceMock.getCharCountForUser.and.resolveTo(11);
     // Should return true for total contingent exceeded first

@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import {
-  FirebaseFirestoreService,
-  FirestoreControlFlags,
-} from './firebase-firestore.service';
+import { FirebaseFirestoreService } from './firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import { FireStoreConstants } from '../shared/app.constants';
+import { FirestoreContingentData } from '../shared/firebase-firestore.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -14,40 +12,23 @@ export class FirebaseFirestoreUtilsService {
   constructor(private readonly firestoreService: FirebaseFirestoreService) {}
 
   /**
-   * Updates the translation statistics by calculating the total number of characters translated
-   * (text length multiplied by the number of selected target languages) and records this value
-   * using the Firestore service.
-   *
-   * @param text The text that was translated.
-   * @param selectedLanguagesCount The number of target languages selected for translation.
-   */
-  updateTranslationStatistics(
-    text: string,
-    selectedLanguagesCount: number,
-  ): void {
-    const chars = text.length * selectedLanguagesCount;
-    console.log(
-      `Updating translation statistics: ${chars} chars for ${selectedLanguagesCount} target languages.`,
-    );
-    this.firestoreService.addTranslatedChars(chars);
-  }
-
-  /**
    * Checks if the translation contingent has been exceeded.
    * This method auto-refreshes the month context if the month has changed, then verifies, in order:
    * 1. If translation is globally stopped for all users.
    * 2. If the total contingent for all users is exceeded.
    * 3. If the contingent for the current user is exceeded.
    * Returns true if any of these conditions are met, otherwise false.
+   * 
+   * Note: these checks are also implemented in the Firebase Functions backend for security.
    */
   async isContingentExceeded(): Promise<boolean> {
     // Auto-refresh month context if the month has changed
     await this.autrefreshMonthContextIfNeeded();
-    
+
     // Read all control flags from Firestore
-    const flags: FirestoreControlFlags =
-      await this.firestoreService.readControlFlags();
-    console.log('Control flags from Firestore:', flags);
+    const flags: FirestoreContingentData =
+      await this.firestoreService.readContingentData();
+    console.log('Firestore contingent data:', flags);
 
     // 1. If translation is globally stopped for all users
     if (flags.StopTranslationForAllUsers) {
@@ -68,7 +49,7 @@ export class FirebaseFirestoreUtilsService {
   }
 
   private async isContingentForUserExceeded(
-    flags: FirestoreControlFlags,
+    flags: FirestoreContingentData,
   ): Promise<boolean> {
     const limit =
       flags.maxFreeTranslateCharsPerMonthForUser ??
@@ -78,7 +59,7 @@ export class FirebaseFirestoreUtilsService {
   }
 
   private async isTotalContingentExceeded(
-    flags: FirestoreControlFlags,
+    flags: FirestoreContingentData,
   ): Promise<boolean> {
     const limit =
       flags.maxFreeTranslateCharsPerMonth ??

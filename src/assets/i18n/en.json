@@ -60,7 +60,10 @@
         "SPEAK_NOT_SUPPORTED": "Speech output is currently not available for this language on this device.",
         "TEXT_TRANSLATED_SIMULATION": "Simulation is being used.",
         "CONTINGENT_EXCEEDED": "Translation quota exceeded. Please try again next month.",
-        "NO_TEXT_OR_LANGUAGES": "No text or target language(s) selected for translation."
+        "NO_TEXT_OR_LANGUAGES": "No text or target language(s) selected for translation.",
+        "ERROR": "Error during translation. Please try again.",
+        "ERROR_ADDING_USER": "Error adding user. Please try again.",
+        "ERROR_UPDATING_PROGRAMMER_DEVICES": "Error updating programmer devices. Please try again."
       },
       "SIMULATION": {
         "INPUT": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month.",

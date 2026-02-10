@@ -60,7 +60,10 @@
         "SPEAK_NOT_SUPPORTED": "Für diese Sprache ist aktuell keine Sprachausgabe auf diesem Gerät verfügbar.",
         "TEXT_TRANSLATED_SIMULATION": "Simulation wird verwendet.",
         "CONTINGENT_EXCEEDED": "Übersetzungskontingent überschritten. Bitte versuchen Sie es im nächsten Monat erneut. Sie verwenden derzeit die Simulationsfunktion.",
-        "NO_TEXT_OR_LANGUAGES": "Kein Text oder keine Zielsprache(n) zum Übersetzen ausgewählt."
+        "NO_TEXT_OR_LANGUAGES": "Kein Text oder keine Zielsprache(n) zum Übersetzen ausgewählt.",
+        "ERROR": "Fehler bei der Übersetzung. Bitte versuchen Sie es erneut.",
+        "ERROR_ADDING_USER": "Fehler beim Hinzufügen des Benutzers. Bitte versuchen Sie es erneut.",
+        "ERROR_UPDATING_PROGRAMMER_DEVICES": "Fehler beim Aktualisieren der Programmiergeräte. Bitte versuchen Sie es erneut."
       },
       "SIMULATION": {
         "INPUT": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar.",

@@ -13,40 +13,22 @@ This document lists important activities to execute when working with environmen
   - **Details:**
     - See `docs/firebase-config-enviroment-files.md` for more information on environment file management and the generate-env script.
 
-    ***
-
-## b) Registering a Programmer Device's Firebase UID in the Environment
+## b) Registering a Programmer Device's Firebase UID in the Environment and in Firestore userMapping Collection
 
 - **Action Steps:**
-  1. Launch the app on the new programmer device. This will automatically add its UID to the Firestore user mapping.
-  2. Before performing any translations or other actions, ensure the new device's UID is added to the environment files.
-  3. In Firestore user mapping, update the Name and type fields for the new device's UID to accurately reflect its identity. Change its type from User Device to Programmer Device.
-  4. Add the new device's UID to the `myDevices` array in `.env.local`.
+  1. Launch the app on the new programmer device. The app will automatically register its UID in Firestore user mapping with username prefix U and type User.
+  2. Set `PROGRAMMER_DEVICES_UPDATE_USERMAP=true` in `.env.local` to enable device registration.
+  3. Add the device's UID to the `myDevices` array in `.env.local`.
+  4. Update `generate-env.js` to include an environment variable for the new programmer device UID.
   5. Run `npm run generate-env` to regenerate the environment files.
-  6. Relaunch the app on the new programmer device and verify that the statistics accordion appears in the settings page.
-  7. Confirm that the new programmer device UID is correctly listed in the Firestore user mapping.
-
-- **Details:**
-  - Always add the new programmer device UID to both Firestore user mapping and the environment files before using the device for translations or other changes. This ensures correct device recognition and access to programmer features.
-
----
-
-## c) Updating Programmer Device UIDs in the Environment
-
-- **Action Steps:**
-  1. Update the list of programmer device UIDs in the `myDevices` array within `.env.local`.
-  2. Set `MY_DEVICES_UPDATE_USERMAP=true` in `.env.local` to enable automatic user mapping updates.
-  3. Run `npm run generate-env` to regenerate the environment files with the new configuration.
-  4. Start the app. This will trigger the `updateNameOfProgrammerUsers()` method (see `src/app/services/firebase-firestore.service.ts`), which will update the type and name of affected users in Firestore user mapping.
-  5. Once the update is complete, set `MY_DEVICES_UPDATE_USERMAP=false` in `.env.local` to prevent further automatic updates.
-  6. Run `npm run generate-env` again to finalize the environment files.
-
-- **Details:**
-  - This update process ensures that Firestore user mapping accurately reflects the current set of programmer device UIDs, updating any devices whose status has changed.
-  - The `updateNameOfProgrammerUsers` method will automatically change the type and name of users in Firestore based on the new `myDevices` list, appending an asterisk to indicate a change.
-  - Only use this process if translations or other actions were performed before the new programmer device UID was added to the environment files (see section b). Otherwise, simply add the UID as described above.
-  - For more information, refer to the `updateNameOfProgrammerUsers` method in `src/app/services/firebase-firestore.service.ts`.
+  6. Relaunch the app.
+  7. Verify the device is now recognized in Firestore user mapping with username prefix P and type Programmer.
+  8. Test translations on the new device to confirm full functionality and proper registration.
+  9. Set `PROGRAMMER_DEVICES_UPDATE_USERMAP=false` in `.env.local` to disable device registration.
+  10. Run `npm run generate-env` to regenerate the environment files.
 
 ---
 
-**Always keep your environment files and Firestore user mapping in sync when making changes to programmer device UIDs or environment variables.**
+**⚠️ Important:** Do not delete programmer device UIDs from environment files or Firestore user mapping. Removing UIDs causes duplicate user numbers because the system counts existing users to generate the next user number. Always add new UIDs instead of replacing old ones. 
+
+Before performing translations or other operations, verify that the new device's UID has been added to the environment files and Firestore user mapping.

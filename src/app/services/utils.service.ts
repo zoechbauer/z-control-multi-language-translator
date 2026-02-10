@@ -8,6 +8,7 @@ import { HelpModalComponent } from '../help-modal/help-modal.component';
 import { Tab } from '../enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { environment } from 'src/environments/environment';
+import { DeviceInfo } from '../shared/app.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -163,6 +164,11 @@ export class UtilsService {
     return await modal.present();
   }
 
+  /**
+   * Sets appropriate CSS classes on the modal based on component type, device orientation, and platform.
+   * Removes existing modal classes and adds component-specific and device-specific classes.
+   * @param modal The modal element to apply classes to
+   */
   setModalLandscapeClasses(modal: HTMLIonModalElement) {
     setTimeout(() => {
       if (modal.classList && typeof modal.classList.remove === 'function') {
@@ -256,21 +262,26 @@ export class UtilsService {
    * @returns True if the UID matches the programmer's device, false otherwise
    */
   isProgrammerDevice(firebaseUID: string | null): boolean {
-    const pgmDevices = environment.app.myDevices.map((deviceObj) => {
+    const pgmDevices = environment.app.programmerDevices.devices.map((deviceObj) => {
       return Object.values(deviceObj)[0];
     });
 
     if (!firebaseUID) {
       return false;
     }
-    // TODO remove console.log after testing
-    // console.log(`Programmer devices UIDs: ${pgmDevices}`);
-    // console.log('pgmDevices', environment.app.myDevices);
-    // console.log(
-    //   `Comparing Firebase UID '${firebaseUID}' with pgmr devices '${pgmDevices}'`,
-    // );
-    // console.log('isProgrammerDevice result:', pgmDevices.includes(firebaseUID));
 
     return pgmDevices.includes(firebaseUID);
+  }
+
+  /**
+   * Returns device information such as user agent, platform, language, and app version.
+   */
+  getDeviceInfo(): DeviceInfo {
+    return {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      appVersion: environment.version,
+    };
   }
 }

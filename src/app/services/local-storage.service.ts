@@ -3,7 +3,7 @@ import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
-import { TextToSpeechValues } from '../shared/interfaces';
+import { TextToSpeechValues } from '../shared/app.interfaces';
 
 enum LocalStorage {
   SelectedLanguage = 'selectedLanguage',
@@ -267,6 +267,10 @@ export class LocalStorageService {
     };
   }
 
+  /**
+   * Loads the firestore UID from storage and updates the observable.
+   * @returns The stored firestore UID or null if not found
+   */
   async loadFirestoreUid(): Promise<string | null> {
     const firestoreUid = await this.storage.get(LocalStorage.CurrentUser);
     console.log('Loaded current user UID from storage:', firestoreUid);
@@ -277,6 +281,10 @@ export class LocalStorageService {
     return null;
   }
 
+  /**
+   * Saves the firestore UID to storage.
+   * @param uid The firestore UID to save
+   */
   async saveFirestoreUid(uid: string): Promise<void> {
     try {
       await this.storage.set(LocalStorage.CurrentUser, uid);

@@ -1,10 +1,22 @@
 // translation.service.ts
-import { Injectable } from '@angular/core';
+
+import {
+  inject,
+  Injectable,
+  Injector,
+  runInInjectionContext,
+} from '@angular/core';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService, Translation } from '@ngx-translate/core';
 import { Observable, firstValueFrom, forkJoin, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import {
+  DeviceInfo,
+  SecureTranslateData,
+  TranslationResult,
+} from '../shared/app.interfaces';
 
 interface GoogleTranslateResponse {
   data: {
@@ -19,6 +31,7 @@ export interface GoogleLanguage {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationGoogleTranslateService {
+  private readonly injector: Injector;
   private readonly GOOGLE_TRANSLATE_API_KEY =
     environment.googleTranslate.apiKey;
   private readonly GOOGLE_TRANSLATE_API_URL = `https://translation.googleapis.com/language/translate/v2?key=${this.GOOGLE_TRANSLATE_API_KEY}`;
@@ -27,7 +40,43 @@ export class TranslationGoogleTranslateService {
   constructor(
     private readonly http: HttpClient,
     private readonly translate: TranslateService,
-  ) {}
+    private readonly functions: Functions,
+  ) {
+    this.injector = inject(Injector);
+  }
+
+  /**
+   * Calls the secureTranslate Firebase Cloud Function for translation and contingent logic.
+   * @param text The text to translate.
+   * @param baseLang The source language code.
+   * @param selectedLanguages Array of target language codes.
+   * @returns Promise resolving to the translations object or throws error.
+   */
+  async secureTranslateCloudFunction(
+    text: string,
+    baseLang: string,
+    selectedLanguages: string[],
+  ): Promise<Record<string, string> | undefined> {
+    try {
+      const callable = runInInjectionContext(this.injector, () =>
+        httpsCallable<SecureTranslateData, TranslationResult>(
+          this.functions,
+          'secureTranslate',
+        ),
+      );
+      const response = await callable({
+        text,
+        baseLang,
+        selectedLanguages,
+      });
+      // response.data is typed as TranslationResult
+      console.log('Response from secureTranslate Cloud Function:', response);
+      return response?.data?.translations;
+    } catch (error) {
+      console.error('Error calling secureTranslate Cloud Function:', error);
+      throw error;
+    }
+  }
 
   // Set to true in environment.ts to simulate translations without making actual API calls
   // This helps to save the free quota during development and layout testing
@@ -46,25 +95,25 @@ export class TranslationGoogleTranslateService {
     translateFunction: (
       text: string,
       baseLang: string,
-      translateToLang: string
+      translateToLang: string,
     ) => Observable<Record<string, string>>,
     text: string,
     baseLang: string,
-    selectedLanguages: string[]
+    selectedLanguages: string[],
   ): Observable<Translation[]> {
     const translations$ = selectedLanguages.map((translateToLang: string) =>
       translateFunction(text, baseLang, translateToLang).pipe(
         map((result) => ({
           language: translateToLang,
           translatedText: result?.[translateToLang] ?? '',
-        }))
-      )
+        })),
+      ),
     );
 
     return forkJoin(translations$).pipe(
       map((results: Translation[]) =>
-        results.sort((a, b) => a.language.localeCompare(b.language))
-      )
+        results.sort((a, b) => a.language.localeCompare(b.language)),
+      ),
     );
   }
 
@@ -79,7 +128,7 @@ export class TranslationGoogleTranslateService {
   translateText(
     word: string,
     source: string,
-    target: string
+    target: string,
   ): Observable<Record<string, string>> {
     if (!source || !target) {
       throw new Error('Source and target languages must be provided');
@@ -94,13 +143,13 @@ export class TranslationGoogleTranslateService {
       .pipe(
         tap(() => {
           console.log(
-            `Translated "${word}" from ${source} to ${target} using Google Translate API.`
+            `Translated "${word}" from ${source} to ${target} using Google Translate API.`,
           );
         }),
         map((resp) => {
           const translatedText = resp.data.translations[0].translatedText;
           return { [target]: translatedText };
-        })
+        }),
       );
   }
 
@@ -115,16 +164,18 @@ export class TranslationGoogleTranslateService {
   simulateTranslateText(
     word: string,
     source: string,
-    target: string
+    target: string,
   ): Observable<Record<string, string>> {
     if (!source || !target) {
       throw new Error('Source and target languages must be provided');
     }
     console.log(
-      `Simulating translation of "${word}" from ${source} to ${target}`
+      `Simulating translation of "${word}" from ${source} to ${target}`,
     );
     return of({
-      [target]: this.translate.instant('TRANSLATE.CARD_RESULTS.SIMULATION.OUTPUT'),
+      [target]: this.translate.instant(
+        'TRANSLATE.CARD_RESULTS.SIMULATION.OUTPUT',
+      ),
     });
   }
 
@@ -136,7 +187,7 @@ export class TranslationGoogleTranslateService {
    * @returns Observable emitting an array of GoogleLanguage objects with formatted names.
    */
   getSupportedLanguagesWithLangCodeInName(
-    targetLang: string
+    targetLang: string,
   ): Observable<GoogleLanguage[]> {
     if (!targetLang) {
       throw new Error('targetLang must be provided');
@@ -153,12 +204,12 @@ export class TranslationGoogleTranslateService {
             language: lang.language,
             name: `${lang.name} (${lang.language})`,
           }))
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => a.name.localeCompare(b.name)),
       ),
       tap((langs) => {
         this.supportedLanguagesCache[targetLang] = langs;
         console.log('Cached supported languages for', targetLang, langs);
-      })
+      }),
     );
   }
 
@@ -172,11 +223,11 @@ export class TranslationGoogleTranslateService {
    */
   formatLanguageNamesWithLineBreaks(
     supportedLanguages: GoogleLanguage[],
-    targetLangCodes: string[]
+    targetLangCodes: string[],
   ): string {
     if (!supportedLanguages || !Array.isArray(targetLangCodes)) {
       throw new Error(
-        'supportedLanguages and targetLangCodes must be provided'
+        'supportedLanguages and targetLangCodes must be provided',
       );
     }
     return supportedLanguages
@@ -196,7 +247,7 @@ export class TranslationGoogleTranslateService {
    */
   async getFormattedTargetLanguageNamesForCodes(
     baseLang: string,
-    targetLangCodes: string[]
+    targetLangCodes: string[],
   ): Promise<string> {
     if (!baseLang) {
       throw new Error('baseLang must be provided');
@@ -207,13 +258,13 @@ export class TranslationGoogleTranslateService {
     ) {
       // Fetch supported languages if not already cached
       await firstValueFrom(
-        this.getSupportedLanguagesWithLangCodeInName(baseLang)
+        this.getSupportedLanguagesWithLangCodeInName(baseLang),
       );
     }
     // Use cached or newly fetched supported languages
     return this.formatLanguageNamesWithLineBreaks(
       this.supportedLanguagesCache[baseLang],
-      targetLangCodes
+      targetLangCodes,
     );
   }
 
@@ -230,7 +281,7 @@ export class TranslationGoogleTranslateService {
     return this.getSupportedLanguagesWithLangCodeInName(baseLang).pipe(
       map((langs: GoogleLanguage[]) => {
         return langs.find((lang) => baseLang === lang.language)?.name || '';
-      })
+      }),
     );
   }
 }

@@ -17,7 +17,7 @@ import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/t
 import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
 import { TextSpeechService } from '../services/text-to-speach.service';
-import { TextToSpeechValues } from '../shared/interfaces';
+import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statiscts-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 

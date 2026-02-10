@@ -12,7 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { TextToSpeechValues } from 'src/app/shared/interfaces';
+import { TextToSpeechValues } from 'src/app/shared/app.interfaces';
 
 @Component({
   selector: 'app-text-to-speech-accordion',
@@ -69,7 +69,8 @@ export class TextToSpeechAccordionComponent {
   }
 
   resetTtsSettings() {
-    const defaultValues = this.localStorageService.getDefaultTextToSpeechValues();
+    const defaultValues =
+      this.localStorageService.getDefaultTextToSpeechValues();
     this.ngModel = {
       ...this.ngModel,
       rate: defaultValues.rate,
