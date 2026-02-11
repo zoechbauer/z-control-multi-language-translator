@@ -2,9 +2,14 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
-## [0.10] – 2026-02-10
+## [0.11] – 2026-02-11
 
 ### ✨ New Features
+
+- App deployed to Firebase Hosting for enhanced online accessibility and streamlined user distribution.
+- Help page now features an updated link to the Firebase-hosted web app, providing users with seamless access to the online version.
+
+## [0.10] – 2026-02-10
 
 ### 🚀 Improvements
 

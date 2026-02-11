@@ -18,7 +18,7 @@ import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
 import { TextSpeechService } from '../services/text-to-speach.service';
 import { TextToSpeechValues } from '../shared/app.interfaces';
-import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statiscts-accordion.component';
+import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 
 @Component({
@@ -105,6 +105,10 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   get isProgrammerDevice(): boolean {
     const currentUserId = this.firestoreService.getCurrentUserId();
     return this.utilsService.isProgrammerDevice(currentUserId);
+  }
+
+  get isFirebaseEmulator(): boolean {
+    return environment.app.useFirebaseEmulator;
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {

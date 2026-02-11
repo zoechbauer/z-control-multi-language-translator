@@ -43,7 +43,7 @@
     <app-get-mobile-app-accordion></app-get-mobile-app-accordion>
     }
     <app-get-source-accordion></app-get-source-accordion>
-    @if(isProgrammerDevice) {
+    @if(isProgrammerDevice || isFirebaseEmulator) {
     <app-get-statistics-accordion></app-get-statistics-accordion>
     } }
 

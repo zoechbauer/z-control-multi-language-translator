@@ -284,21 +284,6 @@
 
     <div>
       <h3 id="web-version">Mobile Version versus Web Version</h3>
-      <p>
-        The web version is available at (TODO: Update link)
-        <a
-          class="external-link"
-          href="https://z-control-qr-code.web.app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          https://z-control-qr-code.web.app
-          <ion-icon
-            name="open-outline"
-            style="vertical-align: text-bottom; margin-left: 2px"
-          ></ion-icon>
-        </a>
-      </p>
       <p>Advantages of the mobile version:</p>
       <ul class="no-list-style-inside">
         <li>Take advantage of voice input via your device's keyboard.</li>
@@ -310,10 +295,30 @@
       <ul class="no-list-style-inside">
         <li>Use your browser for a full keyboard experience.</li>
         <li>
+          Certain operating systems also allow voice input, for example you can
+          activate voice input in Windows 11 using
+          <i>Windows key + H</i>.
+        </li>
+        <li>
           In the web version, all languages are supported for speech output,
           whereas in the mobile version not all languages are available.
         </li>
       </ul>
+      <p *ngIf="isNative">
+        The web version is available at<br />
+        <a
+          class="external-link"
+          href="https://z-control-multi-language-translator.web.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://z-control-multi-language-translator.web.app
+          <ion-icon
+            name="open-outline"
+            style="vertical-align: text-bottom; margin-left: 2px"
+          ></ion-icon>
+        </a>
+      </p>
     </div>
 
     <h3 id="technical-info">Technical Information</h3>
@@ -700,21 +705,6 @@
 
     <div>
       <h3 id="web-version-DE">Mobile-Version versus Web-Version</h3>
-      <p>
-        Die Web-Version ist erreichbar unter (TODO: Link anpassen)
-        <a
-          class="external-link"
-          href="https://z-control-qr-code.web.app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          https://z-control-qr-code.web.app
-          <ion-icon
-            name="open-outline"
-            style="vertical-align: text-bottom; margin-left: 2px"
-          ></ion-icon>
-        </a>
-      </p>
       <p>Vorteile der mobilen Version:</p>
       <ul class="no-list-style-inside">
         <li>
@@ -723,7 +713,7 @@
         </li>
         <li>
           Sie können die Geschwindigkeit und Tonhöhe der Spracheingabe in den
-          Einstellungenanpassen.
+          Einstellungen anpassen.
         </li>
       </ul>
       <p>Vorteile der Web-Version:</p>
@@ -732,11 +722,31 @@
           Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.
         </li>
         <li>
+          Bestimmte Betriebssysteme erlauben auch eine Spracheingabe, z.B können
+          Sie unter Windows 11 die Spracheingabe mittels
+          <i>Windows-Taste + H</i> aktivieren.
+        </li>
+        <li>
           In der Web-Version werden alle Sprachen für die Sprachausgabe
           unterstützt, während in der mobilen Version nicht alle Sprachen
           verfügbar sind.
         </li>
       </ul>
+      <p *ngIf="isNative">
+        Die Web-Version ist erreichbar unter<br />
+        <a
+          class="external-link"
+          href="https://z-control-multi-language-translator.web.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://z-control-multi-language-translator.web.app
+          <ion-icon
+            name="open-outline"
+            style="vertical-align: text-bottom; margin-left: 2px"
+          ></ion-icon>
+        </a>
+      </p>
     </div>
 
     <h3 id="technical-info-DE">Technische Informationen</h3>

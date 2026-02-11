@@ -64,6 +64,7 @@ function makeEnv(prod = false) {
           v("PROGRAMMER_DEVICES_UPDATE_USERMAP", "false").toLowerCase() === "true",
         devices: [
           { GalaxyA33LUid: v("PROGRAMMER_GALAXY_A33_L_UID", "") },
+          { GalaxyA33LUid2: v("PROGRAMMER_GALAXY_A33_L_UID_2", "") },
           { GalaxyA33Uid: v("PROGRAMMER_GALAXY_A33_UID", "") },
           { WebChromeUid: v("PROGRAMMER_WEB_CHROME_UID", "") },
           { WebChromeUid2: v("PROGRAMMER_WEB_CHROME_UID_2", "") },

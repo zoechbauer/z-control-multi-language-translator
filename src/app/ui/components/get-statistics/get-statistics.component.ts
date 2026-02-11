@@ -1,15 +1,23 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IonSpinner } from '@ionic/angular/standalone';
-import { NgFor, NgIf, NgTemplateOutlet, DecimalPipe, JsonPipe } from '@angular/common';
+import {
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+  DecimalPipe,
+  JsonPipe,
+} from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
 import { LogoType } from 'src/app/enums';
-import {
-  FirebaseFirestoreService,
-} from 'src/app/services/firebase-firestore.service';
+import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
-import { UserStatistics, UserType, FirestoreContingentData } from 'src/app/shared/firebase-firestore.interfaces';
+import {
+  UserStatistics,
+  UserType,
+  FirestoreContingentData,
+} from 'src/app/shared/firebase-firestore.interfaces';
 
 @Component({
   selector: 'app-get-statistics',
@@ -96,7 +104,9 @@ export class GetStatisticsComponent implements OnInit {
     this.displayedUserStatistics = this.userStatistics.map((user) => {
       const userInfo = this.users.find((u) => u.userId === user.uid);
       const label = userInfo?.name || 'unknown';
-      const platform = userInfo?.deviceInfo?.platform?.toLowerCase().includes('win32')
+      const platform = userInfo?.deviceInfo?.platform
+        ?.toLowerCase()
+        .includes('win32')
         ? 'web'
         : 'native';
 
@@ -105,7 +115,9 @@ export class GetStatisticsComponent implements OnInit {
       let lastUpdated = '';
       if (user.lastUpdated) {
         const dateObj = new Date(user.lastUpdated);
-        lastUpdated = Number.isNaN(dateObj.getTime()) ? '' : dateObj.toLocaleString();
+        lastUpdated = Number.isNaN(dateObj.getTime())
+          ? ''
+          : this.formatDateTime(dateObj);
       }
 
       return {
@@ -119,5 +131,14 @@ export class GetStatisticsComponent implements OnInit {
     });
 
     this.isLoading = false;
+  }
+
+  private formatDateTime(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 }
