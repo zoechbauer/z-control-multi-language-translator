@@ -146,8 +146,7 @@
           </strong>
         </p>
         <strong>
-          In the web application, all languages are supported for
-          text-to-speech. In the web application, all languages are supported
+          In the web application, all languages are supported
           for the read-aloud function. However, in the mobile application, not
           all languages are available. If a selected target language is not
           available, the read-aloud function for that language is automatically
@@ -194,6 +193,33 @@
             after pressing the "Delete" button, start a new translation.
           </li>
         </ol>
+      </li>
+      <li>
+        <b>How do I check my monthly translation quota?</b>
+        <p><i>On the translation page</i></p>
+        <p>
+          At the end of the translation page, your current translation quota is
+          displayed in the <i>Monthly Quota</i> section. You can expand and
+          collapse this section.
+        </p>
+        <p>
+          When your personal quota or the entire shared quota for all users is
+          reached, only simulated translations are performed. All other features
+          (e.g., speech output) continue to be available. On the 1st of the next
+          month, the quota is automatically reset.
+        </p>
+        <p>
+          <i>Important note:</i> The more target languages and longer texts you
+          translate, the faster your quota will be used up. Choose your target
+          languages and text length carefully.
+        </p>
+        <p><i>On the Statistics page in Settings</i></p>
+        <p>
+          Here you get a detailed overview of the monthly quota for all users,
+          as well as their device information and target languages. This
+          information is presented anonymized and aggregated to protect your
+          privacy.
+        </p>
       </li>
       <li>
         <b>How do I switch between translation and settings?</b>
@@ -304,20 +330,30 @@
           whereas in the mobile version not all languages are available.
         </li>
       </ul>
-      <p *ngIf="isNative">
-        The web version is available at<br />
-        <a
-          class="external-link"
-          href="https://z-control-multi-language-translator.web.app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          https://z-control-multi-language-translator.web.app
-          <ion-icon
-            name="open-outline"
-            style="vertical-align: text-bottom; margin-left: 2px"
-          ></ion-icon>
-        </a>
+      <div *ngIf="isNative">
+        <p><strong>Launch web version</strong></p>
+        <p>
+          The web version is available at<br />
+          <a
+            class="external-link"
+            href="https://z-control-multi-language-translator.web.app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://z-control-multi-language-translator.web.app
+            <ion-icon
+              name="open-outline"
+              style="vertical-align: text-bottom; margin-left: 2px"
+            ></ion-icon>
+          </a>
+        </p>
+      </div>
+      <p><strong>IMPORTANT</strong></p>
+      <p>
+        When you <strong>access the web version on your phone</strong>, make
+        sure the <strong>app is displayed in mobile mode</strong> and not
+        desktop mode. In mobile mode, the web version offers a similar look and
+        behavior to the native app.
       </p>
     </div>
 
@@ -537,7 +573,6 @@
         </p>
         <p>
           <strong>
-            In der Web-Anwendung werden alle Sprachen zum Vorlesen unterstützt.
             In der Web-Anwendung werden alle Sprachen für die Vorlesefunktion
             unterstützt. In der mobilen Anwendung sind jedoch nicht alle
             Sprachen verfügbar. Ist eine ausgewählte Zielsprache nicht
@@ -593,6 +628,35 @@
             neue Übersetzung starten.
           </li>
         </ol>
+      </li>
+      <li>
+        <b>Wie kann ich mein monatliches Übersetzungskontingent überprüfen?</b>
+        <p><i>Auf der Übersetzungsseite</i></p>
+        <p>
+          Am Ende der Übersetzungsseite wird Ihr aktuelles
+          Übersetzungskontingent im Bereich
+          <i>Monatliches Kontingent</i> angezeigt. Sie können diesen Bereich
+          auf- und zuklappen.
+        </p>
+        <p>
+          Wenn Ihr persönliches oder das gesamte Kontingent aller Benutzer
+          erreicht ist, werden nur simulierte Übersetzungen durchgeführt. Alle
+          anderen Funktionen (z.B. Sprachausgabe) stehen weiterhin zur
+          Verfügung. Am 1. des nächsten Monats wird das Kontingent automatisch
+          zurückgesetzt.
+        </p>
+        <p>
+          <i>Wichtiger Hinweis:</i> Je mehr Zielsprachen und je längere Texte
+          Sie übersetzen, desto schneller wird Ihr Kontingent aufgebraucht.
+          Wählen Sie Zielsprachen und Textlänge sorgfältig aus.
+        </p>
+        <p><i>Auf der Statistikseite in den Einstellungen</i></p>
+        <p>
+          Hier erhalten Sie einen detaillierten Überblick über das monatliche
+          Kontingent aller Benutzer sowie deren Geräteinformationen und
+          Zielsprachen. Diese Informationen werden anonymisiert und aggregiert
+          dargestellt, um Ihre Privatsphäre zu schützen.
+        </p>
       </li>
       <li>
         <b>Wie wechsle ich zwischen Übersetzung und Einstellungen?</b>
@@ -705,7 +769,7 @@
 
     <div>
       <h3 id="web-version-DE">Mobile-Version versus Web-Version</h3>
-      <p>Vorteile der mobilen Version:</p>
+      <p><strong>Vorteile der mobilen Version:</strong></p>
       <ul class="no-list-style-inside">
         <li>
           Nutzen Sie die Vorteile der Spracheingabe über die Tastatur Ihres
@@ -716,7 +780,7 @@
           Einstellungen anpassen.
         </li>
       </ul>
-      <p>Vorteile der Web-Version:</p>
+      <p><strong>Vorteile der Web-Version:</strong></p>
       <ul class="no-list-style-inside">
         <li>
           Nutzen Sie Ihren Browser für eine vollständige Tastatur-Erfahrung.
@@ -732,20 +796,30 @@
           verfügbar sind.
         </li>
       </ul>
-      <p *ngIf="isNative">
-        Die Web-Version ist erreichbar unter<br />
-        <a
-          class="external-link"
-          href="https://z-control-multi-language-translator.web.app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          https://z-control-multi-language-translator.web.app
-          <ion-icon
-            name="open-outline"
-            style="vertical-align: text-bottom; margin-left: 2px"
-          ></ion-icon>
-        </a>
+      <div *ngIf="isNative">
+        <p><strong>Web-Version starten</strong></p>
+        <p>
+          Die Web-Version ist erreichbar unter<br />
+          <a
+            class="external-link"
+            href="https://z-control-multi-language-translator.web.app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://z-control-multi-language-translator.web.app
+            <ion-icon
+              name="open-outline"
+              style="vertical-align: text-bottom; margin-left: 2px"
+            ></ion-icon>
+          </a>
+        </p>
+      </div>
+      <p><strong>WICHTIG</strong></p>
+      <p>
+        Wenn Sie die <strong>Web-Version auf dem Handy aufrufen</strong>,
+        stellen Sie sicher, dass die <strong>App im Mobile-Modus</strong> und
+        nicht im Desktop-Modus angezeigt wird. Im Mobile-Modus bietet die
+        Web-Version ein ähnliches Aussehen und Verhalten wie die native App.
       </p>
     </div>
 

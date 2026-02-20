@@ -1,6 +1,7 @@
 import admin from 'firebase-admin';
 import { FireStoreConstants, UserType } from './shared/app.constants.js';
 import {
+  CharCountResult,
   DeviceInfo,
   FirestoreContingentData,
   ProgrammerDeviceUID,
@@ -20,16 +21,19 @@ export class FirebaseFirestoreService {
     const doc = await this.db
       .doc(`${FireStoreConstants.getMetaContingentDataDocumentPath()}`)
       .get();
-    console.log('Contingent Data:', doc.data());
     return doc.data() as FirestoreContingentData;
   }
 
-  async getCharCountForUser(): Promise<number> {
+  async getCharCountForUser(): Promise<CharCountResult> {
     const doc = await this.db
       .doc(`${FireStoreConstants.getUsersCollectionPath()}/${this.userId}`)
       .get();
-    console.log(`Char Count for User ${this.userId}:`, doc.data()?.charCount);
-    return doc.exists && doc.data()?.charCount ? doc.data()!.charCount : 0;
+    return doc.exists && doc.data()?.charCount
+      ? {
+          charCount: doc.data()!.charCount,
+          targetLanguages: doc.data()?.targetLanguages || [],
+        }
+      : { charCount: 0, targetLanguages: [] };
   }
 
   async getTotalCharCount(): Promise<number> {
@@ -37,7 +41,6 @@ export class FirebaseFirestoreService {
       const doc = await this.db
         .doc(`${FireStoreConstants.getMetaTotalCharsDocumentPath()}`)
         .get();
-      console.log('Total Char Count:', doc.data()?.charCount);
       return doc.exists && doc.data()?.charCount ? doc.data()!.charCount : 0;
     } catch (error) {
       console.error('Error getting total char count:', error);
@@ -56,7 +59,6 @@ export class FirebaseFirestoreService {
         `${FireStoreConstants.getMetaContingentDataDocumentPath()}`,
       );
       const doc = await docRef.get();
-      console.log('contingent data:', doc.data());
       if (!doc.exists) {
         await docRef.set(
           {
@@ -163,18 +165,20 @@ export class FirebaseFirestoreService {
    * Adds a new user mapping document to Firestore.
    *
    * Creates a user mapping document with the user's name, type, and device information.
-   * Only creates/updates the document if it does not already exist or if it exists 
+   * Only creates/updates the document if it does not already exist or if it exists
    * without deviceInfo or with different deviceInfo.
    *
    * @param userId The unique identifier of the user.
    * @param programmerDeviceUIDs Array of programmer device UIDs to determine user type and device name.
    * @param deviceInfo Device information to be stored in the user document.
+   * @param isNative Flag indicating if the user is on a native platform (optional).
    * @throws Error if userId is not provided.
    */
   async addUser(
     userId: string,
     programmerDeviceUIDs: ProgrammerDeviceUID[],
     deviceInfo: DeviceInfo,
+    isNative?: boolean,
   ): Promise<void> {
     // Path: .../MLT_translations_statistics/userMapping/{uid}
     if (!userId) {
@@ -193,22 +197,30 @@ export class FirebaseFirestoreService {
             type: getUserType(userId, programmerDeviceUIDs),
             device: getDeviceName(userId, programmerDeviceUIDs),
             deviceInfo: deviceInfo,
+            isNative: isNative ?? false,
             userId: userId,
             createdAt: new Date(),
           },
           { merge: true },
         );
         console.log('Inserted user mapping document for user:', userId);
-      } else if (!doc.data()?.deviceInfo || doc.data()?.deviceInfo !== deviceInfo) {
+      } else if (
+        !doc.data()?.deviceInfo ||
+        doc.data()?.deviceInfo !== deviceInfo
+      ) {
         // If document exists but deviceInfo is missing or different, update it
         await docRef.set(
           {
             deviceInfo: deviceInfo,
+            isNative: isNative ?? false,
             lastUpdated: new Date(),
           },
           { merge: true },
         );
-        console.log('Updated user mapping document with device info for user:', userId);
+        console.log(
+          'Updated user mapping document with device info for user:',
+          userId,
+        );
       }
     } catch (error) {
       console.error('Error upserting user:', userId, error);
@@ -244,24 +256,26 @@ export class FirebaseFirestoreService {
 
   /**
    * Increments the translated character count for the current user.
-   * Also updates the lastUpdated timestamp for both the user and the total statistics document.
+   * Also updates the lastUpdated timestamp for both the user and the total statistics document and the selected languages.
    *
    * - Updates the user's document with the incremented character count and timestamp.
    * - Updates the total statistics document with the incremented character count and timestamp.
    * - Count = text length x number of target languages.
    *
    * @param count Number of characters to add to the user's and total translated character counts.
+   * @param selectedLanguages Array of selected target languages for the translation.
    */
   async addTranslatedChars(
     count: number,
-  ) {
+    selectedLanguages: string[],
+  ): Promise<void> {
     console.log(
-      `addTranslatedChars called with count: ${count} for user ${this.userId}`,
+      `addTranslatedChars called with count: ${count} and selectedLanguages: ${selectedLanguages} for user ${this.userId}`,
     );
     if (!this.userId) return;
 
     try {
-      await this.updateUserCharCount(count);
+      await this.updateUserCharCount(count, selectedLanguages);
     } catch (error) {
       console.error('Error writing user char count document:', error);
     }
@@ -275,35 +289,31 @@ export class FirebaseFirestoreService {
 
   private async updateUserCharCount(
     count: number,
+    selectedLanguages: string[],
   ): Promise<void> {
     const docRef = this.db.doc(
       `${FireStoreConstants.getUsersCollectionPath()}/${this.userId}`,
     );
-    const userDoc = await docRef.get();
-    let newCharCount = count;
-    if (userDoc.exists && typeof userDoc.data()?.charCount === 'number') {
-      newCharCount += userDoc.data()!.charCount;
-    }
     await docRef.set(
-      { charCount: newCharCount, lastUpdated: new Date() },
+      {
+        charCount: admin.firestore.FieldValue.increment(count),
+        targetLanguages: selectedLanguages,
+        lastUpdated: new Date(),
+      },
       { merge: true },
     );
-    console.log('Set charCount for user', this.userId, 'to', newCharCount);
   }
 
   private async updateTotalCharCount(count: number): Promise<void> {
     const totalRef = this.db.doc(
       `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`,
     );
-    const totalDoc = await totalRef.get();
-    let newTotalCharCount = count;
-    if (totalDoc.exists && typeof totalDoc.data()?.charCount === 'number') {
-      newTotalCharCount += totalDoc.data()!.charCount;
-    }
     await totalRef.set(
-      { charCount: newTotalCharCount, lastUpdated: new Date() },
+      {
+        charCount: admin.firestore.FieldValue.increment(count),
+        lastUpdated: new Date(),
+      },
       { merge: true },
     );
-    console.log('Set total charCount to', newTotalCharCount);
   }
 }

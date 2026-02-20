@@ -22,6 +22,7 @@ import { GetStatisticsComponent } from '../get-statistics/get-statistics.compone
 })
 export class GetStatisticsAccordionComponent {
   @Input() lang!: string;
+  @Input() yearMonth!: string;  // yyyy-mm, e.g. 2026-02
 
   constructor(public translate: TranslateService) {}
 

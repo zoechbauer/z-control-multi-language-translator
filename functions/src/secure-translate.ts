@@ -30,7 +30,6 @@ export const secureTranslate = onCall(
     const { data, auth } = request;
     const { text, baseLang, selectedLanguages } =
       data as SecureTranslateData;
-    console.log('secureTranslate called by user/data:', auth?.uid, data);
 
     await validateSecureTranslateRequest(
       auth,
@@ -44,6 +43,7 @@ export const secureTranslate = onCall(
     const firestoreService = new FirebaseFirestoreService(auth!.uid);
     await firestoreService.addTranslatedChars(
       text.length * selectedLanguages.length,
+      selectedLanguages
     );
 
     const translationResult = await translateTextOrThrow(

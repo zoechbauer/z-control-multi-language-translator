@@ -5,15 +5,9 @@ import {
   runInInjectionContext,
 } from '@angular/core';
 import { Auth, signInAnonymously, User } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import {
-  collection,
-  getDocs,
-  increment,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { firstValueFrom } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
@@ -22,10 +16,11 @@ import { UtilsService } from './utils.service';
 import { LocalStorageService } from './local-storage.service';
 import {
   FirestoreContingentData,
-  UserStatistics,
+  UserTranslationStatistics,
   UserType,
   ProgrammerDeviceUID,
   DeviceInfo,
+  CharCountResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
 import { ToastAnchor } from '../enums';
@@ -36,7 +31,7 @@ export class FirebaseFirestoreService {
   private readonly injector: Injector;
   // private user: User | null = null;
   private user!: User;
-  private readonly monthlyTranslationsMonthDocPath = `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.utilsService.getCurrentYearMonth()}`;
+  private readonly monthlyTranslationsMonthDocPath = `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${FireStoreConstants.currentYearMonthPath()}`;
 
   constructor(
     private readonly auth: Auth,
@@ -76,7 +71,6 @@ export class FirebaseFirestoreService {
         );
         if (storedUid) {
           this.user = { uid: storedUid } as User;
-          console.log('Restored user from localStorage: User', this.user);
           if (this.user?.uid) {
             await runInInjectionContext(this.injector, () =>
               this.addUser(this.user!.uid),
@@ -129,7 +123,6 @@ export class FirebaseFirestoreService {
           this.addUser(this.user!.uid),
         );
       }
-      console.log('Signed in anonymously with UID (native):', this.user?.uid);
     } else {
       this.user = this.auth.currentUser;
       if (this.user?.uid) {
@@ -137,7 +130,25 @@ export class FirebaseFirestoreService {
           this.addUser(this.user!.uid),
         );
       }
-      console.log('Already signed in with UID (native):', this.user?.uid);
+    }
+    this.saveUserIdToLocalStorage(this.user.uid);
+  }
+
+  /**
+   * Saves the authenticated user's UID to localStorage using the LocalStorageService.
+   * This allows the web version to restore the same user on page refresh instead of creating a new anonymous user.
+   * On native platforms, Firebase Auth handles persistence, so this is primarily for web usage.
+   * This enables marking the current user in the statistics grid.
+   *
+   * @param uid The UID of the authenticated user to save to localStorage
+   */
+  private async saveUserIdToLocalStorage(uid: string): Promise<void> {
+    try {
+      await runInInjectionContext(this.injector, () =>
+        this.localStorageService.saveFirestoreUid(uid),
+      );
+    } catch (error) {
+      console.error('Error saving user UID to localStorage:', error);
     }
   }
 
@@ -159,11 +170,11 @@ export class FirebaseFirestoreService {
       );
       (snapshot as any).forEach((docSnap: any) => {
         const data = docSnap.data();
-        console.log('Loaded user mapping document', docSnap.id, 'with data', data);
         users.push({
           userId: docSnap.id,
           name: data['name'],
           type: data['type'],
+          isNative: data['isNative'] || false,
           createdAt: this.getFirestoreDate(data['createdAt'])!,
           lastUpdated: this.getFirestoreDate(data['lastUpdated']) || undefined,
           device: data['device'],
@@ -173,7 +184,6 @@ export class FirebaseFirestoreService {
     } catch (error) {
       console.error('Error loading users from user mapping:', error);
     }
-    console.log('getUsers', users);
     return users;
   }
 
@@ -194,6 +204,7 @@ export class FirebaseFirestoreService {
           userId,
           programmerDeviceUIDs: this.getProgrammerDeviceUIDs(),
           deviceInfo: this.deviceInfo,
+          isNative: this.utilsService.isNative,
         }),
       );
     } catch (error) {
@@ -225,12 +236,8 @@ export class FirebaseFirestoreService {
    */
   public async updateProgrammerDeviceUIDs(): Promise<void> {
     if (!environment.app.programmerDevices.updateUsermap) {
-      console.log(
-        'Updating programmer device names is disabled in environment.',
-      );
       return;
     }
-    console.log('updateProgrammerDeviceUIDs called');
 
     try {
       const callable = runInInjectionContext(this.injector, () =>
@@ -262,7 +269,6 @@ export class FirebaseFirestoreService {
       const devObject: ProgrammerDeviceUID = { userId, name };
       programmerDeviceUIDs.push(devObject);
     });
-    console.log('programmerDeviceUIDs', programmerDeviceUIDs);
     return programmerDeviceUIDs;
   }
 
@@ -310,9 +316,6 @@ export class FirebaseFirestoreService {
         const data = (dataSnap as any).data() as FirestoreContingentData;
         return data || {};
       } else {
-        console.log(
-          'Contingent data do not exist, environment values are used instead.',
-        );
         return {};
       }
     } catch (error) {
@@ -326,12 +329,14 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves the current translated character count for the user from Firestore.
-   * @returns Promise resolving to the user's character count (number).
+   * Retrieves the current character count and last selected target languages for the authenticated user from Firestore.
+   * @returns Promise resolving to the user's current character count and target languages.
    */
-  async getCharCountForUser(): Promise<number> {
+  async getCharCountForUser(): Promise<CharCountResult> {
     try {
-      if (!this.user) return 0;
+      if (!this.user) {
+        return { charCount: 0, targetLanguages: [] };
+      }
       const usageSnap = await runInInjectionContext(this.injector, () => {
         const usageRef = doc(
           this.firestore,
@@ -339,14 +344,16 @@ export class FirebaseFirestoreService {
         );
         return getDoc(usageRef);
       });
-      const charCount = usageSnap.exists()
-        ? (usageSnap.data() as any)['charCount'] || 0
-        : 0;
-      console.log('Fetched char count for user', this.user.uid, ':', charCount);
-      return charCount;
+      const charCountResult: CharCountResult = usageSnap.exists()
+        ? {
+            charCount: (usageSnap.data() as any)['charCount'] || 0,
+            targetLanguages: (usageSnap.data() as any)['targetLanguages'] || [],
+          }
+        : { charCount: 0, targetLanguages: [] };
+      return charCountResult;
     } catch (error) {
       console.error('Error fetching char count for user:', error);
-      return 0;
+      return { charCount: 0, targetLanguages: [] };
     }
   }
 
@@ -383,10 +390,12 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves statistics for all users for the current month from Firestore.
-   * Returns an array of UserStatistics objects.
+   * Retrieves translation statistics for all users for the current month from Firestore.
+   * Returns an array of UserTranslationStatistics objects.
    */
-  async getAllUserStatistics(): Promise<UserStatistics[]> {
+  async getAllUserTranslationStatistics(): Promise<
+    UserTranslationStatistics[]
+  > {
     const usersCollectionPath = `${this.monthlyTranslationsMonthDocPath}/users`;
     try {
       // Firestore web SDK: get all docs in collection
@@ -394,18 +403,14 @@ export class FirebaseFirestoreService {
       const snapshot = await runInInjectionContext(this.injector, () =>
         getDocs(usersRef),
       );
-      const result: UserStatistics[] = [];
+      const result: UserTranslationStatistics[] = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-
         result.push({
-          uid: docSnap.id,
-          charCount: data['charCount'] || 0,
-          lastUpdated: this.getFirestoreDate(data['lastUpdated']),
-          userAgent: data['userAgent'],
-          platform: data['platform'],
-          language: data['language'],
-          appVersion: data['appVersion'],
+          userId: docSnap.id,
+          translatedCharCount: data['charCount'] || 0,
+          targetLanguages: data['targetLanguages'] || [],
+          lastTranslationDate: this.getFirestoreDate(data['lastUpdated']),
         });
       });
       return result;

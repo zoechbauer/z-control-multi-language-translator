@@ -162,6 +162,13 @@ npm run build
 cd ..
 ```
 
+4. **Test your functions locally using the Firebase Emulator:**
+
+```sh
+firebase emulators:start --only functions
+```
+- This will start the emulator and allow you to test your functions locally before deploying.
+
 3. **Deploy your functions to Firebase:**
 
 - From the project root, run:

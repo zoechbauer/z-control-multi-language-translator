@@ -35,7 +35,6 @@
     "CARD": {
       "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
       "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern",
-      "CONTINGENT_EXCEEDED": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar. Alle anderen Funktionen können weiterhin genutzt werden. Ab dem nächsten Monat steht Ihnen wieder das volle Kontingent zur Verfügung.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
@@ -69,6 +68,28 @@
         "INPUT": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar.",
         "OUTPUT": "Alle anderen Funktionen können weiterhin genutzt werden. Ab dem nächsten Monat steht Ihnen wieder das volle Kontingent zur Verfügung."
       }
+    }
+  },
+
+  "------ translate page - statistics infos": "-------",
+  "TRANSLATE_STATISTICS": {
+    "ACCORDION": {
+      "TITLE": "Monatliches Kontingent"
+    },
+    "CARD": {
+      "TITLE": "Verfügbares Kontingent in Zeichen für {{yearMonth}}",
+      "GRID": {
+        "USER": "Benutzer",
+        "USER_NAME_YOU": "Sie",
+        "USER_NAME_ALL": "Alle Benutzer",
+        "USED": "Verbraucht",
+        "LIMIT": "Limit",
+        "AVAILABLE": "Verfügbar",
+        "INFO": "Die Übersetzung wird bis zum nächsten Monat ausgesetzt sobald entweder Sie oder alle Benutzer das Limit erreicht haben."
+      },
+      "CONTINGENT_EXCEEDED_1": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht.",
+      "CONTINGENT_EXCEEDED_2": "Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar. Alle anderen Funktionen können weiterhin genutzt werden.",
+      "CONTINGENT_EXCEEDED_3": "Ab dem nächsten Monat steht Ihnen wieder das volle Kontingent zur Verfügung."
     }
   },
 
@@ -166,11 +187,70 @@
     "SOURCE": {
       "ACCORDION": "Quellcode abrufen",
       "TOOLTIPS": {
-        "DOWNLOAD": "GitHub-Repository in einem neuen Tab öffnen — Quellcode, Lizenz, Changelog und Dokumentation anzeigen."
+        "DOWNLOAD": "GitHub-Repository in einem neuen Tab öffnen — Quellcode, Lizenz, Release Notes und Dokumentationen anzeigen."
       }
     },
     "STATISTICS": {
-      "ACCORDION": "Statistiken abrufen"
+      "ACCORDION": "Statistik für {{yearMonth}} abrufen",
+      "LABEL": {
+        "GLOBAL_TRANS_STATUS": "Übersetzungs-Status",
+        "GLOBAL_TRANS_STOPPED": "Übersetzung gestoppt für alle Benutzer",
+        "GLOBAL_TRANS_ACTIVE": "Übersetzung aktiv für alle Benutzer",
+        "TOTAL_CONTINGENT": "Gesamtes Übersetzungskontingent",
+        "USED": "Verbrauchte Summe",
+        "BUFFER": "Puffer",
+        "AVAILABLE": "Noch verfügbar",
+        "CHECKSUM_ALL_USERS": "Verbraucht von allen Benutzern",
+        "CHARS": "Zeichen",
+        "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung"
+      },
+      "GRID": {
+        "USER_CONTINGENT": "Übersetzungskontingent der einzelnen Benutzer",
+        "USER": "Benutzer",
+        "USED": "Verbraucht von {{limit}}",
+        "PLATFORM": "Plattform",
+        "LAST_TRANSLATION": "Letzte Übersetzung"
+      },
+      "USER_DETAIL": {
+        "TITLE": "Benutzer-Übersetzungs-Informationen",
+        "USER_INFORMATION": {
+          "TITLE": "Benutzerinformationen",
+          "LABEL": {
+            "USER_ID": "Benutzer-ID",
+            "USER_NAME": "Benutzer-Name",
+            "USER_TYPE": "Typ",
+            "USER_TYPE_USER": "Benutzer-Übersetzung",
+            "USER_TYPE_PROGRAMMER": "Programmierer-Übersetzung"
+          }
+        },
+        "DEVICE_INFORMATION": {
+          "TITLE": "Geräteinformationen",
+          "LABEL": {
+            "PLATFORM": "Plattform",
+            "DEVICE_PLATFORM": "Geräte-Plattform",
+            "NATIVE": "Handy/Tablet",
+            "DEVICE": "Gerät"
+          }
+        },
+        "TRANSLATION_STATISTICS": {
+          "TITLE": "Übersetzungsstatistik",
+          "LABEL": {
+            "TRANSLATED_CHARS": "Übersetzte Zeichen",
+            "LANGUAGE": "Sprache",
+            "TARGET_LANGUAGES": "Zielsprachen",
+            "LAST_TRANSLATION": "Letzte Übersetzung"
+          }
+        },
+        "USER_AGENT": {
+          "TITLE": "User-Agent"
+        },
+        "APP_VERSION": {
+          "TITLE": "App-Version",
+          "LABEL": {
+            "VERSION": "Version (Datum)"
+          }
+        }
+      }
     }
   }
 }

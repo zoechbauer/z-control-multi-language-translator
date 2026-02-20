@@ -67,6 +67,10 @@ body.native-app {
   padding: 0;
 }
 
+.web-app ion-header ion-toolbar{
+  padding-top: 0 !important;
+}
+
 ion-header {
   margin-right: 0;
   padding-right: 0;
@@ -144,7 +148,8 @@ ion-header ion-toolbar:first-of-type {
 }
 
 .change-log-modal,
-.manual-instructions-modal {
+.manual-instructions-modal,
+.user-detail-modal {
   // Modal ends vertically above navigation bar in portrait mode
   max-height: calc(100vh - var(--safe-area-bottom-fix, 44px)) !important;
   overflow-y: auto !important;

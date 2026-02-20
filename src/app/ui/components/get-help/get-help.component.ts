@@ -13,13 +13,14 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
-import { LocalStorageService } from '../services/local-storage.service';
-import { UtilsService } from './../services/utils.service';
-import { AppConstants } from '../shared/app.constants';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { UtilsService } from 'src/app/services/utils.service';
+import { AppConstants } from 'src/app/shared/app.constants';
+
 @Component({
-  selector: 'app-help-modal',
-  templateUrl: './help-modal.component.html',
-  styleUrls: ['./help-modal.component.scss'],
+  selector: 'app-get-help',
+  templateUrl: './get-help.component.html',
+  styleUrls: ['./get-help.component.scss'],
   imports: [
     IonButtons,
     IonContent,

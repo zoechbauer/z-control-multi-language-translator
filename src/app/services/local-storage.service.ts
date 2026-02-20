@@ -273,7 +273,6 @@ export class LocalStorageService {
    */
   async loadFirestoreUid(): Promise<string | null> {
     const firestoreUid = await this.storage.get(LocalStorage.CurrentUser);
-    console.log('Loaded current user UID from storage:', firestoreUid);
     if (firestoreUid) {
       this.firestoreUidSubject.next(firestoreUid);
       return firestoreUid;

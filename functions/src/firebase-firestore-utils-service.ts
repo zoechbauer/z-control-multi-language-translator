@@ -38,7 +38,7 @@ export class FirebaseFirestoreUtilsService {
     if (limit === undefined) {
       return true;
     }
-    const charCount = await this.firestoreService.getCharCountForUser();
+    const { charCount } = await this.firestoreService.getCharCountForUser();
     return charCount >= limit;
   }
 

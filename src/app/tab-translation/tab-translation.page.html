@@ -106,6 +106,7 @@
               size="medium"
               (click)="speak(text, baseLang)"
               (keydown.enter)="speak(text, baseLang)"
+              [disabled]="speakBtnDisabled"
             >
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
@@ -142,6 +143,7 @@
               size="medium"
               (click)="speak(translation.translatedText, translation.language)"
               (keydown.enter)="speak(translation.translatedText, translation.language)"
+              [disabled]="speakBtnDisabled"
             >
               <ion-icon name="volume-high-outline"></ion-icon>
             </ion-button>
@@ -152,9 +154,17 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
-  } @if(isContingentExceeded) {
-  <div class="contingent-exceeded">
-    {{ 'TRANSLATE.CARD.CONTINGENT_EXCEEDED' | translate }}
-  </div>
   }
+  <ion-accordion-group>
+    <ion-accordion value="user-contingent" class="monthly-quota-accordion">
+      <ion-item slot="header" color="light">
+        <ion-label
+          >{{ 'TRANSLATE_STATISTICS.ACCORDION.TITLE' | translate }}</ion-label
+        >
+      </ion-item>
+      <div  slot="content">
+        <app-user-statistic></app-user-statistic>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
 </ion-content>

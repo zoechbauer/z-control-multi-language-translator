@@ -24,16 +24,6 @@
     color: var(--ion-color-danger);
   }
 
-  div.contingent-exceeded {
-    margin: 16px;
-    padding: 16px;
-    border: 2px dashed var(--ion-color-danger);
-    border-radius: 8px;
-    text-align: center;
-    font-size: 0.8em;
-    color: var(--ion-color-danger);
-  }
-
   .translation-input-card,
   .translation-results-card,
   .translation-results-card-entered-text {
@@ -73,6 +63,19 @@
 
     ion-textarea {
       margin-top: 32px;
+    }
+  }
+
+  .monthly-quota-accordion {
+    text-align: center;
+    ion-label {
+      font-size: 0.7rem;
+      text-align: center;
+    }
+
+    app-user-statistic {
+      display: block;
+      padding: 0 8px;
     }
   }
 }

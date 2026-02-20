@@ -1,5 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { IonSpinner } from '@ionic/angular/standalone';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  IonSpinner,
+  IonGrid,
+  IonCol,
+  IonRow,
+  IonIcon,
+  IonButton,
+} from '@ionic/angular/standalone';
 import {
   NgFor,
   NgIf,
@@ -7,6 +14,7 @@ import {
   DecimalPipe,
   JsonPipe,
 } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
@@ -14,10 +22,13 @@ import { LogoType } from 'src/app/enums';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import {
-  UserStatistics,
-  UserType,
   FirestoreContingentData,
+  DisplayedUserStatistics,
+  StatisticsData,
 } from 'src/app/shared/firebase-firestore.interfaces';
+import { UtilsService } from 'src/app/services/utils.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils-service';
 
 @Component({
   selector: 'app-get-statistics',
@@ -26,6 +37,9 @@ import {
   styleUrls: ['./get-statistics.component.scss'],
   standalone: true,
   imports: [
+    IonButton,
+    IonRow,
+    IonCol,
     IonSpinner,
     LogoComponent,
     NgIf,
@@ -34,111 +48,117 @@ import {
     NgTemplateOutlet,
     DecimalPipe,
     TranslateModule,
+    IonGrid,
+    IonIcon,
   ],
 })
-export class GetStatisticsComponent implements OnInit {
+export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;
   LogoType = LogoType;
+  currentUserUid: string | null = null;
 
   // Statistics data
   isLoading = true;
   contingentData: FirestoreContingentData | null = null;
   isStopped = false;
   totalCharCount = 0;
+  allUsersCharCount = 0;
   totalLimit = 0;
   totalBuffer = 0;
   totalRemaining = 0;
-  userCharCount = 0;
   userLimit = 0;
-  userRemaining = 0;
-  userStatistics: UserStatistics[] = [];
-  users: UserType[] = [];
-  displayedUserStatistics: Array<{
-    label: string;
-    uid: string;
-    charCount: number;
-    remaining: number;
-    platform: string;
-    lastUpdated?: string;
-  }> = [];
+  statisticsData: StatisticsData | null = null;
+  private readonly subscriptions: Subscription[] = [];
 
-  constructor(private readonly firestoreService: FirebaseFirestoreService) {}
+  constructor(
+    private readonly firestoreService: FirebaseFirestoreService,
+    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
+    private readonly localStorageService: LocalStorageService,
+    private readonly utilsService: UtilsService,
+  ) {}
+
+  get hideColumn(): boolean {
+    return this.utilsService.isPortrait;
+  }
+
+  get isProgrammerDevice(): boolean {
+    const currentUserId = this.firestoreService.getCurrentUserId();
+    return this.utilsService.isProgrammerDevice(currentUserId);
+  }
+
+  get isFirebaseEmulator(): boolean {
+    return environment.app.useFirebaseEmulator;
+  }
 
   ngOnInit(): void {
     this.init();
+    this.subscriptions.push(
+      this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
+        this.init();
+      }),
+    );
   }
 
   async init() {
     this.isLoading = true;
-    // Read control flags
-    this.contingentData = await this.firestoreService.readContingentData();
-    this.isStopped = !!this.contingentData.StopTranslationForAllUsers;
 
-    // Total contingent
-    this.totalLimit =
-      this.contingentData.maxFreeTranslateCharsPerMonth ??
-      environment.app.maxFreeTranslateCharsPerMonth;
-    this.totalBuffer =
-      this.contingentData.maxFreeTranslateCharsBufferPerMonth ??
-      environment.app.maxFreeTranslateCharsBufferPerMonth;
-    this.totalCharCount = await this.firestoreService.getTotalCharCount();
-    this.totalRemaining = Math.max(
-      0,
-      this.totalLimit - this.totalBuffer - this.totalCharCount,
-    );
+    try {
+      this.currentUserUid = await this.localStorageService.loadFirestoreUid();
 
-    // User contingent
-    this.userLimit =
-      this.contingentData.maxFreeTranslateCharsPerMonthForUser ??
-      environment.app.maxFreeTranslateCharsPerMonthForUser;
-    this.userCharCount = await this.firestoreService.getCharCountForUser();
-    this.userRemaining = Math.max(0, this.userLimit - this.userCharCount);
+      // Read control flags
+      this.contingentData = await this.firestoreService.readContingentData();
+      this.isStopped = !!this.contingentData.StopTranslationForAllUsers;
 
-    // user statistics
-    this.userStatistics = await this.firestoreService.getAllUserStatistics();
-    console.log('User Statistics:', this.userStatistics);
+      // Total contingent
+      this.totalLimit =
+        this.contingentData.maxFreeTranslateCharsPerMonth ??
+        environment.app.maxFreeTranslateCharsPerMonth;
+      this.totalBuffer =
+        this.contingentData.maxFreeTranslateCharsBufferPerMonth ??
+        environment.app.maxFreeTranslateCharsBufferPerMonth;
+      this.totalCharCount = await this.firestoreService.getTotalCharCount();
+      this.totalRemaining = Math.max(
+        0,
+        this.totalLimit - this.totalBuffer - this.totalCharCount,
+      );
 
-    this.users = await this.firestoreService.getUsers();
-    console.log('Users:', this.users);
+      // User contingent
+      this.userLimit =
+        this.contingentData.maxFreeTranslateCharsPerMonthForUser ??
+        environment.app.maxFreeTranslateCharsPerMonthForUser;
 
-    this.displayedUserStatistics = this.userStatistics.map((user) => {
-      const userInfo = this.users.find((u) => u.userId === user.uid);
-      const label = userInfo?.name || 'unknown';
-      const platform = userInfo?.deviceInfo?.platform
-        ?.toLowerCase()
-        .includes('win32')
-        ? 'web'
-        : 'native';
+      // user statistics and info
+      this.statisticsData =
+        await this.firestoreUtilsService.getDisplayedUserStatistics();
 
-      const remaining = this.userLimit - user.charCount;
-
-      let lastUpdated = '';
-      if (user.lastUpdated) {
-        const dateObj = new Date(user.lastUpdated);
-        lastUpdated = Number.isNaN(dateObj.getTime())
-          ? ''
-          : this.formatDateTime(dateObj);
-      }
-
-      return {
-        label,
-        uid: user.uid,
-        charCount: user.charCount,
-        remaining: Math.max(0, remaining),
-        platform,
-        lastUpdated,
-      };
-    });
-
-    this.isLoading = false;
+      // Calculate the sum of all users' translated characters
+      this.allUsersCharCount =
+        this.statisticsData?.displayedUserStatistics.reduce(
+          (sum, userStat) => sum + userStat.translatedCharCount,
+          0,
+        ) ?? 0;
+    } catch (error) {
+      console.error('GetStatisticsComponent: Error loading statistics', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
-  private formatDateTime(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  isCurrentUser(userId: string): boolean {
+    return userId === this.currentUserUid;
+  }
+
+  async showDetailInfos(lang: string, userStatistic: DisplayedUserStatistics): Promise<void> {
+    this.utilsService.openUserDetail(lang, userStatistic);
+  }
+
+  getFormatDate(dateTime: Date | null): string {
+    return dateTime
+      ? this.utilsService.formatDateISO(new Date(dateTime))
+      : '';
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

@@ -15,6 +15,10 @@ export interface SecureTranslateData {
 export interface TranslationResult {
   translations: Record<string, string>;
 }
+export interface CharCountResult {
+  charCount: number;
+  targetLanguages: string[];
+}
 export interface DeviceInfo {
   userAgent: string;
   platform: string;

@@ -35,7 +35,6 @@
     "CARD": {
       "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
       "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)",
-      "CONTINGENT_EXCEEDED": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month. All other functions can still be used. The full quota will be available again from next month.",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)",
@@ -69,6 +68,28 @@
         "INPUT": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month.",
         "OUTPUT": "All other functions can still be used. The full quota will be available again from next month."
       }
+    }
+  },
+
+  "------ translate page - statistics infos": "-------",
+  "TRANSLATE_STATISTICS": {
+    "ACCORDION": {
+      "TITLE": "Monthly Quota"
+    },
+    "CARD": {
+      "TITLE": "Available Quota in Characters for {{yearMonth}}",
+      "GRID": {
+        "USER": "User",
+        "USER_NAME_YOU": "You",
+        "USER_NAME_ALL": "All Users",
+        "USED": "Used",
+        "LIMIT": "Limit",
+        "AVAILABLE": "Available",
+        "INFO": "Translation will be suspended until next month once either you or all users have reached the limit."
+      },
+      "CONTINGENT_EXCEEDED_1": "Your monthly translation quota has been used up.",
+      "CONTINGENT_EXCEEDED_2": "Translations are only available as simulations until the end of the month. All other functions can still be used.",
+      "CONTINGENT_EXCEEDED_3": "Starting next month, your full quota will be available again."
     }
   },
 
@@ -170,7 +191,66 @@
       }
     },
     "STATISTICS": {
-      "ACCORDION": "Get Statistics"
+      "ACCORDION": "Get Statistics for {{yearMonth}}",
+      "LABEL": {
+        "GLOBAL_TRANS_STATUS": "Translation Status",
+        "GLOBAL_TRANS_STOPPED": "Translation stopped for all users",
+        "GLOBAL_TRANS_ACTIVE": "Translation active for all users",
+        "TOTAL_CONTINGENT": "Total Translation Contingent",
+        "USED": "Used",
+        "BUFFER": "Buffer",
+        "AVAILABLE": "Available",
+        "CHECKSUM_ALL_USERS": "Used by all users",
+        "CHARS": "Characters",
+        "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation"
+      },
+      "GRID": {
+        "USER_CONTINGENT": "Translation Contingent of Individual Users",
+        "USER": "User",
+        "USED": "Used of {{limit}}",
+        "PLATFORM": "Platform",
+        "LAST_TRANSLATION": "Last Translation"
+      },
+      "USER_DETAIL": {
+        "TITLE": "User Translation Information",
+        "USER_INFORMATION": {
+          "TITLE": "User Information",
+          "LABEL": {
+            "USER_ID": "User ID",
+            "USER_NAME": "Username",
+            "USER_TYPE": "Type",
+            "USER_TYPE_USER": "User Translation",
+            "USER_TYPE_PROGRAMMER": "Programmer Translation"
+          }
+        },
+        "DEVICE_INFORMATION": {
+          "TITLE": "Device Information",
+          "LABEL": {
+            "PLATFORM": "Platform",
+            "DEVICE_PLATFORM": "Device Platform",
+            "NATIVE": "Mobile/Tablet",
+            "DEVICE": "Device"
+          }
+        },
+        "TRANSLATION_STATISTICS": {
+          "TITLE": "Translation Statistics",
+          "LABEL": {
+            "TRANSLATED_CHARS": "Translated Characters",
+            "LANGUAGE": "Language",
+            "TARGET_LANGUAGES": "Target Languages",
+            "LAST_TRANSLATION": "Last Translation"
+          }
+        },
+        "USER_AGENT": {
+          "TITLE": "User Agent"
+        },
+        "APP_VERSION": {
+          "TITLE": "App Version",
+          "LABEL": {
+            "VERSION": "Version (Date)"
+          }
+        }
+      }
     }
   }
 }

@@ -34,10 +34,11 @@ export const addUser = onCall(async (request) => {
   if (!deviceInfo) {
     throw new HttpsError('invalid-argument', 'deviceInfo is empty.');
   }
+  const isNative = request.data?.isNative;
   try {
     const userId = auth.uid;
     const firestoreService = new FirebaseFirestoreService(userId);
-    await firestoreService.addUser(userId, programmerDeviceUIDs, deviceInfo);
+    await firestoreService.addUser(userId, programmerDeviceUIDs, deviceInfo, isNative);
     return { success: true };
   } catch (error) {
     let errorMessage = 'Error adding user.';

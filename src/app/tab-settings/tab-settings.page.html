@@ -43,9 +43,11 @@
     <app-get-mobile-app-accordion></app-get-mobile-app-accordion>
     }
     <app-get-source-accordion></app-get-source-accordion>
-    @if(isProgrammerDevice || isFirebaseEmulator) {
-    <app-get-statistics-accordion></app-get-statistics-accordion>
-    } }
+    <app-get-statistics-accordion
+      [lang]="selectedLanguage"
+      [yearMonth]="currentYearMonth"
+    ></app-get-statistics-accordion>
+    }
 
     <!-- Show only the opened accordion  -->
     @if (!showAllAccordions && openAccordion) { @switch (openAccordion) { @case
@@ -89,6 +91,7 @@
     } @case ('get-statistics') {
     <app-get-statistics-accordion
       [lang]="selectedLanguage"
+      [yearMonth]="currentYearMonth"
     ></app-get-statistics-accordion>
     } }
     <!-- Button to show all accordions -->

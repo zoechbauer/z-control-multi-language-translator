@@ -20,6 +20,7 @@ import { TextSpeechService } from '../services/text-to-speach.service';
 import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
+import { FireStoreConstants } from '../shared/app.constants';
 
 @Component({
   selector: 'app-tab-settings',
@@ -47,6 +48,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   LogoType = LogoType;
   Tab = Tab;
   textToSpeechValues!: TextToSpeechValues;
+  currentYearMonth: string = FireStoreConstants.currentYearMonthPath();
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -100,15 +102,6 @@ export class TabSettingsPage implements OnInit, OnDestroy {
 
   get isNative(): boolean {
     return this.utilsService.isNative;
-  }
-
-  get isProgrammerDevice(): boolean {
-    const currentUserId = this.firestoreService.getCurrentUserId();
-    return this.utilsService.isProgrammerDevice(currentUserId);
-  }
-
-  get isFirebaseEmulator(): boolean {
-    return environment.app.useFirebaseEmulator;
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {

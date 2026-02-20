@@ -13,7 +13,6 @@ import { Observable, firstValueFrom, forkJoin, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
-  DeviceInfo,
   SecureTranslateData,
   TranslationResult,
 } from '../shared/app.interfaces';
@@ -70,7 +69,7 @@ export class TranslationGoogleTranslateService {
         selectedLanguages,
       });
       // response.data is typed as TranslationResult
-      console.log('Response from secureTranslate Cloud Function:', response);
+      // console.log('Response from secureTranslate Cloud Function:', response);
       return response?.data?.translations;
     } catch (error) {
       console.error('Error calling secureTranslate Cloud Function:', error);
@@ -141,11 +140,11 @@ export class TranslationGoogleTranslateService {
         format: 'text',
       })
       .pipe(
-        tap(() => {
-          console.log(
-            `Translated "${word}" from ${source} to ${target} using Google Translate API.`,
-          );
-        }),
+        // tap(() => {
+        //   console.log(
+        //     `Translated "${word}" from ${source} to ${target} using Google Translate API.`,
+        //   );
+        // }),
         map((resp) => {
           const translatedText = resp.data.translations[0].translatedText;
           return { [target]: translatedText };
@@ -208,7 +207,6 @@ export class TranslationGoogleTranslateService {
       ),
       tap((langs) => {
         this.supportedLanguagesCache[targetLang] = langs;
-        console.log('Cached supported languages for', targetLang, langs);
       }),
     );
   }

@@ -5,80 +5,145 @@
     <ion-spinner name="dots"></ion-spinner>
     <span>Loading statistics...</span>
   </ng-container>
+
   <ng-container *ngIf="!isLoading">
     <!-- Segment 1: Global Stop Flag -->
     <div class="stat-segment">
-      <h3>Global Translation Status</h3>
-      <p>
-        <strong>Translation stopped for all users:</strong>
-        <span [class.stopped]="isStopped">{{ isStopped ? "Yes" : "No" }}</span>
+      <h3>{{ "SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS" | translate }}</h3>
+      <p [class.stopped]="isStopped">
+        {{
+          isStopped
+            ? ("SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STOPPED" | translate)
+            : ("SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_ACTIVE" | translate)
+        }}
       </p>
     </div>
 
     <!-- Segment 2: Total Contingent -->
     <div class="stat-segment">
-      <h3>Total Contingent (All Users)</h3>
-      <p>
-        <strong>Used:</strong> {{ totalCharCount | number }} /
-        {{ totalLimit | number }}
+      <h3>{{ "SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT" | translate }}</h3>
+      <p
+        [class.total-all-users-difference]="
+          allUsersCharCount !== totalCharCount
+        "
+      >
+        {{ "SETTINGS.STATISTICS.LABEL.CHECKSUM_ALL_USERS" | translate }}:
+        {{
+          allUsersCharCount
+            | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+        }}
+        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
-      <p><strong>Buffer:</strong> {{ totalBuffer | number }}</p>
       <p>
-        <strong>Remaining:</strong>
+        <strong>{{ "SETTINGS.STATISTICS.LABEL.USED" | translate }}:</strong>
+        {{
+          totalCharCount | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+        }}
+        /
+        {{ totalLimit | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US") }}
+        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+      </p>
+      <p>
+        <strong>{{ "SETTINGS.STATISTICS.LABEL.BUFFER" | translate }}:</strong>
+        {{
+          totalBuffer | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+        }}
+        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+      </p>
+      <p>
+        <strong
+          >{{ "SETTINGS.STATISTICS.LABEL.AVAILABLE" | translate }}:
+        </strong>
         <span [class.exceeded]="totalRemaining === 0">{{
-          totalRemaining | number
+          totalRemaining | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
         }}</span>
+        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
     </div>
 
-    <!-- Segment 3: User Contingent -->
+    <!-- Segment 3: User Statistics -->
     <div class="stat-segment">
-      <h3>Your Contingent</h3>
-      <p>
-        <strong>Used:</strong> {{ userCharCount | number }} /
-        {{ userLimit | number }}
-      </p>
-      <p>
-        <strong>Remaining:</strong>
-        <span [class.exceeded]="userRemaining === 0">{{
-          userRemaining | number
-        }}</span>
-      </p>
-    </div>
-
-    <!-- Segment 4: User Statistics Table -->
-    <div class="stat-segment">
-      <h3>User Statistics</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Used Chars</th>
-            <th>Remaining Chars</th>
-            <th>Platform</th>
-            <th>Last Update</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let userStat of displayedUserStatistics">
-            <td>{{ userStat.label }}</td>
-            <td>{{ userStat.charCount | number }}</td>
-            <td>{{ userStat.remaining | number }}</td>
-            <td>{{ userStat.platform }}</td>
-            <td>{{ userStat.lastUpdated }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <!-- do not remove - for debugging purposes only: -->
-        <p>Original values</p>
-        <pre>{{ userStatistics | json }}</pre>
-        <p>Displayed values</p>
-        <pre>{{ displayedUserStatistics | json }}</pre>
-        <p>User Mapping</p>
-        <pre>{{ users | json }}</pre>
+      <h3>{{ "SETTINGS.STATISTICS.GRID.USER_CONTINGENT" | translate }}</h3>
+      <div class="info-note">
+        {{ "SETTINGS.STATISTICS.LABEL.GRID_INFO_NOTE" | translate }}
       </div>
+      <ion-grid>
+        <ion-row class="header-row">
+          <ion-col>{{ "SETTINGS.STATISTICS.GRID.USER" | translate }}</ion-col>
+          <ion-col class="used-chars">{{
+            "SETTINGS.STATISTICS.GRID.USED"
+              | translate
+                : {
+                    limit:
+                      (userLimit
+                      | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")),
+                  }
+          }}</ion-col>
+          <ion-col>{{
+            "SETTINGS.STATISTICS.GRID.PLATFORM" | translate
+          }}</ion-col>
+          <ion-col *ngIf="!hideColumn">{{
+            "SETTINGS.STATISTICS.GRID.LAST_TRANSLATION" | translate
+          }}</ion-col>
+          <ion-col size="1"></ion-col>
+        </ion-row>
+        <ion-row
+          class="detail-row"
+          *ngFor="let userStat of statisticsData?.displayedUserStatistics"
+          [class.user-contingent-exceeded]="
+            userStat.translatedCharCount >= userLimit
+          "
+          [class.my-device]="isCurrentUser(userStat.userId)"
+        >
+          <ion-col>{{ userStat.userName }}</ion-col>
+          <ion-col class="used-chars">{{
+            userStat.translatedCharCount
+              | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}</ion-col>
+          <ion-col>{{ userStat.displayedPlatform }}</ion-col>
+          <ion-col *ngIf="!hideColumn">{{
+            getFormatDate(userStat.lastTranslationDate)
+          }}</ion-col>
+          <ion-col size="1">
+            <ion-button
+              class="info-btn"
+              fill="clear"
+              size="medium"
+              (click)="showDetailInfos(lang, userStat)"
+              (keydown.enter)="showDetailInfos(lang, userStat)"
+            >
+              <ion-icon class="info-icon" name="information-circle"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </div>
+
+    <!-- Raw Data Debug Section -->
+    @if (isProgrammerDevice) {
+      <div class="debug-section">
+        <hr />
+        <details>
+          <summary>Raw Data (JSON) - Debug Only</summary>
+
+          <details>
+            <summary>Displayed values</summary>
+            <pre>{{ statisticsData?.displayedUserStatistics | json }}</pre>
+          </details>
+
+          <details>
+            <summary>Translation Statistics</summary>
+            <pre>{{ statisticsData?.userTranslationStatistics | json }}</pre>
+          </details>
+
+          <details>
+            <summary>User Mapping</summary>
+            <pre>{{ statisticsData?.users | json }}</pre>
+          </details>
+        </details>
+        <hr />
+      </div>
+    }
   </ng-container>
 </div>
 
@@ -90,8 +155,33 @@
 
 <ng-template #englishTemplate>
   <div class="additional-margin-right">
-    <p></p>
-    <p class="small-text"></p>
+    <p>Google Firebase/Firestore stores the following data:</p>
+    <ul>
+      <li>Device information</li>
+      <li>Number of translated characters</li>
+      <li>Selected target languages</li>
+      <li>Date of last translation</li>
+      <li>Anonymized user ID</li>
+    </ul>
+    <p>
+      This data allows us to manage each user’s monthly usage quota. Once a user
+      reaches their monthly limit, no further translation requests are processed
+      for the remainder of the month. Instead, a simulated translation with
+      status information is displayed. At the beginning of the next month, the
+      quota resets automatically and the user can resume normal translations.
+      z-control allows the application to retrieve device information to
+      determine the platform (native app, web desktop, or web mobile) from which
+      translation requests are sent. Wenn du möchtest, kann ich die Texte auch
+      kürzer, technischer, formeller oder noch stärker auf UX‑Lesbarkeit
+      optimieren.
+    </p>
+    <p class="small-text">
+      <i>z-control</i> allows the application to retrieve device information to
+      determine the platform (native app, web desktop, or web mobile) from which
+      translation requests are sent. Wenn du möchtest, kann ich die Texte auch
+      kürzer, technischer, formeller oder noch stärker auf UX‑Lesbarkeit
+      optimieren.
+    </p>
   </div>
 </ng-template>
 
@@ -99,27 +189,26 @@
 
 <ng-template #germanTemplate>
   <div class="additional-margin-right">
-    <p>
-      TODOs Statistiken anzeigen: Formeln und Werte siehe
-      FirebaseFirestoreUtilsService.isContingentExceeded
-    </p>
+    <p>Google Firebase/Firestore speichert folgende Daten:</p>
     <ul>
-      <li>Wurde die Übersetzung gestoppt?</li>
-      <li>
-        Gesamtanzahl der durchgeführten übersetzen Zeichen und Defintionen.
-        Wieviele Zeichen sind noch im Kontingent enthalten?
-      </li>
-      <li>Anzahl der Benutzer und definiertes Kontingent je Benutzer</li>
-      <li>
-        Tabelle mit uid der einzelnen Benutzer, verbrauchtes Kontingent und
-        restliches Kontingent
-      </li>
+      <li>Geräte-Informationen</li>
+      <li>Anzahl der übersetzten Zeichen</li>
+      <li>ausgewählte Zielsprachen</li>
+      <li>Datum der letzten Übersetzung</li>
+      <li>Anonymisierte Benutzer-ID</li>
     </ul>
+    <p>
+      Diese Daten helfen uns, das monatliche Nutzungskontingent pro Benutzer zu
+      verwalten. Sobald ein Benutzer sein monatliches Kontingent erreicht hat,
+      werden für den restlichen Monat keine weiteren Übersetzungsanfragen
+      verarbeitet. Stattdessen erscheint eine simulierte Übersetzung mit
+      Statushinweisen. Zu Beginn des nächsten Monats wird das Kontingent
+      automatisch zurückgesetzt und der Benutzer kann wieder regulär übersetzen.
+    </p>
     <p class="small-text">
-      <i
-        >Hinweis: Der Programmierer kann die definierten Einschränkungen und die
-        verwendeten Daten von Kontingen einsehen .</i
-      >
+      <i>z-control</i> ermöglicht es der Anwendung, Geräteinformationen
+      auszulesen, um die Plattform zu erkennen (native App, Web-Desktop oder
+      Web-Mobile), von der aus Übersetzungsanfragen gesendet werden.
     </p>
   </div>
 </ng-template>

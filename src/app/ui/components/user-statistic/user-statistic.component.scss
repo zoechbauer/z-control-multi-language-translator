@@ -1,0 +1,44 @@
+.translation-contingent-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.5em;
+
+  ion-card-title {
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .header-row {
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.7rem;
+    text-align: right;
+  }
+  .detail-row {
+    align-items: center;
+    font-size: 0.7rem;
+    text-align: right;
+  }
+  .info-row {
+    font-weight: normal;
+    font-size: 0.7rem;
+    ion-col {
+      text-align: center;
+    }
+  }
+  ion-col:first-child {
+    text-align: left;
+  }
+
+  div.contingent-exceeded {
+    padding: 16px;
+    border: 2px dashed var(--ion-color-danger);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--ion-color-danger);
+
+    .margin-bottom {
+      margin-bottom: 0.8rem;
+    }
+  }
+}

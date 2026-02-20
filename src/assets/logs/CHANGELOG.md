@@ -2,7 +2,27 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
-## [0.11] – 2026-02-11
+## [1.1] – 2026-02-18
+
+### ✨ New Features
+
+- Released the "User Statistics" accordion on the Settings page for all users, showing the current-month character usage and remaining monthly quota.
+- Added a "Statistics" section on the Translation page that summarizes total characters translated by all users and by you for the current month, giving an at-a-glance view of the monthly contingent.
+- On translation the selected target languages are now stored in Firestore along with the character count, enabling more detailed usage insights and statistics.
+- Added the "Statistics" section to the help page with detailed explanations of the monthly translation contingent, how character counts are calculated, and tips for managing your usage effectively.
+
+### 🚀 Improvements
+
+- Speak Button is disabled during speaking the translation to prevent multiple clicks and repeated speech, enhancing user experience and ensuring clear audio output.
+- Improved the cloud function with atomic updates to the user statistics, ensuring accurate tracking of translation usage and preventing race conditions when multiple translations occur simultaneously.
+- Enhanced the GetStatisticsComponent to provide better insights into translation usage:
+  - Current user is now highlighted in the statistics grid for easier identification
+  - Users who have exceeded their monthly quota are visually marked
+  - Added validation to compare total character count with the sum of individual user counts, ensuring data integrity
+  - Added collapsible raw data section in JSON format for programmers, enabling detailed debugging and transparency of stored data
+  - Improved information in the "Get Mobile App" component for better clarity and user guidance, and disabled download button because native app is not yet published online.
+
+## [1.0] – 2026-02-11
 
 ### ✨ New Features
 

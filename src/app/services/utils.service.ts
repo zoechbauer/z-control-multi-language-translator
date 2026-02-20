@@ -4,11 +4,16 @@ import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
-import { HelpModalComponent } from '../help-modal/help-modal.component';
 import { Tab } from '../enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { environment } from 'src/environments/environment';
-import { DeviceInfo } from '../shared/app.interfaces';
+import {
+  DeviceInfo,
+  DisplayedUserStatistics,
+  UserType,
+} from '../shared/firebase-firestore.interfaces';
+import { UserDetailComponent } from '../ui/components/user-detail/user-detail.component';
+import { HelpModalComponent } from '../ui/components/get-help/get-help.component';
 
 @Injectable({
   providedIn: 'root',
@@ -165,6 +170,24 @@ export class UtilsService {
   }
 
   /**
+   * Opens the user detail modal dialog.
+   * @param lang The language code for displaying statistics in the modal
+   * @param userStatistic The user statistics to display in the modal
+   */
+  async openUserDetail(lang: string,userStatistic: DisplayedUserStatistics) {
+    const modal = await this.modalController.create({
+      component: UserDetailComponent,
+      componentProps: {
+        lang: lang,
+        userStatistic: userStatistic,
+      },
+    });
+    this.currentModal = modal;
+    this.setModalLandscapeClasses(modal);
+    return await modal.present();
+  }
+
+  /**
    * Sets appropriate CSS classes on the modal based on component type, device orientation, and platform.
    * Removes existing modal classes and adds component-specific and device-specific classes.
    * @param modal The modal element to apply classes to
@@ -175,6 +198,7 @@ export class UtilsService {
         modal.classList.remove(
           'manual-instructions-modal',
           'change-log-modal',
+          'user-detail-modal',
           'desktop',
           'landscape',
         );
@@ -184,6 +208,9 @@ export class UtilsService {
             break;
           case MarkdownViewerComponent:
             modal.classList.add('change-log-modal');
+            break;
+          case UserDetailComponent:
+            modal.classList.add('user-detail-modal');
             break;
           default:
             console.error(
@@ -247,13 +274,29 @@ export class UtilsService {
   }
 
   /**
-   * Returns the current year and month as a string in the format 'YYYY-MM'.
+   * Formats a Date object to an ISO-like string in the format 'YYYY-MM-DD'.
+   * @param date The date to format
+   * @returns The formatted date string
    */
-  getCurrentYearMonth(): string {
-    const date = new Date();
+  formatDateISO(date: Date): string {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    return `${year}-${month}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Formats a Date object to an ISO-like string in the format 'YYYY-MM-DD HH:mm'.
+   * @param date The date to format
+   * @returns The formatted date string
+   */
+  formatDateTimeISO(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 
   /**
@@ -262,9 +305,11 @@ export class UtilsService {
    * @returns True if the UID matches the programmer's device, false otherwise
    */
   isProgrammerDevice(firebaseUID: string | null): boolean {
-    const pgmDevices = environment.app.programmerDevices.devices.map((deviceObj) => {
-      return Object.values(deviceObj)[0];
-    });
+    const pgmDevices = environment.app.programmerDevices.devices.map(
+      (deviceObj) => {
+        return Object.values(deviceObj)[0];
+      },
+    );
 
     if (!firebaseUID) {
       return false;
@@ -283,5 +328,24 @@ export class UtilsService {
       language: navigator.language,
       appVersion: environment.version,
     };
+  }
+
+  /**
+   * Determines the platform type for a given user.
+   * @param userInfo The user information
+   * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
+   */
+  getPlatform(userInfo: UserType): string {
+    // Check if native flag is explicitly set
+    if (userInfo?.isNative === true) {
+      return 'native';
+    }
+
+    // For web users, distinguish between mobile and desktop
+    const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
+    const isMobileWeb =
+      /android|iphone|ipad|ipod|mobile|iemobile|windows phone/.test(userAgent);
+
+    return isMobileWeb ? 'web-mobile' : 'web-desktop';
   }
 }

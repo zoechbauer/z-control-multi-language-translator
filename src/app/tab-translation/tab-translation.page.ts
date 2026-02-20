@@ -14,15 +14,18 @@ import {
   IonRow,
   IonIcon,
   IonTextarea,
+  IonAccordion,
+  IonAccordionGroup,
+  IonItem,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { Tab, ToastAnchor } from '../enums';
-import { environment } from 'src/environments/environment';
 import { AppConstants } from '../shared/app.constants';
-import { DeviceInfo } from '../shared/app.interfaces';
+import { DeviceInfo } from '../shared/firebase-firestore.interfaces';
 import { UtilsService } from '../services/utils.service';
 import { LocalStorageService } from '../services/local-storage.service';
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
@@ -30,6 +33,7 @@ import { ToastService } from '../services/toast.service';
 import { TextSpeechService } from '../services/text-to-speach.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils-service';
+import { UserStatisticComponent } from '../ui/components/user-statistic/user-statistic.component';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -45,6 +49,8 @@ interface Translation {
   templateUrl: 'tab-translation.page.html',
   styleUrls: ['tab-translation.page.scss'],
   imports: [
+    IonLabel,
+    IonItem,
     IonIcon,
     IonButton,
     IonCard,
@@ -58,10 +64,13 @@ interface Translation {
     IonIcon,
     IonRow,
     IonTextarea,
+    IonAccordionGroup,
+    IonAccordion,
     FormsModule,
     HeaderComponent,
     TranslatePipe,
     AsyncPipe,
+    UserStatisticComponent,
   ],
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
@@ -74,6 +83,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   textareaDisabled: boolean = false;
   translateBtnDisabled: boolean = false;
   clearBtnDisabled: boolean = false;
+  speakBtnDisabled: boolean = false;
   cardInputVisible: boolean = true;
   cardResultsVisible: boolean = false;
 
@@ -117,24 +127,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
 
   isContingentExceeded: boolean = false;
 
-  private async updateIsContingentExceeded() {
-    // for testing isContingentExceeded uncomment these 2 lines
-    // this.isContingentExceeded = true;
-    // return;
-
-    if (environment.app.simulateTranslation) {
-      this.isContingentExceeded = false;
-      return;
-    }
-
-    try {
-      this.isContingentExceeded =
-        await this.firestoreUtilsService.isContingentExceeded();
-    } catch {
-      this.isContingentExceeded = false;
-    }
-  }
-
   ngOnInit() {
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
@@ -143,6 +135,11 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       this.initFormControls();
       this.getTranslationPlaceholder();
     });
+  }
+
+  private async updateIsContingentExceeded() {
+    this.isContingentExceeded =
+      await this.firestoreUtilsService.isContingentExceeded();
   }
 
   getTranslationPlaceholder(): string {
@@ -174,19 +171,16 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       );
       return;
     }
-
     if (TranslationGoogleTranslateService.SIMULATE_TRANSLATION) {
       this.simulateTranslateText();
       this.toggleCard();
       return;
     }
-
     if (this.isContingentExceeded) {
       this.simulateTranslationOnContingentExceeded();
       this.toggleCard();
       return;
     }
-
     this.disableFormControls();
 
     // Call secure cloud function for contingent check, update, and translation
@@ -197,11 +191,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
           this.baseLang,
           this.selectedLanguages,
         );
-        // TODO fehlerfreie übersetzung bei handy
-      console.log(
-        'Translations from secureTranslateCloudFunction:',
-        translations,
-      );
       if (!translations) {
         this.simulateTranslationOnContingentExceeded();
         this.toggleCard();
@@ -213,6 +202,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
           translatedText: String(translatedText),
         }),
       );
+      this.firestoreUtilsService.requestStatisticsRefresh();
+
       this.toggleCard();
     } catch (error: any) {
       console.error('Translation error:', error); // TODO test
@@ -263,7 +254,11 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   async speak(text: string, lang: string) {
+    if (this.speakBtnDisabled) {
+      return;
+    }
     try {
+      this.speakBtnDisabled = true;
       await this.ttsService.speak(text, lang);
     } catch (err) {
       this.toastService.showToast(
@@ -273,6 +268,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         ToastAnchor.TRANSLATE_PAGE,
       );
       console.error('TTS error:', err);
+    } finally {
+      this.speakBtnDisabled = false;
     }
   }
 
