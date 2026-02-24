@@ -2,6 +2,19 @@
 
 Welcome to our updates and improvements of the **z-control Multi Language Translator** app!
 
+## [1.2] – 2026-02-24
+
+### 🚀 Improvements
+
+- Enhanced the GetStatisticsComponent for better privacy and usability:
+  - User IDs are now only visible on programmer devices to protect user privacy.
+  - Users with no translations this month are hidden from statistics on user devices for a cleaner view. On programmer devices, all users remain visible in descending order by creation date for monitoring.
+  - Improved dark mode styling for better readability of user details.
+- Enhanced color styling of the Translation page for improved visual consistency in both light and dark modes.
+- Reordered Settings page accordions for quicker access to frequently used features.
+- Improved explanations and instructions in multiple Settings accordions for better user guidance.
+- Added comprehensive README.md to the project root with app information, installation instructions, and usage guidelines.
+
 ## [1.1] – 2026-02-18
 
 ### ✨ New Features
@@ -20,7 +33,7 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
   - Users who have exceeded their monthly quota are visually marked
   - Added validation to compare total character count with the sum of individual user counts, ensuring data integrity
   - Added collapsible raw data section in JSON format for programmers, enabling detailed debugging and transparency of stored data
-  - Improved information in the "Get Mobile App" component for better clarity and user guidance, and disabled download button because native app is not yet published online.
+- Improved information in the "Get Mobile App" component for better clarity and user guidance, and disabled download button because native app is not yet published online.
 
 ## [1.0] – 2026-02-11
 

@@ -19,6 +19,7 @@ import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.inter
 import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
+import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 
 @Component({
   selector: 'app-user-detail-modal',
@@ -51,6 +52,7 @@ export class UserDetailComponent implements OnInit {
     private readonly googleTranslateSevervice: TranslationGoogleTranslateService,
     private readonly modalCtrl: ModalController,
     private readonly utilsService: UtilsService,
+    private readonly firestoreService: FirebaseFirestoreService,
   ) {}
 
   ngOnInit() {
@@ -69,6 +71,11 @@ export class UserDetailComponent implements OnInit {
     return dateTime
       ? this.utilsService.formatDateTimeISO(new Date(dateTime))
       : '';
+  }
+
+    get isProgrammerDevice(): boolean {
+    const currentUserId = this.firestoreService.getCurrentUserId();
+    return this.utilsService.isProgrammerDevice(currentUserId);
   }
 
   private async getTargetLanguagesWithLineBreak(): Promise<void> {

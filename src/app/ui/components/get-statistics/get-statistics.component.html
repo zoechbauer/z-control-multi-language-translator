@@ -95,16 +95,16 @@
           "
           [class.my-device]="isCurrentUser(userStat.userId)"
         >
-          <ion-col>{{ userStat.userName }}</ion-col>
-          <ion-col class="used-chars">{{
+          <ion-col *ngIf="getDisplayUserRow(userStat)">{{ userStat.userName }}</ion-col>
+          <ion-col class="used-chars" *ngIf="getDisplayUserRow(userStat)">{{
             userStat.translatedCharCount
               | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
           }}</ion-col>
-          <ion-col>{{ userStat.displayedPlatform }}</ion-col>
-          <ion-col *ngIf="!hideColumn">{{
+          <ion-col *ngIf="getDisplayUserRow(userStat)">{{ userStat.displayedPlatform }}</ion-col>
+          <ion-col *ngIf="!hideColumn && getDisplayUserRow(userStat)">{{
             getFormatDate(userStat.lastTranslationDate)
           }}</ion-col>
-          <ion-col size="1">
+          <ion-col size="1"  *ngIf="getDisplayUserRow(userStat)">
             <ion-button
               class="info-btn"
               fill="clear"

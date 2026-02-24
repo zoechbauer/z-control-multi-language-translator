@@ -100,8 +100,10 @@ export class FirebaseFirestoreUtilsService {
     statisticsData.displayedUserStatistics.sort(
       (a, b) =>
         (b.lastTranslationDate?.getTime() ?? 0) -
-        (a.lastTranslationDate?.getTime() ?? 0),
-    ); // Sort by last translation date desc
+        (a.lastTranslationDate?.getTime() ?? 0) ||
+        (b.userCreatedAt?.getTime() ?? 0) -
+        (a.userCreatedAt?.getTime() ?? 0),
+    ); // Sort by last translation date desc and userCreatedAt desc
     return statisticsData;
   }
 

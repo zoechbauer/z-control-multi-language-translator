@@ -1,7 +1,9 @@
 <ion-accordion value="language" id="language">
   <ion-item slot="header" color="light">
-    <ion-label>{{ "SETTINGS.LANGUAGE.ACCORDION" | translate }}:<br /><br />
-      <span>{{localStorage.selectedLanguageName$ | async}}</span> </ion-label>
+    <ion-label
+      >{{ "SETTINGS.LANGUAGE.ACCORDION" | translate }}:<br /><br />
+      <span>{{ localStorage.selectedLanguageName$ | async }}</span>
+    </ion-label>
   </ion-item>
   <div class="ion-padding" slot="content" title="">
     <ion-item>
@@ -31,16 +33,15 @@
       <div class="notes">
         <p>Note</p>
         <p>
-          The app language is either <b>German</b> or <b>English</b> depending
-          on your device's language setting.
+          The app language defaults to your device's language setting. If your
+          device uses German, the app displays in German; otherwise, it displays
+          in English.
         </p>
         <p>
-          If a language other than German or English is set, the app will be
-          displayed in English.
-        </p>
-        <p>
-          You can change the language at any time. The change takes effect
-          immediately.
+          You can change the app language at any time, and the change takes
+          effect immediately. This language is also used as the base language
+          for translations—all translations are performed from this base
+          language into your selected target languages.
         </p>
       </div>
     </ng-template>
@@ -51,23 +52,15 @@
       <div class="notes">
         <p>Hinweis</p>
         <p>
-          Die verwendete Sprache ist entweder <b>Deutsch</b> oder
-          <b>Englisch</b> je nachdem welche Sprache am Handy eingestellt wurde.
+          Die App-Sprache wird standardmäßig von den Spracheinstellungen Ihres
+          Geräts bestimmt. Bei Deutsch wird die App auf Deutsch angezeigt,
+          ansonsten auf Englisch.
         </p>
         <p>
-          Wurde eine andere Sprache als Deutsch oder Englisch eingestellt, wird
-          die App in Englisch angezeigt.
-        </p>
-        <p>
-          Sie können jederzeit die Sprache ändern. Die Änderung ist sofort
-          wirksam.
-        </p>
-        <p>
-          <strong
-            >Diese ausgewählte Sprache ist auch die Basissprache für die
-            Übersetzung. Die Übersetzung erfolgt von der Basissprache in die
-            ausgewählten Zielsprachen.</strong
-          >
+          Sie können die App-Sprache jederzeit ändern, und die Änderung ist
+          sofort wirksam. Diese Sprache dient auch als Basissprache für
+          Übersetzungen – alle Übersetzungen werden von dieser Basissprache in
+          die von Ihnen ausgewählten Zielsprachen durchgeführt.
         </p>
       </div>
     </ng-template>

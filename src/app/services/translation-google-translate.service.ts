@@ -69,7 +69,6 @@ export class TranslationGoogleTranslateService {
         selectedLanguages,
       });
       // response.data is typed as TranslationResult
-      // console.log('Response from secureTranslate Cloud Function:', response);
       return response?.data?.translations;
     } catch (error) {
       console.error('Error calling secureTranslate Cloud Function:', error);
@@ -140,11 +139,6 @@ export class TranslationGoogleTranslateService {
         format: 'text',
       })
       .pipe(
-        // tap(() => {
-        //   console.log(
-        //     `Translated "${word}" from ${source} to ${target} using Google Translate API.`,
-        //   );
-        // }),
         map((resp) => {
           const translatedText = resp.data.translations[0].translatedText;
           return { [target]: translatedText };
@@ -168,9 +162,6 @@ export class TranslationGoogleTranslateService {
     if (!source || !target) {
       throw new Error('Source and target languages must be provided');
     }
-    console.log(
-      `Simulating translation of "${word}" from ${source} to ${target}`,
-    );
     return of({
       [target]: this.translate.instant(
         'TRANSLATE.CARD_RESULTS.SIMULATION.OUTPUT',

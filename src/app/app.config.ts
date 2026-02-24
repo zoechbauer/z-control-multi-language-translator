@@ -67,10 +67,6 @@ export const appConfig: ApplicationConfig = {
         provideFirestore(() => {
           const firestore = getFirestore();
           const emulatorHost = getEmulatorHost();
-          console.log(
-            'Initializing Firestore: globalThis.location.hostname:',
-            globalThis.location.hostname,
-          );
           if (emulatorHost) {
             console.log(
               'Connecting to Firestore emulator with host:',

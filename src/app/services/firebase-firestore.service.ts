@@ -438,16 +438,12 @@ export class FirebaseFirestoreService {
     if (date) {
       if (typeof date.toDate === 'function') {
         lastUpdated = date.toDate();
-        // console.log('Converting lastUpdated using toDate() to ', lastUpdated);
       } else if (typeof date.seconds === 'number') {
         lastUpdated = new Date(date.seconds * 1000);
-        // console.log('Converting lastUpdated using seconds to ', lastUpdated);
       } else {
         lastUpdated = new Date(date);
-        // console.log('Converting lastUpdated using Date constructor to ', lastUpdated);
       }
     } else {
-      // console.log('lastUpdated is null or undefined');
       lastUpdated = undefined;
     }
     return lastUpdated;

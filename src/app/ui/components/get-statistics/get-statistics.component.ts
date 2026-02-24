@@ -144,18 +144,24 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDisplayUserRow(userStat: DisplayedUserStatistics): boolean {
+    // Show all users on programmer devices, but only users with translations on user devices
+    return this.isProgrammerDevice || userStat.translatedCharCount > 0;
+  }
+
   isCurrentUser(userId: string): boolean {
     return userId === this.currentUserUid;
   }
 
-  async showDetailInfos(lang: string, userStatistic: DisplayedUserStatistics): Promise<void> {
+  async showDetailInfos(
+    lang: string,
+    userStatistic: DisplayedUserStatistics,
+  ): Promise<void> {
     this.utilsService.openUserDetail(lang, userStatistic);
   }
 
   getFormatDate(dateTime: Date | null): string {
-    return dateTime
-      ? this.utilsService.formatDateISO(new Date(dateTime))
-      : '';
+    return dateTime ? this.utilsService.formatDateISO(new Date(dateTime)) : '';
   }
 
   ngOnDestroy(): void {

@@ -35,6 +35,10 @@
     <h5 class="ion-text-center settings-section-title" title="">
       {{ "SETTINGS.INFORMATIONS" | translate }}
     </h5>
+    <app-get-statistics-accordion
+      [lang]="selectedLanguage"
+      [yearMonth]="currentYearMonth"
+    ></app-get-statistics-accordion>
     <app-privacy-policy-accordion></app-privacy-policy-accordion>
     <app-change-log-accordion
       [versionInfo]="versionInfo"
@@ -43,12 +47,7 @@
     <app-get-mobile-app-accordion></app-get-mobile-app-accordion>
     }
     <app-get-source-accordion></app-get-source-accordion>
-    <app-get-statistics-accordion
-      [lang]="selectedLanguage"
-      [yearMonth]="currentYearMonth"
-    ></app-get-statistics-accordion>
     }
-
     <!-- Show only the opened accordion  -->
     @if (!showAllAccordions && openAccordion) { @switch (openAccordion) { @case
     ('language') {
@@ -70,6 +69,11 @@
     ></app-text-to-speech-accordion>
     } @case ('z-control') {
     <app-feedback-accordion [lang]="selectedLanguage"></app-feedback-accordion>
+    } @case ('get-statistics') {
+    <app-get-statistics-accordion
+      [lang]="selectedLanguage"
+      [yearMonth]="currentYearMonth"
+    ></app-get-statistics-accordion>
     } @case ('privacy-policy') {
     <app-privacy-policy-accordion
       [lang]="selectedLanguage"
@@ -88,11 +92,6 @@
     <app-get-source-accordion
       [lang]="selectedLanguage"
     ></app-get-source-accordion>
-    } @case ('get-statistics') {
-    <app-get-statistics-accordion
-      [lang]="selectedLanguage"
-      [yearMonth]="currentYearMonth"
-    ></app-get-statistics-accordion>
     } }
     <!-- Button to show all accordions -->
     <div class="ion-padding ion-text-center accordion-close-button">

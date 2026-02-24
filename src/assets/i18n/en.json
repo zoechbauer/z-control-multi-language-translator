@@ -215,9 +215,11 @@
         "TITLE": "User Translation Information",
         "USER_INFORMATION": {
           "TITLE": "User Information",
-          "LABEL": {
+          "LABEL": {  
             "USER_ID": "User ID",
             "USER_NAME": "Username",
+            "USER_CREATED": "Created At",
+            "USER_UPDATED": "Updated At",
             "USER_TYPE": "Type",
             "USER_TYPE_USER": "User Translation",
             "USER_TYPE_PROGRAMMER": "Programmer Translation"

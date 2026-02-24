@@ -84,9 +84,9 @@
     <b>What is this app for?</b>
     <p>
       <strong>
-        You can enter a text of up to 100 characters and have it easily
-        translated into up to 5 selected languages using
-        <i>Google Translate and have it read aloud.</i>.
+        You can enter a text of up to {{ maxInputLength }} characters and have
+        it easily translated into up to {{ maxTargetLanguages }} selected
+        languages using <i>Google Translate and have it read aloud.</i>.
       </strong>
       The base language (English or German) as well as the target languages can
       be freely selected in the settings.
@@ -127,8 +127,9 @@
         </strong>
         If this quota is exceeded, costs will be incurred for <i>z-control</i>.
         <p>
-          For this reason, the selection is limited to a maximum of 5 target
-          languages so that the shared monthly quota is not used up too quickly.
+          For this reason, the selection is limited to a maximum of
+          {{ maxTargetLanguages }} target languages so that the shared monthly
+          quota is not used up too quickly.
         </p>
         <p>
           <strong>
@@ -146,11 +147,10 @@
           </strong>
         </p>
         <strong>
-          In the web application, all languages are supported
-          for the read-aloud function. However, in the mobile application, not
-          all languages are available. If a selected target language is not
-          available, the read-aloud function for that language is automatically
-          hidden.
+          In the web application, all languages are supported for the read-aloud
+          function. However, in the mobile application, not all languages are
+          available. If a selected target language is not available, the
+          read-aloud function for that language is automatically hidden.
         </strong>
       </li>
       <li>For complex texts, Google Translate may return errors.</li>
@@ -353,7 +353,8 @@
         When you <strong>access the web version on your phone</strong>, make
         sure the <strong>app is displayed in mobile mode</strong> and not
         desktop mode. In mobile mode, the web version offers a similar look and
-        behavior to the native app.
+        behavior to the native app. You can also use the voice input of your
+        mobile keyboard.
       </p>
     </div>
 
@@ -372,7 +373,7 @@
       via v2 client libraries or REST calls.
     </p>
     <p><strong>Main features</strong></p>
-    <ul class="no-list-style">
+    <ul>
       <li>Supports over 100 languages</li>
       <li>Automatic language detection</li>
       <li>Translation of single or multiple text strings in one request</li>
@@ -509,9 +510,9 @@
     <b>Wofür ist diese App gedacht?</b>
     <p>
       <strong>
-        Sie können einen Text mit bis zu 100 Zeichen eingeben und ihn ganz
-        einfach in bis zu 5 ausgewählten Sprachen mit
-        <i>Google Translate</i> übersetzen und vorlesen lassen.
+        Sie können einen Text mit bis zu {{ maxInputLength }} Zeichen eingeben
+        und ihn ganz einfach in bis zu {{ maxTargetLanguages }} ausgewählten
+        Sprachen mit <i>Google Translate</i> übersetzen und vorlesen lassen.
       </strong>
       Die Basissprache (Englisch oder Deutsch) sowie die Zielsprachen können Sie
       in den Einstellungen frei wählen.
@@ -553,8 +554,9 @@
         Wird dieses Kontingent überschritten, entstehen für
         <i>z-control</i> Kosten.
         <p>
-          Daher ist die Auswahl auf maximal 5 Zielsprachen begrenzt, damit das
-          gemeinsame Monatskontingent nicht zu schnell aufgebraucht wird.
+          Daher ist die Auswahl auf maximal
+          {{ maxTargetLanguages }} Zielsprachen begrenzt, damit das gemeinsame
+          Monatskontingent nicht zu schnell aufgebraucht wird.
         </p>
         <p>
           <strong>
@@ -841,7 +843,7 @@
       v2-Clientbibliotheken oder REST-Aufrufe zugänglich ist.
     </p>
     <p><strong>Hauptmerkmale</strong></p>
-    <ul class="no-list-style">
+    <ul>
       <li>Unterstützt über 100 Sprachen</li>
       <li>Automatische Spracherkennung</li>
       <li>Übersetzung einzelner oder mehrerer Textstrings in einer Anfrage</li>

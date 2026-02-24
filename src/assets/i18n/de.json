@@ -218,6 +218,8 @@
           "LABEL": {
             "USER_ID": "Benutzer-ID",
             "USER_NAME": "Benutzer-Name",
+            "USER_CREATED": "Erstellt am",
+            "USER_UPDATED": "Aktualisiert am",
             "USER_TYPE": "Typ",
             "USER_TYPE_USER": "Benutzer-Übersetzung",
             "USER_TYPE_PROGRAMMER": "Programmierer-Übersetzung"

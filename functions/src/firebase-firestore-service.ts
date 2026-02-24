@@ -71,9 +71,7 @@ export class FirebaseFirestoreService {
           { merge: true },
         );
         console.log('Created control flags document with default values.');
-      } else {
-        console.log('Control flags document already exists. No changes made.');
-      }
+      } 
     } catch (error) {
       console.error('Error creating missing contingent data:', error);
       throw error;
@@ -119,7 +117,6 @@ export class FirebaseFirestoreService {
     const doc = await docRef.get();
 
     if (doc.exists) {
-      this.logExistingDevice(device, doc.data());
       if (doc.data()?.type === UserType.User) {
         // Update existing document to type Programmer
         await docRef.set(
@@ -146,13 +143,6 @@ export class FirebaseFirestoreService {
         { merge: true },
       );
     }
-  }
-
-  private logExistingDevice(device: ProgrammerDeviceUID, data: any): void {
-    console.log(
-      `User mapping document for user ${device.userId} already exists. Checking if update is needed...`,
-      data,
-    );
   }
 
   private logCreatingDevice(device: ProgrammerDeviceUID): void {
@@ -203,7 +193,6 @@ export class FirebaseFirestoreService {
           },
           { merge: true },
         );
-        console.log('Inserted user mapping document for user:', userId);
       } else if (
         !doc.data()?.deviceInfo ||
         doc.data()?.deviceInfo !== deviceInfo
@@ -233,9 +222,6 @@ export class FirebaseFirestoreService {
   ): Promise<string> {
     const type = getUserType(userId, programmerDeviceUIDs);
     const userNumber = await this.countUser(type);
-    console.log(
-      `Assigning user name for user ${userId}: type=${type}, userNumber=${userNumber + 1}`,
-    );
     return `${type}-${userNumber + 1}`;
   }
 
@@ -269,9 +255,6 @@ export class FirebaseFirestoreService {
     count: number,
     selectedLanguages: string[],
   ): Promise<void> {
-    console.log(
-      `addTranslatedChars called with count: ${count} and selectedLanguages: ${selectedLanguages} for user ${this.userId}`,
-    );
     if (!this.userId) return;
 
     try {

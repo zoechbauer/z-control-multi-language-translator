@@ -26,7 +26,7 @@
   </div>
   } @if(cardInputVisible) {
   <!-- show input card before translation results-->
-  <ion-card class="translation-input-card">
+  <ion-card class="translation-input-card" color="light">
     <ion-card-header>
       <ion-card-title>{{ 'APP.NAME' | translate }}</ion-card-title>
       <p>
@@ -82,7 +82,7 @@
   </ion-card>
   } @if(translations.length > 0 && showTranslationResultEnteredTextCard) {
   <!-- show translation results with entered text card before translation results-->
-  <ion-card class="translation-results-card-entered-text">
+  <ion-card class="translation-results-card-entered-text" color="light">
     <ion-card-content>
       <ion-grid>
         <ion-row class="header-row">
@@ -117,7 +117,7 @@
   </ion-card>
   } @if(translations.length > 0 && cardResultsVisible) {
   <!-- show translation results without entered text card -->
-  <ion-card class="translation-results-card">
+  <ion-card class="translation-results-card" color="light">
     <ion-card-content>
       <ion-grid>
         <ion-row class="header-row">
