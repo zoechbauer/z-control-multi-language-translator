@@ -37,7 +37,7 @@ Download now for free and translate, listen, and learn with ease!
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Ionic 8 with Angular 17+
+- **Framework**: Ionic 8 with Angular 20
 - **Language**: TypeScript
 - **Styling**: SCSS with Ionic CSS Variables
 - **Backend**: Firebase (Firestore, Cloud Functions, Hosting)
