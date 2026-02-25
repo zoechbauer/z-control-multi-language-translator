@@ -115,8 +115,13 @@ ion-content {
     padding-left: 0;
 
     li {
-    margin-top: 16px;
-    margin-bottom: 16px;
+      margin-top: 16px;
+      margin-bottom: 16px;
+
+      ol li {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
     }
   }
 }

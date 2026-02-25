@@ -14,6 +14,7 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 - Reordered Settings page accordions for quicker access to frequently used features.
 - Improved explanations and instructions in multiple Settings accordions for better user guidance.
 - Added comprehensive README.md to the project root with app information, installation instructions, and usage guidelines.
+- Added a user help entry explaining the Facebook in-app browser speech output issue, including problem description, cause, and step-by-step solution.
 
 ## [1.1] – 2026-02-18
 

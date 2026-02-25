@@ -69,7 +69,7 @@
             >Technical Information</a
           >
         </li>
-        <li *ngIf="isNative" class="toc-increase-margin-top">
+        <li class="toc-increase-margin-top">
           <a
             href="#"
             (click)="utilsService.scrollTo('troubleshooting', $event)"
@@ -385,10 +385,10 @@
       <li>Billing per character per translation, with a free monthly quota.</li>
     </ul>
 
-    <div *ngIf="isNative">
+    <div>
       <h3 id="troubleshooting">Troubleshooting & Problem Solving</h3>
       <ul class="no-list-style">
-        <li>
+        <li *ngIf="isNative">
           <p><b>No microphone is shown in the keyboard (mobile):</b></p>
           <p>
             Example: How to enable voice input on a Samsung Galaxy A33 device:
@@ -408,7 +408,7 @@
             </li>
           </ol>
         </li>
-        <li>
+        <li *ngIf="isNative">
           <p><b>The keyboard covers input fields (mobile):</b></p>
           <p>
             Example: How to enable the "Floating Keyboard" on a Samsung Galaxy
@@ -419,6 +419,52 @@
             <li>Select "Modes"</li>
             <li>Select "Floating keyboard"</li>
           </ol>
+        </li>
+        <li *ngIf="!isNative">
+          <p>
+            <b>No speech output when opened from Facebook (in-app browser):</b>
+          </p>
+          <p>Problem description</p>
+          <ul class="no-list-style-inside">
+            <li>
+              When the z-control Multi Language Translator app is opened via a
+              link in a Facebook profile or Facebook post, clicking the speech
+              output shows the message: "Speech output is currently not
+              available for this language on this device." If the same web app
+              is opened directly in the standard browser (e.g., Google Chrome),
+              speech output works as usual.
+            </li>
+          </ul>
+          <p>Cause</p>
+          <ul class="no-list-style-inside">
+            <li>
+              The app is opened inside the Facebook in-app browser. This browser
+              supports the technology required for speech output (e.g., Web
+              Speech API or system TTS) only partially or not at all. Therefore,
+              the app cannot detect available voices even though they are
+              available in the normal browser.
+            </li>
+          </ul>
+          <p>Solution</p>
+          <ul class="no-list-style-inside">
+            <li>
+              Open the z-control Multi Language Translator app link in the
+              device's standard browser instead of the Facebook in-app browser.
+            </li>
+            <li>
+              Steps in the Facebook app:
+              <ol>
+                <li>
+                  If the app page was opened in the Facebook in-app browser, you
+                  can tell by the fact that "Facebook" or "In-App Browser" is
+                  displayed in the status bar at the top.
+                </li>
+                <li>Tap the three-dot menu in the top right.</li>
+                <li>Select "Open in external browser".</li>
+              </ol>
+            </li>
+            <li>After that, speech output is available as usual.</li>
+          </ul>
         </li>
       </ul>
     </div>
@@ -495,7 +541,7 @@
             >Technische Informationen</a
           >
         </li>
-        <li class="toc-increase-margin-top" *ngIf="isNative">
+        <li class="toc-increase-margin-top">
           <a
             href="#"
             (click)="utilsService.scrollTo('troubleshooting-DE', $event)"
@@ -858,10 +904,10 @@
       </li>
     </ul>
 
-    <div *ngIf="isNative">
+    <div>
       <h3 id="troubleshooting-DE">Fehlerbehebung & Problemlösung</h3>
       <ul class="no-list-style">
-        <li>
+        <li *ngIf="isNative">
           <p><b>Es wird kein Mikrofon in Tastaturangezeigt (Handy):</b></p>
           <p>
             Beispiel: So aktivieren Sie die Spracheingabe auf einem Samsung
@@ -883,7 +929,7 @@
             </li>
           </ol>
         </li>
-        <li>
+        <li *ngIf="isNative">
           <p><b>Die Tastatur verdeckt Eingabefelder (Handy):</b></p>
           <p>
             Beispiel: So aktivieren Sie die "Schwebende Tastatur" auf einem
@@ -894,6 +940,58 @@
             <li>Wählen Sie "Modi"</li>
             <li>Wählen Sie "Schwebende Tastatur"</li>
           </ol>
+        </li>
+        <li *ngIf="!isNative">
+          <p>
+            <b>Keine Sprachausgabe bei Aufruf aus Facebook (In‑App‑Browser):</b>
+          </p>
+          <p>Problembeschreibung</p>
+          <ul class="no-list-style-inside">
+            <li>
+              Wenn die z‑control Multi Sprachen Übersetzer App über den Link in
+              einem Facebook‑Profil oder Facebook-Beitrag geöffnet wird,
+              erscheint bei Klick auf die Sprachausgabe die Meldung: „Für diese
+              Sprache ist aktuell keine Sprachausgabe auf diesem Gerät
+              verfügbar.“ Wird dieselbe Web‑App jedoch direkt im
+              Standard‑Browser (z.B. Google Chrome) geöffnet, funktioniert die
+              Sprachausgabe ganz normal.
+            </li>
+          </ul>
+          <p>Ursache</p>
+          <ul class="no-list-style-inside">
+            <li>
+              Die App wird innerhalb des Facebook In‑App‑Browsers geöffnet.
+              Dieser Browser unterstützt die für die Sprachausgabe benötigte
+              Technologie (z.B. Web‑Speech‑API bzw. System‑TTS) nur
+              eingeschränkt oder gar nicht. Deshalb kann die App keine
+              verfügbaren Stimmen erkennen, obwohl sie im normalen Browser
+              vorhanden sind.
+            </li>
+          </ul>
+          <p>Lösung</p>
+          <ul class="no-list-style-inside">
+            <li>
+              Öffnen Sie den Link zur z‑control Multi Sprachen Übersetzer App
+              nicht im Facebook‑In-App‑Browser, sondern im Standard‑Browser des
+              Geräts.
+            </li>
+            <li>
+              Vorgehensweise in der Facebook‑App:
+              <ol>
+                <li>
+                  Wurde die App‑Seite im Facebook‑In‑App‑Browser geöffnet,
+                  erkennen Sie dies daran, dass in der Systemleiste oben
+                  „Facebook“ oder „In‑App‑Browser“ steht.
+                </li>
+                <li>Tippen Sie dann oben rechts auf das Drei‑Punkte‑Menü.</li>
+                <li>Wählen Sie „Im externen Browser öffnen“.</li>
+              </ol>
+            </li>
+            <li>
+              Danach steht Ihnen die Sprachausgabe wieder wie gewohnt zur
+              Verfügung.
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
