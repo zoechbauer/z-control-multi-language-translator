@@ -75,4 +75,27 @@ export class FirebaseFirestoreUtilsService {
       );
     }
   }
+
+  /**
+   * Deep equality comparison that ignores property order.
+   * Recursively sorts object keys alphabetically using localeCompare before stringifying.
+   */
+  static isDeepEqual(obj1: any, obj2: any): boolean {
+    if (obj1 === obj2) return true;
+    if (obj1 == null || obj2 == null) return false;
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object')
+      return obj1 === obj2;
+
+    const keys1 = Object.keys(obj1).sort((a, b) => a.localeCompare(b));
+    const keys2 = Object.keys(obj2).sort((a, b) => a.localeCompare(b));
+
+    if (keys1.length !== keys2.length) return false;
+    if (JSON.stringify(keys1) !== JSON.stringify(keys2)) return false;
+
+    for (const key of keys1) {
+      if (!FirebaseFirestoreUtilsService.isDeepEqual(obj1[key], obj2[key])) return false;
+    }
+
+    return true;
+  }
 }

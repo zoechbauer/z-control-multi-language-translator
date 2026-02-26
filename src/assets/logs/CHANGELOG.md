@@ -16,6 +16,10 @@ Welcome to our updates and improvements of the **z-control Multi Language Transl
 - Added comprehensive README.md to the project root with app information, installation instructions, and usage guidelines.
 - Added a user help entry explaining the Facebook in-app browser speech output issue, including problem description, cause, and step-by-step solution.
 
+### 🐛 Fixes
+
+- Fixed device information comparison in Cloud Functions to prevent unnecessary Firestore updates when only property order differs.
+
 ## [1.1] – 2026-02-18
 
 ### ✨ New Features

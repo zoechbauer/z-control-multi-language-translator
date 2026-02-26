@@ -7,6 +7,7 @@ import {
   ProgrammerDeviceUID,
 } from './shared/firebase-firestore.interfaces.js';
 import { getDeviceName, getUserType, isValidDevice } from './utils.js';
+import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils-service.js';
 
 export class FirebaseFirestoreService {
   private readonly db: admin.firestore.Firestore;
@@ -17,6 +18,12 @@ export class FirebaseFirestoreService {
     this.userId = userId;
   }
 
+  /**
+   * Reads the contingent data document containing global translation limits and control flags.
+   *
+   * @returns Promise resolving to the contingent data object with translation quotas and control flags.
+   * @throws Error if the document read operation fails.
+   */
   async readContingentData(): Promise<FirestoreContingentData> {
     const doc = await this.db
       .doc(`${FireStoreConstants.getMetaContingentDataDocumentPath()}`)
@@ -24,6 +31,15 @@ export class FirebaseFirestoreService {
     return doc.data() as FirestoreContingentData;
   }
 
+  /**
+   * Retrieves the character count and target languages for the current user.
+   *
+   * Returns the user's cumulative translated character count and their selected target languages
+   * for translations. If the user document doesn't exist or lacks character count data, returns 0.
+   *
+   * @returns Promise resolving to an object with charCount and targetLanguages array.
+   * @throws Error if the document read operation fails.
+   */
   async getCharCountForUser(): Promise<CharCountResult> {
     const doc = await this.db
       .doc(`${FireStoreConstants.getUsersCollectionPath()}/${this.userId}`)
@@ -36,6 +52,15 @@ export class FirebaseFirestoreService {
       : { charCount: 0, targetLanguages: [] };
   }
 
+  /**
+   * Retrieves the total translated character count across all users for the current month.
+   *
+   * Reads the meta document that tracks cumulative translation usage. Used for monitoring
+   * global translation quotas and enforcing rate limits.
+   *
+   * @returns Promise resolving to the total character count as a number, or 0 if not found.
+   * @throws Error if the document read operation fails.
+   */
   async getTotalCharCount(): Promise<number> {
     try {
       const doc = await this.db
@@ -71,7 +96,7 @@ export class FirebaseFirestoreService {
           { merge: true },
         );
         console.log('Created control flags document with default values.');
-      } 
+      }
     } catch (error) {
       console.error('Error creating missing contingent data:', error);
       throw error;
@@ -85,6 +110,19 @@ export class FirebaseFirestoreService {
    *   - If a user mapping exists and type is 'User', update to 'Programmer'.
    *   - If no mapping exists, create as 'Programmer'.
    *   - Devices missing userId or name are skipped.
+   */
+  /**
+   * Updates user mapping documents for a list of programmer devices.
+   *
+   * For each provided device, either creates a new user mapping with type 'Programmer'
+   * or updates an existing user mapping to type 'Programmer' (upgrading from 'User' type).
+   * Devices missing userId or name are silently skipped. Errors in individual device updates
+   * are logged but do not prevent processing other devices.
+   *
+   * @param programmerDeviceUIDs Array of programmer device objects containing userId and name.
+   * @returns Promise that resolves when all device updates are complete.
+   * @throws TypeError if programmerDeviceUIDs is not an array.
+   * @throws Error is caught and logged for individual device update failures.
    */
   async updateProgrammerDeviceUIDs(
     programmerDeviceUIDs: ProgrammerDeviceUID[],
@@ -107,6 +145,10 @@ export class FirebaseFirestoreService {
     }
   }
 
+  /**
+   * Updates or creates a user mapping document for a single programmer device.
+   * Internal helper for updateProgrammerDeviceUIDs.
+   */
   private async updateUserMappingUsers(
     device: ProgrammerDeviceUID,
     allDevices: ProgrammerDeviceUID[],
@@ -145,6 +187,10 @@ export class FirebaseFirestoreService {
     }
   }
 
+  /**
+   * Logs the creation of a new device mapping document.
+   * Internal helper for debugging device mapping lifecycle.
+   */
   private logCreatingDevice(device: ProgrammerDeviceUID): void {
     console.log(
       `User mapping document for user ${device.userId} does not exist. Creating new document...`,
@@ -163,6 +209,21 @@ export class FirebaseFirestoreService {
    * @param deviceInfo Device information to be stored in the user document.
    * @param isNative Flag indicating if the user is on a native platform (optional).
    * @throws Error if userId is not provided.
+   */
+  /**
+   * Creates or updates a user mapping document with device information.
+   *
+   * Creates a new user mapping if the document doesn't exist, or updates the deviceInfo
+   * and isNative flag if the document exists but has missing/different deviceInfo.
+   * Property order differences in deviceInfo are properly handled to avoid unnecessary updates.
+   * Uses deep equality comparison with locale-aware sorting to detect actual content changes.
+   *
+   * @param userId The unique identifier of the user (required).
+   * @param programmerDeviceUIDs Array of programmer device UIDs to determine user type and device name.
+   * @param deviceInfo Device information object (userAgent, platform, language, appVersion) to store.
+   * @param isNative Optional flag indicating if user is on a native platform (default: false).
+   * @returns Promise that resolves when the user document is created or updated.
+   * @throws Error if userId is not provided, or if the write operation fails.
    */
   async addUser(
     userId: string,
@@ -195,7 +256,10 @@ export class FirebaseFirestoreService {
         );
       } else if (
         !doc.data()?.deviceInfo ||
-        doc.data()?.deviceInfo !== deviceInfo
+        !FirebaseFirestoreUtilsService.isDeepEqual(
+          doc.data()?.deviceInfo,
+          deviceInfo,
+        )
       ) {
         // If document exists but deviceInfo is missing or different, update it
         await docRef.set(
@@ -216,6 +280,11 @@ export class FirebaseFirestoreService {
     }
   }
 
+  /**
+   * Generates a unique user name based on type and count.
+   * Format: '{userType}-{sequenceNumber}' (e.g., 'User-42', 'Programmer-5').
+   * Internal helper for creating consistent user identifiers.
+   */
   private async getUserName(
     userId: string,
     programmerDeviceUIDs: ProgrammerDeviceUID[],
@@ -225,6 +294,10 @@ export class FirebaseFirestoreService {
     return `${type}-${userNumber + 1}`;
   }
 
+  /**
+   * Counts the number of existing user mappings of a given type.
+   * Used to determine the sequence number for new user names.
+   */
   private async countUser(type: string): Promise<number> {
     try {
       const collectionRef = this.db.collection(
@@ -251,6 +324,19 @@ export class FirebaseFirestoreService {
    * @param count Number of characters to add to the user's and total translated character counts.
    * @param selectedLanguages Array of selected target languages for the translation.
    */
+  /**
+   * Increments the translated character count for the current user and globally.
+   *
+   * Updates both the user's character count document and the global total character count.
+   * Also updates the user's selected target languages and lastUpdated timestamps for tracking.
+   * Errors in individual update operations are logged but do not prevent other updates.
+   * Count represents: text length × number of target languages.
+   *
+   * @param count Number of characters to add to both user and total character counts.
+   * @param selectedLanguages Array of target language codes selected for the translation.
+   * @returns Promise that resolves when both user and total counts are updated.
+   * @throws Error is caught and logged for update operation failures.
+   */
   async addTranslatedChars(
     count: number,
     selectedLanguages: string[],
@@ -270,6 +356,10 @@ export class FirebaseFirestoreService {
     }
   }
 
+  /**
+   * Updates the character count and target languages for the current user.
+   * Internal helper for addTranslatedChars that updates the user's usage statistics.
+   */
   private async updateUserCharCount(
     count: number,
     selectedLanguages: string[],
@@ -287,6 +377,10 @@ export class FirebaseFirestoreService {
     );
   }
 
+  /**
+   * Updates the total translated character count across all users for the current month.
+   * Internal helper for addTranslatedChars that updates global usage statistics.
+   */
   private async updateTotalCharCount(count: number): Promise<void> {
     const totalRef = this.db.doc(
       `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`,
