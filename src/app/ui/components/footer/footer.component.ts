@@ -15,6 +15,6 @@ export class FooterComponent {
   constructor(public translate: TranslateService) {}
 
   get mailtoLink() {
-    return 'mailto:zcontrol.app.qr@gmail.com?subject=z-control%20Multi%20Language%20Translator%20App%20Feedback';
+    return 'mailto:zcontrol.app.qr@gmail.com?subject=z-control%20Multi%20Translator%20App%20Feedback';
   }
 }

@@ -1,8 +1,8 @@
-# z-control Multi Language Translator
+# z-control Translator
 
 Translate text into multiple languages instantly — fast, easy, and powered by Google Translate!
 
-z-control Multi Language Translator is a modern, user-friendly app built with Ionic and Angular.  
+z-control Translator is a modern, user-friendly app built with Ionic and Angular.  
 Instantly translate text up to 100 characters into up to 5 selected languages, listen to translations with text-to-speech, and track your monthly translation quota.  
 Perfect for travelers, language learners, students, and anyone who needs quick translations.  
 Enjoy a clean, accessible design, multi-language UI, and built-in help — all with privacy in mind.
@@ -27,7 +27,7 @@ Download now for free and translate, listen, and learn with ease!
 ## Download & Online Access
 
 - **Web App:**  
-  [Run the app online (Firebase Hosting)](https://z-control-multi-language-translator.web.app/)
+  [Run the app online (Firebase Hosting)](https://z-control-translator.web.app/)
 
 - **Native Mobile App on Android devices** (coming soon):  
   Installation guide available in the app's help section.
@@ -269,7 +269,7 @@ All documentation, deployment guides, setup instructions, and troubleshooting ti
 
 ## Privacy Policy
 
-See [Privacy Policy](https://z-control-multi-language-translator.web.app/privacy) in the app.
+See [Privacy Policy](https://z-control-translator.web.app/privacy) in the app.
 
 Data handling:
 

@@ -1,6 +1,6 @@
 # Text-to-Speech (TTS) Integration for Translated Text
 
-This document explains how to add text-to-speech (TTS) functionality to the Multi Language Translator app, allowing users to listen to translated text directly in the app—on both web and mobile.
+This document explains how to add text-to-speech (TTS) functionality to the Multi Translator app, allowing users to listen to translated text directly in the app—on both web and mobile.
 
 ## Overview
 

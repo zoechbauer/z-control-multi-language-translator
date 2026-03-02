@@ -1,6 +1,6 @@
-# How to Install the z-control Multi Language Translator App Locally on Your Mobile
+# How to Install the z-control Translator App Locally on Your Mobile
 
-If you have already installed the z-control QR Code Generator App, your device is ready for local app installation. Follow these steps to install the Multi Language Translator app:
+If you have already installed the z-control QR Code Generator App, your device is ready for local app installation. Follow these steps to install the Multi Translator app:
 
 ---
 
@@ -22,9 +22,9 @@ If you have already installed the z-control QR Code Generator App, your device i
 - **Set your appId and appName in capacitor.config.ts before building for mobile:**
   ```typescript
   const config: CapacitorConfig = {
-    appId: 'at.zcontrol.zoe.translator',
-    appName: 'z-control Multi Language Translator',
-    webDir: 'www'
+    appId: "at.zcontrol.zoe.translator",
+    appName: "z-control Translator",
+    webDir: "www",
   };
   export default config;
   ```
@@ -81,7 +81,7 @@ npx cap add android
 
 ## 5. Open and Use the App
 
-- Find the **z-control Multi Language Translator** app icon on your device and tap to open.
+- Find the **z-control Translator** app icon on your device and tap to open.
 - The app is now ready to use!
 
 ---

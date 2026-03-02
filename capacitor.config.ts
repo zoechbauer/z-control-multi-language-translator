@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'at.zcontrol.zoe.translator',
-  appName: 'z-control Multi Language Translator',
+  appName: 'z-control Translator',
   webDir: 'www',
 };
 

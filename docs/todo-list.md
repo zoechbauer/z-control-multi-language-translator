@@ -1,6 +1,6 @@
 # TODO List for Environment and Programmer Device Management
 
-This document lists important activities to execute when working with environment variables and programmer device UIDs in the Multi Language Translator project.
+This document lists important activities to execute when working with environment variables and programmer device UIDs in the Multi Translator project.
 
 ---
 
@@ -29,6 +29,6 @@ This document lists important activities to execute when working with environmen
 
 ---
 
-**⚠️ Important:** Do not delete programmer device UIDs from environment files or Firestore user mapping. Removing UIDs causes duplicate user numbers because the system counts existing users to generate the next user number. Always add new UIDs instead of replacing old ones. 
+**⚠️ Important:** Do not delete programmer device UIDs from environment files or Firestore user mapping. Removing UIDs causes duplicate user numbers because the system counts existing users to generate the next user number. Always add new UIDs instead of replacing old ones.
 
 Before performing translations or other operations, verify that the new device's UID has been added to the environment files and Firestore user mapping.

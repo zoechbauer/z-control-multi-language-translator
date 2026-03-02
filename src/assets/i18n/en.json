@@ -1,7 +1,7 @@
 {
   "------ global": "-------",
   "APP": {
-    "NAME": "z-control Multi Language Translator"
+    "NAME": "z-control Translator"
   },
   "------ header page": "-------",
   "HEADER": {
@@ -215,7 +215,7 @@
         "TITLE": "User Translation Information",
         "USER_INFORMATION": {
           "TITLE": "User Information",
-          "LABEL": {  
+          "LABEL": {
             "USER_ID": "User ID",
             "USER_NAME": "Username",
             "USER_CREATED": "Created At",

@@ -1,6 +1,6 @@
-# Documentation Overview: Multi Language Translator App
+# Documentation Overview: Multi Translator App
 
-This folder contains categorized guides, troubleshooting steps, and best practices for developing, building, and deploying the Multi Language Translator app using Ionic, Angular, and Capacitor.
+This folder contains categorized guides, troubleshooting steps, and best practices for developing, building, and deploying the Multi Translator app using Ionic, Angular, and Capacitor.
 
 ## A. Programming
 
@@ -10,7 +10,7 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **coding-guidelines.md**  
   Clean code principles and best practices for naming, functions, error handling, formatting, and testing.
 
-   **why-use-runInInjectionContext.md**  
+  **why-use-runInInjectionContext.md**  
   Explanation of the importance of using `runInInjectionContext` in Angular for proper dependency injection and change detection in asynchronous or external code.
 
 - **standalone-config.md**  
