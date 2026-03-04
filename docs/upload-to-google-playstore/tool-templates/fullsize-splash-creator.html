@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full-Size Splash Screen Creator</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+      }
+
+      .splash-container {
+        width: 1080px;
+        height: 1920px;
+        margin: 20px auto;
+        border: 5px solid #ff0000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transform: scale(0.4);
+        transform-origin: top center;
+      }
+
+      .splash-light {
+        background: #3ddc84;
+      }
+
+      .splash-dark {
+        background: #1a1a1a;
+      }
+
+      .splash-icon {
+        width: 192px;
+        height: 192px;
+        background: url("icon/z-bell.png") center/contain no-repeat;
+        border-radius: 96px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 3px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .splash-dark .splash-icon {
+        background-color: #3ddc84;
+        border: 3px solid #2ab470;
+      }
+
+      .instructions {
+        max-width: 1400px;
+        margin: 60px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+        font-size: 18px;
+        line-height: 1.8;
+      }
+
+      .instructions h3 {
+        font-size: 28px;
+        color: #2d5a2d;
+        margin-bottom: 25px;
+      }
+
+      .instructions h4 {
+        font-size: 22px;
+        color: #2d5a2d;
+        margin-top: 30px;
+        margin-bottom: 15px;
+      }
+
+      .instructions h5 {
+        font-size: 20px;
+        color: #2d5a2d;
+        margin-top: 25px;
+        margin-bottom: 12px;
+      }
+
+      .instructions ol,
+      .instructions ul {
+        font-size: 18px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+      }
+
+      .instructions li {
+        margin-bottom: 8px;
+      }
+
+      .template-title {
+        text-align: center;
+        padding: 25px;
+        background: #e8f5e8;
+        border-radius: 10px;
+        margin: 40px auto;
+        font-weight: bold;
+        color: #2d5a2d;
+        font-size: 28px;
+        max-width: 900px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="template-title">
+      ☀️ Light Mode Splash - 1080×1920 (Capture RED border area)
+    </div>
+    <div class="splash-container splash-light">
+      <div class="splash-icon"></div>
+    </div>
+
+    <div class="template-title">
+      🌙 Dark Mode Splash - 1080×1920 (Capture RED border area)
+    </div>
+    <div class="splash-container splash-dark">
+      <div class="splash-icon"></div>
+    </div>
+    <div class="instructions">
+      <h3>🎯 CREATE NEW SPLASH SCREENS</h3>
+
+      <h4>⚠️ IMPORTANT: Don't resize old images!</h4>
+      <p>
+        <strong
+          >You need to screenshot the GREEN SPLASH TEMPLATES above, not resize
+          your draft images!</strong
+        >
+      </p>
+
+      <h4>✅ Correct Process:</h4>
+      <ol>
+        <li>
+          <strong>Screenshot the LIGHT green splash</strong> (capture only the
+          red border area)
+        </li>
+        <li>
+          <strong>Screenshot the DARK green splash</strong> (capture only the
+          red border area)
+        </li>
+        <li><strong>Save as splash-light.png and splash-dark.png</strong></li>
+        <li><strong>Copy to resources/ folder</strong></li>
+        <li><strong>Run fix-splash-screens.ps1</strong></li>
+      </ol>
+
+      <h4>🎨 If images need resizing after screenshot:</h4>
+
+      <h5>🎨 Option A: Paint 3D (deprecated since Oct 2024):</h5>
+      <p>
+        <em
+          >⚠️ Note: Paint 3D was deprecated by Microsoft in October 2024. Use
+          Option B instead.</em
+        >
+      </p>
+      <ol>
+        <li><strong>Open Paint 3D</strong> (if still available)</li>
+        <li><strong>Datei → Öffnen</strong> your splash-light-draft.png</li>
+        <li><strong>Select "Zeichenbereich"</strong></li>
+        <li>
+          <strong>Change "Zeichenbereichsgröße":</strong>
+          <ul>
+            <li>Breite: 1080px (from 319px)</li>
+            <li>Höhe: 1920px (from 573px)</li>
+          </ul>
+        </li>
+        <li><strong>Uncheck:</strong> "Seitenverhältnisse sperren"</li>
+        <li>
+          <strong>Uncheck:</strong> "Bildgröße mit Zeichenbereich anpassen"
+        </li>
+        <li>
+          <strong>Center your image and export as splash-light.png</strong>
+        </li>
+        <li><strong>Repeat for dark version</strong></li>
+      </ol>
+
+      <h5>🌐 Option B: Online Tool (recommended):</h5>
+      <ol>
+        <li>
+          <strong>Go to:</strong>
+          <a href="https://resize-image.net" target="_blank"
+            >resize-image.net</a
+          >
+        </li>
+        <li><strong>Upload</strong> your splash-light-draft.png</li>
+        <li><strong>Set dimensions:</strong> 1080 × 1920 pixels</li>
+        <li><strong>Download</strong> resized image as splash-light.png</li>
+        <li><strong>Repeat for dark version</strong></li>
+      </ol>
+      <h4>📏 Target Specifications:</h4>
+      <ul>
+        <li><strong>Size:</strong> 1080×1920 pixels</li>
+        <li>
+          <strong>File size:</strong> Should be 35-40KB (not 4-6KB or 13-14KB)
+        </li>
+        <li><strong>Quality:</strong> PNG format with good compression</li>
+      </ul>
+      <h4>✅ Problem Diagnosis:</h4>
+      <ul>
+        <li>
+          <strong>Current issue:</strong> Using resized draft images (just icon,
+          no green background) ❌
+        </li>
+        <li>
+          <strong>Needed:</strong> Screenshot the full GREEN splash templates
+          above ✅
+        </li>
+        <li>
+          <strong>Result:</strong> Proper splash with green background and
+          centered icon
+        </li>
+      </ul>
+      <h4>🚀 After Creating Proper Screenshots:</h4>
+      <ol>
+        <li><strong>Save as:</strong> splash-light.png and splash-dark.png</li>
+        <li>
+          <strong>Copy to:</strong> resources/ folder (replace existing files)
+        </li>
+        <li><strong>Run:</strong> fix-splash-screens.ps1</li>
+        <li>
+          <strong>Build & test:</strong> cd android && .\gradlew installDebug
+        </li>
+      </ol>
+
+      <h4>🎯 Expected Result:</h4>
+      <ul>
+        <li>
+          <strong>Light mode:</strong> Green background with white z-bell icon
+        </li>
+        <li>
+          <strong>Dark mode:</strong> Dark background with green z-bell icon
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

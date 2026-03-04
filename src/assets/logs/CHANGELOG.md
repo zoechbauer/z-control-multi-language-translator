@@ -2,11 +2,16 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
-## [1.3] – YYYY-MM-DD
+## [1.3] – 2026-03-03
+
+### ✨ New Features
+
+- App deployed to Google Play Store for Testing by invited users (internal test group and closed test group), making it easily accessible on Android devices without manual installation.
 
 ### 🚀 Improvements
 
 - Rebranded the app to "z-control Translator" for improved memorability and a more modern, streamlined brand identity.
+- Updated documentation for the Google Play Store publication process.
 
 ## [1.2] – 2026-02-24
 

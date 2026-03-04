@@ -19,9 +19,6 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **capacitor-8-upgrade-checklist.md**  
   Step-by-step instructions for upgrading from Capacitor 7 to 8, including dependency updates, Gradle configuration, and Kotlin fixes.
 
-- **ionic-capacitor-splash-screens-guide.md**  
-  Guide to creating and implementing icons and splash screens using @capacitor/assets, with image requirements and troubleshooting tips.
-
 ## B. Installation
 
 - **mobile-installation-guide.md.md**  
@@ -62,6 +59,17 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **local-testing-guide-secureTranslate.md**  
   How to test the SecureTranslate Cloud Function locally using the Firebase Emulator Suite and dotenv for environment variables. Includes curl examples, debugging, and troubleshooting steps.
 
+## G. Google Play Store Publication
+
+- **upload-to-google-playstore/docs/Google-Play-Store-Publication-Guide.md**  
+  Complete step-by-step guide for publishing to Google Play Store, covering 24 steps across 6 phases from app creation through post-launch management. Includes build instructions, testing workflows, submission checklists, and troubleshooting.
+
+- **upload-to-google-playstore/docs/Update-Notification-Guide.md**  
+  Guide to app update notifications covering closed testing and production releases. Explains how to monitor test updates, how users get notified of new versions, automatic vs. manual updates, and optional in-app update strategies.
+
+- **upload-to-google-playstore/docs/ionic-capacitor-splash-screens-guide.md**  
+  Guide to creating and implementing app icons and splash screens for Android using @capacitor/assets or manual drawable generation. Includes image specifications, tools, and troubleshooting tips.
+
 ---
 
 ### How to Use This Folder
@@ -72,6 +80,7 @@ This folder contains categorized guides, troubleshooting steps, and best practic
 - **Google Translation API:** Review API pricing before enabling cloud translation features.
 - **Text to Speech API:** Follow the TTS integration guide to add speech capabilities.
 - **Google Firebase API:** Use the Firebase config guide to manage environment-specific settings securely.
+- **Google Play Store Publication:** Use these guides for creating app assets (icons, splash screens) and the complete publication workflow.
 
 Each document is self-contained and addresses a specific aspect of the app's development or deployment. For further details, open the relevant markdown file in this folder.
 

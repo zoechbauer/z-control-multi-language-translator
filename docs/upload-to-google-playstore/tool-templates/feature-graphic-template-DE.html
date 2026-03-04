@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>z-control Translator - Feature Graphic</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 50px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f0f0f0;
+        zoom: 1;
+      }
+
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-graphic {
+        width: 1024px;
+        height: 500px;
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        border: none;
+        margin: 0 auto;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .content-center {
+        z-index: 2;
+        max-width: 700px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        height: 100%;
+      }
+
+      .app-title {
+        font-size: 52px;
+        font-weight: bold;
+        margin: 0 0 12px 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 1px;
+      }
+
+      .app-subtitle {
+        font-size: 26px;
+        margin: 0 0 20px 0;
+        opacity: 0.98;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .promo-text {
+        font-size: 18px;
+        margin: 0 0 20px 0;
+        font-weight: 400;
+        opacity: 0.96;
+        text-align: left;
+        max-width: 620px;
+        line-height: 1.5;
+      }
+
+      .highlights {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 12px 24px;
+        margin-bottom: 18px;
+      }
+
+      .highlight-badge {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 22px;
+        padding: 8px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .icon {
+        font-size: 20px;
+        vertical-align: middle;
+      }
+
+      .brand {
+        position: absolute;
+        bottom: 20px;
+        right: 60px;
+        font-size: 16px;
+        opacity: 0.8;
+        font-weight: 300;
+      }
+
+      .qr-pattern {
+        position: absolute;
+        right: -40px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 240px;
+        height: 240px;
+        opacity: 0.08;
+        background-image:
+          linear-gradient(
+            0deg,
+            transparent 24%,
+            white 25%,
+            white 26%,
+            transparent 27%,
+            transparent 74%,
+            white 75%,
+            white 76%,
+            transparent 77%,
+            transparent
+          ),
+          linear-gradient(
+            90deg,
+            transparent 24%,
+            white 25%,
+            white 26%,
+            transparent 27%,
+            transparent 74%,
+            white 75%,
+            white 76%,
+            transparent 77%,
+            transparent
+          );
+        background-size: 24px 24px;
+      }
+
+      .qr-visual {
+        position: absolute;
+        left: 770px;
+        top: 48%;
+        transform: translateY(-50%);
+        width: 113px;
+        height: 113px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+      }
+
+      .qr-visual img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+      }
+
+      .size-indicator {
+        margin-top: 20px;
+        padding: 10px;
+        background: #e8f5e8;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+        color: #2d5a2d;
+      }
+
+      .grid-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 100px 100px;
+        pointer-events: none;
+        opacity: 0.3;
+      }
+
+      .instructions {
+        margin-top: 30px;
+        padding: 20px;
+        background: #e8f5e8;
+        border-radius: 8px;
+        color: #2d5a2d;
+      }
+
+      .instructions h3 {
+        margin-top: 0;
+        color: #1b4d1b;
+      }
+
+      .instructions ol {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .instructions li {
+        margin: 8px 0;
+      }
+    </style>
+    <!-- Optionally, you can use Ionicons CDN for icons -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/ionicons@7.2.2/dist/ionicons/ionicons.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="feature-graphic">
+        <div class="content-center">
+          <h1 class="app-title">z-control Übersetzer</h1>
+          <div class="app-subtitle">Mehrere Sprachen parallel lernen!</div>
+          <div class="promo-text">
+            Übersetzen Sie in bis zu 5 Sprachen gleichzeitig und lassen Sie sich
+            Übersetzungen vorlesen. Perfekt zur Urlaubsvorbereitung oder zum
+            Sprachenlernen — vergleichen Sie, wie verschiedene Sprachen dieselbe
+            Bedeutung ausdrücken.
+          </div>
+          <div class="highlights">
+            <span class="highlight-badge"
+              ><span class="icon">🌍</span> Bis zu 5 Sprachen parallel</span
+            >
+            <span class="highlight-badge"
+              ><span class="icon">🔊</span> Text-to-Speech unbegrenzt</span
+            >
+            <span class="highlight-badge"
+              ><span class="icon">🆓</span> Kostenlos nutzbar</span
+            >
+            <span class="highlight-badge"
+              ><span class="icon">📊</span> Quota-Übersicht</span
+            >
+            <span class="highlight-badge"
+              ><span class="icon">🌓</span> Hell/Dunkel Modus</span
+            >
+          </div>
+        </div>
+        <div class="qr-pattern"></div>
+        <div class="grid-overlay"></div>
+      </div>
+
+      <div class="size-indicator">
+        📏 Template Size: 1024×500 pixels | Use Paint 3D or Online Tool for
+        Perfect Resize
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>🎯 Exact Size Template - Multiple Options!</h3>
+
+      <h4>📱 Option 1: Direct Screenshot (NO RESIZING!)</h4>
+      <ol>
+        <li><strong>Open this HTML file in your browser</strong></li>
+        <li><strong>Use Snipping Tool</strong> (Windows + Shift + S)</li>
+        <li>
+          <strong>Capture ONLY the green area</strong> (inside the graphic)
+        </li>
+        <li><strong>Save as PNG</strong> - it's exactly 1024×500!</li>
+        <li><strong>Upload directly</strong> - no Paint needed!</li>
+      </ol>
+
+      <h4>🎨 Option 2: Use Paint 3D (Better Resize)</h4>
+      <ol>
+        <li><strong>Take screenshot of green area</strong></li>
+        <li><strong>Open Paint 3D</strong> (free with Windows)</li>
+        <li><strong>File → Open</strong> your screenshot</li>
+        <li><strong>Canvas → Resize Canvas</strong></li>
+        <li><strong>Set: Width 1024, Height 500</strong></li>
+        <li><strong>Click Done</strong></li>
+        <li><strong>Export as PNG</strong></li>
+      </ol>
+
+      <h4>🌐 Option 3: Free Online Tool</h4>
+      <ol>
+        <li><strong>Take screenshot</strong></li>
+        <li><strong>Go to:</strong> resize-image.net or iloveimg.com</li>
+        <li><strong>Upload your image</strong></li>
+        <li><strong>Resize to 1024×500 pixels</strong></li>
+        <li><strong>Download and use</strong></li>
+      </ol>
+
+      <p><strong>💡 Why These Work Better:</strong></p>
+      <ul>
+        <li><strong>Option 1:</strong> No resizing = perfect centering</li>
+        <li><strong>Option 2:</strong> Paint 3D has better resize controls</li>
+        <li><strong>Option 3:</strong> Online tools force exact dimensions</li>
+      </ul>
+
+      <p>
+        <strong>🎯 The banner above is exactly 1024×500 pixels</strong> -
+        capture just the green area!
+      </p>
+    </div>
+  </body>
+</html>

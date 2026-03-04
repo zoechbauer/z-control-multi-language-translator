@@ -29,9 +29,9 @@ Download now for free and translate, listen, and learn with ease!
 - **Web App:**  
   [Run the app online (Firebase Hosting)](https://z-control-translator.web.app/)
 
-- **Native Mobile App on Android devices** (coming soon):  
-  Installation guide available in the app's help section.
-  At the moment you can install the Android app on your mobile device by connecting with cable and running 'ionic capacitor run android --external' from the command line in the project directory.
+- **Native Mobile App on Android devices:**
+  [Get the app on Google Play Store](https://play.google.com/store/apps/details?id=at.zcontrol.zoe.translator) — currently available through closed testing.
+  Installation and setup guidance is included in the app's help section.
 
 ---
 

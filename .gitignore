@@ -77,3 +77,13 @@ Thumbs.db
 # environment files
 src/environments/environment.ts
 src/environments/environment.prod.ts
+
+# Android Security - DO NOT COMMIT
+android/keystore.properties
+android/local.properties
+upload-keystore.jks
+*.keystore
+*.jks
+android/app/release/
+
+resources/android/**/*

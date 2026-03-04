@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splash Screen Creator - Exact Size</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+      }
+
+      .splash-container {
+        width: 1080px;
+        height: 1920px;
+        margin: 20px auto;
+        border: 3px solid #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transform: scale(0.25);
+        transform-origin: top center;
+      }
+
+      .splash-light {
+        background: #3ddc84;
+      }
+
+      .splash-dark {
+        background: #1a1a1a;
+      }
+
+      .splash-icon {
+        width: 192px;
+        height: 192px;
+        background: url("icon/z-bell.png") center/contain no-repeat;
+        border-radius: 96px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 3px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .splash-dark .splash-icon {
+        background-color: #3ddc84;
+        border: 3px solid #2ab470;
+      }
+
+      .instructions {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .template-title {
+        text-align: center;
+        padding: 15px;
+        background: #e8f5e8;
+        border-radius: 5px;
+        margin: 20px 0;
+        font-weight: bold;
+        color: #2d5a2d;
+        font-size: 18px;
+      }
+
+      .size-info {
+        text-align: center;
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="size-info">
+      📐 These templates are exactly 1080×1920 pixels - screenshot the entire
+      colored area inside the black border!
+    </div>
+
+    <div class="template-title">☀️ Light Mode Splash Screen</div>
+    <div class="splash-container splash-light">
+      <div class="splash-icon"></div>
+    </div>
+
+    <div class="template-title">🌙 Dark Mode Splash Screen</div>
+    <div class="splash-container splash-dark">
+      <div class="splash-icon"></div>
+    </div>
+
+    <div class="instructions">
+      <h3>🎯 Splash Screen Fix Instructions</h3>
+
+      <h4>Step 1: Create the Images</h4>
+      <ol>
+        <li>
+          <strong>Screenshot each colored rectangle above</strong> (inside black
+          borders only)
+        </li>
+        <li>
+          <strong>Important:</strong> Capture exactly inside the black border -
+          the templates are already 1080×1920!
+        </li>
+        <li>
+          <strong>Save as:</strong>
+          <ul>
+            <li><code>splash-light.png</code> (green background)</li>
+            <li><code>splash-dark.png</code> (dark background)</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h4>Step 2: Replace Android Resources</h4>
+      <ol>
+        <li>
+          <strong>Replace:</strong>
+          <code>android/app/src/main/res/drawable/splash.png</code> with
+          <code>splash-light.png</code>
+        </li>
+        <li>
+          <strong>Copy:</strong> <code>splash-dark.png</code> to
+          <code>android/app/src/main/res/drawable-night/splash.png</code>
+        </li>
+      </ol>
+
+      <h4>Step 3: Test</h4>
+      <ol>
+        <li>
+          <strong>Build:</strong>
+          <code>cd android && .\gradlew assembleDebug</code>
+        </li>
+        <li><strong>Install:</strong> <code>.\gradlew installDebug</code></li>
+        <li><strong>Test both light and dark modes!</strong></li>
+      </ol>
+
+      <div class="size-info">
+        💡 <strong>Pro Tip:</strong> If your screenshots aren't exactly
+        1080×1920, use an online image resizer to force the exact dimensions!
+      </div>
+    </div>
+  </body>
+</html>

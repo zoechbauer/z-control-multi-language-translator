@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splash Screen Templates</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+      }
+
+      .splash-container {
+        width: 1080px;
+        height: 1920px;
+        margin: 20px auto;
+        border: 2px solid #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transform: scale(0.3);
+        transform-origin: top center;
+      }
+
+      .splash-light {
+        background: #3ddc84;
+      }
+
+      .splash-dark {
+        background: #2a5e2a;
+      }
+      .splash-icon {
+        width: 240px;
+        height: 240px;
+        background: url("icon/z-bell.png") center/contain no-repeat;
+        border-radius: 60px;
+      }
+
+      .splash-dark .splash-icon {
+        background: url("icon/z-bell.png") center/contain no-repeat;
+        filter: brightness(0.9) contrast(1.1);
+      }
+
+      .instructions {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .template-title {
+        text-align: center;
+        padding: 10px;
+        background: #e8f5e8;
+        border-radius: 5px;
+        margin: 20px 0;
+        font-weight: bold;
+        color: #2d5a2d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="template-title">📱 Light Mode Splash Screen (1080×1920)</div>
+    <div class="splash-container splash-light">
+      <div class="splash-icon"></div>
+    </div>
+
+    <div class="template-title">🌙 Dark Mode Splash Screen (1080×1920)</div>
+    <div class="splash-container splash-dark">
+      <div class="splash-icon"></div>
+    </div>
+
+    <div class="instructions">
+      <h3>🎯 Splash Screen Creation Instructions</h3>
+
+      <h4>Step 1: Create Splash Screens</h4>
+      <ol>
+        <li>
+          <strong>Screenshot each splash screen above</strong> (light and dark
+          versions)
+        </li>
+        <li>
+          <strong>Crop to remove black borders</strong> - keep only the colored
+          rectangles
+        </li>
+        <li>
+          <strong>Resize to 1080×1920 pixels</strong> using Paint 3D or online
+          tool
+        </li>
+        <li>
+          <strong>Save as:</strong>
+          <ul>
+            <li>splash-light.png (green background)</li>
+            <li>splash-dark.png (dark green background)</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h4>Step 2: Copy to Android Project</h4>
+      <ol>
+        <li>
+          <strong>Copy splash-light.png</strong> to
+          <code>android/app/src/main/res/drawable/splash.png</code>
+        </li>
+        <li>
+          <strong>Copy splash-dark.png</strong> to
+          <code>android/app/src/main/res/drawable-night/splash.png</code>
+        </li>
+      </ol>
+
+      <h4>Step 3: Clean Old Icons</h4>
+      <p>
+        Run these commands in terminal to ensure consistent icons everywhere:
+      </p>
+      <pre>npx cap sync android</pre>
+
+      <p>
+        <strong>Note:</strong> Replace the placeholder QR icons with your actual
+        z-bell icon for best results.
+      </p>
+    </div>
+  </body>
+</html>

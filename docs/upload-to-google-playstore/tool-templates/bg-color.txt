@@ -1,0 +1,41 @@
+new background-color
+====================
+icon-only.png
+HEX: #40d987
+RGB:rgb(64, 217, 135)
+
+splash.png
+HEX: #40d987
+RGB:rgb(64, 217, 135)
+
+
+used tools:
+============
+get color of image: https://html-color-codes.info/colors-from-image/
+change background-color: paint 3D
+resize image: https://www.resize-image.net/
+
+
+------------
+
+Analyzes with:
+https://html-color-codes.info/colors-from-image/
+
+icon-only.png
+HEX: #40d987
+RGB:rgb(64, 217, 135)
+
+splash.png
+HEX:#3eda86
+RGB:rgb(62, 218, 134)
+
+splash-test-color.png
+HEX: #40d987
+RGB:rgb(64, 217, 135)
+
+
+light-mode-splash screen
+splash-screen-template.html
+RGB:rgb(61, 220, 132)
+fullsize-splash-creator.html
+RGB:rgb(61, 220, 132)

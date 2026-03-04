@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Play Store Icon Generator</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+      }
+
+      .icon-container {
+        width: 512px;
+        height: 512px;
+        background: #3ddc84;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
+        border: 2px solid #333;
+        position: relative;
+      }
+
+      .icon-foreground {
+        width: 320px;
+        height: 320px;
+        background: url('./../resources/icon/z-bell.png')
+          center/contain no-repeat;
+      }
+
+      .instructions {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .instructions h3 {
+        color: #2d5a2d;
+        margin-top: 0;
+      }
+
+      .size-info {
+        text-align: center;
+        padding: 10px;
+        background: #e8f5e8;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-weight: bold;
+        color: #2d5a2d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="icon-container">
+      <div class="icon-foreground"></div>
+    </div>
+
+    <div class="size-info">📱 Google Play Store Icon: 512×512 pixels</div>
+
+    <div class="instructions">
+      <h3>🎯 Google Play Store Icon Creation</h3>
+      <ol>
+        <li>
+          <strong>Screenshot the green square above</strong> (with black border)
+        </li>
+        <li><strong>Open Paint or Paint 3D</strong></li>
+        <li>
+          <strong>Crop to remove black border</strong> - keep only green square
+        </li>
+        <li><strong>Resize to 512×512 pixels</strong> if needed</li>
+        <li><strong>Save as app-icon-512px.png</strong></li>
+        <li>
+          <strong>Replace the file in upload-to-google-playstore folder</strong>
+        </li>
+      </ol>
+
+      <p>
+        <strong>Note:</strong> This template uses a placeholder QR icon. You
+        should replace the icon-foreground background-image with your actual
+        z-bell icon from C:\SOURCE-ACTIVE\z-bell-icons\z-bell.png
+      </p>
+    </div>
+  </body>
+</html>
