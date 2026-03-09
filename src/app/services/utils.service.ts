@@ -31,7 +31,7 @@ export class UtilsService {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly router: Router,
+    private readonly router: Router
   ) {
     globalThis.addEventListener('orientationchange', () => {
       if (this.currentModal) {
@@ -174,7 +174,7 @@ export class UtilsService {
    * @param lang The language code for displaying statistics in the modal
    * @param userStatistic The user statistics to display in the modal
    */
-  async openUserDetail(lang: string,userStatistic: DisplayedUserStatistics) {
+  async openUserDetail(lang: string, userStatistic: DisplayedUserStatistics) {
     const modal = await this.modalController.create({
       component: UserDetailComponent,
       componentProps: {
@@ -200,7 +200,7 @@ export class UtilsService {
           'change-log-modal',
           'user-detail-modal',
           'desktop',
-          'landscape',
+          'landscape'
         );
         switch (modal.component) {
           case HelpModalComponent:
@@ -214,7 +214,7 @@ export class UtilsService {
             break;
           default:
             console.error(
-              'Unknown modal component for setting landscape class',
+              'Unknown modal component for setting landscape class'
             );
         }
         if (this.isDesktop) {
@@ -300,25 +300,6 @@ export class UtilsService {
   }
 
   /**
-   * Checks if the given Firebase UID matches the programmer's device UID from the environment config.
-   * @param firebaseUID The Firebase UID to check
-   * @returns True if the UID matches the programmer's device, false otherwise
-   */
-  isProgrammerDevice(firebaseUID: string | null): boolean {
-    const pgmDevices = environment.app.programmerDevices.devices.map(
-      (deviceObj) => {
-        return Object.values(deviceObj)[0];
-      },
-    );
-
-    if (!firebaseUID) {
-      return false;
-    }
-
-    return pgmDevices.includes(firebaseUID);
-  }
-
-  /**
    * Returns device information such as user agent, platform, language, and app version.
    */
   getDeviceInfo(): DeviceInfo {
@@ -335,10 +316,13 @@ export class UtilsService {
    * @param userInfo The user information
    * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
    */
-  getPlatform(userInfo: UserType): string {
+  getPlatform(userInfo: UserType, isProgrammerDevice: boolean, platform: string | undefined): string {
     // Check if native flag is explicitly set
     if (userInfo?.isNative === true) {
-      return 'native';
+      if (!isProgrammerDevice) {
+        return 'native';
+      }
+      return 'native ' + platform;
     }
 
     // For web users, distinguish between mobile and desktop

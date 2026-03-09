@@ -132,11 +132,14 @@ This will create a `firebase.json` and (if selected) a `firestore.rules` file in
 
 ### 3. Start the Emulator
 
-From your project root:
+From your project root, you can use npm scripts to start the emulator:
 
 ```bash
-firebase emulators:start --inspect-functions=9229
+npm run emulators:start        # Standard mode
+npm run emulators:debug        # Debug mode with breakpoints support
 ```
+
+See [Step 5: Start the Emulator Suite](#5-start-the-emulator-suite) below for detailed explanation of the difference between these two modes.
 
 If you see `Error: Not in a Firebase app directory (could not locate firebase.json)`, make sure you are in the folder containing `firebase.json`.
 
@@ -181,9 +184,43 @@ npm run build
 
 ### 5. Start the Emulator Suite
 
+You can start the Firebase Emulator Suite using one of these commands:
+
+**Option A: Standard Mode (for testing)**
+
 ```bash
-firebase emulators:start
+npm run emulators:start
 ```
+
+Use this for normal testing when you don't need to debug function code. Functions run in parallel for better performance.
+
+**Option B: Debug Mode (for debugging with breakpoints)**
+
+```bash
+npm run emulators:debug
+```
+
+Use this when you want to attach VS Code's debugger and set breakpoints in your function code. Functions run sequentially in debug mode on port 9229.
+
+**Key Differences:**
+
+| Feature                | `emulators:start`                | `emulators:debug`                     |
+| ---------------------- | -------------------------------- | ------------------------------------- |
+| **Function Execution** | Parallel (faster)                | Sequential (debug mode)               |
+| **Debugger Port**      | None                             | Port 9229 enabled                     |
+| **Use Case**           | Normal testing, faster execution | Debugging with breakpoints in VS Code |
+| **Performance**        | Full speed                       | Slower due to debug mode              |
+
+**Alternative (direct Firebase CLI):**
+
+You can also use the Firebase CLI directly instead of npm scripts:
+
+```bash
+firebase emulators:start                        # Standard mode
+firebase emulators:start --inspect-functions=9229  # Debug mode
+```
+
+**Note:** The npm scripts are recommended as they're shorter and consistent with your project's workflow.
 
 ### 6. Trigger the Function
 
@@ -245,6 +282,7 @@ firebase emulators:start
 You can control whether your app uses the Firestore emulator or the production database by setting the `useFirebaseEmulator` property in your environment files.
 
 - **To use the emulator:**
+
   - Set `useFirebaseEmulator: true` in your environment `.env.local`.
   - Run `npm run generate-env` to update your environment files.
   - **Start your app locally first** (e.g., with `ionic serve` or your preferred method). The app must be running before starting the emulator, otherwise the emulator cannot start because it relies on environment values from the running app.
@@ -253,7 +291,7 @@ You can control whether your app uses the Firestore emulator or the production d
 
 - **To use production Firestore:**
   - Set `useFirebaseEmulator: false` in your environment `.env.local`.
-  - Run npm generate-env to update your environment files.
+  - Run `npm run generate-env` to update your environment files.
   - Run your app as usual.
   - The app will connect to the live Firestore database in the cloud.
 
@@ -265,7 +303,15 @@ You can debug your Firebase Functions running in the emulator and set breakpoint
 
 #### 1. Start the Emulator in Debug Mode
 
-Stop any running emulator process. Then start the emulator with debugging enabled (use a free port, e.g., 9229):
+**Important:** To use breakpoints and the VS Code debugger, you MUST use debug mode. The standard `npm run emulators:start` command does not enable the debugger port. See [Step 5](#5-start-the-emulator-suite) for the differences between the two modes.
+
+Stop any running emulator process. Then start the emulator in debug mode:
+
+```sh
+npm run emulators:debug
+```
+
+Alternative (without npm script):
 
 ```sh
 firebase emulators:start --inspect-functions=9229
@@ -325,4 +371,4 @@ Make sure the `port` matches the one you used above.
 ---
 
 **Maintained by:** Hans Zöchbauer  
-**Last Updated:** February 5, 2026
+**Last Updated:** March 7, 2026

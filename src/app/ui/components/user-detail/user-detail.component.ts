@@ -45,6 +45,7 @@ export class UserDetailComponent implements OnInit {
   @Input() lang!: string;
   @Input() userStatistic!: DisplayedUserStatistics;
   targetLanguagesDisplay: string = '';
+  isProgrammerDevice: boolean = false;  
 
   constructor(
     public readonly localStorage: LocalStorageService,
@@ -57,6 +58,7 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit() {
     this.getTargetLanguagesWithLineBreak();
+    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
   }
 
   close(): void {
@@ -71,11 +73,6 @@ export class UserDetailComponent implements OnInit {
     return dateTime
       ? this.utilsService.formatDateTimeISO(new Date(dateTime))
       : '';
-  }
-
-    get isProgrammerDevice(): boolean {
-    const currentUserId = this.firestoreService.getCurrentUserId();
-    return this.utilsService.isProgrammerDevice(currentUserId);
   }
 
   private async getTargetLanguagesWithLineBreak(): Promise<void> {

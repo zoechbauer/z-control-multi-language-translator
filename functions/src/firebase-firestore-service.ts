@@ -81,7 +81,7 @@ export class FirebaseFirestoreService {
     // Path: .../MLT_translations_statistics/{yyyy-mm}/meta/contingentData
     try {
       const docRef = this.db.doc(
-        `${FireStoreConstants.getMetaContingentDataDocumentPath()}`,
+        `${FireStoreConstants.getMetaContingentDataDocumentPath()}`
       );
       const doc = await docRef.get();
       if (!doc.exists) {
@@ -93,7 +93,7 @@ export class FirebaseFirestoreService {
             maxFreeTranslateCharsBufferPerMonth: 5000,
             lastUpdated: new Date(),
           },
-          { merge: true },
+          { merge: true }
         );
         console.log('Created control flags document with default values.');
       }
@@ -104,28 +104,44 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Updates or creates user mapping documents for a list of programmer devices.
+   * Initializes or syncs programmer device UIDs from client configuration to Firestore.
    *
-   * For each device:
-   *   - If a user mapping exists and type is 'User', update to 'Programmer'.
-   *   - If no mapping exists, create as 'Programmer'.
-   *   - Devices missing userId or name are skipped.
-   */
-  /**
-   * Updates user mapping documents for a list of programmer devices.
+   * **Initial Setup Workflow:**
+   * This function is called once from the client (via Cloud Function) to populate the
+   * `programmerDevices` collection with UIDs from .env.local. After initial setup,
+   * programmer UIDs should be maintained manually in Firestore, allowing UID changes
+   * without code deployment.
    *
-   * For each provided device, either creates a new user mapping with type 'Programmer'
-   * or updates an existing user mapping to type 'Programmer' (upgrading from 'User' type).
-   * Devices missing userId or name are silently skipped. Errors in individual device updates
-   * are logged but do not prevent processing other devices.
+   * **Behavior:**
+   * For each device in the provided array:
+   *   - Creates a document in `programmerDevices` collection if it doesn't exist
+   *   - Updates the `users` mapping: if a user mapping exists with type 'User', updates to 'Programmer'
+   *   - If no user mapping exists, creates a new one as 'Programmer'
+   *   - Skips devices with missing userId or name
    *
-   * @param programmerDeviceUIDs Array of programmer device objects containing userId and name.
+   * **Important:**
+   * - Existing `programmerDevices` documents are NOT overwritten
+   * - Manual changes in Firestore are preserved
+   * - This function is idempotent - safe to call multiple times
+   *
+   * **Path Structure:**
+   * - User mappings: `MLT_translations_statistics/userMapping/users/{userId}`
+   * - Programmer devices: `MLT_translations_statistics/userMapping/programmerDevices/{userId}`
+   *
+   * @param programmerDeviceUIDs Array of programmer device objects from client (.env.local).
    * @returns Promise that resolves when all device updates are complete.
    * @throws TypeError if programmerDeviceUIDs is not an array.
    * @throws Error is caught and logged for individual device update failures.
+   *
+   * @example
+   * // Initial setup - called once from client
+   * await service.updateProgrammerDeviceUIDs([
+   *   { userId: 'abc123', name: 'Hans-Laptop' }
+   * ]);
+   * // After this, update UIDs directly in Firestore programmerDevices collection
    */
   async updateProgrammerDeviceUIDs(
-    programmerDeviceUIDs: ProgrammerDeviceUID[],
+    programmerDeviceUIDs: ProgrammerDeviceUID[]
   ): Promise<void> {
     if (!Array.isArray(programmerDeviceUIDs)) {
       throw new TypeError('programmerDeviceUIDs must be an array');
@@ -135,11 +151,12 @@ export class FirebaseFirestoreService {
       if (!isValidDevice(device)) continue;
       try {
         await this.updateUserMappingUsers(device, programmerDeviceUIDs);
+        await this.createUserMappingProgrammerDevices(device);
       } catch (error) {
         console.error(
           'Error updating user mapping for programmer device:',
           device,
-          error,
+          error
         );
       }
     }
@@ -151,10 +168,12 @@ export class FirebaseFirestoreService {
    */
   private async updateUserMappingUsers(
     device: ProgrammerDeviceUID,
-    allDevices: ProgrammerDeviceUID[],
+    allDevices: ProgrammerDeviceUID[]
   ): Promise<void> {
     const docRef = this.db.doc(
-      `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${device.userId}`,
+      `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        device.userId
+      }`
     );
     const doc = await docRef.get();
 
@@ -168,7 +187,7 @@ export class FirebaseFirestoreService {
             device: device.name,
             lastUpdated: new Date(),
           },
-          { merge: true },
+          { merge: true }
         );
       }
     } else {
@@ -182,8 +201,91 @@ export class FirebaseFirestoreService {
           device: device.name,
           createdAt: new Date(),
         },
-        { merge: true },
+        { merge: true }
       );
+    }
+  }
+
+  /**
+   * Creates or updates a programmer device mapping in Firestore.
+   *
+   * Stores the device UID and name in the programmerDevices collection,
+   * using the userId as the document ID. This allows direct modification
+   * of programmer device UIDs in Firestore without redeploying the app.
+   *
+   * Path: MLT_translations_statistics/userMapping/programmerDevices/{userId}
+   *
+   * @param device - Programmer device object containing userId and device name.
+   * @returns Promise that resolves when the document is created or confirmed to exist.
+   * @throws Error if the Firestore write operation fails.
+   *
+   * @example
+   * await service.createUserMappingProgrammerDevices({
+   *   userId: 'abc123',
+   *   name: 'Chrome Browser'
+   * });
+   */
+  private async createUserMappingProgrammerDevices(
+    device: ProgrammerDeviceUID
+  ): Promise<void> {
+    const docRef = this.db.doc(
+      `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}/${
+        device.userId
+      }`
+    );
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      await docRef.set(
+        {
+          userId: device.userId,
+          device: device.name,
+          createdAt: new Date(),
+        },
+        { merge: true }
+      );
+      console.log(
+        `Created programmer device mapping for userId: ${device.userId}`
+      );
+    }
+  }
+
+  /**
+   * Retrieves all programmer device UIDs from Firestore.
+   *
+   * Reads all documents from the programmerDevices collection and returns them
+   * as an array. This is the source of truth for determining which UIDs belong
+   * to programmer devices, allowing you to update programmer UIDs directly in
+   * Firestore without modifying .env.local or redeploying.
+   *
+   * Path: MLT_translations_statistics/userMapping/programmerDevices/*
+   *
+   * @returns Promise resolving to array of all programmer device UIDs stored in Firestore.
+   *          Returns empty array if the collection is empty or doesn't exist.
+   * @throws Error if the Firestore read operation fails.
+   *
+   * @example
+   * const devices = await service.getProgrammerDeviceUIDs();
+   * // Returns: [{ userId: 'abc123', name: 'Chrome Browser' }, ...]
+   */
+  async getProgrammerDeviceUIDs(): Promise<ProgrammerDeviceUID[]> {
+    try {
+      const collectionRef = this.db.collection(
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}`
+      );
+      const snapshot = await collectionRef.get();
+
+      if (snapshot.empty) {
+        console.log('No programmer devices found in Firestore.');
+        return [];
+      }
+      return snapshot.docs.map((doc) => doc.data() as ProgrammerDeviceUID);
+    } catch (error) {
+      console.error(
+        'Error retrieving programmer devices from Firestore:',
+        error
+      );
+      throw error;
     }
   }
 
@@ -193,23 +295,10 @@ export class FirebaseFirestoreService {
    */
   private logCreatingDevice(device: ProgrammerDeviceUID): void {
     console.log(
-      `User mapping document for user ${device.userId} does not exist. Creating new document...`,
+      `User mapping document for user ${device.userId} does not exist. Creating new document...`
     );
   }
 
-  /**
-   * Adds a new user mapping document to Firestore.
-   *
-   * Creates a user mapping document with the user's name, type, and device information.
-   * Only creates/updates the document if it does not already exist or if it exists
-   * without deviceInfo or with different deviceInfo.
-   *
-   * @param userId The unique identifier of the user.
-   * @param programmerDeviceUIDs Array of programmer device UIDs to determine user type and device name.
-   * @param deviceInfo Device information to be stored in the user document.
-   * @param isNative Flag indicating if the user is on a native platform (optional).
-   * @throws Error if userId is not provided.
-   */
   /**
    * Creates or updates a user mapping document with device information.
    *
@@ -229,7 +318,7 @@ export class FirebaseFirestoreService {
     userId: string,
     programmerDeviceUIDs: ProgrammerDeviceUID[],
     deviceInfo: DeviceInfo,
-    isNative?: boolean,
+    isNative?: boolean
   ): Promise<void> {
     // Path: .../MLT_translations_statistics/userMapping/{uid}
     if (!userId) {
@@ -237,7 +326,7 @@ export class FirebaseFirestoreService {
     }
     try {
       const docRef = this.db.doc(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`,
+        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
       );
       const doc = await docRef.get();
       if (!doc.exists) {
@@ -252,13 +341,13 @@ export class FirebaseFirestoreService {
             userId: userId,
             createdAt: new Date(),
           },
-          { merge: true },
+          { merge: true }
         );
       } else if (
         !doc.data()?.deviceInfo ||
         !FirebaseFirestoreUtilsService.isDeepEqual(
           doc.data()?.deviceInfo,
-          deviceInfo,
+          deviceInfo
         )
       ) {
         // If document exists but deviceInfo is missing or different, update it
@@ -268,11 +357,11 @@ export class FirebaseFirestoreService {
             isNative: isNative ?? false,
             lastUpdated: new Date(),
           },
-          { merge: true },
+          { merge: true }
         );
         console.log(
           'Updated user mapping document with device info for user:',
-          userId,
+          userId
         );
       }
     } catch (error) {
@@ -287,7 +376,7 @@ export class FirebaseFirestoreService {
    */
   private async getUserName(
     userId: string,
-    programmerDeviceUIDs: ProgrammerDeviceUID[],
+    programmerDeviceUIDs: ProgrammerDeviceUID[]
   ): Promise<string> {
     const type = getUserType(userId, programmerDeviceUIDs);
     const userNumber = await this.countUser(type);
@@ -301,7 +390,7 @@ export class FirebaseFirestoreService {
   private async countUser(type: string): Promise<number> {
     try {
       const collectionRef = this.db.collection(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}`,
+        `${FireStoreConstants.getUserMappingUsersCollectionPath()}`
       );
       return collectionRef
         .where('type', '==', type)
@@ -323,14 +412,6 @@ export class FirebaseFirestoreService {
    *
    * @param count Number of characters to add to the user's and total translated character counts.
    * @param selectedLanguages Array of selected target languages for the translation.
-   */
-  /**
-   * Increments the translated character count for the current user and globally.
-   *
-   * Updates both the user's character count document and the global total character count.
-   * Also updates the user's selected target languages and lastUpdated timestamps for tracking.
-   * Errors in individual update operations are logged but do not prevent other updates.
-   * Count represents: text length × number of target languages.
    *
    * @param count Number of characters to add to both user and total character counts.
    * @param selectedLanguages Array of target language codes selected for the translation.
@@ -339,7 +420,7 @@ export class FirebaseFirestoreService {
    */
   async addTranslatedChars(
     count: number,
-    selectedLanguages: string[],
+    selectedLanguages: string[]
   ): Promise<void> {
     if (!this.userId) return;
 
@@ -362,10 +443,10 @@ export class FirebaseFirestoreService {
    */
   private async updateUserCharCount(
     count: number,
-    selectedLanguages: string[],
+    selectedLanguages: string[]
   ): Promise<void> {
     const docRef = this.db.doc(
-      `${FireStoreConstants.getUsersCollectionPath()}/${this.userId}`,
+      `${FireStoreConstants.getUsersCollectionPath()}/${this.userId}`
     );
     await docRef.set(
       {
@@ -373,7 +454,7 @@ export class FirebaseFirestoreService {
         targetLanguages: selectedLanguages,
         lastUpdated: new Date(),
       },
-      { merge: true },
+      { merge: true }
     );
   }
 
@@ -383,14 +464,14 @@ export class FirebaseFirestoreService {
    */
   private async updateTotalCharCount(count: number): Promise<void> {
     const totalRef = this.db.doc(
-      `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`,
+      `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`
     );
     await totalRef.set(
       {
         charCount: admin.firestore.FieldValue.increment(count),
         lastUpdated: new Date(),
       },
-      { merge: true },
+      { merge: true }
     );
   }
 }

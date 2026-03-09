@@ -30,23 +30,26 @@
         {{ "SETTINGS.STATISTICS.LABEL.CHECKSUM_ALL_USERS" | translate }}:
         {{
           allUsersCharCount
-            | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
         }}
         {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
       <p>
         <strong>{{ "SETTINGS.STATISTICS.LABEL.USED" | translate }}:</strong>
         {{
-          totalCharCount | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          totalCharCount
+            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
         }}
         /
-        {{ totalLimit | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US") }}
+        {{
+          totalLimit | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+        }}
         {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
       <p>
         <strong>{{ "SETTINGS.STATISTICS.LABEL.BUFFER" | translate }}:</strong>
         {{
-          totalBuffer | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          totalBuffer | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
         }}
         {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
@@ -55,7 +58,8 @@
           >{{ "SETTINGS.STATISTICS.LABEL.AVAILABLE" | translate }}:
         </strong>
         <span [class.exceeded]="totalRemaining === 0">{{
-          totalRemaining | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          totalRemaining
+            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
         }}</span>
         {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
       </p>
@@ -95,16 +99,18 @@
           "
           [class.my-device]="isCurrentUser(userStat.userId)"
         >
-          <ion-col *ngIf="getDisplayUserRow(userStat)">{{ userStat.userName }}</ion-col>
-          <ion-col class="used-chars" *ngIf="getDisplayUserRow(userStat)">{{
+          <ion-col>{{ userStat.userName }}</ion-col>
+          <ion-col class="used-chars">{{
             userStat.translatedCharCount
-              | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+              | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
           }}</ion-col>
-          <ion-col *ngIf="getDisplayUserRow(userStat)">{{ userStat.displayedPlatform }}</ion-col>
-          <ion-col *ngIf="!hideColumn && getDisplayUserRow(userStat)">{{
-            getFormatDate(userStat.lastTranslationDate)
+          <ion-col>{{ userStat.displayedPlatform }}</ion-col>
+          <ion-col *ngIf="!hideColumn">{{
+            userStat.lastTranslationDate
+              ? getFormatDate(userStat.lastTranslationDate)
+              : getFormatDate(userStat.userCreatedAt)
           }}</ion-col>
-          <ion-col size="1"  *ngIf="getDisplayUserRow(userStat)">
+          <ion-col size="1">
             <ion-button
               class="info-btn"
               fill="clear"
@@ -121,28 +127,33 @@
 
     <!-- Raw Data Debug Section -->
     @if (isProgrammerDevice) {
-      <div class="debug-section">
-        <hr />
+    <div class="debug-section">
+      <hr />
+      <details>
+        <summary>Raw Data (JSON) - Debug Only</summary>
+
         <details>
-          <summary>Raw Data (JSON) - Debug Only</summary>
-
-          <details>
-            <summary>Displayed values</summary>
-            <pre>{{ statisticsData?.displayedUserStatistics | json }}</pre>
-          </details>
-
-          <details>
-            <summary>Translation Statistics</summary>
-            <pre>{{ statisticsData?.userTranslationStatistics | json }}</pre>
-          </details>
-
-          <details>
-            <summary>User Mapping</summary>
-            <pre>{{ statisticsData?.users | json }}</pre>
-          </details>
+          <summary>Displayed values</summary>
+          <pre>{{ statisticsData?.displayedUserStatistics | json }}</pre>
         </details>
-        <hr />
-      </div>
+
+        <details>
+          <summary>Translation Statistics</summary>
+          <pre>{{ statisticsData?.userTranslationStatistics | json }}</pre>
+        </details>
+
+        <details>
+          <summary>User Mapping</summary>
+          <pre>{{ statisticsData?.users | json }}</pre>
+        </details>
+
+        <details>
+          <summary>Programmer Devices</summary>
+          <pre>{{ statisticsData?.programmerDeviceUIDs | json }}</pre>
+        </details>
+      </details>
+      <hr />
+    </div>
     }
   </ng-container>
 </div>

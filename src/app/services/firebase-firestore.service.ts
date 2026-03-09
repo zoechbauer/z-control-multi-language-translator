@@ -8,7 +8,7 @@ import { Auth, signInAnonymously, User } from '@angular/fire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { collection, getDocs } from 'firebase/firestore';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { FireStoreConstants } from '../shared/app.constants';
@@ -28,10 +28,15 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
+  private readonly programmerDeviceRefreshSubject = new Subject<void>();
+  readonly programmerDeviceRefresh$ = this.programmerDeviceRefreshSubject.asObservable();
+
   private readonly injector: Injector;
-  // private user: User | null = null;
   private user!: User;
-  private readonly monthlyTranslationsMonthDocPath = `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${FireStoreConstants.currentYearMonthPath()}`;
+  private readonly monthlyTranslationsMonthDocPath = `${
+    FireStoreConstants.COLLECTION_TRANSLATIONS
+  }/${FireStoreConstants.currentYearMonthPath()}`;
+  private cachedProgrammerDeviceUIDs: ProgrammerDeviceUID[] = [];
 
   constructor(
     private readonly auth: Auth,
@@ -40,7 +45,7 @@ export class FirebaseFirestoreService {
     private readonly functions: Functions,
     private readonly utilsService: UtilsService,
     private readonly localStorageService: LocalStorageService,
-    private readonly toastService: ToastService,
+    private readonly toastService: ToastService
   ) {
     this.injector = inject(Injector);
   }
@@ -51,6 +56,8 @@ export class FirebaseFirestoreService {
    */
   async init() {
     await this.authenticateUser();
+    this.cachedProgrammerDeviceUIDs = await this.getProgrammerDeviceUIDs();
+    this.programmerDeviceRefreshSubject.next();
   }
 
   /**
@@ -67,37 +74,37 @@ export class FirebaseFirestoreService {
       if (!this.utilsService.isNative) {
         // Web: Try to restore user from localStorage first
         const storedUid = await runInInjectionContext(this.injector, () =>
-          firstValueFrom(this.localStorageService.firestoreUid$),
+          firstValueFrom(this.localStorageService.firestoreUid$)
         );
         if (storedUid) {
           this.user = { uid: storedUid } as User;
           if (this.user?.uid) {
             await runInInjectionContext(this.injector, () =>
-              this.addUser(this.user!.uid),
+              this.addUser(this.user.uid)
             );
           }
         } else {
           // Sign in anonymously if not already signed in
           await runInInjectionContext(this.injector, () =>
-            this.signInAnonymously(),
+            this.signInAnonymously()
           );
         }
         await runInInjectionContext(this.injector, () =>
-          this.createMissingContingentData(),
+          this.createMissingContingentData()
         );
         await runInInjectionContext(this.injector, () =>
-          this.updateProgrammerDeviceUIDs(),
+          this.updateProgrammerDeviceUIDs()
         );
       } else {
         // Native: Always use Firebase Auth
         await runInInjectionContext(this.injector, () =>
-          this.signInAnonymously(),
+          this.signInAnonymously()
         );
         await runInInjectionContext(this.injector, () =>
-          this.createMissingContingentData(),
+          this.createMissingContingentData()
         );
         await runInInjectionContext(this.injector, () =>
-          this.updateProgrammerDeviceUIDs(),
+          this.updateProgrammerDeviceUIDs()
         );
       }
     } catch (error) {
@@ -115,19 +122,19 @@ export class FirebaseFirestoreService {
   private async signInAnonymously(): Promise<void> {
     if (!this.auth.currentUser) {
       const result = await runInInjectionContext(this.injector, () =>
-        signInAnonymously(this.auth),
+        signInAnonymously(this.auth)
       );
       this.user = (result as any).user;
       if (this.user?.uid) {
         await runInInjectionContext(this.injector, () =>
-          this.addUser(this.user!.uid),
+          this.addUser(this.user.uid)
         );
       }
     } else {
       this.user = this.auth.currentUser;
       if (this.user?.uid) {
         await runInInjectionContext(this.injector, () =>
-          this.addUser(this.user!.uid),
+          this.addUser(this.user.uid)
         );
       }
     }
@@ -145,11 +152,33 @@ export class FirebaseFirestoreService {
   private async saveUserIdToLocalStorage(uid: string): Promise<void> {
     try {
       await runInInjectionContext(this.injector, () =>
-        this.localStorageService.saveFirestoreUid(uid),
+        this.localStorageService.saveFirestoreUid(uid)
       );
     } catch (error) {
       console.error('Error saving user UID to localStorage:', error);
     }
+  }
+
+  /**
+   * Checks if the given Firebase UID matches any programmer device UID stored in the
+   * `programmerDevices` Firestore collection.
+   *
+   * This method uses the cached list of programmer device UIDs loaded during service
+   * initialization. If no UID is provided, it checks the current authenticated user's UID
+   * against the programmer devices.
+   *
+   * @param firebaseUID The Firebase UID to check against the programmer devices collection.
+   * @returns True if the UID matches a programmer device, false otherwise.
+   */
+  isProgrammerDevice(firebaseUID: string | null): boolean {
+    if (!firebaseUID) {
+      firebaseUID = this.getCurrentUserId();
+    }
+
+    const pgmDevices: ProgrammerDeviceUID[] =
+      this.getCachedProgrammerDeviceUIDs();
+
+    return pgmDevices.some((device) => device.userId === firebaseUID);
   }
 
   /**
@@ -163,10 +192,10 @@ export class FirebaseFirestoreService {
     try {
       const usersRef = collection(
         this.firestore,
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}`,
+        `${FireStoreConstants.getUserMappingUsersCollectionPath()}`
       );
       const snapshot = await runInInjectionContext(this.injector, () =>
-        getDocs(usersRef),
+        getDocs(usersRef)
       );
       (snapshot as any).forEach((docSnap: any) => {
         const data = docSnap.data();
@@ -197,29 +226,64 @@ export class FirebaseFirestoreService {
     // Path: .../MLT_translations_statistics/userMapping/users
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'addUser'),
+        httpsCallable(this.functions, 'addUser')
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
           userId,
-          programmerDeviceUIDs: this.getProgrammerDeviceUIDs(),
+          programmerDeviceUIDs: this.getEnvironmentProgrammerDeviceUIDs(),
           deviceInfo: this.deviceInfo,
           isNative: this.utilsService.isNative,
-        }),
+        })
       );
     } catch (error) {
       console.error('Error adding user:', error);
       this.toastService.showToast(
         this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_ADDING_USER',
+          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_ADDING_USER'
         ),
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
     }
   }
 
   private get deviceInfo(): DeviceInfo {
     return this.utilsService.getDeviceInfo();
+  }
+
+  /**
+   * Fetches all programmer device UIDs from Firestore via Cloud Function.
+   * Result is cached during initialization for synchronous access.
+   */
+  public async getProgrammerDeviceUIDs(): Promise<ProgrammerDeviceUID[]> {
+    try {
+      const callable = runInInjectionContext(this.injector, () =>
+        httpsCallable(this.functions, 'getProgrammerDeviceUIDs')
+      );
+      const result = await runInInjectionContext(this.injector, () =>
+        (callable as any)({})
+      );
+      return result.data.programmerDevices as ProgrammerDeviceUID[];
+    } catch (error) {
+      console.error('Error getting all programmer devices:', error);
+      this.toastService.showToast(
+        this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICES'
+        ),
+        ToastAnchor.TRANSLATE_PAGE
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Returns the cached list of programmer device UIDs.
+   * This list is loaded during service initialization and provides synchronous access.
+   *
+   * @returns Array of programmer device UIDs from cache
+   */
+  public getCachedProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
+    return this.cachedProgrammerDeviceUIDs;
   }
 
   /**
@@ -241,25 +305,25 @@ export class FirebaseFirestoreService {
 
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'updateProgrammerDeviceUIDs'),
+        httpsCallable(this.functions, 'updateProgrammerDeviceUIDs')
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
-          programmerDeviceUIDs: this.getProgrammerDeviceUIDs(),
-        }),
+          programmerDeviceUIDs: this.getEnvironmentProgrammerDeviceUIDs(),
+        })
       );
     } catch (error) {
       console.error('Error updating programmer devices:', error);
       this.toastService.showToast(
         this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_UPDATING_PROGRAMMER_DEVICES',
+          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_UPDATING_PROGRAMMER_DEVICES'
         ),
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
     }
   }
 
-  private getProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
+  private getEnvironmentProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
     const programmerDeviceUIDs: ProgrammerDeviceUID[] = [];
     const devices = environment.app.programmerDevices.devices;
 
@@ -284,14 +348,14 @@ export class FirebaseFirestoreService {
     try {
       // Path: .../MLT_translations_statistics/{yyyy-mm}/meta/contingentData
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'createMissingContingentData'),
+        httpsCallable(this.functions, 'createMissingContingentData')
       );
       await runInInjectionContext(this.injector, () => (callable as any)({}));
     } catch (error) {
       console.error('Error creating missing contingent data:', error);
       this.toastService.showToast(
         'Error creating missing contingent data.',
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
     }
   }
@@ -322,7 +386,7 @@ export class FirebaseFirestoreService {
       console.error('Error reading contingent data:', error);
       this.toastService.showToast(
         'Error reading contingent data.',
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
       return {};
     }
@@ -340,7 +404,7 @@ export class FirebaseFirestoreService {
       const usageSnap = await runInInjectionContext(this.injector, () => {
         const usageRef = doc(
           this.firestore,
-          `${FireStoreConstants.getUsersCollectionPath()}/${this.user.uid}`,
+          `${FireStoreConstants.getUsersCollectionPath()}/${this.user.uid}`
         );
         return getDoc(usageRef);
       });
@@ -369,7 +433,7 @@ export class FirebaseFirestoreService {
       const usageSnap = await runInInjectionContext(this.injector, () => {
         const usageRef = doc(
           this.firestore,
-          `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`,
+          `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`
         );
         return getDoc(usageRef);
       });
@@ -401,7 +465,7 @@ export class FirebaseFirestoreService {
       // Firestore web SDK: get all docs in collection
       const usersRef = collection(this.firestore, usersCollectionPath);
       const snapshot = await runInInjectionContext(this.injector, () =>
-        getDocs(usersRef),
+        getDocs(usersRef)
       );
       const result: UserTranslationStatistics[] = [];
       snapshot.forEach((docSnap) => {

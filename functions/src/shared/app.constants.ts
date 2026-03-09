@@ -9,16 +9,26 @@ export class FireStoreConstants {
     return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/users`;
   };
 
+  static readonly getUserMappingProgrammerDevicesCollectionPath = () => {
+    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/programmerDevices`;
+  };
+
   static readonly getUsersCollectionPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/users`;
+    return `${
+      FireStoreConstants.COLLECTION_TRANSLATIONS
+    }/${this.currentYearMonthPath()}/users`;
   };
 
   static readonly getMetaTotalCharsDocumentPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/meta/totalChars`;
+    return `${
+      FireStoreConstants.COLLECTION_TRANSLATIONS
+    }/${this.currentYearMonthPath()}/meta/totalChars`;
   };
 
   static readonly getMetaContingentDataDocumentPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/meta/contingentData`;
+    return `${
+      FireStoreConstants.COLLECTION_TRANSLATIONS
+    }/${this.currentYearMonthPath()}/meta/contingentData`;
   };
 
   /**

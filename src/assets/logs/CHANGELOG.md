@@ -2,6 +2,17 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.4] – 2026-03-07
+
+### ✨ New Features
+
+- Programmer device UIDs are now managed in Firestore and initialized from environment files, enabling runtime updates without requiring code changes or redeployment.
+
+### 🐛 Fixes on Mobile Version
+
+- In native mobile builds, the header now renders at the correct height across all tested Android devices (including Samsung A53).
+- In native mobile builds, the status bar is now consistently visible and correctly styled across all tested Android devices.
+
 ## [1.3] – 2026-03-03
 
 ### ✨ New Features

@@ -56,6 +56,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;
   LogoType = LogoType;
   currentUserUid: string | null = null;
+  isProgrammerDevice: boolean = false;
 
   // Statistics data
   isLoading = true;
@@ -81,11 +82,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     return this.utilsService.isPortrait;
   }
 
-  get isProgrammerDevice(): boolean {
-    const currentUserId = this.firestoreService.getCurrentUserId();
-    return this.utilsService.isProgrammerDevice(currentUserId);
-  }
-
   get isFirebaseEmulator(): boolean {
     return environment.app.useFirebaseEmulator;
   }
@@ -96,11 +92,15 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
         this.init();
       }),
+      this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
+        this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+      })
     );
   }
 
   async init() {
     this.isLoading = true;
+    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
 
     try {
       this.currentUserUid = await this.localStorageService.loadFirestoreUid();
@@ -144,11 +144,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDisplayUserRow(userStat: DisplayedUserStatistics): boolean {
-    // Show all users on programmer devices, but only users with translations on user devices
-    return this.isProgrammerDevice || userStat.translatedCharCount > 0;
-  }
-
   isCurrentUser(userId: string): boolean {
     return userId === this.currentUserUid;
   }
@@ -161,6 +156,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   }
 
   getFormatDate(dateTime: Date | null): string {
+    if (this.isProgrammerDevice) {
+      return dateTime ? this.utilsService.formatDateTimeISO(new Date(dateTime)) : '';
+    }
+
     return dateTime ? this.utilsService.formatDateISO(new Date(dateTime)) : '';
   }
 

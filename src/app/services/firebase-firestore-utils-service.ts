@@ -19,11 +19,16 @@ import { UtilsService } from './utils.service';
 export class FirebaseFirestoreUtilsService {
   private readonly statisticsRefreshSubject = new Subject<void>();
   readonly statisticsRefresh$ = this.statisticsRefreshSubject.asObservable();
+  private isProgrammerDevice: boolean = false;
 
   constructor(
     private readonly firestoreService: FirebaseFirestoreService,
-    private readonly utilsService: UtilsService,
-  ) {}
+    private readonly utilsService: UtilsService
+  ) {
+    this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
+        this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+      })
+  }
 
   /**
    * Requests a statistics refresh by emitting a notification to all subscribers.
@@ -39,35 +44,43 @@ export class FirebaseFirestoreUtilsService {
    * Retrieves displayed user statistics from Firestore.
    *
    * Fetches all user translation statistics and user information, then combines them
-   * into a single DisplayedUserStatistics array. The results are sorted by last
-   * translation date in descending order.
+   * into a single DisplayedUserStatistics array. Filters data to include only users with
+   * translation activity (translatedCharCount > 0) or if running on a programmer device.
+   * The results are sorted by last translation date in descending order, with ties broken
+   * by user creation date.
    *
    * @returns {Promise<StatisticsData>} A promise resolving to statistics data containing
-   *          displayed user statistics, user translation statistics, and user information.
+   *          filtered displayed user statistics, user translation statistics, and all users.
    */
   async getDisplayedUserStatistics(): Promise<StatisticsData> {
     let statisticsData: StatisticsData = {
       displayedUserStatistics: [],
       userTranslationStatistics: [],
       users: [],
+      programmerDeviceUIDs: [],
     };
 
     const userTranslationStatistics: UserTranslationStatistics[] =
       await this.firestoreService.getAllUserTranslationStatistics();
+
     statisticsData.userTranslationStatistics = userTranslationStatistics;
 
     statisticsData.users = await this.firestoreService.getUsers();
 
+    statisticsData.programmerDeviceUIDs = await this.firestoreService.getProgrammerDeviceUIDs();
+
+    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+
     statisticsData.users.forEach((user) => {
       const userInfo = statisticsData.users.find(
-        (u) => u.userId === user.userId,
+        (u) => u.userId === user.userId
       );
       if (!userInfo) {
         console.warn('No user info found for userId:', user.userId);
         return; // Skip if no user info
       }
       const userTranslationInfo = userTranslationStatistics.find(
-        (u) => u.userId === user.userId,
+        (u) => u.userId === user.userId
       );
 
       const stat: DisplayedUserStatistics = {
@@ -89,20 +102,21 @@ export class FirebaseFirestoreUtilsService {
             date: '',
           },
         },
-        displayedPlatform: this.utilsService.getPlatform(userInfo),
+        displayedPlatform: this.utilsService.getPlatform(userInfo, this.isProgrammerDevice, userInfo.deviceInfo?.platform),
         // translation infos
         translatedCharCount: userTranslationInfo?.translatedCharCount ?? 0,
         targetLanguages: userTranslationInfo?.targetLanguages ?? [],
         lastTranslationDate: userTranslationInfo?.lastTranslationDate ?? null,
       };
-      statisticsData.displayedUserStatistics.push(stat);
+      if (this.isProgrammerDevice || stat.translatedCharCount > 0) {
+        statisticsData.displayedUserStatistics.push(stat);
+      }
     });
     statisticsData.displayedUserStatistics.sort(
       (a, b) =>
         (b.lastTranslationDate?.getTime() ?? 0) -
-        (a.lastTranslationDate?.getTime() ?? 0) ||
-        (b.userCreatedAt?.getTime() ?? 0) -
-        (a.userCreatedAt?.getTime() ?? 0),
+          (a.lastTranslationDate?.getTime() ?? 0) ||
+        (b.userCreatedAt?.getTime() ?? 0) - (a.userCreatedAt?.getTime() ?? 0)
     ); // Sort by last translation date desc and userCreatedAt desc
     return statisticsData;
   }
@@ -151,7 +165,7 @@ export class FirebaseFirestoreUtilsService {
       environment.app.maxFreeTranslateCharsBufferPerMonth;
     availableCharCountCurrentMonth = Math.max(
       0,
-      totalLimit - totalBuffer - totalCharCount,
+      totalLimit - totalBuffer - totalCharCount
     );
     const allUserContingentData: DisplayedUserContingentData = {
       userNameKey: 'TRANSLATE_STATISTICS.CARD.GRID.USER_NAME_ALL',
@@ -207,7 +221,7 @@ export class FirebaseFirestoreUtilsService {
   }
 
   private async isContingentForUserExceeded(
-    flags: FirestoreContingentData,
+    flags: FirestoreContingentData
   ): Promise<boolean> {
     const limit =
       flags.maxFreeTranslateCharsPerMonthForUser ??
@@ -217,7 +231,7 @@ export class FirebaseFirestoreUtilsService {
   }
 
   private async isTotalContingentExceeded(
-    flags: FirestoreContingentData,
+    flags: FirestoreContingentData
   ): Promise<boolean> {
     const limit =
       flags.maxFreeTranslateCharsPerMonth ??
@@ -238,7 +252,7 @@ export class FirebaseFirestoreUtilsService {
     }/${FireStoreConstants.currentYearMonthPath()}`;
     if (currentMonth !== expectedMonth) {
       console.log(
-        'Month has changed. Re-initializing FirestoreService for new month context.',
+        'Month has changed. Re-initializing FirestoreService for new month context.'
       );
       await this.firestoreService.init();
     }

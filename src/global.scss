@@ -67,7 +67,7 @@ body.native-app {
   padding: 0;
 }
 
-.web-app ion-header ion-toolbar{
+.web-app ion-header ion-toolbar {
   padding-top: 0 !important;
 }
 
@@ -99,7 +99,7 @@ ion-tab-bar {
 
 // Compatibility styles for legacy Android versions (e.g., Android 11)
 ion-header ion-toolbar:first-of-type {
-  padding-top: var(--safe-area-top, 24px);
+  padding-top: var(--safe-area-top-fix, 24px);
 }
 
 @media (prefers-color-scheme: dark) {

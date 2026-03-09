@@ -40,14 +40,14 @@ export class AppComponent implements OnInit {
     if (this.isNativeApp) {
       this.renderer.addClass(document.body, 'native-app');
 
-      SplashScreen.hide();
+      await SplashScreen.hide();
+      await StatusBar.setOverlaysWebView({ overlay: false });
       this.safeAreaInsets.setSafeAreaInsetsFix();
-      StatusBar.setOverlaysWebView({ overlay: false });
 
       const isDarkMode = await this.systemBars.getCurrentIsDarkMode();
       await this.systemBars.setBars(isDarkMode);
 
-      StatusBar.show();
+      await StatusBar.show();
     } else {
       this.renderer.addClass(document.body, 'web-app');
     }

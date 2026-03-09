@@ -27,6 +27,10 @@ This document lists important activities to execute when working with environmen
   9. Set `PROGRAMMER_DEVICES_UPDATE_USERMAP=false` in `.env.local` to disable device registration.
   10. Run `npm run generate-env` to regenerate the environment files.
 
+  - **Info (no workflow change):**
+  - When this registration flow runs, the Firestore collection `MLT_translations_statistics/userMapping/programmerDevices` is created/populated automatically.
+  - After initial creation, this `programmerDevices` collection can be maintained manually in Firestore (for example, updating/replacing programmer UIDs there) without changing `.env.local` for every UID change.
+
 ---
 
 **⚠️ Important:** Do not delete programmer device UIDs from environment files or Firestore user mapping. Removing UIDs causes duplicate user numbers because the system counts existing users to generate the next user number. Always add new UIDs instead of replacing old ones.

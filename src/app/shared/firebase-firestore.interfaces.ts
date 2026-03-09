@@ -49,6 +49,7 @@ export interface StatisticsData {
   displayedUserStatistics: DisplayedUserStatistics[];
   userTranslationStatistics: UserTranslationStatistics[];
   users: UserType[];
+  programmerDeviceUIDs: ProgrammerDeviceUID[];
 }
 export interface ProgrammerDeviceUID {
   userId: string;
