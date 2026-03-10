@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
-import { Tab } from '../enums';
+import { DisplayMode, Tab } from '../shared/enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { environment } from 'src/environments/environment';
 import {
@@ -173,13 +173,15 @@ export class UtilsService {
    * Opens the user detail modal dialog.
    * @param lang The language code for displaying statistics in the modal
    * @param userStatistic The user statistics to display in the modal
+   * @param displayMode The display mode for the user detail modal
    */
-  async openUserDetail(lang: string, userStatistic: DisplayedUserStatistics) {
+  async openUserDetail(lang: string, userStatistic: DisplayedUserStatistics, displayMode: DisplayMode): Promise<void> {
     const modal = await this.modalController.create({
       component: UserDetailComponent,
       componentProps: {
         lang: lang,
         userStatistic: userStatistic,
+        displayMode: displayMode,
       },
     });
     this.currentModal = modal;
@@ -316,10 +318,14 @@ export class UtilsService {
    * @param userInfo The user information
    * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
    */
-  getPlatform(userInfo: UserType, isProgrammerDevice: boolean, platform: string | undefined): string {
+  getPlatform(
+    userInfo: UserType,
+    statisticsDisplayMode: DisplayMode,
+    platform: string | undefined
+  ): string {
     // Check if native flag is explicitly set
     if (userInfo?.isNative === true) {
-      if (!isProgrammerDevice) {
+      if (statisticsDisplayMode !== DisplayMode.Programmer) {
         return 'native';
       }
       return 'native ' + platform;

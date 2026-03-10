@@ -3,10 +3,11 @@ import { FirebaseFirestoreService } from './firebase-firestore-service.js';
 import { getErrorMsg } from './utils.js';
 
 /**
- * Callable function to get the list of programmer device UIDs.
+ * Callable function returning whether the current device is a programmer device.
+ * Validates the request and delegates the check to `FirebaseFirestoreService`.
  * Requires authentication and delegates creation to `FirebaseFirestoreService`.
  */
-export const getProgrammerDeviceUIDs = onCall(async (request) => {
+export const isProgrammerDevice = onCall(async (request) => {
   const { auth } = request;
   if (!auth) {
     throw new HttpsError('unauthenticated', 'User must be authenticated.');
@@ -14,10 +15,10 @@ export const getProgrammerDeviceUIDs = onCall(async (request) => {
   try {
     const userId = auth.uid;
     const firestoreService = new FirebaseFirestoreService(userId);
-    const programmerDevices = await firestoreService.getProgrammerDeviceUIDs();
-    return { programmerDevices };
+    const isProgrammerDevice = await firestoreService.isProgrammerDevice();
+    return { isProgrammerDevice };
   } catch (error) {
-    let errorMessage = 'Error retrieving programmer device UIDs.';
+    let errorMessage = 'Error checking if device is a programmer device.';
     console.error(errorMessage, error);
     throw new HttpsError('internal', getErrorMsg(error, errorMessage));
   }

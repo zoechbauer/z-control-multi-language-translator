@@ -19,7 +19,7 @@ import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.inter
 import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
-import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
+import { DisplayMode } from 'src/app/shared/enums';
 
 @Component({
   selector: 'app-user-detail-modal',
@@ -44,8 +44,9 @@ import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.se
 export class UserDetailComponent implements OnInit {
   @Input() lang!: string;
   @Input() userStatistic!: DisplayedUserStatistics;
+  @Input() displayMode!: DisplayMode;
+  DisplayMode = DisplayMode;
   targetLanguagesDisplay: string = '';
-  isProgrammerDevice: boolean = false;  
 
   constructor(
     public readonly localStorage: LocalStorageService,
@@ -53,12 +54,10 @@ export class UserDetailComponent implements OnInit {
     private readonly googleTranslateSevervice: TranslationGoogleTranslateService,
     private readonly modalCtrl: ModalController,
     private readonly utilsService: UtilsService,
-    private readonly firestoreService: FirebaseFirestoreService,
   ) {}
 
   ngOnInit() {
     this.getTargetLanguagesWithLineBreak();
-    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
   }
 
   close(): void {

@@ -4,7 +4,7 @@ import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { LogoType } from 'src/app/enums';
+import { LogoType } from 'src/app/shared/enums';
 @Component({
   selector: 'app-get-source-code',
   templateUrl: './get-source-code.component.html',
@@ -12,10 +12,9 @@ import { LogoType } from 'src/app/enums';
   standalone: true,
   imports: [IonIcon, LogoComponent, NgIf, NgTemplateOutlet, TranslateModule],
 })
-export class GetSourceCodeComponent  {
+export class GetSourceCodeComponent {
   @Input() lang!: string;
   LogoType = LogoType;
 
-  constructor() { }
-
+  constructor() {}
 }

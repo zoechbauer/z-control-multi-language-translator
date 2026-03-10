@@ -6,6 +6,8 @@ import {
   IonRow,
   IonIcon,
   IonButton,
+  IonRadio,
+  IonRadioGroup,
 } from '@ionic/angular/standalone';
 import {
   NgFor,
@@ -18,7 +20,7 @@ import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { LogoType } from 'src/app/enums';
+import { DisplayMode, LogoType } from 'src/app/shared/enums';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import {
@@ -50,11 +52,15 @@ import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firesto
     TranslateModule,
     IonGrid,
     IonIcon,
+    IonRadioGroup,
+    IonRadio,
   ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;
   LogoType = LogoType;
+  DisplayMode = DisplayMode;
+  displayMode: DisplayMode = DisplayMode.User;
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
 
@@ -75,11 +81,15 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
     private readonly localStorageService: LocalStorageService,
-    private readonly utilsService: UtilsService,
+    private readonly utilsService: UtilsService
   ) {}
 
   get hideColumn(): boolean {
     return this.utilsService.isPortrait;
+  }
+
+  get hideColumnIfUserOrPortrait(): boolean {
+    return this.utilsService.isPortrait || this.displayMode === DisplayMode.User;
   }
 
   get isFirebaseEmulator(): boolean {
@@ -90,17 +100,29 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     this.init();
     this.subscriptions.push(
       this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
-        this.init();
+        // Only reload if not currently loading
+        if (!this.isLoading) {
+          this.init();
+        }
       }),
       this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
-        this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+        // Update isProgrammerDevice without triggering full reload
+        const newValue = this.firestoreService.isProgrammerDevice;
+        if (this.isProgrammerDevice !== newValue) {
+          this.isProgrammerDevice = newValue;
+        }
+      }),
+      this.localStorageService.statisticsDisplayMode$.subscribe((mode) => {
+        this.displayMode = mode;
       })
     );
   }
 
   async init() {
     this.isLoading = true;
-    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice;
+    this.displayMode =
+      await this.localStorageService.getStatisticsDisplayMode();
 
     try {
       this.currentUserUid = await this.localStorageService.loadFirestoreUid();
@@ -119,7 +141,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.totalCharCount = await this.firestoreService.getTotalCharCount();
       this.totalRemaining = Math.max(
         0,
-        this.totalLimit - this.totalBuffer - this.totalCharCount,
+        this.totalLimit - this.totalBuffer - this.totalCharCount
       );
 
       // User contingent
@@ -135,7 +157,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.allUsersCharCount =
         this.statisticsData?.displayedUserStatistics.reduce(
           (sum, userStat) => sum + userStat.translatedCharCount,
-          0,
+          0
         ) ?? 0;
     } catch (error) {
       console.error('GetStatisticsComponent: Error loading statistics', error);
@@ -148,16 +170,34 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     return userId === this.currentUserUid;
   }
 
+  onDisplayModeChange(event: any): void {
+    const value = event?.detail?.value;
+    if (value === DisplayMode.User || value === DisplayMode.Programmer) {
+      this.displayMode = value;
+
+      // Store display mode in local storage
+      this.localStorageService
+        .saveStatisticsDisplayMode(this.displayMode)
+        .catch((error) => {
+          console.error('Error saving display mode to local storage:', error);
+        });
+      // Refresh statistics data to apply display mode change
+      this.init();
+    }
+  }
+
   async showDetailInfos(
     lang: string,
-    userStatistic: DisplayedUserStatistics,
+    userStatistic: DisplayedUserStatistics
   ): Promise<void> {
-    this.utilsService.openUserDetail(lang, userStatistic);
+    this.utilsService.openUserDetail(lang, userStatistic, this.displayMode);
   }
 
   getFormatDate(dateTime: Date | null): string {
-    if (this.isProgrammerDevice) {
-      return dateTime ? this.utilsService.formatDateTimeISO(new Date(dateTime)) : '';
+    if (this.displayMode === DisplayMode.Programmer) {
+      return dateTime
+        ? this.utilsService.formatDateTimeISO(new Date(dateTime))
+        : '';
     }
 
     return dateTime ? this.utilsService.formatDateISO(new Date(dateTime)) : '';

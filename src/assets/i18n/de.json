@@ -63,7 +63,8 @@
         "ERROR": "Fehler bei der Übersetzung. Bitte versuchen Sie es erneut.",
         "ERROR_ADDING_USER": "Fehler beim Hinzufügen des Benutzers. Bitte versuchen Sie es erneut.",
         "ERROR_UPDATING_PROGRAMMER_DEVICES": "Fehler beim Aktualisieren der Programmiergeräte. Bitte versuchen Sie es erneut.",
-        "ERROR_GETTING_PROGRAMMER_DEVICES": "Fehler beim Abrufen der Programmierer-Geräte. Bitte versuchen Sie es erneut."
+        "ERROR_GETTING_PROGRAMMER_DEVICES": "Fehler beim Abrufen der Programmierer-Geräte. Bitte versuchen Sie es erneut.",
+        "ERROR_GETTING_PROGRAMMER_DEVICE_STATUS": "Fehler beim Abrufen des Status des Programmierer-Geräts. Bitte versuchen Sie es erneut."
       },
       "SIMULATION": {
         "INPUT": "Ihr monatliches Übersetzungskontingent wurde aufgebraucht. Übersetzungen sind bis zum Monatsende nur noch als Simulation verfügbar.",
@@ -203,7 +204,10 @@
         "AVAILABLE": "Noch verfügbar",
         "CHECKSUM_ALL_USERS": "Verbraucht von allen Benutzern",
         "CHARS": "Zeichen",
-        "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung"
+        "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung",
+        "DISPLAY_MODE": "Anzeigemodus",
+        "DISPLAY_MODE_USER": "Benutzer-Ansicht",
+        "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht"
       },
       "GRID": {
         "USER_CONTINGENT": "Übersetzungskontingent der einzelnen Benutzer",

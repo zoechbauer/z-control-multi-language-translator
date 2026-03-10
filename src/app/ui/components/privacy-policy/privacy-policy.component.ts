@@ -4,7 +4,7 @@ import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { LogoType } from 'src/app/enums';
+import { LogoType } from 'src/app/shared/enums';
 
 @Component({
   selector: 'app-privacy-policy',

@@ -6,7 +6,7 @@ import { IonContent, IonicModule } from '@ionic/angular';
 import { LocalStorageService } from '../services/local-storage.service';
 import { environment } from 'src/environments/environment';
 import { UtilsService } from '../services/utils.service';
-import { LogoType, Tab } from '../enums';
+import { LogoType, Tab } from '../shared/enums';
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { LanguageAccordionComponent } from '../ui/components/accordions/language-accordion.component';
 import { FeedbackAccordionComponent } from '../ui/components/accordions/feedback-accordion.component';
@@ -21,6 +21,22 @@ import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { FireStoreConstants } from '../shared/app.constants';
+
+// Single source of truth for settings accordion IDs.
+// Add new accordion IDs here when extending the settings page.
+const ACCORDION_VALUES = [
+  'language',
+  'target-languages',
+  'text-to-speech',
+  'z-control',
+  'get-statistics',
+  'privacy-policy',
+  'change-log',
+  'get-mobile-app',
+  'get-source',
+] as const;
+
+type AccordionValue = (typeof ACCORDION_VALUES)[number];
 
 @Component({
   selector: 'app-tab-settings',
@@ -41,7 +57,10 @@ import { FireStoreConstants } from '../shared/app.constants';
   ],
 })
 export class TabSettingsPage implements OnInit, OnDestroy {
-  openAccordion: string | null = null;
+  private readonly validAccordionValues = new Set<AccordionValue>(
+    ACCORDION_VALUES
+  );
+  openAccordion: AccordionValue | null = null;
   showAllAccordions = true;
   selectedLanguage!: string;
   selectedLanguageName?: string;
@@ -56,7 +75,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     public readonly localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
     private readonly textToSpeechService: TextSpeechService,
-    private readonly firestoreService: FirebaseFirestoreService,
+    private readonly firestoreService: FirebaseFirestoreService
   ) {}
 
   ngOnInit() {
@@ -73,24 +92,24 @@ export class TabSettingsPage implements OnInit, OnDestroy {
         this.translate.setDefaultLang(lang);
         this.selectedLanguage = lang;
         this.localStorage.loadTargetLanguages();
-      }),
+      })
     );
     this.subscriptions.push(
       this.utilsService.logoClicked$.subscribe(() => {
         this.openFeedbackAccordion();
-      }),
+      })
     );
     this.subscriptions.push(
       this.localStorage.textToSpeechValues$.subscribe(
         (ttsValues: TextToSpeechValues) => {
           this.textToSpeechValues = ttsValues;
-        },
-      ),
+        }
+      )
     );
   }
 
   private openFeedbackAccordion() {
-    this.openAccordion = '';
+    this.openAccordion = null;
     this.openAccordion = 'z-control';
   }
 
@@ -105,8 +124,33 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   }
 
   onAccordionGroupChange(event: CustomEvent, content: IonContent) {
-    this.openAccordion = event.detail.value;
+    const value = this.normalizeAccordionValue(event?.detail?.value);
+
+    // Ignore bubbled value-change events from nested controls (e.g. radio groups).
+    if (value === undefined) {
+      return;
+    }
+
+    this.openAccordion = value;
     this.showAllAccordions = this.openAccordion == null;
+  }
+
+  private normalizeAccordionValue(
+    rawValue: unknown
+  ): AccordionValue | null | undefined {
+    // Header toggle close can emit undefined, null, or empty string.
+    if (rawValue === undefined || rawValue === null || rawValue === '') {
+      return null;
+    }
+
+    if (
+      typeof rawValue === 'string' &&
+      this.validAccordionValues.has(rawValue as AccordionValue)
+    ) {
+      return rawValue as AccordionValue;
+    }
+
+    return undefined;
   }
 
   onLanguageChange(event: any) {
@@ -132,7 +176,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
       this.localStorage.saveTargetLanguages(languages);
       this.textToSpeechService.updateTtsSupportedLanguagesMap(
         this.utilsService.isNative,
-        languages,
+        languages
       );
     }
   }

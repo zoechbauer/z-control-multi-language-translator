@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { LogoComponent } from './logo.component';
-import { LogoType } from 'src/app/enums';
+import { LogoType } from 'src/app/shared/enums';
 
 describe('LogoComponent', () => {
   let component: LogoComponent;
@@ -76,7 +76,7 @@ describe('LogoComponent', () => {
       const setSpy = spyOn<any>(component, 'setLogoText').and.callFake(
         () => {}
       );
-      
+
       // dispatch resize event - listener added in constructor should call setLogoText
       window.dispatchEvent(new Event('resize'));
 

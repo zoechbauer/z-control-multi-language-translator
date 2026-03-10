@@ -63,7 +63,8 @@
         "ERROR": "Error during translation. Please try again.",
         "ERROR_ADDING_USER": "Error adding user. Please try again.",
         "ERROR_UPDATING_PROGRAMMER_DEVICES": "Error updating programmer devices. Please try again.",
-        "ERROR_GETTING_PROGRAMMER_DEVICES": "Error getting programmer devices. Please try again."
+        "ERROR_GETTING_PROGRAMMER_DEVICES": "Error getting programmer devices. Please try again.",
+        "ERROR_GETTING_PROGRAMMER_DEVICE_STATUS": "Error getting programmer device status. Please try again."
       },
       "SIMULATION": {
         "INPUT": "Your monthly translation quota has been used up. Translations are only available as simulations until the end of the month.",
@@ -203,7 +204,10 @@
         "AVAILABLE": "Available",
         "CHECKSUM_ALL_USERS": "Used by all users",
         "CHARS": "Characters",
-        "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation"
+        "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation",
+        "DISPLAY_MODE": "Display Mode",
+        "DISPLAY_MODE_USER": "User View",
+        "DISPLAY_MODE_PROGRAMMER": "Programmer View"
       },
       "GRID": {
         "USER_CONTINGENT": "Translation Contingent of Individual Users",

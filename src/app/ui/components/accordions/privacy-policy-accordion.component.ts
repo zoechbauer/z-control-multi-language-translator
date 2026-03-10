@@ -1,12 +1,8 @@
 import { Component, Input } from '@angular/core';
-import {
-  IonAccordion,
-  IonItem,
-  IonLabel,
-} from '@ionic/angular/standalone';
+import { IonAccordion, IonItem, IonLabel } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { LogoType } from 'src/app/enums';
+import { LogoType } from 'src/app/shared/enums';
 import { PrivacyPolicyComponent } from './../privacy-policy/privacy-policy.component';
 
 @Component({

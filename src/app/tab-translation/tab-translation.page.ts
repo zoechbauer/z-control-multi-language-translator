@@ -23,7 +23,7 @@ import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
-import { Tab, ToastAnchor } from '../enums';
+import { Tab, ToastAnchor } from '../shared/enums';
 import { AppConstants } from '../shared/app.constants';
 import { DeviceInfo } from '../shared/firebase-firestore.interfaces';
 import { UtilsService } from '../services/utils.service';
@@ -97,7 +97,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     private readonly googleTranslateService: TranslationGoogleTranslateService,
     private readonly toastService: ToastService,
     private readonly firestoreService: FirebaseFirestoreService,
-    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
+    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService
   ) {}
 
   get maxInputLength(): number {
@@ -146,7 +146,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     return this.translate.instant('TRANSLATE.CARD.PLACEHOLDER.INPUT_TEXT', {
       baseLanguage: this.baseLangString.substring(
         0,
-        this.baseLangString.indexOf(' ('),
+        this.baseLangString.indexOf(' (')
       ),
     });
   }
@@ -165,9 +165,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     if (!this.text.trim() || this.selectedLanguages.length === 0) {
       this.toastService.showToast(
         this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES',
+          'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES'
         ),
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
       return;
     }
@@ -189,7 +189,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         await this.googleTranslateService.secureTranslateCloudFunction(
           this.text,
           this.baseLang,
-          this.selectedLanguages,
+          this.selectedLanguages
         );
       if (!translations) {
         this.simulateTranslationOnContingentExceeded();
@@ -200,7 +200,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         ([language, translatedText]) => ({
           language,
           translatedText: String(translatedText),
-        }),
+        })
       );
       this.firestoreUtilsService.requestStatisticsRefresh();
 
@@ -214,7 +214,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         console.error('Translation error:', error);
         this.toastService.showToast(
           this.translate.instant('TRANSLATE.CARD_RESULTS.TOAST.ERROR'),
-          ToastAnchor.TRANSLATE_PAGE,
+          ToastAnchor.TRANSLATE_PAGE
         );
       }
     }
@@ -223,9 +223,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   private simulateTranslationOnContingentExceeded(): void {
     this.toastService.showToast(
       this.translate.instant(
-        'TRANSLATE.CARD_RESULTS.TOAST.CONTINGENT_EXCEEDED',
+        'TRANSLATE.CARD_RESULTS.TOAST.CONTINGENT_EXCEEDED'
       ),
-      ToastAnchor.TRANSLATE_PAGE,
+      ToastAnchor.TRANSLATE_PAGE
     );
     this.simulateTranslateText();
   }
@@ -239,16 +239,16 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.googleTranslateService
       .getTranslations(
         this.googleTranslateService.simulateTranslateText.bind(
-          this.googleTranslateService,
+          this.googleTranslateService
         ),
         this.text,
         this.baseLang,
-        this.selectedLanguages,
+        this.selectedLanguages
       )
       .subscribe((results: Translation[]) => {
         this.translations = results;
         this.text = this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.SIMULATION.INPUT',
+          'TRANSLATE.CARD_RESULTS.SIMULATION.INPUT'
         );
       });
   }
@@ -263,9 +263,9 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     } catch (err) {
       this.toastService.showToast(
         this.translate.instant(
-          'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED',
+          'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED'
         ),
-        ToastAnchor.TRANSLATE_PAGE,
+        ToastAnchor.TRANSLATE_PAGE
       );
       console.error('TTS error:', err);
     } finally {
@@ -307,7 +307,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       this.localStorage.targetLanguages$.subscribe((langs) => {
         this.selectedLanguages = langs;
         this.initFormControls();
-      }),
+      })
     );
   }
 

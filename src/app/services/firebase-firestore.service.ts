@@ -4,7 +4,7 @@ import {
   Injector,
   runInInjectionContext,
 } from '@angular/core';
-import { Auth, signInAnonymously, User } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged, signInAnonymously, User } from '@angular/fire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { collection, getDocs } from 'firebase/firestore';
@@ -23,20 +23,21 @@ import {
   CharCountResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
-import { ToastAnchor } from '../enums';
+import { ToastAnchor } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
   private readonly programmerDeviceRefreshSubject = new Subject<void>();
-  readonly programmerDeviceRefresh$ = this.programmerDeviceRefreshSubject.asObservable();
+  readonly programmerDeviceRefresh$ =
+    this.programmerDeviceRefreshSubject.asObservable();
 
   private readonly injector: Injector;
   private user!: User;
   private readonly monthlyTranslationsMonthDocPath = `${
     FireStoreConstants.COLLECTION_TRANSLATIONS
   }/${FireStoreConstants.currentYearMonthPath()}`;
-  private cachedProgrammerDeviceUIDs: ProgrammerDeviceUID[] = [];
+  private cachedIsProgrammerDevice: boolean = false;
 
   constructor(
     private readonly auth: Auth,
@@ -50,45 +51,60 @@ export class FirebaseFirestoreService {
     this.injector = inject(Injector);
   }
 
+  get isProgrammerDevice(): boolean {
+    return this.cachedIsProgrammerDevice;
+  }
+
   /**
    * Initializes the Firestore service.
    * Currently, it authenticates the user and sets up user mapping and control flags.
    */
   async init() {
     await this.authenticateUser();
-    this.cachedProgrammerDeviceUIDs = await this.getProgrammerDeviceUIDs();
-    this.programmerDeviceRefreshSubject.next();
+    this.cachedIsProgrammerDevice = await this.getIsProgrammerDevice();
   }
 
-  /**
-   * Authenticates the user and sets up user mapping and control flags for both web and native platforms.
-   *
-   * - On web: Attempts to restore the user UID from localStorage (if available) to avoid generating a new UID on refresh.
-   *   If no UID is found, signs in anonymously and saves the new UID to localStorage.
-   * - On native: Always uses Firebase Auth for persistence and signs in anonymously if not already signed in.
-   *
-   * In both cases, ensures Firestore control flags exist and updates programmer/user mapping as needed.
-   */
+/**
+ * Authenticates the user and sets up user mapping and control flags for web and native platforms.
+ *
+ * - First waits until Firebase Auth state restoration is complete, so browser refresh does not
+ *   accidentally create a new anonymous UID.
+ * - On web: Uses Firebase Auth as the source of truth. If a persisted user exists, it reuses that
+ *   user and updates local storage with the same UID. If no user exists, it signs in anonymously.
+ * - On native: Uses Firebase Auth persistence and signs in anonymously only when needed.
+ *
+ * After authentication, it ensures backend control data is initialized and programmer-device
+ * mapping is updated.
+ */
   private async authenticateUser() {
+    // Wait until Firebase Auth persistence restore finishes.
+    // Otherwise, currentUser can be temporarily null right after browser refresh,
+    // which can create a new anonymous UID unnecessarily.
+    await this.waitForAuthReady();
     try {
       if (!this.utilsService.isNative) {
-        // Web: Try to restore user from localStorage first
-        const storedUid = await runInInjectionContext(this.injector, () =>
-          firstValueFrom(this.localStorageService.firestoreUid$)
-        );
-        if (storedUid) {
-          this.user = { uid: storedUid } as User;
+        // Web: Use Firebase Auth as source of truth (not localStorage UID).
+        if (this.auth.currentUser) {
+          this.user = this.auth.currentUser;
           if (this.user?.uid) {
             await runInInjectionContext(this.injector, () =>
               this.addUser(this.user.uid)
             );
+            await this.saveUserIdToLocalStorage(this.user.uid);
           }
         } else {
-          // Sign in anonymously if not already signed in
+          // No restored session available -> sign in anonymously once.
           await runInInjectionContext(this.injector, () =>
             this.signInAnonymously()
           );
         }
+
+        // Optional: force token refresh once before callable functions
+        // to reduce "unauthenticated" races for very early calls.
+        if (this.auth.currentUser) {
+          await this.auth.currentUser.getIdToken(true);
+        }
+
         await runInInjectionContext(this.injector, () =>
           this.createMissingContingentData()
         );
@@ -110,6 +126,30 @@ export class FirebaseFirestoreService {
     } catch (error) {
       console.error('Error during Firebase authentication:', error);
     }
+  }
+
+  /**
+   * Waits for Firebase Auth state restoration to complete.
+   * Uses authStateReady() when available, falls back to one-shot onAuthStateChanged.
+   */
+  private async waitForAuthReady(): Promise<void> {
+    const authAny = this.auth as any;
+    if (typeof authAny.authStateReady === 'function') {
+      await authAny.authStateReady();
+      return;
+    }
+
+    await new Promise<void>((resolve) => {
+      const unsub = onAuthStateChanged(this.auth, () => {
+        unsub();
+        resolve();
+      });
+      // Safety fallback to avoid hanging if callback never fires
+      setTimeout(() => {
+        unsub();
+        resolve();
+      }, 3000);
+    });
   }
 
   /**
@@ -157,28 +197,6 @@ export class FirebaseFirestoreService {
     } catch (error) {
       console.error('Error saving user UID to localStorage:', error);
     }
-  }
-
-  /**
-   * Checks if the given Firebase UID matches any programmer device UID stored in the
-   * `programmerDevices` Firestore collection.
-   *
-   * This method uses the cached list of programmer device UIDs loaded during service
-   * initialization. If no UID is provided, it checks the current authenticated user's UID
-   * against the programmer devices.
-   *
-   * @param firebaseUID The Firebase UID to check against the programmer devices collection.
-   * @returns True if the UID matches a programmer device, false otherwise.
-   */
-  isProgrammerDevice(firebaseUID: string | null): boolean {
-    if (!firebaseUID) {
-      firebaseUID = this.getCurrentUserId();
-    }
-
-    const pgmDevices: ProgrammerDeviceUID[] =
-      this.getCachedProgrammerDeviceUIDs();
-
-    return pgmDevices.some((device) => device.userId === firebaseUID);
   }
 
   /**
@@ -276,14 +294,27 @@ export class FirebaseFirestoreService {
     }
   }
 
-  /**
-   * Returns the cached list of programmer device UIDs.
-   * This list is loaded during service initialization and provides synchronous access.
-   *
-   * @returns Array of programmer device UIDs from cache
-   */
-  public getCachedProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
-    return this.cachedProgrammerDeviceUIDs;
+  public async getIsProgrammerDevice(): Promise<boolean> {
+    try {
+      const callable = runInInjectionContext(this.injector, () =>
+        httpsCallable(this.functions, 'isProgrammerDevice')
+      );
+      const result = await runInInjectionContext(this.injector, () =>
+        (callable as any)({})
+      );
+      console.log('Programmer device status from Cloud Function:', result.data);
+      this.programmerDeviceRefreshSubject.next();
+      return result.data.isProgrammerDevice as boolean;
+    } catch (error) {
+      console.error('Error getting programmer device status:', error);
+      this.toastService.showToast(
+        this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICE_STATUS'
+        ),
+        ToastAnchor.TRANSLATE_PAGE
+      );
+      return false;
+    }
   }
 
   /**

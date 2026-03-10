@@ -7,10 +7,27 @@
   </ng-container>
 
   <ng-container *ngIf="!isLoading">
+    <div class="stat-segment" *ngIf="isProgrammerDevice">
+      <!-- Select displaymode: user-mode or programmer-mode -->
+      <h3>{{ "SETTINGS.STATISTICS.LABEL.DISPLAY_MODE" | translate }}</h3>
+      <ion-radio-group
+        [value]="displayMode"
+        (ionChange)="onDisplayModeChange($event)"
+        class="display-mode"
+      >
+        <ion-radio [value]="DisplayMode.Programmer">
+          {{ "SETTINGS.STATISTICS.LABEL.DISPLAY_MODE_PROGRAMMER" | translate }}
+        </ion-radio>
+        <ion-radio [value]="DisplayMode.User">
+          {{ "SETTINGS.STATISTICS.LABEL.DISPLAY_MODE_USER" | translate }}
+        </ion-radio>
+      </ion-radio-group>
+    </div>
+
     <!-- Segment 1: Global Stop Flag -->
     <div class="stat-segment">
       <h3>{{ "SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS" | translate }}</h3>
-      <p [class.stopped]="isStopped">
+      <p [class.stopped]="isStopped" class="ion-text-center">
         {{
           isStopped
             ? ("SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STOPPED" | translate)
@@ -83,6 +100,9 @@
                       | number: "1.0-0" : (lang === "de" ? "de-DE" : "en-US")),
                   }
           }}</ion-col>
+          <ion-col size="1" *ngIf="!hideColumnIfUserOrPortrait"
+            ><ion-icon name="language-outline"></ion-icon>
+          </ion-col>
           <ion-col>{{
             "SETTINGS.STATISTICS.GRID.PLATFORM" | translate
           }}</ion-col>
@@ -104,8 +124,9 @@
             userStat.translatedCharCount
               | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
           }}</ion-col>
+          <ion-col *ngIf="!hideColumnIfUserOrPortrait" size="1">{{ userStat.targetLanguages.length }}</ion-col>
           <ion-col>{{ userStat.displayedPlatform }}</ion-col>
-          <ion-col *ngIf="!hideColumn">{{
+          <ion-col *ngIf="!hideColumn" class="translation-date">{{
             userStat.lastTranslationDate
               ? getFormatDate(userStat.lastTranslationDate)
               : getFormatDate(userStat.userCreatedAt)
@@ -126,8 +147,7 @@
     </div>
 
     <!-- Raw Data Debug Section -->
-    @if (isProgrammerDevice) {
-    <div class="debug-section">
+    <div class="debug-section" *ngIf="displayMode === DisplayMode.Programmer">
       <hr />
       <details>
         <summary>Raw Data (JSON) - Debug Only</summary>
@@ -154,7 +174,6 @@
       </details>
       <hr />
     </div>
-    }
   </ng-container>
 </div>
 

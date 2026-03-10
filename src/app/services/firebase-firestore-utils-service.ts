@@ -12,6 +12,8 @@ import {
   UserTranslationStatistics,
 } from '../shared/firebase-firestore.interfaces';
 import { UtilsService } from './utils.service';
+import { LocalStorageService } from './local-storage.service';
+import { DisplayMode } from '../shared/enums';
 
 @Injectable({
   providedIn: 'root',
@@ -19,15 +21,20 @@ import { UtilsService } from './utils.service';
 export class FirebaseFirestoreUtilsService {
   private readonly statisticsRefreshSubject = new Subject<void>();
   readonly statisticsRefresh$ = this.statisticsRefreshSubject.asObservable();
-  private isProgrammerDevice: boolean = false;
+  private statisticsDisplayMode: DisplayMode = DisplayMode.User;
 
   constructor(
     private readonly firestoreService: FirebaseFirestoreService,
-    private readonly utilsService: UtilsService
+    private readonly utilsService: UtilsService,
+    private readonly localStorageService: LocalStorageService
   ) {
     this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
-        this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
-      })
+      this.localStorageService
+        .getStatisticsDisplayMode()
+        .then((mode: DisplayMode) => {
+          this.statisticsDisplayMode = mode;
+        });
+    });
   }
 
   /**
@@ -67,9 +74,13 @@ export class FirebaseFirestoreUtilsService {
 
     statisticsData.users = await this.firestoreService.getUsers();
 
-    statisticsData.programmerDeviceUIDs = await this.firestoreService.getProgrammerDeviceUIDs();
+    if (this.firestoreService.isProgrammerDevice) {
+      statisticsData.programmerDeviceUIDs =
+        await this.firestoreService.getProgrammerDeviceUIDs();
+    }
 
-    this.isProgrammerDevice = this.firestoreService.isProgrammerDevice(null);
+    this.statisticsDisplayMode =
+      await this.localStorageService.getStatisticsDisplayMode();
 
     statisticsData.users.forEach((user) => {
       const userInfo = statisticsData.users.find(
@@ -102,13 +113,20 @@ export class FirebaseFirestoreUtilsService {
             date: '',
           },
         },
-        displayedPlatform: this.utilsService.getPlatform(userInfo, this.isProgrammerDevice, userInfo.deviceInfo?.platform),
+        displayedPlatform: this.utilsService.getPlatform(
+          userInfo,
+          this.statisticsDisplayMode,
+          userInfo.deviceInfo?.platform
+        ),
         // translation infos
         translatedCharCount: userTranslationInfo?.translatedCharCount ?? 0,
         targetLanguages: userTranslationInfo?.targetLanguages ?? [],
         lastTranslationDate: userTranslationInfo?.lastTranslationDate ?? null,
       };
-      if (this.isProgrammerDevice || stat.translatedCharCount > 0) {
+      if (
+        this.statisticsDisplayMode == DisplayMode.Programmer ||
+        stat.translatedCharCount > 0
+      ) {
         statisticsData.displayedUserStatistics.push(stat);
       }
     });
@@ -118,6 +136,7 @@ export class FirebaseFirestoreUtilsService {
           (a.lastTranslationDate?.getTime() ?? 0) ||
         (b.userCreatedAt?.getTime() ?? 0) - (a.userCreatedAt?.getTime() ?? 0)
     ); // Sort by last translation date desc and userCreatedAt desc
+    console.log('getDisplayedUserStatistics: statisticsData:', statisticsData);
     return statisticsData;
   }
 

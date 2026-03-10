@@ -4,12 +4,14 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
 import { TextToSpeechValues } from '../shared/app.interfaces';
+import { DisplayMode } from '../shared/enums';
 
 enum LocalStorage {
   SelectedLanguage = 'selectedLanguage',
   TargetLanguages = 'targetLanguages',
   TextToSpeechValues = 'textToSpeechValues',
   CurrentUser = 'mlt_currentUser',
+  StatisticsDisplayMode = 'statisticsDisplayMode',
 }
 
 @Injectable({
@@ -29,7 +31,7 @@ export class LocalStorageService {
    * Emits the currently selected base language code (e.g. 'en', 'de').
    */
   selectedLanguageSubject = new BehaviorSubject<string>(
-    this.getMobileDefaultLanguage(),
+    this.getMobileDefaultLanguage()
   );
   /**
    * Observable for the currently selected base language code.
@@ -39,7 +41,7 @@ export class LocalStorageService {
    * Emits the name of the currently selected base language (e.g. 'English', 'Deutsch').
    */
   selectedLanguageNameSubject = new BehaviorSubject<string>(
-    this.getMobileDefaultLanguage(),
+    this.getMobileDefaultLanguage()
   );
   /**
    * Observable for the name of the currently selected base language.
@@ -68,16 +70,27 @@ export class LocalStorageService {
    * Emits the current text-to-speech values with default settings if not set (rate, pitch).
    */
   textToSpeechValuesSubject = new BehaviorSubject<TextToSpeechValues>(
-    this.getDefaultTextToSpeechValues(),
+    this.getDefaultTextToSpeechValues()
   );
   /**
    * Observable for the current text-to-speech values.
    */
   textToSpeechValues$ = this.textToSpeechValuesSubject.asObservable();
 
+  /**
+   * Emits the current display mode for statistics (User or Programmer).
+   */
+  statisticsDisplayModeSubject = new BehaviorSubject<DisplayMode>(
+    DisplayMode.User
+  );
+  /**
+   * Observable for the current display mode for statistics.
+   */
+  statisticsDisplayMode$ = this.statisticsDisplayModeSubject.asObservable();
+
   constructor(
     private readonly storage: Storage,
-    private readonly googleTranslateService: TranslationGoogleTranslateService,
+    private readonly googleTranslateService: TranslationGoogleTranslateService
   ) {}
 
   private async initStorage() {
@@ -89,7 +102,7 @@ export class LocalStorageService {
    * @param translate The TranslateService instance
    */
   async initializeServicesAsync(
-    translate: import('@ngx-translate/core').TranslateService,
+    translate: import('@ngx-translate/core').TranslateService
   ): Promise<void> {
     try {
       await this.initStorage();
@@ -108,7 +121,7 @@ export class LocalStorageService {
    * Fallback: sets default language to 'en' in TranslateService
    */
   private async initializeWithDefaults(
-    translate: import('@ngx-translate/core').TranslateService,
+    translate: import('@ngx-translate/core').TranslateService
   ): Promise<void> {
     try {
       translate.setDefaultLang('en');
@@ -125,7 +138,7 @@ export class LocalStorageService {
    */
   async loadSelectedOrDefaultLanguage(): Promise<string> {
     const selectedLanguage = await this.storage.get(
-      LocalStorage.SelectedLanguage,
+      LocalStorage.SelectedLanguage
     );
 
     if (selectedLanguage) {
@@ -148,7 +161,7 @@ export class LocalStorageService {
       throw new Error('Language code must be provided');
     }
     const name = await firstValueFrom(
-      this.googleTranslateService.getBaseLanguageName(langCode),
+      this.googleTranslateService.getBaseLanguageName(langCode)
     );
     this.selectedLanguageNameSubject.next(name);
   }
@@ -178,12 +191,12 @@ export class LocalStorageService {
     try {
       await this.storage.set(
         LocalStorage.TargetLanguages,
-        JSON.stringify(languages),
+        JSON.stringify(languages)
       );
       this.targetLanguagesSubject.next(languages);
       this.setTargetLanguageNames(
         this.selectedLanguageSubject.value,
-        languages,
+        languages
       );
     } catch (error) {
       console.error('Error saving selected language:', error);
@@ -195,14 +208,14 @@ export class LocalStorageService {
    */
   async loadTargetLanguages() {
     const targetLanguages = await this.storage.get(
-      LocalStorage.TargetLanguages,
+      LocalStorage.TargetLanguages
     );
 
     if (targetLanguages) {
       this.targetLanguagesSubject.next(JSON.parse(targetLanguages));
       this.setTargetLanguageNames(
         this.selectedLanguageSubject.value,
-        JSON.parse(targetLanguages),
+        JSON.parse(targetLanguages)
       );
     } else {
       await this.saveTargetLanguages([]);
@@ -234,7 +247,7 @@ export class LocalStorageService {
     try {
       await this.storage.set(
         LocalStorage.TextToSpeechValues,
-        JSON.stringify(values),
+        JSON.stringify(values)
       );
       this.textToSpeechValuesSubject.next(values);
     } catch (error) {
@@ -246,7 +259,7 @@ export class LocalStorageService {
     const targetLanguagesName: string =
       await this.googleTranslateService.getFormattedTargetLanguageNamesForCodes(
         baseLang,
-        langs,
+        langs
       );
     this.targetLanguagesNameWithLineBreaksSubject.next(targetLanguagesName);
   }
@@ -289,6 +302,33 @@ export class LocalStorageService {
       await this.storage.set(LocalStorage.CurrentUser, uid);
     } catch (error) {
       console.error('Error saving current user UID:', error);
+    }
+  }
+
+  async getStatisticsDisplayMode(): Promise<DisplayMode> {
+    let displayMode: DisplayMode;
+    const rawValue = await this.storage.get(LocalStorage.StatisticsDisplayMode);
+
+    if (rawValue && Object.values(DisplayMode).includes(rawValue)) {
+      displayMode = rawValue as DisplayMode;
+    } else {
+      displayMode = DisplayMode.User;
+    }
+
+    this.statisticsDisplayModeSubject.next(displayMode);
+    return displayMode;
+  }
+
+  /**
+   * Saves the selected display mode for statistics in local storage.
+   * @param displayMode User or Programmer display mode to save in local storage
+   */
+  async saveStatisticsDisplayMode(displayMode: DisplayMode): Promise<void> {
+    try {
+      await this.storage.set(LocalStorage.StatisticsDisplayMode, displayMode);
+      this.statisticsDisplayModeSubject.next(displayMode);
+    } catch (error) {
+      console.error('Error saving statistics display mode:', error);
     }
   }
 }

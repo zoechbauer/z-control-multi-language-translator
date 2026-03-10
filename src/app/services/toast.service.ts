@@ -3,7 +3,7 @@ import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { UtilsService } from './utils.service';
-import { ToastAnchor } from '../enums';
+import { ToastAnchor } from '../shared/enums';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class ToastService {
   constructor(
     public translate: TranslateService,
     private readonly toastController: ToastController,
-    private readonly utilsService: UtilsService,
+    private readonly utilsService: UtilsService
   ) {}
 
   /**
@@ -41,7 +41,7 @@ export class ToastService {
 
   async showToastMessage(
     translatedToastMessage: string,
-    anchorId?: ToastAnchor,
+    anchorId?: ToastAnchor
   ) {
     const toastOptions: any = {
       message: translatedToastMessage,

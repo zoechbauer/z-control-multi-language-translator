@@ -7,7 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 
-import { LogoType } from 'src/app/enums';
+import { LogoType } from 'src/app/shared/enums';
 
 @Component({
   selector: 'app-logo',

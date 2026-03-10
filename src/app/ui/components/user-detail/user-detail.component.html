@@ -47,40 +47,40 @@
             | translate)
       }}</ion-col>
     </ion-row>
-    @if (isProgrammerDevice) {
-      <ion-row class="data-row">
-        <ion-col size="4" class="label"
-          >{{
-            "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_ID"
-              | translate
-          }}:</ion-col
-        >
-        <ion-col size="8" class="value monospace">{{
-          userStatistic.userId
-        }}</ion-col>
-      </ion-row>
-      <ion-row class="data-row">
-        <ion-col size="4" class="label"
-          >{{
-            "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_CREATED"
-              | translate
-          }}:</ion-col
-        >
-        <ion-col size="8">{{
-          getFormatDateTime(userStatistic.userCreatedAt)
-        }}</ion-col>
-      </ion-row>
-      <ion-row class="data-row" *ngIf="userStatistic.userLastUpdated">
-        <ion-col size="4" class="label"
-          >{{
-            "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_UPDATED"
-              | translate
-          }}:</ion-col
-        >
-        <ion-col size="8">{{
-          getFormatDateTime(userStatistic.userLastUpdated)
-        }}</ion-col>
-      </ion-row>
+    @if (displayMode === DisplayMode.Programmer) {
+    <ion-row class="data-row">
+      <ion-col size="4" class="label"
+        >{{
+          "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_ID"
+            | translate
+        }}:</ion-col
+      >
+      <ion-col size="8" class="value monospace">{{
+        userStatistic.userId
+      }}</ion-col>
+    </ion-row>
+    <ion-row class="data-row">
+      <ion-col size="4" class="label"
+        >{{
+          "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_CREATED"
+            | translate
+        }}:</ion-col
+      >
+      <ion-col size="8">{{
+        getFormatDateTime(userStatistic.userCreatedAt)
+      }}</ion-col>
+    </ion-row>
+    <ion-row class="data-row" *ngIf="userStatistic.userLastUpdated">
+      <ion-col size="4" class="label"
+        >{{
+          "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_UPDATED"
+            | translate
+        }}:</ion-col
+      >
+      <ion-col size="8">{{
+        getFormatDateTime(userStatistic.userLastUpdated)
+      }}</ion-col>
+    </ion-row>
     }
     <!-- Device Info Section -->
     <ion-row class="section-header">

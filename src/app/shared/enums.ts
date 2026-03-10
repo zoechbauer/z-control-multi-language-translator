@@ -17,3 +17,8 @@ export enum ToastAnchor {
   TRANSLATE_PAGE = 'toast-anchor-translate',
   SETTINGS_PAGE = 'toast-anchor-settings',
 }
+
+export enum DisplayMode {
+  User = 'user',
+  Programmer = 'programmer',
+}

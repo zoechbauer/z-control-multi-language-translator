@@ -289,6 +289,27 @@ export class FirebaseFirestoreService {
     }
   }
 
+  async isProgrammerDevice(): Promise<boolean> {
+    try {
+      const collectionRef = this.db.collection(
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}`
+      );
+      const snapshot = await collectionRef.get();
+
+      if (snapshot.empty) {
+        console.log('No programmer devices found in Firestore.');
+        return false;
+      }
+      return snapshot.docs.some((doc) => (doc.data() as ProgrammerDeviceUID).userId === this.userId)  ;
+    } catch (error) {
+      console.error(
+        'Error checking if device is a programmer device from Firestore:',
+        error
+      );
+      throw error;
+    }
+  }
+
   /**
    * Logs the creation of a new device mapping document.
    * Internal helper for debugging device mapping lifecycle.
