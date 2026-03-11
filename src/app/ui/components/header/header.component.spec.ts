@@ -4,7 +4,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { HeaderComponent } from './header.component';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from 'src/app/services/utils.service';
-import { Tab } from 'src/app/enums';
+import { Tab } from 'src/app/shared/enums';
 import { of, Subject } from 'rxjs';
 
 describe('HeaderComponent', () => {
@@ -101,7 +101,7 @@ describe('HeaderComponent', () => {
     component.goToSettingsAndOpenFeedback();
     expect(utilsService.navigateToTabWithParams).toHaveBeenCalledWith(
       Tab.Settings,
-      { open: 'z-control' },
+      { open: 'z-control' }
     );
     setTimeout(() => {
       expect(utilsService.logoClickedSub.next).toHaveBeenCalledWith(true);

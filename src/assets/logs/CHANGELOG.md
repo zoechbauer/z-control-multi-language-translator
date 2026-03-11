@@ -7,11 +7,12 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 ### ✨ New Features
 
 - On programmer devices, the statistics accordion now includes a display mode toggle to switch between programmer view (detailed data) and user view, allowing z-control to preview the user experience without logging in on a separate device.
--  On programmer devices, the statistics grid now displays the number of target languages used by each user.
+- On programmer devices, the statistics grid now displays the number of target languages used by each user.
 
 ### 🐛 Fixes
 
 - Fixed web authentication on browser refresh to avoid creating unnecessary new anonymous UIDs, keeping user translation totals consistent and improving callable Cloud Function authentication.
+- Unit tests were stabilized for standalone Angular components by updating spec configuration (`imports` instead of legacy patterns), aligning Firestore-related mocks with current return types, introducing a shared `createTranslateServiceMock()` helper across specs, and fixing TypeScript test-project configuration for reliable Jasmine type resolution.
 
 ## [1.4] – 2026-03-07
 

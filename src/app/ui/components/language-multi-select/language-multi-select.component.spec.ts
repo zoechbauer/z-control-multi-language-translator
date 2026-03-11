@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { of } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { ModalController } from '@ionic/angular';
 
 import { LanguageMultiSelectComponent } from './language-multi-select.component';
+import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 
 describe('LanguageMultiSelectComponent', () => {
   let component: LanguageMultiSelectComponent;
@@ -9,8 +13,17 @@ describe('LanguageMultiSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ LanguageMultiSelectComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), LanguageMultiSelectComponent],
+      providers: [
+        {
+          provide: TranslateService,
+          useValue: createTranslateServiceMock(),
+        },
+        {
+          provide: ModalController,
+          useValue: jasmine.createSpyObj('ModalController', ['dismiss']),
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LanguageMultiSelectComponent);

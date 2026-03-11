@@ -8,9 +8,10 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
-import { HelpModalComponent } from './help-modal.component';
-import { LocalStorageService } from '../services/local-storage.service';
-import { UtilsService } from '../services/utils.service';
+import { HelpModalComponent } from './get-help.component';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { UtilsService } from 'src/app/services/utils.service';
+import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 
 describe('HelpModalComponent', () => {
   let component: HelpModalComponent;
@@ -24,9 +25,6 @@ describe('HelpModalComponent', () => {
     const modalControllerSpy = jasmine.createSpyObj('ModalController', [
       'dismiss',
       'create',
-    ]);
-    const translateServiceSpy = jasmine.createSpyObj('TranslateService', [
-      'instant',
     ]);
     const localStorageServiceSpy = jasmine.createSpyObj(
       'LocalStorageService',
@@ -45,10 +43,10 @@ describe('HelpModalComponent', () => {
     );
 
     await TestBed.configureTestingModule({
-      declarations: [HelpModalComponent],
+      imports: [HelpModalComponent],
       providers: [
         { provide: ModalController, useValue: modalControllerSpy },
-        { provide: TranslateService, useValue: translateServiceSpy },
+        { provide: TranslateService, useValue: createTranslateServiceMock() },
         { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: UtilsService, useValue: utilsServiceSpy },
       ],
