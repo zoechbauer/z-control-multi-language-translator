@@ -8,6 +8,7 @@ import {
   IonButton,
   IonRadio,
   IonRadioGroup,
+  IonSearchbar,
 } from '@ionic/angular/standalone';
 import {
   NgFor,
@@ -39,6 +40,7 @@ import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firesto
   styleUrls: ['./get-statistics.component.scss'],
   standalone: true,
   imports: [
+    IonSearchbar,
     IonButton,
     IonRow,
     IonCol,
@@ -63,6 +65,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   displayMode: DisplayMode = DisplayMode.User;
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
+
+  searchTerm = '';
+  platformFilter: 'all' | 'web' | 'native' = 'all';
+  onlyExceeded = false;
 
   // Statistics data
   isLoading = true;
@@ -89,12 +95,70 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   }
 
   get hideColumnIfUserOrPortrait(): boolean {
-    return this.utilsService.isPortrait || this.displayMode === DisplayMode.User;
+    return (
+      this.utilsService.isPortrait || this.displayMode === DisplayMode.User
+    );
   }
 
   get isFirebaseEmulator(): boolean {
     return environment.app.useFirebaseEmulator;
   }
+
+  /**
+ * Returns the statistics rows filtered by the current search term.
+ *
+ * Supported filter modes:
+ * - Text search (default): matches `userName` or `displayedPlatform` (case-insensitive).
+ * - Translated character count:
+ *   - `>123` => rows with `translatedCharCount >= 123`
+ *   - `<10`  => rows with `translatedCharCount <= 10`
+ * - Target language count:
+ *   - `>>5` => rows with `targetLanguages.length >= 5`
+ *   - `<<1` => rows with `targetLanguages.length <= 1`
+ *
+ * Notes:
+ * - Optional spaces after operators are supported (for example `> 123`, `>> 5`).
+ * - If the search term is empty, all rows are returned unchanged.
+ */
+  get filteredUserStats(): DisplayedUserStatistics[] {
+  const rows = this.statisticsData?.displayedUserStatistics ?? [];
+  const term = (this.searchTerm ?? '').trim();
+
+  if (!term) {
+    return rows;
+  }
+
+  // Target language count filters: >>5 or <<1
+  const targetMatch = term.match(/^(>>|<<)\s*(\d+)$/);
+  if (targetMatch) {
+    const operator = targetMatch[1];
+    const value = Number(targetMatch[2]);
+
+    return rows.filter((u) => {
+      const count = u.targetLanguages?.length ?? 0;
+      return operator === '>>' ? count >= value : count <= value;
+    });
+  }
+
+  // Translated char count filters: >123 or <10
+  const charMatch = term.match(/^(>|<)\s*(\d+)$/);
+  if (charMatch) {
+    const operator = charMatch[1];
+    const value = Number(charMatch[2]);
+
+    return rows.filter((u) =>
+      operator === '>' ? u.translatedCharCount >= value : u.translatedCharCount <= value
+    );
+  }
+
+  // Default text filter
+  const lower = term.toLowerCase();
+  return rows.filter(
+    (u) =>
+      u.userName.toLowerCase().includes(lower) ||
+      (u.displayedPlatform ?? '').toLowerCase().includes(lower)
+  );
+}
 
   ngOnInit(): void {
     this.init();

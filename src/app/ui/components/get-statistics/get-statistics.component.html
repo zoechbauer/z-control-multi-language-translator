@@ -3,7 +3,7 @@
 <div class="statistics-container">
   <ng-container *ngIf="isLoading">
     <ion-spinner name="dots"></ion-spinner>
-    <span>Loading statistics...</span>
+    <span>{{ "APP.LOADING_DATA" | translate }}</span>
   </ng-container>
 
   <ng-container *ngIf="!isLoading">
@@ -88,6 +88,16 @@
       <div class="info-note">
         {{ "SETTINGS.STATISTICS.LABEL.GRID_INFO_NOTE" | translate }}
       </div>
+      <div *ngIf="displayMode === DisplayMode.Programmer">
+        <ion-searchbar
+          [value]="searchTerm"
+          (ionInput)="searchTerm = $any($event.detail).value || ''"
+        >
+        </ion-searchbar>
+        <div class="searchbar-info">
+          {{ "SETTINGS.STATISTICS.LABEL.GRID_SEARCH_INFO" | translate }}
+        </div>
+      </div>
       <ion-grid>
         <ion-row class="header-row">
           <ion-col>{{ "SETTINGS.STATISTICS.GRID.USER" | translate }}</ion-col>
@@ -113,7 +123,7 @@
         </ion-row>
         <ion-row
           class="detail-row"
-          *ngFor="let userStat of statisticsData?.displayedUserStatistics"
+          *ngFor="let userStat of filteredUserStats"
           [class.user-contingent-exceeded]="
             userStat.translatedCharCount >= userLimit
           "
@@ -124,7 +134,9 @@
             userStat.translatedCharCount
               | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
           }}</ion-col>
-          <ion-col *ngIf="!hideColumnIfUserOrPortrait" size="1">{{ userStat.targetLanguages.length }}</ion-col>
+          <ion-col *ngIf="!hideColumnIfUserOrPortrait" size="1">{{
+            userStat.targetLanguages.length
+          }}</ion-col>
           <ion-col>{{ userStat.displayedPlatform }}</ion-col>
           <ion-col *ngIf="!hideColumn" class="translation-date">{{
             userStat.lastTranslationDate

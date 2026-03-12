@@ -1,7 +1,8 @@
 {
   "------ global": "-------",
   "APP": {
-    "NAME": "z-control Translator"
+    "NAME": "z-control Translator",
+    "LOADING_DATA": "Loading data..."
   },
   "------ header page": "-------",
   "HEADER": {
@@ -34,7 +35,10 @@
   "TRANSLATE": {
     "CARD": {
       "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
-      "NO_TARGET_LANGUAGES": "Please select at least one target language first: Go to Settings → Change Target Language(s)",
+      "NO_TARGET_LANGUAGES_1": "Please select at least one target language first:",
+      "NO_TARGET_LANGUAGES_2": "Click on Settings",
+      "NO_TARGET_LANGUAGES_3": "and then choose",
+      "NO_TARGET_LANGUAGES_4": "'Select / Change Target Language(s)'",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)",
@@ -207,7 +211,8 @@
         "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation",
         "DISPLAY_MODE": "Display Mode",
         "DISPLAY_MODE_USER": "User View",
-        "DISPLAY_MODE_PROGRAMMER": "Programmer View"
+        "DISPLAY_MODE_PROGRAMMER": "Programmer View",
+        "GRID_SEARCH_INFO": "Text=User & Platform, <|>=used chars, <<|>>=lang"
       },
       "GRID": {
         "USER_CONTINGENT": "Translation Contingent of Individual Users",

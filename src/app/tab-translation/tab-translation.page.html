@@ -9,9 +9,16 @@
   class="translation-content"
   [class.landscape]="!utilsService.isPortrait"
 >
-  @if(selectedLanguages.length === 0) {
+  @if (selectedLanguages.length === 0) {
   <div class="no-languages-selected">
-    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES' | translate }}
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_1' | translate }}
+    <br /><br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_2' | translate }}
+    <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_3' | translate }}
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_4' | translate }}
   </div>
   } @if(translations.length > 0) {
   <!-- show switch buttons for input/results cards -->
@@ -162,7 +169,7 @@
           >{{ 'TRANSLATE_STATISTICS.ACCORDION.TITLE' | translate }}</ion-label
         >
       </ion-item>
-      <div  slot="content">
+      <div slot="content">
         <app-user-statistic></app-user-statistic>
       </div>
     </ion-accordion>

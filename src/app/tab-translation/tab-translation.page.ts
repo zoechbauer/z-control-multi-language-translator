@@ -86,6 +86,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   speakBtnDisabled: boolean = false;
   cardInputVisible: boolean = true;
   cardResultsVisible: boolean = false;
+  settingsIcon: string = '<ion-icon name="settings-outline"></ion-icon>';
 
   private readonly subscriptions: Subscription[] = [];
 

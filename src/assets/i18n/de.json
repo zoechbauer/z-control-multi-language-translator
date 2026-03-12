@@ -1,7 +1,8 @@
 {
   "------ global": "-------",
   "APP": {
-    "NAME": "z-control Übersetzer"
+    "NAME": "z-control Übersetzer",
+    "LOADING_DATA": "Daten werden geladen..."
   },
   "------ header page": "-------",
   "HEADER": {
@@ -34,7 +35,10 @@
   "TRANSLATE": {
     "CARD": {
       "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
-      "NO_TARGET_LANGUAGES": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus: Gehen Sie zu Einstellungen → Zielsprache(n) ändern",
+          "NO_TARGET_LANGUAGES_1": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus:",
+          "NO_TARGET_LANGUAGES_2": "Klicken Sie auf Einstellungen",
+          "NO_TARGET_LANGUAGES_3": "und wählen Sie dann",
+          "NO_TARGET_LANGUAGES_4": "'Zielsprache(n) auswählen / ändern'",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
@@ -207,7 +211,8 @@
         "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung",
         "DISPLAY_MODE": "Anzeigemodus",
         "DISPLAY_MODE_USER": "Benutzer-Ansicht",
-        "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht"
+        "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht",
+        "GRID_SEARCH_INFO": "Text=Benutz.|Plattf., <|>=verbraucht, <<|>>=Sprachen"
       },
       "GRID": {
         "USER_CONTINGENT": "Übersetzungskontingent der einzelnen Benutzer",

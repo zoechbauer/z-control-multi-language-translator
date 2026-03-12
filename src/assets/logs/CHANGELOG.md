@@ -2,12 +2,18 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
-## [1.5] – YYYY-MM-DD
+## [1.5] – 2026-03-12
 
 ### ✨ New Features
 
-- On programmer devices, the statistics accordion now includes a display mode toggle to switch between programmer view (detailed data) and user view, allowing z-control to preview the user experience without logging in on a separate device.
-- On programmer devices, the statistics grid now displays the number of target languages used by each user.
+- On programmer devices, the statistics accordion now includes a display mode toggle to switch between programmer view (detailed data) and user view, letting programmers preview the user experience without needing a separate device.
+- In programmer view, the statistics grid now shows the number of target languages used by each user.
+- In programmer view, the statistics grid can now be searched and filtered by user name, platform, translated character count, and target language count for easier monitoring and debugging.
+- On the user detail page, the `isProgrammerDevice` filter has been replaced by the programmer view toggle.
+
+### 🚀 Improvements
+
+- Improved displayed information in the translation page if no target languages are selected, guiding users to select at least one target language before translating.
 
 ### 🐛 Fixes
 
