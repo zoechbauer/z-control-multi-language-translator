@@ -241,7 +241,8 @@
             "PLATFORM": "Platform",
             "DEVICE_PLATFORM": "Device Platform",
             "NATIVE": "Mobile/Tablet",
-            "DEVICE": "Device"
+            "DEVICE": "Device",
+            "MODEL": "Model",
           }
         },
         "TRANSLATION_STATISTICS": {

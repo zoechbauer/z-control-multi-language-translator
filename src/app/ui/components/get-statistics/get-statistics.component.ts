@@ -105,60 +105,63 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   }
 
   /**
- * Returns the statistics rows filtered by the current search term.
- *
- * Supported filter modes:
- * - Text search (default): matches `userName` or `displayedPlatform` (case-insensitive).
- * - Translated character count:
- *   - `>123` => rows with `translatedCharCount >= 123`
- *   - `<10`  => rows with `translatedCharCount <= 10`
- * - Target language count:
- *   - `>>5` => rows with `targetLanguages.length >= 5`
- *   - `<<1` => rows with `targetLanguages.length <= 1`
- *
- * Notes:
- * - Optional spaces after operators are supported (for example `> 123`, `>> 5`).
- * - If the search term is empty, all rows are returned unchanged.
- */
+   * Returns the statistics rows filtered by the current search term.
+   *
+   * Supported filter modes:
+   * - Text search (default): matches `userName` or `displayedPlatform` (case-insensitive).
+   * - Translated character count:
+   *   - `>123` => rows with `translatedCharCount >= 123`
+   *   - `<10`  => rows with `translatedCharCount <= 10`
+   * - Target language count:
+   *   - `>>5` => rows with `targetLanguages.length >= 5`
+   *   - `<<1` => rows with `targetLanguages.length <= 1`
+   *
+   * Notes:
+   * - Optional spaces after operators are supported (for example `> 123`, `>> 5`).
+   * - If the search term is empty, all rows are returned unchanged.
+   */
   get filteredUserStats(): DisplayedUserStatistics[] {
-  const rows = this.statisticsData?.displayedUserStatistics ?? [];
-  const term = (this.searchTerm ?? '').trim();
+    const rows = this.statisticsData?.displayedUserStatistics ?? [];
+    const term = (this.searchTerm ?? '').trim();
 
-  if (!term) {
-    return rows;
-  }
+    if (!term) {
+      return rows;
+    }
 
-  // Target language count filters: >>5 or <<1
-  const targetMatch = term.match(/^(>>|<<)\s*(\d+)$/);
-  if (targetMatch) {
-    const operator = targetMatch[1];
-    const value = Number(targetMatch[2]);
+    // Target language count filters: >>5 or <<1
+    const targetMatch = term.match(/^(>>|<<)\s*(\d+)$/);
+    if (targetMatch) {
+      const operator = targetMatch[1];
+      const value = Number(targetMatch[2]);
 
-    return rows.filter((u) => {
-      const count = u.targetLanguages?.length ?? 0;
-      return operator === '>>' ? count >= value : count <= value;
-    });
-  }
+      return rows.filter((u) => {
+        const count = u.targetLanguages?.length ?? 0;
+        return operator === '>>' ? count >= value : count <= value;
+      });
+    }
 
-  // Translated char count filters: >123 or <10
-  const charMatch = term.match(/^(>|<)\s*(\d+)$/);
-  if (charMatch) {
-    const operator = charMatch[1];
-    const value = Number(charMatch[2]);
+    // Translated char count filters: >123 or <10
+    const charMatch = term.match(/^(>|<)\s*(\d+)$/);
+    if (charMatch) {
+      const operator = charMatch[1];
+      const value = Number(charMatch[2]);
 
-    return rows.filter((u) =>
-      operator === '>' ? u.translatedCharCount >= value : u.translatedCharCount <= value
+      return rows.filter((u) =>
+        operator === '>'
+          ? u.translatedCharCount >= value
+          : u.translatedCharCount <= value
+      );
+    }
+
+    // Default text filter on userName, displayedPlatform, or displayedModel
+    const lower = term.toLowerCase();
+    return rows.filter(
+      (u) =>
+        u.userName.toLowerCase().includes(lower) ||
+        (u.displayedPlatform ?? '').toLowerCase().includes(lower) ||
+        (u.displayedModel ?? '').toLowerCase().includes(lower)
     );
   }
-
-  // Default text filter
-  const lower = term.toLowerCase();
-  return rows.filter(
-    (u) =>
-      u.userName.toLowerCase().includes(lower) ||
-      (u.displayedPlatform ?? '').toLowerCase().includes(lower)
-  );
-}
 
   ngOnInit(): void {
     this.init();

@@ -113,11 +113,8 @@ export class FirebaseFirestoreUtilsService {
             date: '',
           },
         },
-        displayedPlatform: this.utilsService.getPlatform(
-          userInfo,
-          this.statisticsDisplayMode,
-          userInfo.deviceInfo?.platform
-        ),
+        displayedPlatform: this.utilsService.getPlatform(userInfo),
+        displayedModel: this.utilsService.getModel(userInfo),
         // translation infos
         translatedCharCount: userTranslationInfo?.translatedCharCount ?? 0,
         targetLanguages: userTranslationInfo?.targetLanguages ?? [],
@@ -136,7 +133,6 @@ export class FirebaseFirestoreUtilsService {
           (a.lastTranslationDate?.getTime() ?? 0) ||
         (b.userCreatedAt?.getTime() ?? 0) - (a.userCreatedAt?.getTime() ?? 0)
     ); // Sort by last translation date desc and userCreatedAt desc
-    console.log('getDisplayedUserStatistics: statisticsData:', statisticsData);
     return statisticsData;
   }
 

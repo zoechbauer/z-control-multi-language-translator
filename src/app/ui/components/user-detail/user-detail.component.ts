@@ -74,6 +74,11 @@ export class UserDetailComponent implements OnInit {
       : '';
   }
 
+  getDisplayedPlatform(): string {
+    const platform = this.userStatistic.displayedPlatform;
+    return platform === "native" ? `${platform} - Android App` : platform;
+  }
+
   private async getTargetLanguagesWithLineBreak(): Promise<void> {
     this.targetLanguagesDisplay =
       await this.googleTranslateSevervice.getFormattedTargetLanguageNamesForCodes(

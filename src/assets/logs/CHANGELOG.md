@@ -2,6 +2,12 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.6] – YYY-MM-DD
+
+### ✨ New Features
+
+- Device model number is now displayed in the statistics grid and user detail page for programmer devices, providing more detailed insights into the devices being used for translation.
+
 ## [1.5] – 2026-03-12
 
 ### ✨ New Features

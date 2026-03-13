@@ -302,7 +302,6 @@ export class FirebaseFirestoreService {
       const result = await runInInjectionContext(this.injector, () =>
         (callable as any)({})
       );
-      console.log('Programmer device status from Cloud Function:', result.data);
       this.programmerDeviceRefreshSubject.next();
       return result.data.isProgrammerDevice as boolean;
     } catch (error) {

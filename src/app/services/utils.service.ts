@@ -175,7 +175,11 @@ export class UtilsService {
    * @param userStatistic The user statistics to display in the modal
    * @param displayMode The display mode for the user detail modal
    */
-  async openUserDetail(lang: string, userStatistic: DisplayedUserStatistics, displayMode: DisplayMode): Promise<void> {
+  async openUserDetail(
+    lang: string,
+    userStatistic: DisplayedUserStatistics,
+    displayMode: DisplayMode
+  ): Promise<void> {
     const modal = await this.modalController.create({
       component: UserDetailComponent,
       componentProps: {
@@ -319,23 +323,45 @@ export class UtilsService {
    * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
    */
   getPlatform(
-    userInfo: UserType,
-    statisticsDisplayMode: DisplayMode,
-    platform: string | undefined
+    userInfo: UserType
   ): string {
     // Check if native flag is explicitly set
     if (userInfo?.isNative === true) {
-      if (statisticsDisplayMode !== DisplayMode.Programmer) {
         return 'native';
-      }
-      return 'native ' + platform;
     }
-
+    
     // For web users, distinguish between mobile and desktop
     const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
     const isMobileWeb =
       /android|iphone|ipad|ipod|mobile|iemobile|windows phone/.test(userAgent);
 
     return isMobileWeb ? 'web-mobile' : 'web-desktop';
+  }
+
+  /**
+   * Determines the device model for a given user.
+   * @param userInfo The user information
+   * @returns The device model as a string
+   */
+  getModel(
+    userInfo: UserType
+  ): string {
+    const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
+    const model = this.getAndroidModelFromUserAgent(userAgent);
+    const modelSplit = model ? model?.substring(0, 8) + ' ' + model?.substring(8) : '';
+    const modelString = modelSplit ? ` ${modelSplit.toUpperCase()}` : '';
+
+    return modelString;
+  }
+
+  /**
+   * Extracts the Android device model from the user agent string.
+   * @param userAgent The user agent string
+   * @returns The Android model name or null if not found
+   */
+  private getAndroidModelFromUserAgent(userAgent: string): string | null {
+    const ua = (userAgent || '').toLowerCase();
+    const match = ua.match(/android\s+[\d.]+;\s*([^;]+?)\s+build\//i);
+    return match?.[1]?.trim() ?? null;
   }
 }

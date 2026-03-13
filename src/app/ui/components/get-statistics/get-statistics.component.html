@@ -137,7 +137,7 @@
           <ion-col *ngIf="!hideColumnIfUserOrPortrait" size="1">{{
             userStat.targetLanguages.length
           }}</ion-col>
-          <ion-col>{{ userStat.displayedPlatform }}</ion-col>
+          <ion-col>{{ userStat.displayedPlatform }}<span *ngIf="displayMode === DisplayMode.Programmer" class="model-info"><br>{{ userStat.displayedModel }}</span> </ion-col>
           <ion-col *ngIf="!hideColumn" class="translation-date">{{
             userStat.lastTranslationDate
               ? getFormatDate(userStat.lastTranslationDate)

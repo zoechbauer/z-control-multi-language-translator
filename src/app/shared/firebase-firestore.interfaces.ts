@@ -22,6 +22,7 @@ export interface DisplayedUserStatistics {
   isNative: boolean;
   deviceInfo: DeviceInfo;
   displayedPlatform: string;
+  displayedModel: string;
   translatedCharCount: number;
   targetLanguages: string[];
   lastTranslationDate: Date | null;
