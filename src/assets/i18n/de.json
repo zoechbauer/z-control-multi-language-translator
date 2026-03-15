@@ -212,10 +212,11 @@
         "DISPLAY_MODE": "Anzeigemodus",
         "DISPLAY_MODE_USER": "Benutzer-Ansicht",
         "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht",
-        "GRID_SEARCH_INFO": "Text=Benutz.|Plattf., <|>=verbraucht, <<|>>=Sprachen"
+        "GRID_SEARCH_INFO": "Text=Benutz.|Plattf., <|>=verbraucht, <<|>>=Sprachen",
+        "USER_STATISTICS_OVERVIEW": "Benutzer-Statistik Übersicht"
       },
       "GRID": {
-        "USER_CONTINGENT": "Übersetzungskontingent der einzelnen Benutzer",
+        "USER_CONTINGENT": "Benutzer-Übersetzungskontingent",
         "USER": "Benutzer",
         "USED": "Verbraucht von {{limit}}",
         "PLATFORM": "Plattform",

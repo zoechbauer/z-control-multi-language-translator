@@ -7,7 +7,7 @@
   </ng-container>
 
   <ng-container *ngIf="!isLoading">
-    <div class="stat-segment" *ngIf="isProgrammerDevice">
+    <div class="stat-section" *ngIf="isProgrammerDevice">
       <!-- Select displaymode: user-mode or programmer-mode -->
       <h3>{{ "SETTINGS.STATISTICS.LABEL.DISPLAY_MODE" | translate }}</h3>
       <ion-radio-group
@@ -24,8 +24,8 @@
       </ion-radio-group>
     </div>
 
-    <!-- Segment 1: Global Stop Flag -->
-    <div class="stat-segment">
+    <!-- Section: Global Stop Flag -->
+    <div class="stat-section">
       <h3>{{ "SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS" | translate }}</h3>
       <p [class.stopped]="isStopped" class="ion-text-center">
         {{
@@ -36,8 +36,8 @@
       </p>
     </div>
 
-    <!-- Segment 2: Total Contingent -->
-    <div class="stat-segment">
+    <!-- Section: Total Contingent -->
+    <div class="stat-section">
       <h3>{{ "SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT" | translate }}</h3>
       <p
         [class.total-all-users-difference]="
@@ -82,8 +82,27 @@
       </p>
     </div>
 
-    <!-- Segment 3: User Statistics -->
-    <div class="stat-segment">
+    <!-- Section: User Statistics Overview -->
+    <div class="stat-section" *ngIf="displayMode === DisplayMode.Programmer">
+      <h3>{{ "SETTINGS.STATISTICS.LABEL.USER_STATISTICS_OVERVIEW" | translate }}</h3>
+      <ion-grid class="user-statistics-overview">
+        <ion-row class="header-row">
+          <ion-col size="3">Art</ion-col>
+          <ion-col size="5">Name</ion-col>
+          <ion-col size="2" class="ion-text-right"><ion-icon size="small" name="language-outline"></ion-icon></ion-col>
+          <ion-col size="2" class="ion-text-right"><ion-icon size="small" name="log-in-outline"></ion-icon></ion-col>
+        </ion-row>
+        <ion-row class="detail-row" *ngFor="let userStat of userStatisticsSummaryData">
+          <ion-col size="3" class="smaller-font">{{ userStat.category }}</ion-col>
+          <ion-col size="5">{{ userStat.name }}</ion-col>
+          <ion-col size="2" class="ion-text-right">{{ userStat.countTranslations }}</ion-col>
+          <ion-col size="2" class="ion-text-right">{{ userStat.countRegistrations }}</ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Section: User Statistics Details-->
+    <div class="stat-section">
       <h3>{{ "SETTINGS.STATISTICS.GRID.USER_CONTINGENT" | translate }}</h3>
       <div class="info-note">
         {{ "SETTINGS.STATISTICS.LABEL.GRID_INFO_NOTE" | translate }}
@@ -137,7 +156,14 @@
           <ion-col *ngIf="!hideColumnIfUserOrPortrait" size="1">{{
             userStat.targetLanguages.length
           }}</ion-col>
-          <ion-col>{{ userStat.displayedPlatform }}<span *ngIf="displayMode === DisplayMode.Programmer" class="model-info"><br>{{ userStat.displayedModel }}</span> </ion-col>
+          <ion-col
+            >{{ userStat.displayedPlatform
+            }}<span
+              *ngIf="displayMode === DisplayMode.Programmer"
+              class="model-info"
+              ><br />{{ userStat.displayedModel }}</span
+            >
+          </ion-col>
           <ion-col *ngIf="!hideColumn" class="translation-date">{{
             userStat.lastTranslationDate
               ? getFormatDate(userStat.lastTranslationDate)
@@ -158,7 +184,7 @@
       </ion-grid>
     </div>
 
-    <!-- Raw Data Debug Section -->
+    <!-- Section: Raw Data Debug -->
     <div class="debug-section" *ngIf="displayMode === DisplayMode.Programmer">
       <hr />
       <details>

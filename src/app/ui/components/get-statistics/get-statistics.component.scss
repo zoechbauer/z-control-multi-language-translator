@@ -12,13 +12,13 @@
       margin: 0 1.5rem;
     }
   }
-  .stat-segment,
+  .stat-section,
   .debug-section {
     margin-bottom: 1rem;
     padding: 1rem;
     border-radius: 6px;
   }
-  .stat-segment h3 {
+  .stat-section h3 {
     margin-top: 0;
     font-size: 1.1rem;
   }
@@ -30,7 +30,7 @@
     color: #d32f2f;
     font-weight: bold;
   }
-  .stat-segment p {
+  .stat-section p {
     margin: 0.3rem 0;
   }
 
@@ -55,7 +55,6 @@
 
   ion-grid {
     display: grid;
-    gap: 1rem;
 
     .header-row {
       font-weight: bold;
@@ -70,6 +69,10 @@
 
     .detail-row {
       align-items: center;
+
+    .smaller-font {
+      font-size: 0.8rem;
+    }
 
       .info-button {
         background: none;

@@ -322,14 +322,12 @@ export class UtilsService {
    * @param userInfo The user information
    * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
    */
-  getPlatform(
-    userInfo: UserType
-  ): string {
+  getPlatform(userInfo: UserType): string {
     // Check if native flag is explicitly set
     if (userInfo?.isNative === true) {
-        return 'native';
+      return 'native';
     }
-    
+
     // For web users, distinguish between mobile and desktop
     const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
     const isMobileWeb =
@@ -343,15 +341,19 @@ export class UtilsService {
    * @param userInfo The user information
    * @returns The device model as a string
    */
-  getModel(
-    userInfo: UserType
-  ): string {
+  getModel(userInfo: UserType): string {
     const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
     const model = this.getAndroidModelFromUserAgent(userAgent);
-    const modelSplit = model ? model?.substring(0, 8) + ' ' + model?.substring(8) : '';
-    const modelString = modelSplit ? ` ${modelSplit.toUpperCase()}` : '';
+    const normalizedModel = model?.trim().toUpperCase() ?? '';
 
-    return modelString;
+    if (!normalizedModel) {
+      return '';
+    }
+
+    // Keep long model names readable without introducing leading/trailing spaces.
+    return normalizedModel.length > 8
+      ? `${normalizedModel.substring(0, 8)} ${normalizedModel.substring(8)}`
+      : normalizedModel;
   }
 
   /**
@@ -361,7 +363,7 @@ export class UtilsService {
    */
   private getAndroidModelFromUserAgent(userAgent: string): string | null {
     const ua = (userAgent || '').toLowerCase();
-    const match = ua.match(/android\s+[\d.]+;\s*([^;]+?)\s+build\//i);
+    const match = /android\s+[\d.]+;\s*([^;]+?)\s+build\//i.exec(ua);
     return match?.[1]?.trim() ?? null;
   }
 }

@@ -28,6 +28,13 @@ export interface DisplayedUserStatistics {
   lastTranslationDate: Date | null;
 }
 
+export interface UserStatisticsSummary {
+  category: string;
+  name: string;
+  countTranslations: number;
+  countRegistrations: number;
+}
+
 export interface UserTranslationStatistics {
   userId: string;
   translatedCharCount: number;

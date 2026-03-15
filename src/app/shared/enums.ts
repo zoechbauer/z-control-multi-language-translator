@@ -22,3 +22,24 @@ export enum DisplayMode {
   User = 'user',
   Programmer = 'programmer',
 }
+
+export enum StatisticsSummaryCategory {
+  UserType = 'User',
+  Platform = 'Platform',
+  Model = 'Model',
+  Languages = 'Lang#',
+}
+
+export enum StatisticsSummaryName {
+  User = 'U',
+  Programmer = 'P',
+  native = 'native',
+  webmobile = 'web-mobile',
+  webdesktop = 'web-desktop',
+  OneLanguage = '1',
+  TwoLanguages = '2',
+  ThreeLanguages = '3',
+  FourLanguages = '4',
+  FiveLanguages = '5',
+}
+

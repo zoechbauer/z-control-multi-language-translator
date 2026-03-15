@@ -212,10 +212,11 @@
         "DISPLAY_MODE": "Display Mode",
         "DISPLAY_MODE_USER": "User View",
         "DISPLAY_MODE_PROGRAMMER": "Programmer View",
-        "GRID_SEARCH_INFO": "Text=User & Platform, <|>=used chars, <<|>>=lang"
+        "GRID_SEARCH_INFO": "Text=User & Platform, <|>=used chars, <<|>>=lang",
+        "USER_STATISTICS_OVERVIEW": "User Statistics Overview"
       },
       "GRID": {
-        "USER_CONTINGENT": "Translation Contingent of Individual Users",
+        "USER_CONTINGENT": "User Translation Contingent",
         "USER": "User",
         "USED": "Used of {{limit}}",
         "PLATFORM": "Platform",

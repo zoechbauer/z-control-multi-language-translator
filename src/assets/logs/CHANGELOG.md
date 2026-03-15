@@ -2,10 +2,11 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
-## [1.6] – YYY-MM-DD
+## [1.6] – YYYY-MM-DD
 
 ### ✨ New Features
 
+- In programmer view, the statistics page includes the new section "User Statistics Overview" that summarizes the distribution of users by user type, platform, device model, and number of target languages used, giving programmers a quick overview of user demographics and usage patterns.
 - Device model number is now displayed in the statistics grid and user detail page for programmer devices, providing more detailed insights into the devices being used for translation.
 
 ## [1.5] – 2026-03-12

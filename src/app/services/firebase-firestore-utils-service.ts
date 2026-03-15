@@ -9,11 +9,16 @@ import {
   DisplayedUserStatistics,
   FirestoreContingentData,
   StatisticsData,
+  UserStatisticsSummary,
   UserTranslationStatistics,
 } from '../shared/firebase-firestore.interfaces';
 import { UtilsService } from './utils.service';
 import { LocalStorageService } from './local-storage.service';
-import { DisplayMode } from '../shared/enums';
+import {
+  DisplayMode,
+  StatisticsSummaryCategory,
+  StatisticsSummaryName,
+} from '../shared/enums';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +139,307 @@ export class FirebaseFirestoreUtilsService {
         (b.userCreatedAt?.getTime() ?? 0) - (a.userCreatedAt?.getTime() ?? 0)
     ); // Sort by last translation date desc and userCreatedAt desc
     return statisticsData;
+  }
+
+  /**
+   * Builds an aggregated statistics summary for display in the admin statistics view.
+   *
+   * Creates summary rows in this order:
+   * 1. User type (Programmer/User)
+   * 2. Platform (native/webmobile/webdesktop)
+   * 3. Device model
+   * 4. Target language count (1-5)
+   *
+   * Each row includes:
+   * - countTranslations: users with translatedCharCount > 0
+   * - countRegistrations: users with translatedCharCount === 0
+   *
+   * @param statisticsData The list of displayed user statistics used as input.
+   * @returns A flattened array of summary rows grouped by category.
+   */
+  getUserStatisticsSummary(
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    let statsSummary: UserStatisticsSummary[] = [];
+    let rows: UserStatisticsSummary[];
+
+    // user type summary rows
+    rows = this.createStatisticsSummaryUserTypeRows(
+      StatisticsSummaryCategory.UserType,
+      statisticsData
+    );
+    statsSummary.push(...rows);
+
+    // platform summary rows
+    rows = this.createStatisticsSummaryPlatformRows(
+      StatisticsSummaryCategory.Platform,
+      statisticsData
+    );
+    statsSummary.push(...rows);
+
+    // device model summary rows
+    rows = this.createStatisticsSummaryModelRows(
+      StatisticsSummaryCategory.Model,
+      statisticsData
+    );
+    statsSummary.push(...rows);
+
+    // target languages summary rows
+    rows = this.createStatisticsSummaryLanguagesRows(
+      StatisticsSummaryCategory.Languages,
+      statisticsData
+    );
+    statsSummary.push(...rows);
+
+    return statsSummary;
+  }
+
+  /**
+   * Creates summary rows grouped by user type (Programmer/User).
+   *
+   * @param category Summary category label for the generated rows.
+   * @param statisticsData Source user statistics.
+   * @returns Summary rows for each user type.
+   */
+  private createStatisticsSummaryUserTypeRows(
+    category: StatisticsSummaryCategory,
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    const types = [
+      StatisticsSummaryName.Programmer,
+      StatisticsSummaryName.User,
+    ];
+
+    return this.buildStatisticsSummaryRows(category, types, statisticsData);
+  }
+
+  /**
+   * Creates summary rows grouped by platform (native/webmobile/webdesktop).
+   *
+   * @param category Summary category label for the generated rows.
+   * @param statisticsData Source user statistics.
+   * @returns Summary rows for each platform.
+   */
+  private createStatisticsSummaryPlatformRows(
+    category: StatisticsSummaryCategory,
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    const types = [
+      StatisticsSummaryName.native,
+      StatisticsSummaryName.webmobile,
+      StatisticsSummaryName.webdesktop,
+    ];
+
+    return this.buildStatisticsSummaryRows(category, types, statisticsData);
+  }
+
+  /**
+   * Creates summary rows grouped by normalized device model names.
+   *
+   * Uses a normalized model key to merge formatting variants while preserving
+   * one display name per model for output.
+   *
+   * @param category Summary category label for the generated rows.
+   * @param statisticsData Source user statistics.
+   * @returns Alphabetically sorted model summary rows.
+   */
+  private createStatisticsSummaryModelRows(
+    category: StatisticsSummaryCategory,
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    const modelMap = this.getModelTypeMap(statisticsData);
+
+    return Array.from(modelMap.entries())
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([normalizedModel, displayedModel]) => ({
+        category,
+        name: displayedModel,
+        countTranslations: this.countTranslationsForType(
+          statisticsData,
+          normalizedModel
+        ),
+        countRegistrations: this.countRegistrationsForType(
+          statisticsData,
+          normalizedModel
+        ),
+      }));
+  }
+
+  /**
+   * Creates summary rows grouped by target languages.
+   *
+   * @param category Summary category label for the generated rows.
+   * @param statisticsData Source user statistics.
+   * @returns Summary rows for each target language count.
+   */
+  private createStatisticsSummaryLanguagesRows(
+    category: StatisticsSummaryCategory,
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    const types = [
+      StatisticsSummaryName.OneLanguage,
+      StatisticsSummaryName.TwoLanguages,
+      StatisticsSummaryName.ThreeLanguages,
+      StatisticsSummaryName.FourLanguages,
+      StatisticsSummaryName.FiveLanguages,
+    ];
+
+    return this.buildStatisticsSummaryRows(category, types, statisticsData);
+  }
+
+  /**
+   * Builds summary rows for the specified types.
+   *
+   * @param category Summary category label for the generated rows.
+   * @param types Array of types to generate summary rows for.
+   * @param statisticsData Source user statistics.
+   * @returns Summary rows for each specified type.
+   */
+  private buildStatisticsSummaryRows(
+    category: StatisticsSummaryCategory,
+    types: string[],
+    statisticsData: DisplayedUserStatistics[]
+  ): UserStatisticsSummary[] {
+    let rows: UserStatisticsSummary[] = [];
+    types.forEach((type) => {
+      rows.push({
+        category,
+        name: type,
+        countTranslations: this.countTranslationsForType(statisticsData, type),
+        countRegistrations: this.countRegistrationsForType(
+          statisticsData,
+          type
+        ),
+      });
+    });
+    return rows;
+  }
+
+  /**
+   * Counts users with at least one translation for the given type.
+   *
+   * Supports user type, platform, language-count buckets, and normalized model names.
+   *
+   * @param statisticsData Source user statistics.
+   * @param type Type discriminator used for matching.
+   * @returns Number of users with translatedCharCount > 0.
+   */
+  private countTranslationsForType(
+    statisticsData: DisplayedUserStatistics[],
+    type: StatisticsSummaryName | string
+  ): number {
+    return statisticsData.filter((userStat) => {
+      switch (type) {
+        case StatisticsSummaryName.Programmer:
+        case StatisticsSummaryName.User:
+          return userStat.userType === type && userStat.translatedCharCount > 0;
+        case StatisticsSummaryName.native:
+        case StatisticsSummaryName.webmobile:
+        case StatisticsSummaryName.webdesktop:
+          return (
+            userStat.displayedPlatform === type &&
+            userStat.translatedCharCount > 0
+          );
+        case StatisticsSummaryName.OneLanguage:
+        case StatisticsSummaryName.TwoLanguages:
+        case StatisticsSummaryName.ThreeLanguages:
+        case StatisticsSummaryName.FourLanguages:
+        case StatisticsSummaryName.FiveLanguages:
+          return (
+            userStat.targetLanguages.length === Number(type) &&
+            userStat.translatedCharCount > 0
+          );
+        default:
+          return (
+            this.normalizeModelForCompare(userStat.displayedModel) ===
+              this.normalizeModelForCompare(type) &&
+            userStat.translatedCharCount > 0
+          );
+      }
+    }).length;
+  }
+
+  /**
+   * Counts users with no translations for the given type.
+   *
+   * Supports user type, platform, language-count buckets, and normalized model names.
+   *
+   * @param statisticsData Source user statistics.
+   * @param type Type discriminator used for matching.
+   * @returns Number of users with translatedCharCount === 0.
+   */
+  private countRegistrationsForType(
+    statisticsData: DisplayedUserStatistics[],
+    type: StatisticsSummaryName | string
+  ): number {
+    return statisticsData.filter((userStat) => {
+      switch (type) {
+        case StatisticsSummaryName.Programmer:
+        case StatisticsSummaryName.User:
+          return (
+            userStat.userType === type && userStat.translatedCharCount === 0
+          );
+        case StatisticsSummaryName.native:
+        case StatisticsSummaryName.webmobile:
+        case StatisticsSummaryName.webdesktop:
+          return (
+            userStat.displayedPlatform === type &&
+            userStat.translatedCharCount === 0
+          );
+        case StatisticsSummaryName.OneLanguage:
+        case StatisticsSummaryName.TwoLanguages:
+        case StatisticsSummaryName.ThreeLanguages:
+        case StatisticsSummaryName.FourLanguages:
+        case StatisticsSummaryName.FiveLanguages:
+          return (
+            userStat.targetLanguages.length === Number(type) &&
+            userStat.translatedCharCount === 0
+          );
+        default:
+          return (
+            this.normalizeModelForCompare(userStat.displayedModel) ===
+              this.normalizeModelForCompare(type) &&
+            userStat.translatedCharCount === 0
+          );
+      }
+    }).length;
+  }
+
+  /**
+   * Normalizes a model name for comparison by removing whitespace and converting to uppercase.
+   *
+   * @param value Model name to normalize.
+   * @returns Normalized model name.
+   */
+  private normalizeModelForCompare(value: string | null | undefined): string {
+    return (value ?? '').split(/\s+/).join('').toUpperCase();
+  }
+
+  /**
+   * Builds a map of normalized model keys to display model names.
+   *
+   * Empty model names are skipped. The first encountered display name is kept
+   * for each normalized key.
+   *
+   * @param statisticsData Source user statistics.
+   * @returns Map where key is normalized model and value is display model.
+   */
+  private getModelTypeMap(
+    statisticsData: DisplayedUserStatistics[]
+  ): Map<string, string> {
+    const modelMap = new Map<string, string>();
+
+    statisticsData.forEach((userStat) => {
+      const displayedModel = (userStat.displayedModel ?? '').trim();
+      if (!displayedModel) {
+        return;
+      }
+      const normalizedModel = this.normalizeModelForCompare(displayedModel);
+      if (!modelMap.has(normalizedModel)) {
+        modelMap.set(normalizedModel, displayedModel);
+      }
+    });
+    return modelMap;
   }
 
   /**
