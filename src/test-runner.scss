@@ -1,0 +1,17 @@
+/* Only for Karma/Jasmine browser runner - remove Ionic's height constraints */
+html, body {
+  height: 100% !important;
+  overflow-y: visible !important;
+}
+
+body {
+  position: static !important;
+  min-height: auto !important;
+}
+
+/* Let Jasmine report expand freely */
+.jasmine-results {
+  height: auto !important;
+  overflow: visible !important;
+  max-height: none !important;
+}

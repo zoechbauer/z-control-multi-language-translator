@@ -2,12 +2,19 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.7] – YYYY-MM-DD
+
+### ✨ New Features
+
+- Fixed scrolling in the Karma test runner so all Jasmine specs are fully visible in the browser report.
+- Added developer documentation for unit testing with Angular, including a quick-start reference for running tests and a curated list of tutorials and learning resources.
+
 ## [1.6] – 2026-03-15
 
 ### ✨ New Features
 
 - In programmer view, the statistics page includes the new section "User Statistics Overview" that summarizes the distribution of users by user type, platform, device model, and number of target languages used, giving programmers a quick overview of user demographics and usage patterns.
-- Device model number is now displayed in the statistics grid and user detail page for programmer devices, providing more detailed insights into the devices being used for translation.
+- In programmer view, the device model is now shown in both the statistics grid and the user details page, providing clearer insight into the devices used for translation. You can also filter by model in the statistics grid to monitor specific devices more easily.
 
 ## [1.5] – 2026-03-12
 
@@ -15,7 +22,7 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 - On programmer devices, the statistics accordion now includes a display mode toggle to switch between programmer view (detailed data) and user view, letting programmers preview the user experience without needing a separate device.
 - In programmer view, the statistics grid now shows the number of target languages used by each user.
-- In programmer view, the statistics grid can now be searched and filtered by user name, platform, translated character count, and target language count for easier monitoring and debugging.
+- In programmer view, the statistics grid can now be searched and filtered by user type, platform, translated character count, and target language count for easier monitoring and debugging.
 - On the user detail page, the `isProgrammerDevice` filter has been replaced by the programmer view toggle.
 
 ### 🚀 Improvements
