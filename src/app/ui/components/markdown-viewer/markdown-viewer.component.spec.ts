@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
-  HttpClientTestingModule,
+  provideHttpClientTesting,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { MarkdownModule } from 'ngx-markdown';
 import { IonicModule, ModalController } from '@ionic/angular';
 
@@ -23,11 +24,12 @@ describe('MarkdownViewerComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         MarkdownViewerComponent,
-        HttpClientTestingModule,
         IonicModule.forRoot(),
         MarkdownModule.forRoot(),
       ],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: ModalController, useValue: modalControllerSpy },
         { provide: UtilsService, useValue: utilsServiceSpy },
       ],

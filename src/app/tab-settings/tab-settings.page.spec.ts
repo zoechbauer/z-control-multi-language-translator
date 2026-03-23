@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TabSettingsPage } from './tab-settings.page';
 import { LocalStorageService } from '../services/local-storage.service';
 import { UtilsService } from '../services/utils.service';
-import { TextSpeechService } from '../services/text-to-speach.service';
+import { TextSpeechService } from '../services/text-to-speech.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 

@@ -16,7 +16,7 @@ import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/pri
 import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
 import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
-import { TextSpeechService } from '../services/text-to-speach.service';
+import { TextSpeechService } from '../services/text-to-speech.service';
 import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';

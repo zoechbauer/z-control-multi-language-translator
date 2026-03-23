@@ -8,7 +8,7 @@ import { SafeAreaInsetsService } from './services/safe-area-insets.service';
 import { environment } from 'src/environments/environment';
 import { SystemBarsService } from './services/system-bars.service';
 import { FirebaseFirestoreService } from './services/firebase-firestore.service';
-import { TextSpeechService } from './services/text-to-speach.service';
+import { TextSpeechService } from './services/text-to-speech.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
 

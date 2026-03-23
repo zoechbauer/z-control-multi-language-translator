@@ -199,7 +199,7 @@ export class LocalStorageService {
         languages
       );
     } catch (error) {
-      console.error('Error saving selected language:', error);
+      console.error('Error saving target languages:', error);
     }
   }
 
@@ -251,7 +251,7 @@ export class LocalStorageService {
       );
       this.textToSpeechValuesSubject.next(values);
     } catch (error) {
-      console.error('Error saving text-to-speech values:', error);
+      console.error('Error saving text to speech values:', error);
     }
   }
 

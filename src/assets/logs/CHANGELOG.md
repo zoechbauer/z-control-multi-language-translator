@@ -6,8 +6,18 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
+- Updated app title and favicon to "z-control Translator" for improved brand consistency and recognition.
 - Fixed scrolling in the Karma test runner so all Jasmine specs are fully visible in the browser report.
 - Added developer documentation for unit testing with Angular, including a quick-start reference for running tests and a curated list of tutorials and learning resources.
+- Added missing unit tests across services.
+
+### 🚀 Improvements
+
+- Added a createSecureTranslateCallable helper to TranslationGoogleTranslateService to improve testability and reuse when invoking the authenticated Cloud Function.
+
+### 🐛 Fixes
+
+- Fixed typos in Text-to-Speech file names and import paths to ensure consistent naming and prevent import errors.
 
 ## [1.6] – 2026-03-15
 

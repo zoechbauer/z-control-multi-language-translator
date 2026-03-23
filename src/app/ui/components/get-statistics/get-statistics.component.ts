@@ -165,11 +165,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // TODO delete this getter and use the firestoreUtilsService method directly in the template after migrating summary to use DisplayedUserStatistics as source
-  // get userStatisticsSummary(): UserStatisticsSummary[] {
-  //   return this.firestoreUtilsService.getUserStatisticsSummary(this.statisticsData?.displayedUserStatistics!);
-  // }
-
   ngOnInit(): void {
     this.init();
     this.subscriptions.push(
@@ -251,6 +246,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     const value = event?.detail?.value;
     if (value === DisplayMode.User || value === DisplayMode.Programmer) {
       this.displayMode = value;
+      this.searchTerm = '';
 
       // Store display mode in local storage
       this.localStorageService

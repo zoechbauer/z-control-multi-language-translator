@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { SafeAreaInsetsService } from './services/safe-area-insets.service';
 import { SystemBarsService } from './services/system-bars.service';
 import { FirebaseFirestoreService } from './services/firebase-firestore.service';
-import { TextSpeechService } from './services/text-to-speach.service';
+import { TextSpeechService } from './services/text-to-speech.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { createTranslateServiceMock } from './testing/translate-service.mock';
 
