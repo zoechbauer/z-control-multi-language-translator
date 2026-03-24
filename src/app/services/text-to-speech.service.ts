@@ -52,7 +52,7 @@ export class TextSpeechService {
 
   constructor(
     private readonly platform: Platform,
-    private readonly localStorageService: LocalStorageService,
+    private readonly localStorageService: LocalStorageService
   ) {
     this.isNative =
       this.platform.is('capacitor') || this.platform.is('cordova');
@@ -73,11 +73,35 @@ export class TextSpeechService {
   }
 
   private async loadTtsSupportedLanguagesForMobiles(): Promise<void> {
-    if (this.isNative && window?.Capacitor?.isNativePlatform) {
-      const result = await TextToSpeech.getSupportedLanguages();
-      const languages = result.languages.sort((a, b) => a.localeCompare(b));
+    if (this.isNativeTtsAvailable()) {
+      const result = await this.getNativeTtsPlugin().getSupportedLanguages();
+      const languages = [...result.languages].sort((a, b) =>
+        a.localeCompare(b)
+      );
       this.ttsSupportedLanguagesforMobiles = languages;
     }
+  }
+
+  private isNativeTtsAvailable(): boolean {
+    return this.isNative && !!window?.Capacitor?.isNativePlatform;
+  }
+
+  private getNativeTtsPlugin() {
+    return TextToSpeech;
+  }
+
+  private async speakWithNativePlugin(
+    text: string,
+    lang: string
+  ): Promise<void> {
+    await this.getNativeTtsPlugin().speak({
+      text,
+      lang,
+      rate: this._ttsRate,
+      pitch: this._ttsPitch,
+      volume: 1.0,
+      category: 'ambient',
+    });
   }
 
   /**
@@ -87,21 +111,16 @@ export class TextSpeechService {
    * @throws Error if TTS is not available or fails
    */
   async speak(text: string, lang: string): Promise<void> {
-    if (this.isNative && window?.Capacitor?.isNativePlatform) {
-      // Use Capacitor TTS plugin if available
+    if (this.isNativeTtsAvailable()) {
       try {
-        await TextToSpeech.speak({
-          text,
-          lang,
-          rate: this._ttsRate,
-          pitch: this._ttsPitch,
-          volume: 1.0,
-          category: 'ambient',
-        });
+        await this.speakWithNativePlugin(text, lang);
+        return;
       } catch (err) {
         throw new Error('TTS plugin not available or failed: ' + err);
       }
-    } else if ('speechSynthesis' in globalThis) {
+    }
+
+    if ('speechSynthesis' in globalThis) {
       // Use browser TTS
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
@@ -112,9 +131,10 @@ export class TextSpeechService {
         globalThis.speechSynthesis.cancel();
         globalThis.speechSynthesis.speak(utterance);
       });
-    } else {
-      throw new Error('Text-to-speech is not supported on this platform.');
+      return;
     }
+
+    throw new Error('Text-to-speech is not supported on this platform.');
   }
 
   /**
@@ -132,7 +152,7 @@ export class TextSpeechService {
     const isSupported =
       this.ttsSupportedLanguagesforMobiles.includes(lang) ||
       this.ttsSupportedLanguagesforMobiles.some((l) =>
-        l.startsWith(lang + '-'),
+        l.startsWith(lang + '-')
       );
     this.ttsSupportedLanguagesforMobilesCache[lang] = isSupported;
     return isSupported;
@@ -145,7 +165,7 @@ export class TextSpeechService {
    */
   updateTtsSupportedLanguagesMap(
     isNative: boolean,
-    selectedLanguages: string[],
+    selectedLanguages: string[]
   ) {
     const map: { [lang: string]: boolean } = {};
     if (isNative) {
