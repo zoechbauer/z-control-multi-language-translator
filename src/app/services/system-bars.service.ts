@@ -15,7 +15,7 @@ export class SystemBarsService {
   // Only specific Samsung models need a status style override.
   // J5 is intentionally excluded because it works with the default mode-based logic.
   private hasSamsungStatusStyleOverride(userAgent: string): boolean {
-    return /SM-A336|SM-A556/i.test(userAgent);
+    return /SM-A\d{3}/i.test(userAgent);
   }
 
   /**
@@ -36,14 +36,22 @@ export class SystemBarsService {
     const navDarkButtons = !isDarkMode;
 
     // StatusBar
-    await StatusBar.setBackgroundColor({ color: bgColor });
-    await StatusBar.setStyle({ style: statusStyle });
+    await this.getStatusBar().setBackgroundColor({ color: bgColor });
+    await this.getStatusBar().setStyle({ style: statusStyle });
 
     // NavigationBar
-    await NavigationBar.setNavigationBarColor({
+    await this.getNavigationBar().setNavigationBarColor({
       color: isDarkMode ? NavigationBarColor.BLACK : NavigationBarColor.WHITE,
       darkButtons: navDarkButtons,
     });
+  }
+
+  private getStatusBar() {
+    return StatusBar;
+  }
+
+  private getNavigationBar() {
+    return NavigationBar;
   }
 
   /**
