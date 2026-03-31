@@ -33,9 +33,9 @@ export enum StatisticsSummaryCategory {
 export enum StatisticsSummaryName {
   User = 'U',
   Programmer = 'P',
-  native = 'native',
-  webmobile = 'web-mobile',
-  webdesktop = 'web-desktop',
+  Native = 'native',
+  WebMobile = 'web-mobile',
+  WebDesktop = 'web-desktop',
   OneLanguage = '1',
   TwoLanguages = '2',
   ThreeLanguages = '3',

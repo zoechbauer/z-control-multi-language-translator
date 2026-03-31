@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { UserStatisticComponent } from './user-statistic.component';
-import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils-service';
+import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 

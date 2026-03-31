@@ -7,7 +7,7 @@ import {
   ProgrammerDeviceUID,
 } from './shared/firebase-firestore.interfaces.js';
 import { getDeviceName, getUserType, isValidDevice } from './utils.js';
-import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils-service.js';
+import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils.service.js';
 
 export class FirebaseFirestoreService {
   private readonly db: admin.firestore.Firestore;
@@ -300,7 +300,9 @@ export class FirebaseFirestoreService {
         console.log('No programmer devices found in Firestore.');
         return false;
       }
-      return snapshot.docs.some((doc) => (doc.data() as ProgrammerDeviceUID).userId === this.userId)  ;
+      return snapshot.docs.some(
+        (doc) => (doc.data() as ProgrammerDeviceUID).userId === this.userId
+      );
     } catch (error) {
       console.error(
         'Error checking if device is a programmer device from Firestore:',

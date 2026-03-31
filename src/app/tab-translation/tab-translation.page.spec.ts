@@ -9,7 +9,7 @@ import { TranslationGoogleTranslateService } from '../services/translation-googl
 import { ToastService } from '../services/toast.service';
 import { TextSpeechService } from '../services/text-to-speech.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
-import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils-service';
+import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils.service';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 
 describe('TabTranslationPage', () => {

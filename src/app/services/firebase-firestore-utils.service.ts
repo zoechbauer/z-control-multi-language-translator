@@ -87,21 +87,14 @@ export class FirebaseFirestoreUtilsService {
     this.statisticsDisplayMode =
       await this.localStorageService.getStatisticsDisplayMode();
 
-    statisticsData.users.forEach((user) => {
-      const userInfo = statisticsData.users.find(
-        (u) => u.userId === user.userId
-      );
-      if (!userInfo) {
-        console.warn('No user info found for userId:', user.userId);
-        return; // Skip if no user info
-      }
+    statisticsData.users.forEach((userInfo) => {
       const userTranslationInfo = userTranslationStatistics.find(
-        (u) => u.userId === user.userId
+        (u) => u.userId === userInfo.userId
       );
 
       const stat: DisplayedUserStatistics = {
         // user infos
-        userId: user.userId,
+        userId: userInfo.userId,
         userName: userInfo.name,
         userType: userInfo.type,
         userCreatedAt: userInfo.createdAt,
@@ -225,9 +218,9 @@ export class FirebaseFirestoreUtilsService {
     statisticsData: DisplayedUserStatistics[]
   ): UserStatisticsSummary[] {
     const types = [
-      StatisticsSummaryName.native,
-      StatisticsSummaryName.webmobile,
-      StatisticsSummaryName.webdesktop,
+      StatisticsSummaryName.Native,
+      StatisticsSummaryName.WebMobile,
+      StatisticsSummaryName.WebDesktop,
     ];
 
     return this.buildStatisticsSummaryRows(category, types, statisticsData);
@@ -333,9 +326,9 @@ export class FirebaseFirestoreUtilsService {
         case StatisticsSummaryName.Programmer:
         case StatisticsSummaryName.User:
           return userStat.userType === type && userStat.translatedCharCount > 0;
-        case StatisticsSummaryName.native:
-        case StatisticsSummaryName.webmobile:
-        case StatisticsSummaryName.webdesktop:
+        case StatisticsSummaryName.Native:
+        case StatisticsSummaryName.WebMobile:
+        case StatisticsSummaryName.WebDesktop:
           return (
             userStat.displayedPlatform === type &&
             userStat.translatedCharCount > 0
@@ -379,9 +372,9 @@ export class FirebaseFirestoreUtilsService {
           return (
             userStat.userType === type && userStat.translatedCharCount === 0
           );
-        case StatisticsSummaryName.native:
-        case StatisticsSummaryName.webmobile:
-        case StatisticsSummaryName.webdesktop:
+        case StatisticsSummaryName.Native:
+        case StatisticsSummaryName.WebMobile:
+        case StatisticsSummaryName.WebDesktop:
           return (
             userStat.displayedPlatform === type &&
             userStat.translatedCharCount === 0
@@ -462,7 +455,7 @@ export class FirebaseFirestoreUtilsService {
       await this.firestoreService.readContingentData();
     const displayedContingentData: DisplayedUserContingentData[] = [];
     // calculate data for current user
-    const { charCount: userCharCount = 0 } =
+    const { charCount: userCharCount } =
       await this.firestoreService.getCharCountForUser();
     const limit =
       contingentData.maxFreeTranslateCharsPerMonthForUser ??
@@ -547,7 +540,7 @@ export class FirebaseFirestoreUtilsService {
     const limit =
       flags.maxFreeTranslateCharsPerMonthForUser ??
       environment.app.maxFreeTranslateCharsPerMonthForUser;
-    const { charCount = 0 } = await this.firestoreService.getCharCountForUser();
+    const { charCount } = await this.firestoreService.getCharCountForUser();
     return charCount >= limit;
   }
 

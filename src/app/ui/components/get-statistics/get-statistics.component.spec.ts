@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { GetStatisticsComponent } from './get-statistics.component';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
-import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils-service';
+import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { DisplayMode } from 'src/app/shared/enums';

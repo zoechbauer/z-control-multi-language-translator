@@ -1,4 +1,4 @@
-import { FirebaseFirestoreService } from './firebase-firestore-service.js';
+import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 import { FirestoreContingentData } from './shared/firebase-firestore.interfaces.js';
 
 export class FirebaseFirestoreUtilsService {
@@ -13,7 +13,7 @@ export class FirebaseFirestoreUtilsService {
    */
   async isContingentExceeded(
     flags: FirestoreContingentData,
-    userId: string,
+    userId: string
   ): Promise<boolean> {
     // 1. If translation is globally stopped for all users
     if (flags.StopTranslationForAllUsers) {
@@ -32,7 +32,7 @@ export class FirebaseFirestoreUtilsService {
 
   private async isContingentForUserExceeded(
     flags: FirestoreContingentData,
-    userId: string,
+    userId: string
   ): Promise<boolean> {
     const limit = flags.maxFreeTranslateCharsPerMonthForUser;
     if (limit === undefined) {
@@ -43,7 +43,7 @@ export class FirebaseFirestoreUtilsService {
   }
 
   private async isTotalContingentExceeded(
-    flags: FirestoreContingentData,
+    flags: FirestoreContingentData
   ): Promise<boolean> {
     const limit = flags.maxFreeTranslateCharsPerMonth;
     const buffer = flags.maxFreeTranslateCharsBufferPerMonth;
@@ -71,7 +71,7 @@ export class FirebaseFirestoreUtilsService {
       console.error('Contingent exceeded for user:', userId);
       throw new (await import('firebase-functions/v2/https')).HttpsError(
         'resource-exhausted',
-        'Translation contingent exceeded.',
+        'Translation contingent exceeded.'
       );
     }
   }
@@ -93,7 +93,8 @@ export class FirebaseFirestoreUtilsService {
     if (JSON.stringify(keys1) !== JSON.stringify(keys2)) return false;
 
     for (const key of keys1) {
-      if (!FirebaseFirestoreUtilsService.isDeepEqual(obj1[key], obj2[key])) return false;
+      if (!FirebaseFirestoreUtilsService.isDeepEqual(obj1[key], obj2[key]))
+        return false;
     }
 
     return true;

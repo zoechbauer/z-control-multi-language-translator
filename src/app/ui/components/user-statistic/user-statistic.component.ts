@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils-service';
+import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import {
   IonCardHeader,
   IonCardTitle,
@@ -51,7 +51,7 @@ export class UserStatisticComponent implements OnInit, OnDestroy {
   constructor(
     public translate: TranslateService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
-    private readonly utilsService: UtilsService,
+    private readonly utilsService: UtilsService
   ) {}
 
   ngOnInit() {
@@ -61,7 +61,7 @@ export class UserStatisticComponent implements OnInit, OnDestroy {
       this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
         this.updateIsContingentExceeded();
         this.updateTranslationStatistics();
-      }),
+      })
     );
   }
 

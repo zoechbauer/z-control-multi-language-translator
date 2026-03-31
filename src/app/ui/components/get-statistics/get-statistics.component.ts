@@ -32,7 +32,7 @@ import {
 } from 'src/app/shared/firebase-firestore.interfaces';
 import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils-service';
+import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 
 @Component({
   selector: 'app-get-statistics',
@@ -221,9 +221,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       // user statistics and info
       this.statisticsData =
         await this.firestoreUtilsService.getDisplayedUserStatistics();
-      this.userStatisticsSummaryData = this.firestoreUtilsService.getUserStatisticsSummary(
-        this.statisticsData?.displayedUserStatistics ?? []
-      );
+      this.userStatisticsSummaryData =
+        this.firestoreUtilsService.getUserStatisticsSummary(
+          this.statisticsData?.displayedUserStatistics ?? []
+        );
 
       // Calculate the sum of all users' translated characters
       this.allUsersCharCount =

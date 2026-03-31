@@ -4,20 +4,26 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ## [1.7] – YYYY-MM-DD
 
+
 ### ✨ New Features
 
+- Added comprehensive unit tests across all services, achieving 97.96% statement coverage for robust code quality.
+- Introduced callable functions (`is-programmer-devices.ts`, `create-missing-contingent-data.ts`) to enhance testability and modularity.
+- Added `firebase-firestore-auth-wrapper.service.ts` to improve authentication handling and test coverage.
 - Updated app title and favicon to "z-control Translator" for improved brand consistency and recognition.
-- Fixed scrolling in the Karma test runner so all Jasmine specs are fully visible in the browser report.
 - Added developer documentation for unit testing with Angular, including a quick-start reference for running tests and a curated list of tutorials and learning resources.
-- Added missing unit tests across services.
+
 
 ### 🚀 Improvements
 
+- Refined Jasmine and Karma configurations to ensure all tests are fully visible and reliably executed in the browser, streamlining the developer testing experience.
 - Added a createSecureTranslateCallable helper to TranslationGoogleTranslateService to improve testability and reuse when invoking the authenticated Cloud Function.
+- Standardized file names and Enums, corrected typos, and improved naming conventions for greater consistency and readability throughout the codebase.
+- Added new translations for improved localization and user experience.
 
 ### 🐛 Fixes
 
-- Fixed typos in Text-to-Speech file names and import paths to ensure consistent naming and prevent import errors.
+- Fixed typos in Text-to-Speech file names and firebase-firestore-utils file names and import paths to ensure consistent naming and prevent import errors.
 
 ## [1.6] – 2026-03-15
 

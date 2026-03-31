@@ -66,6 +66,7 @@
         "NO_TEXT_OR_LANGUAGES": "Kein Text oder keine Zielsprache(n) zum Übersetzen ausgewählt.",
         "ERROR": "Fehler bei der Übersetzung. Bitte versuchen Sie es erneut.",
         "ERROR_ADDING_USER": "Fehler beim Hinzufügen des Benutzers. Bitte versuchen Sie es erneut.",
+        "ERROR_LOADING_USERS": "Fehler beim Laden der Benutzer. Bitte versuchen Sie es erneut.",
         "ERROR_UPDATING_PROGRAMMER_DEVICES": "Fehler beim Aktualisieren der Programmiergeräte. Bitte versuchen Sie es erneut.",
         "ERROR_GETTING_PROGRAMMER_DEVICES": "Fehler beim Abrufen der Programmierer-Geräte. Bitte versuchen Sie es erneut.",
         "ERROR_GETTING_PROGRAMMER_DEVICE_STATUS": "Fehler beim Abrufen des Status des Programmierer-Geräts. Bitte versuchen Sie es erneut."

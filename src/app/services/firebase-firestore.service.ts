@@ -4,11 +4,20 @@ import {
   Injector,
   runInInjectionContext,
 } from '@angular/core';
-import { Auth, onAuthStateChanged, signInAnonymously, User } from '@angular/fire/auth';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import * as angularFireAuth from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
+  QuerySnapshot,
+} from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { collection, getDocs } from 'firebase/firestore';
-import { firstValueFrom, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { FireStoreConstants } from '../shared/app.constants';
@@ -25,6 +34,7 @@ import {
 import { ToastService } from './toast.service';
 import { ToastAnchor } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
+import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
@@ -33,14 +43,15 @@ export class FirebaseFirestoreService {
     this.programmerDeviceRefreshSubject.asObservable();
 
   private readonly injector: Injector;
-  private user!: User;
+  private user!: angularFireAuth.User;
   private readonly monthlyTranslationsMonthDocPath = `${
     FireStoreConstants.COLLECTION_TRANSLATIONS
   }/${FireStoreConstants.currentYearMonthPath()}`;
   private cachedIsProgrammerDevice: boolean = false;
 
   constructor(
-    private readonly auth: Auth,
+    private readonly auth: angularFireAuth.Auth,
+    private readonly authWrapper: FirebaseFirestoreAuthWrapperService,
     private readonly translate: TranslateService,
     private readonly firestore: Firestore,
     private readonly functions: Functions,
@@ -64,18 +75,18 @@ export class FirebaseFirestoreService {
     this.cachedIsProgrammerDevice = await this.getIsProgrammerDevice();
   }
 
-/**
- * Authenticates the user and sets up user mapping and control flags for web and native platforms.
- *
- * - First waits until Firebase Auth state restoration is complete, so browser refresh does not
- *   accidentally create a new anonymous UID.
- * - On web: Uses Firebase Auth as the source of truth. If a persisted user exists, it reuses that
- *   user and updates local storage with the same UID. If no user exists, it signs in anonymously.
- * - On native: Uses Firebase Auth persistence and signs in anonymously only when needed.
- *
- * After authentication, it ensures backend control data is initialized and programmer-device
- * mapping is updated.
- */
+  /**
+   * Authenticates the user and sets up user mapping and control flags for web and native platforms.
+   *
+   * - First waits until Firebase Auth state restoration is complete, so browser refresh does not
+   *   accidentally create a new anonymous UID.
+   * - On web: Uses Firebase Auth as the source of truth. If a persisted user exists, it reuses that
+   *   user and updates local storage with the same UID. If no user exists, it signs in anonymously.
+   * - On native: Uses Firebase Auth persistence and signs in anonymously only when needed.
+   *
+   * After authentication, it ensures backend control data is initialized and programmer-device
+   * mapping is updated.
+   */
   private async authenticateUser() {
     // Wait until Firebase Auth persistence restore finishes.
     // Otherwise, currentUser can be temporarily null right after browser refresh,
@@ -140,7 +151,7 @@ export class FirebaseFirestoreService {
     }
 
     await new Promise<void>((resolve) => {
-      const unsub = onAuthStateChanged(this.auth, () => {
+      const unsub = this.authWrapper.onAuthStateChanged(this.auth, () => {
         unsub();
         resolve();
       });
@@ -162,7 +173,7 @@ export class FirebaseFirestoreService {
   private async signInAnonymously(): Promise<void> {
     if (!this.auth.currentUser) {
       const result = await runInInjectionContext(this.injector, () =>
-        signInAnonymously(this.auth)
+        this.authWrapper.signInAnonymously(this.auth)
       );
       this.user = (result as any).user;
       if (this.user?.uid) {
@@ -206,19 +217,17 @@ export class FirebaseFirestoreService {
    */
   public async getUsers(): Promise<UserType[]> {
     // Path: .../MLT_translations_statistics/userMapping/users
-    const users: UserType[] = [];
+    const usersCollectionPath = `${FireStoreConstants.getUserMappingUsersCollectionPath()}`;
     try {
-      const usersRef = collection(
-        this.firestore,
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}`
-      );
+      const usersRef = this.getCollection(usersCollectionPath);
       const snapshot = await runInInjectionContext(this.injector, () =>
-        getDocs(usersRef)
+        this.getDocs(usersRef)
       );
-      (snapshot as any).forEach((docSnap: any) => {
+      const users: UserType[] = [];
+      snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         users.push({
-          userId: docSnap.id,
+          userId: data['userId'],
           name: data['name'],
           type: data['type'],
           isNative: data['isNative'] || false,
@@ -228,10 +237,17 @@ export class FirebaseFirestoreService {
           deviceInfo: data['deviceInfo'],
         });
       });
+      return users;
     } catch (error) {
       console.error('Error loading users from user mapping:', error);
+      this.toastService.showToast(
+        this.translate.instant(
+          'TRANSLATE.CARD_RESULTS.TOAST.ERROR_LOADING_USERS'
+        ),
+        ToastAnchor.SETTINGS_PAGE
+      );
+      return [];
     }
-    return users;
   }
 
   /**
@@ -244,7 +260,7 @@ export class FirebaseFirestoreService {
     // Path: .../MLT_translations_statistics/userMapping/users
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'addUser')
+        this.getHttpsCallable('addUser')
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
@@ -276,7 +292,7 @@ export class FirebaseFirestoreService {
   public async getProgrammerDeviceUIDs(): Promise<ProgrammerDeviceUID[]> {
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'getProgrammerDeviceUIDs')
+        this.getHttpsCallable('getProgrammerDeviceUIDs')
       );
       const result = await runInInjectionContext(this.injector, () =>
         (callable as any)({})
@@ -297,7 +313,7 @@ export class FirebaseFirestoreService {
   public async getIsProgrammerDevice(): Promise<boolean> {
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'isProgrammerDevice')
+        this.getHttpsCallable('isProgrammerDevice')
       );
       const result = await runInInjectionContext(this.injector, () =>
         (callable as any)({})
@@ -335,7 +351,7 @@ export class FirebaseFirestoreService {
 
     try {
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'updateProgrammerDeviceUIDs')
+        this.getHttpsCallable('updateProgrammerDeviceUIDs')
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
@@ -378,7 +394,7 @@ export class FirebaseFirestoreService {
     try {
       // Path: .../MLT_translations_statistics/{yyyy-mm}/meta/contingentData
       const callable = runInInjectionContext(this.injector, () =>
-        httpsCallable(this.functions, 'createMissingContingentData')
+        this.getHttpsCallable('createMissingContingentData')
       );
       await runInInjectionContext(this.injector, () => (callable as any)({}));
     } catch (error) {
@@ -388,6 +404,10 @@ export class FirebaseFirestoreService {
         ToastAnchor.TRANSLATE_PAGE
       );
     }
+  }
+
+  private getHttpsCallable(functionName: string) {
+    return httpsCallable(this.functions, functionName);
   }
 
   /**
@@ -403,8 +423,8 @@ export class FirebaseFirestoreService {
       // Path: .../MLT_translations_statistics/{yyyy-mm}/control/control
       const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath()}`;
       const dataSnap = await runInInjectionContext(this.injector, () => {
-        const dataRef = doc(this.firestore, dataDocPath);
-        return getDoc(dataRef);
+        const dataRef = this.getFirestoreDoc(dataDocPath);
+        return this.getFirestoreDocSnapshot(dataRef);
       });
       if ((dataSnap as any).exists()) {
         const data = (dataSnap as any).data() as FirestoreContingentData;
@@ -422,6 +442,16 @@ export class FirebaseFirestoreService {
     }
   }
 
+  private getFirestoreDoc(path: string): DocumentReference<DocumentData> {
+    return doc(this.firestore, path);
+  }
+
+  private getFirestoreDocSnapshot(
+    docRef: DocumentReference<DocumentData>
+  ): Promise<DocumentSnapshot<DocumentData>> {
+    return getDoc(docRef);
+  }
+
   /**
    * Retrieves the current character count and last selected target languages for the authenticated user from Firestore.
    * @returns Promise resolving to the user's current character count and target languages.
@@ -432,11 +462,10 @@ export class FirebaseFirestoreService {
         return { charCount: 0, targetLanguages: [] };
       }
       const usageSnap = await runInInjectionContext(this.injector, () => {
-        const usageRef = doc(
-          this.firestore,
+        const usageRef = this.getFirestoreDoc(
           `${FireStoreConstants.getUsersCollectionPath()}/${this.user.uid}`
         );
-        return getDoc(usageRef);
+        return this.getFirestoreDocSnapshot(usageRef);
       });
       const charCountResult: CharCountResult = usageSnap.exists()
         ? {
@@ -461,11 +490,10 @@ export class FirebaseFirestoreService {
     try {
       if (!this.user) return 0;
       const usageSnap = await runInInjectionContext(this.injector, () => {
-        const usageRef = doc(
-          this.firestore,
+        const usageRef = this.getFirestoreDoc(
           `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`
         );
-        return getDoc(usageRef);
+        return this.getFirestoreDocSnapshot(usageRef);
       });
       return usageSnap.exists() ? usageSnap.data()['charCount'] || 0 : 0;
     } catch (error) {
@@ -492,10 +520,9 @@ export class FirebaseFirestoreService {
   > {
     const usersCollectionPath = `${this.monthlyTranslationsMonthDocPath}/users`;
     try {
-      // Firestore web SDK: get all docs in collection
-      const usersRef = collection(this.firestore, usersCollectionPath);
+      const usersRef = this.getCollection(usersCollectionPath);
       const snapshot = await runInInjectionContext(this.injector, () =>
-        getDocs(usersRef)
+        this.getDocs(usersRef)
       );
       const result: UserTranslationStatistics[] = [];
       snapshot.forEach((docSnap) => {
@@ -514,32 +541,68 @@ export class FirebaseFirestoreService {
     }
   }
 
+  private getCollection(path: string) {
+    return runInInjectionContext(this.injector, () =>
+      collection(this.firestore, path)
+    );
+  }
+
+  private getDocs(
+    collectionRef: ReturnType<FirebaseFirestoreService['getCollection']>
+  ): Promise<QuerySnapshot<DocumentData>> {
+    return runInInjectionContext(this.injector, () => getDocs(collectionRef));
+  }
+
   /**
-   * Converts a Firestore Timestamp or compatible value to a JavaScript Date object.
+   * Converts Firestore-like timestamp values into a valid JavaScript Date.
    *
-   * Firestore Timestamps may be:
-   * - An object with a .toDate() method (standard Firestore Timestamp)
-   * - An object with seconds/nanoseconds properties
-   * - An ISO string or JS Date-compatible value
+   * Supported input shapes:
+   * - null/undefined -> undefined
+   * - object with toDate(): Date (Firestore Timestamp-like)
+   * - object with seconds: number (Unix timestamp in seconds)
+   * - Date, string, or number parseable by new Date(...)
    *
-   * This function checks the type and converts accordingly, returning a valid JS Date or undefined.
+   * Returns undefined for unsupported or invalid date values
+   * (for example, invalid date strings or invalid Date objects).
    *
-   * @param date Firestore Timestamp, object, or string
-   * @returns JavaScript Date object or undefined
+   * @param date Value to convert (Firestore timestamp-like value or Date input)
+   * @returns Valid JavaScript Date or undefined if conversion is not possible
    */
-  private getFirestoreDate(date: any): Date | undefined {
-    let lastUpdated: Date | undefined;
-    if (date) {
-      if (typeof date.toDate === 'function') {
-        lastUpdated = date.toDate();
-      } else if (typeof date.seconds === 'number') {
-        lastUpdated = new Date(date.seconds * 1000);
-      } else {
-        lastUpdated = new Date(date);
-      }
-    } else {
-      lastUpdated = undefined;
+  private getFirestoreDate(date: unknown): Date | undefined {
+    if (date == null) {
+      return undefined;
     }
-    return lastUpdated;
+
+    // Firestore Timestamp-like object: { toDate(): Date }
+    if (
+      typeof date === 'object' &&
+      date !== null &&
+      'toDate' in date &&
+      typeof (date as { toDate: unknown }).toDate === 'function'
+    ) {
+      const converted = (date as { toDate: () => unknown }).toDate();
+      if (converted instanceof Date && !Number.isNaN(converted.getTime())) {
+        return converted;
+      } else {
+        return undefined;
+      }
+    }
+
+    // Firestore Timestamp-like object: { seconds: number }
+    if (
+      typeof date === 'object' &&
+      date !== null &&
+      'seconds' in date &&
+      typeof (date as { seconds: unknown }).seconds === 'number'
+    ) {
+      const fromSeconds = new Date(
+        (date as { seconds: number }).seconds * 1000
+      );
+      return Number.isNaN(fromSeconds.getTime()) ? undefined : fromSeconds;
+    }
+
+    // Fallback for ISO/date strings, numbers, Date, etc.
+    const parsed = new Date(date as string | number | Date);
+    return Number.isNaN(parsed.getTime()) ? undefined : parsed;
   }
 }

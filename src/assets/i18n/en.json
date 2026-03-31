@@ -66,6 +66,7 @@
         "NO_TEXT_OR_LANGUAGES": "No text or target language(s) selected for translation.",
         "ERROR": "Error during translation. Please try again.",
         "ERROR_ADDING_USER": "Error adding user. Please try again.",
+        "ERROR_LOADING_USERS": "Error loading users. Please try again.",
         "ERROR_UPDATING_PROGRAMMER_DEVICES": "Error updating programmer devices. Please try again.",
         "ERROR_GETTING_PROGRAMMER_DEVICES": "Error getting programmer devices. Please try again.",
         "ERROR_GETTING_PROGRAMMER_DEVICE_STATUS": "Error getting programmer device status. Please try again."
@@ -243,7 +244,7 @@
             "DEVICE_PLATFORM": "Device Platform",
             "NATIVE": "Mobile/Tablet",
             "DEVICE": "Device",
-            "MODEL": "Model",
+            "MODEL": "Model"
           }
         },
         "TRANSLATION_STATISTICS": {

@@ -5,12 +5,12 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils-service.js';
+import { FirebaseFirestoreUtilsService } from './firebase-firestore-utils.service.js';
 import {
   SecureTranslateData,
   TranslationResult,
 } from './shared/firebase-firestore.interfaces.js';
-import { FirebaseFirestoreService } from './firebase-firestore-service.js';
+import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,14 +28,13 @@ export const secureTranslate = onCall(
   { secrets: [GOOGLE_TRANSLATE_API_KEY] },
   async (request) => {
     const { data, auth } = request;
-    const { text, baseLang, selectedLanguages } =
-      data as SecureTranslateData;
+    const { text, baseLang, selectedLanguages } = data as SecureTranslateData;
 
     await validateSecureTranslateRequest(
       auth,
       text,
       baseLang,
-      selectedLanguages,
+      selectedLanguages
     );
 
     await FirebaseFirestoreUtilsService.validateContingentOrThrow(auth!.uid);
@@ -49,10 +48,10 @@ export const secureTranslate = onCall(
     const translationResult = await translateTextOrThrow(
       text,
       baseLang,
-      selectedLanguages,
+      selectedLanguages
     );
     return translationResult;
-  },
+  }
 );
 
 /**
@@ -63,7 +62,7 @@ async function validateSecureTranslateRequest(
   auth: any,
   text: string,
   baseLang: string,
-  selectedLanguages: string[],
+  selectedLanguages: string[]
 ): Promise<void> {
   if (!auth) {
     throw new HttpsError('unauthenticated', 'User must be authenticated.');
@@ -84,7 +83,7 @@ async function validateSecureTranslateRequest(
 async function translateTextOrThrow(
   text: string,
   baseLang: string,
-  selectedLanguages: string[],
+  selectedLanguages: string[]
 ): Promise<TranslationResult> {
   const apiKey =
     GOOGLE_TRANSLATE_API_KEY.value() || process.env.GOOGLE_TRANSLATE_API_KEY;
@@ -109,7 +108,7 @@ async function translateTextOrThrow(
     if (!response.ok) {
       throw new HttpsError(
         'internal',
-        `Translation API error: ${response.statusText}`,
+        `Translation API error: ${response.statusText}`
       );
     }
     const respData: any = await response.json();

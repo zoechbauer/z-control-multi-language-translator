@@ -1,5 +1,5 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { FirebaseFirestoreService } from './firebase-firestore-service.js';
+import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 import { getErrorMsg } from './utils.js';
 
 /**
