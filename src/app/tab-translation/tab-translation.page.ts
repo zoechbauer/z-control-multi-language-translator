@@ -116,10 +116,11 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   get showTranslationResultEnteredTextCard(): boolean {
-    return (
-      this.cardResultsVisible &&
-      (!this.utilsService.isNative || this.utilsService.isPortrait)
-    );
+    if (!this.cardResultsVisible) return false;
+    if (this.utilsService.isSmallDevice) {
+      return this.utilsService.isPortrait;
+    }
+    return true;
   }
 
   get deviceInfos(): DeviceInfo {
@@ -279,7 +280,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   getTextareaRows(): string {
-    return this.utilsService.isNative && this.utilsService.isPortrait
+    return this.utilsService.isSmallScreen
       ? '4'
       : '2';
   }
@@ -320,6 +321,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.text = '';
     this.cardInputVisible = true;
     this.cardResultsVisible = false;
+    this.speakBtnDisabled = false;
   }
 
   private disableFormControls(): void {

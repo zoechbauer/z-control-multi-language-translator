@@ -2,6 +2,19 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.8] – YYYY-MM-DD
+
+### ✨ New Features
+
+- Achieved 100% statement coverage for the translation page and user detail components with comprehensive unit tests, ensuring robust code quality and reliability.
+- Added a new `isSmallDevice` method to UtilsService for more accurate device detection, enhancing responsive design across all screen sizes and orientations. Thorough unit tests were included for this method.
+
+### 🚀 Improvements
+
+- Enhanced the `isSmallDevice` logic for better small screen detection, further improving app responsiveness on all devices and orientations.
+- Increased textarea height on small devices in portrait mode for improved usability and easier text entry.
+- The translation input card now automatically hides on small devices in landscape mode to maximize space for results, while remaining visible in portrait mode. This applies to both native and web platforms.
+
 ## [1.7] – 2025-03-31
 
 ### ✨ New Features
@@ -11,7 +24,6 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 - Added `firebase-firestore-auth-wrapper.service.ts` to improve authentication handling and test coverage.
 - Updated app title and favicon to "z-control Translator" for improved brand consistency and recognition.
 - Added developer documentation for unit testing with Angular, including a quick-start reference for running tests and a curated list of tutorials and learning resources.
-
 
 ### 🚀 Improvements
 

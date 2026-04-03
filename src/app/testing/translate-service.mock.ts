@@ -3,6 +3,8 @@ import { of } from 'rxjs';
 export function createTranslateServiceMock() {
   return {
     instant: jasmine.createSpy('instant').and.callFake((key: any) => key),
+    use: jasmine.createSpy('use'),
+    setDefaultLang: jasmine.createSpy('setDefaultLang'),
     get: jasmine.createSpy('get').and.callFake((key: any) => of(key)),
     stream: jasmine.createSpy('stream').and.callFake((key: any) => of(key)),
     getParsedResult: jasmine

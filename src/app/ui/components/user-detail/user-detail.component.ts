@@ -17,7 +17,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.interfaces';
 import { UtilsService } from 'src/app/services/utils.service';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
 import { DisplayMode } from 'src/app/shared/enums';
 
@@ -49,11 +48,10 @@ export class UserDetailComponent implements OnInit {
   targetLanguagesDisplay: string = '';
 
   constructor(
-    public readonly localStorage: LocalStorageService,
     public translate: TranslateService,
-    private readonly googleTranslateSevervice: TranslationGoogleTranslateService,
+    private readonly googleTranslateService: TranslationGoogleTranslateService,
     private readonly modalCtrl: ModalController,
-    private readonly utilsService: UtilsService,
+    private readonly utilsService: UtilsService
   ) {}
 
   ngOnInit() {
@@ -76,14 +74,14 @@ export class UserDetailComponent implements OnInit {
 
   getDisplayedPlatform(): string {
     const platform = this.userStatistic.displayedPlatform;
-    return platform === "native" ? `${platform} - Android App` : platform;
+    return platform === 'native' ? `${platform} - Android App` : platform;
   }
 
   private async getTargetLanguagesWithLineBreak(): Promise<void> {
     this.targetLanguagesDisplay =
-      await this.googleTranslateSevervice.getFormattedTargetLanguageNamesForCodes(
+      await this.googleTranslateService.getFormattedTargetLanguageNamesForCodes(
         this.lang,
-        this.userStatistic.targetLanguages,
+        this.userStatistic.targetLanguages
       );
   }
 }

@@ -63,11 +63,12 @@ export class UtilsService {
   }
 
   /**
-   * Returns true if the device is a small device (mobile, short height, portrait).
+   * Returns true if the device is a small device (short height, short width).
    */
   get isSmallDevice(): boolean {
     const isMobileHeight = window.innerHeight <= 640;
-    return isMobileHeight && this.isPortrait;
+    const isMobileWidth = window.innerWidth <= 768;
+    return isMobileHeight && isMobileWidth;
   }
 
   /**

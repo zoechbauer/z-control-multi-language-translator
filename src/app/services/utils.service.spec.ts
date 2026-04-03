@@ -91,10 +91,25 @@ describe('UtilsService', () => {
       expect(service.isSmallScreen).toBeTrue();
     });
 
-    it('should return false for isSmallDevice on landscape', () => {
+    it('should return false for isSmallDevice on landscape and large width', () => {
       spyOnProperty(globalThis, 'innerHeight', 'get').and.returnValue(600);
+      spyOnProperty(globalThis, 'innerWidth', 'get').and.returnValue(800);
       spyOnProperty(service, 'isPortrait', 'get').and.returnValue(false);
       expect(service.isSmallDevice).toBeFalse();
+    });
+
+    it('should return false for isSmallDevice on portrait and large height', () => {
+      spyOnProperty(globalThis, 'innerHeight', 'get').and.returnValue(800);
+      spyOnProperty(globalThis, 'innerWidth', 'get').and.returnValue(700);
+      spyOnProperty(service, 'isPortrait', 'get').and.returnValue(true);
+      expect(service.isSmallDevice).toBeFalse();
+    });
+
+    it('should return true for isSmallDevice on portrait', () => {
+      spyOnProperty(globalThis, 'innerHeight', 'get').and.returnValue(640);
+      spyOnProperty(globalThis, 'innerWidth', 'get').and.returnValue(768);
+      spyOnProperty(service, 'isPortrait', 'get').and.returnValue(true);
+      expect(service.isSmallDevice).toBeTrue();
     });
   });
 
