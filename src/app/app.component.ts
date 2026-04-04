@@ -11,6 +11,7 @@ import { FirebaseFirestoreService } from './services/firebase-firestore.service'
 import { TextSpeechService } from './services/text-to-speech.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
+import { CapacitorPlatformService } from './services/capacitor-platform.service';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,8 @@ export class AppComponent implements OnInit {
     private readonly systemBars: SystemBarsService,
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly textSpeechService: TextSpeechService,
-    private readonly localStorageService: LocalStorageService
+    private readonly localStorageService: LocalStorageService,
+    private readonly capacitorPlatformService: CapacitorPlatformService
   ) {}
 
   ngOnInit() {
@@ -40,14 +42,14 @@ export class AppComponent implements OnInit {
     if (this.isNativeApp) {
       this.renderer.addClass(document.body, 'native-app');
 
-      await SplashScreen.hide();
-      await StatusBar.setOverlaysWebView({ overlay: false });
+      await this.capacitorPlatformService.hideSplashScreen();
+      await this.capacitorPlatformService.setStatusBarOverlay(false);
       this.safeAreaInsets.setSafeAreaInsetsFix();
 
       const isDarkMode = await this.systemBars.getCurrentIsDarkMode();
       await this.systemBars.setBars(isDarkMode);
 
-      await StatusBar.show();
+      await this.capacitorPlatformService.showStatusBar();
     } else {
       this.renderer.addClass(document.body, 'web-app');
     }

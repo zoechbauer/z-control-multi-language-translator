@@ -1,12 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SystemBarsService } from './system-bars.service';
+import { STATUS_BAR, NAVIGATION_BAR } from './capacitor-tokens';
 
 describe('SystemBarsService', () => {
   let service: SystemBarsService;
+  let statusBarMock: any;
+  let navigationBarMock: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    statusBarMock = {
+      setBackgroundColor: jasmine
+        .createSpy('setBackgroundColor')
+        .and.returnValue(Promise.resolve()),
+      setStyle: jasmine
+        .createSpy('setStyle')
+        .and.returnValue(Promise.resolve()),
+    };
+
+    navigationBarMock = {
+      setNavigationBarColor: jasmine
+        .createSpy('setNavigationBarColor')
+        .and.returnValue(Promise.resolve()),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: STATUS_BAR, useValue: statusBarMock },
+        { provide: NAVIGATION_BAR, useValue: navigationBarMock },
+      ],
+    });
     service = TestBed.inject(SystemBarsService);
   });
 
@@ -43,39 +66,42 @@ describe('SystemBarsService', () => {
   });
 
   describe('setBars', () => {
-    let setBackgroundColorSpy: jasmine.Spy;
-    let setStyleSpy: jasmine.Spy;
-    let setNavigationBarColorSpy: jasmine.Spy;
+    // TODO delete
+    // let setBackgroundColorSpy: jasmine.Spy;
+    // let setStyleSpy: jasmine.Spy;
+    // let setNavigationBarColorSpy: jasmine.Spy;
 
     beforeEach(() => {
-      setBackgroundColorSpy = jasmine
-        .createSpy('setBackgroundColor')
-        .and.returnValue(Promise.resolve());
+      spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('TestAgent');
+      // TODO delete
+      // setBackgroundColorSpy = jasmine
+      //   .createSpy('setBackgroundColor')
+      //   .and.returnValue(Promise.resolve());
 
-      setStyleSpy = jasmine
-        .createSpy('setStyle')
-        .and.returnValue(Promise.resolve());
+      // setStyleSpy = jasmine
+      //   .createSpy('setStyle')
+      //   .and.returnValue(Promise.resolve());
 
-      setNavigationBarColorSpy = jasmine
-        .createSpy('setNavigationBarColor')
-        .and.returnValue(Promise.resolve());
+      // setNavigationBarColorSpy = jasmine
+      //   .createSpy('setNavigationBarColor')
+      //   .and.returnValue(Promise.resolve());
 
-      spyOn<any>(service, 'getStatusBar').and.returnValue({
-        setBackgroundColor: setBackgroundColorSpy,
-        setStyle: setStyleSpy,
-      });
+      // spyOn<any>(service, 'getStatusBar').and.returnValue({
+      //   setBackgroundColor: setBackgroundColorSpy,
+      //   setStyle: setStyleSpy,
+      // });
 
-      spyOn<any>(service, 'getNavigationBar').and.returnValue({
-        setNavigationBarColor: setNavigationBarColorSpy,
-      });
+      // spyOn<any>(service, 'getNavigationBar').and.returnValue({
+      //   setNavigationBarColor: setNavigationBarColorSpy,
+      // });
     });
 
     it('sets dark mode bars', async () => {
       await service.setBars(true);
 
-      expect(setBackgroundColorSpy).toHaveBeenCalledWith({ color: '#000000' });
-      expect(setStyleSpy).toHaveBeenCalledWith({ style: jasmine.anything() });
-      expect(setNavigationBarColorSpy).toHaveBeenCalledWith({
+      expect(statusBarMock.setBackgroundColor).toHaveBeenCalledWith({ color: '#000000' });
+      expect(statusBarMock.setStyle).toHaveBeenCalledWith({ style: jasmine.anything() });
+      expect(navigationBarMock.setNavigationBarColor).toHaveBeenCalledWith({
         color: jasmine.anything(),
         darkButtons: false,
       });
@@ -84,24 +110,25 @@ describe('SystemBarsService', () => {
     it('sets light mode bars', async () => {
       await service.setBars(false);
 
-      expect(setBackgroundColorSpy).toHaveBeenCalledWith({ color: '#3880ff' });
-      expect(setStyleSpy).toHaveBeenCalledWith({ style: jasmine.anything() });
-      expect(setNavigationBarColorSpy).toHaveBeenCalledWith({
+      expect(statusBarMock.setBackgroundColor).toHaveBeenCalledWith({ color: '#3880ff' });
+      expect(statusBarMock.setStyle).toHaveBeenCalledWith({ style: jasmine.anything() });
+      expect(navigationBarMock.setNavigationBarColor).toHaveBeenCalledWith({
         color: jasmine.anything(),
         darkButtons: true,
       });
     });
 
     it('uses dark style override for Samsung SM-A models', async () => {
-      spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('SM-A336B');
+      (Object.getOwnPropertyDescriptor(navigator, 'userAgent')!.get as jasmine.Spy).and.returnValue('SM-A336B');
+
 
       await service.setBars(false);
 
-      expect(setStyleSpy).toHaveBeenCalledWith({ style: jasmine.anything() });
+      expect(statusBarMock.setStyle).toHaveBeenCalledWith({ style: jasmine.anything() });
     });
 
     it('rejects when status bar call fails', async () => {
-      setStyleSpy.and.returnValue(Promise.reject(new Error('status fail')));
+      statusBarMock.setStyle.and.returnValue(Promise.reject(new Error('status fail')));
 
       await expectAsync(service.setBars(true)).toBeRejectedWithError(
         'status fail'

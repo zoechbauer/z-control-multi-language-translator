@@ -11,8 +11,12 @@ import { FirebaseFirestoreService } from './services/firebase-firestore.service'
 import { TextSpeechService } from './services/text-to-speech.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { createTranslateServiceMock } from './testing/translate-service.mock';
+import { CapacitorPlatformService } from './services/capacitor-platform.service';
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: any;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
@@ -53,14 +57,68 @@ describe('AppComponent', () => {
             loadTargetLanguages: jasmine.createSpy('loadTargetLanguages'),
           },
         },
+        {
+          provide: CapacitorPlatformService,
+          useValue: {
+            hideSplashScreen: jasmine
+              .createSpy('hideSplashScreen')
+              .and.resolveTo(undefined),
+            setStatusBarOverlay: jasmine
+              .createSpy('setStatusBarOverlay')
+              .and.resolveTo(undefined),
+            showStatusBar: jasmine
+              .createSpy('showStatusBar')
+              .and.resolveTo(undefined),
+          },
+        },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
+
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  describe('ngOnInit', () => {
+    it('should call initializeApp', () => {
+      spyOn(component, 'initializeApp');
+      component.ngOnInit();
+      expect(component.initializeApp).toHaveBeenCalled();
+    });
+  });
+
+  describe('initializeApp', () => {
+    it('should initialize services and set system bars for native app', async () => {
+      component.isNativeApp = true;
+
+      const safeAreaInsetsService = TestBed.inject(
+        SafeAreaInsetsService
+      ) as jasmine.SpyObj<SafeAreaInsetsService>;
+      const systemBarsService = TestBed.inject(
+        SystemBarsService
+      ) as jasmine.SpyObj<SystemBarsService>;
+      const firestoreService = TestBed.inject(
+        FirebaseFirestoreService
+      ) as jasmine.SpyObj<FirebaseFirestoreService>;
+      const textSpeechService = TestBed.inject(
+        TextSpeechService
+      ) as jasmine.SpyObj<TextSpeechService>;
+      const localStorageService = TestBed.inject(LocalStorageService) as any;
+
+      await component.initializeApp();
+
+      expect(safeAreaInsetsService.setSafeAreaInsetsFix).toHaveBeenCalled();
+      expect(systemBarsService.getCurrentIsDarkMode).toHaveBeenCalled();
+      expect(systemBarsService.setBars).toHaveBeenCalled();
+      expect(firestoreService.init).toHaveBeenCalled();
+      expect(textSpeechService.init).toHaveBeenCalled();
+      expect(localStorageService.initializeServicesAsync).toHaveBeenCalled();
+    });
   });
 });

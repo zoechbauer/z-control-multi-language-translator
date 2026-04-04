@@ -6,8 +6,9 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
-- Achieved 100% statement coverage for the translation page and user detail components with comprehensive unit tests, ensuring robust code quality and reliability.
+- Added comprehensive unit tests for the Translation page, Settings page, Footer, AppComponent, and User Detail components, significantly improving code quality, reliability, and test coverage across the app.
 - Added a new `isSmallDevice` method to UtilsService for more accurate device detection, enhancing responsive design across all screen sizes and orientations. Thorough unit tests were included for this method.
+- Added CapacitorPlatformService to provide a unified interface for platform detection across the app, improving maintainability and testability.
 
 ### 🚀 Improvements
 

@@ -5,35 +5,13 @@ import { HeaderComponent } from './header.component';
 import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Tab } from 'src/app/shared/enums';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  const translateServiceSpy = jasmine.createSpyObj('TranslateService', [
-    'instant',
-    'get',
-    'transform',
-    'stream',
-    'getCurrentLang',
-    'getFallbackLang',
-    'getParsedResult',
-  ]);
-  translateServiceSpy.stream.and.returnValue(of(''));
-  translateServiceSpy.get.and.returnValue(of(''));
-  translateServiceSpy.transform.and.returnValue(of(''));
-  translateServiceSpy.getCurrentLang.and.returnValue('en');
-  translateServiceSpy.getFallbackLang.and.returnValue('en');
-  translateServiceSpy.getParsedResult.and.returnValue('');
-  Object.defineProperty(translateServiceSpy, 'onTranslationChange', {
-    get: () => of({ lang: 'en', translations: {} }),
-  });
-  Object.defineProperty(translateServiceSpy, 'onLangChange', {
-    get: () => of({ lang: 'en', translations: {} }),
-  });
-  Object.defineProperty(translateServiceSpy, 'onFallbackLangChange', {
-    get: () => of({ lang: 'en', translations: {} }),
-  });
+  
   const modalControllerSpy = jasmine.createSpyObj('ModalController', [
     'create',
   ]);
@@ -58,7 +36,7 @@ describe('HeaderComponent', () => {
       declarations: [],
       imports: [IonicModule.forRoot(), HeaderComponent],
       providers: [
-        { provide: TranslateService, useValue: translateServiceSpy },
+        { provide: TranslateService, useValue: createTranslateServiceMock() },
         { provide: ModalController, useValue: modalControllerSpy },
         { provide: UtilsService, useValue: utilsServiceMock },
       ],

@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import {
-  NavigationBar,
-  NavigationBarColor,
-} from '@capgo/capacitor-navigation-bar';
+import { Inject, Injectable } from '@angular/core';
+import { Style } from '@capacitor/status-bar';
+import { NavigationBarColor } from '@capgo/capacitor-navigation-bar';
+
+import { STATUS_BAR, NAVIGATION_BAR } from './capacitor-tokens';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +10,11 @@ import {
 export class SystemBarsService {
   private readonly lightBgColor = '#3880ff';
   private readonly darkBgColor = '#000000';
+
+  constructor(
+    @Inject(STATUS_BAR) private readonly statusBar: any,
+    @Inject(NAVIGATION_BAR) private readonly navigationBar: any
+  ) {}
 
   // Only specific Samsung models need a status style override.
   // J5 is intentionally excluded because it works with the default mode-based logic.
@@ -36,22 +40,14 @@ export class SystemBarsService {
     const navDarkButtons = !isDarkMode;
 
     // StatusBar
-    await this.getStatusBar().setBackgroundColor({ color: bgColor });
-    await this.getStatusBar().setStyle({ style: statusStyle });
+    await this.statusBar.setBackgroundColor({ color: bgColor });
+    await this.statusBar.setStyle({ style: statusStyle });
 
     // NavigationBar
-    await this.getNavigationBar().setNavigationBarColor({
+    await this.navigationBar.setNavigationBarColor({
       color: isDarkMode ? NavigationBarColor.BLACK : NavigationBarColor.WHITE,
       darkButtons: navDarkButtons,
     });
-  }
-
-  private getStatusBar() {
-    return StatusBar;
-  }
-
-  private getNavigationBar() {
-    return NavigationBar;
   }
 
   /**
