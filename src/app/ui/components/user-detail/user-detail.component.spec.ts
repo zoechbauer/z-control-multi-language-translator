@@ -21,6 +21,7 @@ describe('UserDetailComponent (unit)', () => {
   let fixture: ComponentFixture<UserDetailComponent>;
   let translateSpy: jasmine.SpyObj<TranslationGoogleTranslateService>;
   let mockTranslateService: jasmine.SpyObj<TranslateService>;
+  let utilsServiceSpy: jasmine.SpyObj<UtilsService>;
 
   function getDisplayedUserStatistic(): any {
     return {
@@ -50,6 +51,14 @@ describe('UserDetailComponent (unit)', () => {
   }
 
   beforeEach(waitForAsync(() => {
+    utilsServiceSpy = jasmine.createSpyObj(
+      'UtilsService',
+      ['formatDateTimeISO', 'formatDateISO'],
+      {
+        isPortrait: true,
+        isNative: false,
+      }
+    );
     translateSpy = jasmine.createSpyObj('TranslationGoogleTranslateService', [
       'getBaseLanguageName',
       'getFormattedTargetLanguageNamesForCodes',
@@ -77,13 +86,7 @@ describe('UserDetailComponent (unit)', () => {
         },
         {
           provide: UtilsService,
-          useValue: {
-            isPortrait: true,
-            isNative: false,
-            formatDateTimeISO: jasmine
-              .createSpy('formatDateTimeISO')
-              .and.returnValue('2026-03-09 00:00'),
-          },
+          useValue: utilsServiceSpy,
         },
       ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -152,19 +155,61 @@ describe('UserDetailComponent (unit)', () => {
     });
   });
 
-  describe('getFormatDateTime()', () => {
-    it('should return formatted date/time string when dateTime is provided', () => {
-      const dateTime = new Date('2026-03-09T00:00:00Z');
-      const formattedDateTime = '2026-03-09 00:00';
-      (
-        component['utilsService'].formatDateTimeISO as jasmine.Spy
-      ).and.returnValue(formattedDateTime);
-      expect(component.getFormatDateTime(dateTime)).toBe(formattedDateTime);
+  describe('formatDateTimeISO()', () => {
+    beforeEach(() => {
+      utilsServiceSpy.formatDateTimeISO.calls.reset();
+      component.displayMode = DisplayMode.Programmer;
     });
 
-    it('should return empty string when dateTime is null', () => {
-      const dateTime = null;
-      expect(component.getFormatDateTime(dateTime)).toBe('');
+    it('should call UtilsService.formatDateTimeISO when dateTime is valid', () => {
+      component.getFormatDateTime(new Date('2026-03-09T00:00:00Z'));
+      expect(utilsServiceSpy.formatDateTimeISO).toHaveBeenCalledWith(
+        new Date('2026-03-09T00:00:00Z')
+      );
+    });
+
+    it('should call UtilsService.formatDateTimeISO when dateTime is invalid', () => {
+      component.getFormatDateTime(new Date('invalid-date'));
+
+      expect(utilsServiceSpy.formatDateTimeISO).toHaveBeenCalled();
+      const callArg =
+        utilsServiceSpy.formatDateTimeISO.calls.mostRecent().args[0];
+      expect(callArg instanceof Date).toBeTrue();
+      expect(Number.isNaN(callArg!.getTime())).toBeTrue(); // Invalid Date
+    });
+
+    it('should call UtilsService.formatDateTimeISO when dateTime is null', () => {
+      component.getFormatDateTime(null);
+      expect(utilsServiceSpy.formatDateTimeISO).toHaveBeenCalledWith(null);
+    });
+  });
+
+  describe('formatDateISO()', () => {
+    beforeEach(() => {
+      utilsServiceSpy.formatDateISO.calls.reset();
+      component.displayMode = DisplayMode.User;
+    });
+
+    it('should call UtilsService.formatDateISO when dateTime is valid', () => {
+      component.getFormatDateTime(new Date('2026-03-09T00:00:00Z'));
+      expect(utilsServiceSpy.formatDateISO).toHaveBeenCalledWith(
+        new Date('2026-03-09T00:00:00Z')
+      );
+    });
+
+    it('should call UtilsService.formatDateISO when dateTime is invalid', () => {
+      component.getFormatDateTime(new Date('invalid-date'));
+
+      expect(utilsServiceSpy.formatDateISO).toHaveBeenCalled();
+      const callArg =
+        utilsServiceSpy.formatDateISO.calls.mostRecent().args[0];
+      expect(callArg instanceof Date).toBeTrue();
+      expect(Number.isNaN(callArg!.getTime())).toBeTrue(); // Invalid Date
+    });
+
+    it('should call UtilsService.formatDateISO when dateTime is null', () => {
+      component.getFormatDateTime(null);
+      expect(utilsServiceSpy.formatDateISO).toHaveBeenCalledWith(null);
     });
   });
 });

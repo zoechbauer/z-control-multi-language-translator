@@ -6,15 +6,16 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
-- Added comprehensive unit tests for the Translation page, Settings page, Footer, AppComponent, and User Detail components, significantly improving code quality, reliability, and test coverage across the app.
-- Added a new `isSmallDevice` method to UtilsService for more accurate device detection, enhancing responsive design across all screen sizes and orientations. Thorough unit tests were included for this method.
-- Added CapacitorPlatformService to provide a unified interface for platform detection across the app, improving maintainability and testability.
+- Added comprehensive unit tests for the Translation page, Settings page, Footer, AppComponent, User Detail, Get Statistics, and User Statistics components, significantly boosting code quality, reliability, and test coverage across the app.
+- Introduced a new `isSmallDevice` method in UtilsService for more accurate device detection, enhancing responsive design on all screen sizes and orientations. This method is fully covered by unit tests.
+- Added `CapacitorPlatformService` to provide a unified interface for platform detection, improving both maintainability and testability.
 
 ### 🚀 Improvements
 
-- Enhanced the `isSmallDevice` logic for better small screen detection, further improving app responsiveness on all devices and orientations.
-- Increased textarea height on small devices in portrait mode for improved usability and easier text entry.
-- The translation input card now automatically hides on small devices in landscape mode to maximize space for results, while remaining visible in portrait mode. This applies to both native and web platforms.
+- Refined the `isSmallDevice` logic for more precise small screen detection, further enhancing app responsiveness on all devices and orientations.
+- Increased textarea height on small devices in portrait mode for better usability and easier text entry.
+- The translation input card now automatically hides on small devices in landscape mode to maximize space for results, while remaining visible in portrait mode on both native and web platforms.
+- Moved date formatting and validation logic from components to UtilsService for better separation of concerns and testability, with comprehensive unit tests added for all date formatting functions.
 
 ## [1.7] – 2025-03-31
 

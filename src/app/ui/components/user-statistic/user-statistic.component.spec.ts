@@ -11,8 +11,18 @@ import { createTranslateServiceMock } from 'src/app/testing/translate-service.mo
 describe('UserStatisticComponent', () => {
   let component: UserStatisticComponent;
   let fixture: ComponentFixture<UserStatisticComponent>;
+  let utilsServiceSpy: jasmine.SpyObj<UtilsService>;
 
   beforeEach(waitForAsync(() => {
+    utilsServiceSpy = jasmine.createSpyObj(
+      'UtilsService',
+      ['formatDateTimeISO'],
+      {
+        isPortrait: true,
+        isNative: false,
+      }
+    );
+
     TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), UserStatisticComponent],
       providers: [
@@ -34,13 +44,7 @@ describe('UserStatisticComponent', () => {
         },
         {
           provide: UtilsService,
-          useValue: {
-            isPortrait: true,
-            isNative: false,
-            formatDateTimeISO: jasmine
-              .createSpy('formatDateTimeISO')
-              .and.returnValue('2026-03-09 00:00'),
-          },
+          useValue: utilsServiceSpy,
         },
       ],
     }).compileComponents();
@@ -52,5 +56,38 @@ describe('UserStatisticComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should unsubscribe from all subscriptions on destroy', () => {
+    const subscription1 = jasmine.createSpyObj('Subscription', ['unsubscribe']);
+    const subscription2 = jasmine.createSpyObj('Subscription', ['unsubscribe']);
+    Object.defineProperty(component, 'subscriptions', {
+      value: [subscription1, subscription2],
+    });
+
+    component.ngOnDestroy();
+
+    expect(subscription1.unsubscribe).toHaveBeenCalled();
+    expect(subscription2.unsubscribe).toHaveBeenCalled();
+  });
+
+  describe('hideColumn', () => {
+    it('should hide column when device is portrait and native', () => {
+      Object.defineProperty(utilsServiceSpy, 'isPortrait', { value: true });
+      Object.defineProperty(utilsServiceSpy, 'isNative', { value: true });
+      expect(component.hideColumn).toBeTrue();
+    });
+
+    it('should not hide column when device is not portrait', () => {
+      Object.defineProperty(utilsServiceSpy, 'isPortrait', { value: false });
+      Object.defineProperty(utilsServiceSpy, 'isNative', { value: true });
+      expect(component.hideColumn).toBeFalse();
+    });
+
+    it('should not hide column when device is not native', () => {
+      Object.defineProperty(utilsServiceSpy, 'isPortrait', { value: true });
+      Object.defineProperty(utilsServiceSpy, 'isNative', { value: false });
+      expect(component.hideColumn).toBeFalse();
+    });
   });
 });

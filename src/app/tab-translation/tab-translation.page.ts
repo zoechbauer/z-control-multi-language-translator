@@ -208,7 +208,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
 
       this.toggleCard();
     } catch (error: any) {
-      console.error('Translation error:', error); // TODO test
       if (error?.message?.includes('contingent')) {
         this.simulateTranslationOnContingentExceeded();
         this.toggleCard();

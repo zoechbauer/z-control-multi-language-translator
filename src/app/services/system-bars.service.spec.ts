@@ -66,34 +66,9 @@ describe('SystemBarsService', () => {
   });
 
   describe('setBars', () => {
-    // TODO delete
-    // let setBackgroundColorSpy: jasmine.Spy;
-    // let setStyleSpy: jasmine.Spy;
-    // let setNavigationBarColorSpy: jasmine.Spy;
 
     beforeEach(() => {
       spyOnProperty(navigator, 'userAgent', 'get').and.returnValue('TestAgent');
-      // TODO delete
-      // setBackgroundColorSpy = jasmine
-      //   .createSpy('setBackgroundColor')
-      //   .and.returnValue(Promise.resolve());
-
-      // setStyleSpy = jasmine
-      //   .createSpy('setStyle')
-      //   .and.returnValue(Promise.resolve());
-
-      // setNavigationBarColorSpy = jasmine
-      //   .createSpy('setNavigationBarColor')
-      //   .and.returnValue(Promise.resolve());
-
-      // spyOn<any>(service, 'getStatusBar').and.returnValue({
-      //   setBackgroundColor: setBackgroundColorSpy,
-      //   setStyle: setStyleSpy,
-      // });
-
-      // spyOn<any>(service, 'getNavigationBar').and.returnValue({
-      //   setNavigationBarColor: setNavigationBarColorSpy,
-      // });
     });
 
     it('sets dark mode bars', async () => {

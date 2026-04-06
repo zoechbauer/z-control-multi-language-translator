@@ -6,11 +6,9 @@ import {
   IonCardTitle,
   IonCardContent,
   IonCard,
-  IonIcon,
   IonRow,
   IonGrid,
   IonCol,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { NgFor, NgIf, DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -23,11 +21,9 @@ import { FireStoreConstants } from 'src/app/shared/app.constants';
   templateUrl: './user-statistic.component.html',
   styleUrls: ['./user-statistic.component.scss'],
   imports: [
-    IonButton,
     IonGrid,
     IonCol,
     IonRow,
-    IonIcon,
     IonCard,
     IonCardContent,
     IonCardHeader,
@@ -73,12 +69,6 @@ export class UserStatisticComponent implements OnInit, OnDestroy {
   private async updateTranslationStatistics() {
     this.displayedContingentData =
       await this.firestoreUtilsService.getDisplayedUserContingentData();
-  }
-
-  getFormatDateTime(dateTime: Date | null): string {
-    return dateTime
-      ? this.utilsService.formatDateTimeISO(new Date(dateTime))
-      : '';
   }
 
   ngOnDestroy(): void {

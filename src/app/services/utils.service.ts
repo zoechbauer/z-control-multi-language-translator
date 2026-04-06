@@ -282,10 +282,15 @@ export class UtilsService {
 
   /**
    * Formats a Date object to an ISO-like string in the format 'YYYY-MM-DD'.
-   * @param date The date to format
-   * @returns The formatted date string
+   * @param date The date to format or null
+   * @returns The formatted date string or an empty string if date is null
    */
-  formatDateISO(date: Date): string {
+  formatDateISO(date: Date | null): string {
+    if (date == null) return '';
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+      console.error('Invalid date provided for formatting:', date);
+      return '';
+    }
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -294,10 +299,15 @@ export class UtilsService {
 
   /**
    * Formats a Date object to an ISO-like string in the format 'YYYY-MM-DD HH:mm'.
-   * @param date The date to format
-   * @returns The formatted date string
+   * @param date The date to format or null
+   * @returns The formatted date string or an empty string if formatting fails
    */
-  formatDateTimeISO(date: Date): string {
+  formatDateTimeISO(date: Date | null): string {
+    if (date == null) return '';
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+      console.error('Invalid date provided for formatting:', date);
+      return '';
+    }
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');

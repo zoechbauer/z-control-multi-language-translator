@@ -67,9 +67,11 @@ export class UserDetailComponent implements OnInit {
   }
 
   getFormatDateTime(dateTime: Date | null): string {
-    return dateTime
-      ? this.utilsService.formatDateTimeISO(new Date(dateTime))
-      : '';
+    if (this.displayMode === DisplayMode.Programmer) {
+      return this.utilsService.formatDateTimeISO(dateTime);
+    }
+
+    return this.utilsService.formatDateISO(dateTime);
   }
 
   getDisplayedPlatform(): string {

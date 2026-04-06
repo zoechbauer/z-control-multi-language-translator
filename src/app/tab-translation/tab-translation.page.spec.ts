@@ -238,7 +238,7 @@ describe('TabTranslationPage', () => {
       (console.error as jasmine.Spy).calls.reset();
     });
 
-    it('should log error and call simulateTranslationOnContingentExceeded if secureTranslateCloudFunction throws an error which includes contingent', async () => {
+    it('should not log error but call simulateTranslationOnContingentExceeded if secureTranslateCloudFunction throws an error which includes contingent', async () => {
       const consoleErrorSpy = spyOn(console, 'error');
       googleTranslateServiceSpy.secureTranslateCloudFunction.and.throwError(
         new Error('Translation contingent exceeded.')
@@ -248,10 +248,7 @@ describe('TabTranslationPage', () => {
 
       await component.translateTextOrSimulate();
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Translation error:',
-        new Error('Translation contingent exceeded.')
-      );
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
       expect(
         (component as any).simulateTranslationOnContingentExceeded
       ).toHaveBeenCalled();

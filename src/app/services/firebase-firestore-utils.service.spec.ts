@@ -872,7 +872,6 @@ describe('FirebaseFirestoreUtilsService', () => {
       // Filter for languages summary rows
       const targetLangRows = result.filter((s) => s.category === StatisticsSummaryCategory.Languages);
       expect(targetLangRows.length).toBe(5, 'targetLangRows.length');
-      console.log('targetLangRows:', targetLangRows);
 
       // Assert
       const targetLang1Row = targetLangRows.find((r) => r.name === '1');

@@ -67,7 +67,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
 
-  searchTerm = '';
+  searchTerm: string = '';
   platformFilter: 'all' | 'web' | 'native' = 'all';
   onlyExceeded = false;
 
@@ -167,6 +167,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.init();
+    this.setupSubscriptions();
+  }
+
+  private setupSubscriptions(): void {
     this.subscriptions.push(
       this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
         // Only reload if not currently loading
@@ -267,14 +271,12 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     this.utilsService.openUserDetail(lang, userStatistic, this.displayMode);
   }
 
-  getFormatDate(dateTime: Date | null): string {
+  getFormatDateTime(dateTime: Date | null): string {
     if (this.displayMode === DisplayMode.Programmer) {
-      return dateTime
-        ? this.utilsService.formatDateTimeISO(new Date(dateTime))
-        : '';
+      return this.utilsService.formatDateTimeISO(dateTime);
     }
 
-    return dateTime ? this.utilsService.formatDateISO(new Date(dateTime)) : '';
+    return this.utilsService.formatDateISO(dateTime);
   }
 
   ngOnDestroy(): void {

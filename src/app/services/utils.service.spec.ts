@@ -284,9 +284,71 @@ describe('UtilsService', () => {
       expect(result).toBe('2024-01-05');
     });
 
+    it('should return empty string and log error if date is invalid in formatDateISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateISO(new Date('invalid date'));
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        jasmine.any(Date)
+      );
+    });
+
+    it('should return empty string and log error if date is incomplete in formatDateISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateISO('2024-01' as unknown as Date);
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        '2024-01'
+      );
+    });
+
+    it('should return empty string but do not log error if date is null in formatDateISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateISO(null as unknown as Date);
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('DateTime formatting', () => {
     it('should format date to ISO date time string', () => {
       const result = service.formatDateTimeISO(new Date(2024, 0, 5, 9, 7));
       expect(result).toBe('2024-01-05 09:07');
+    });
+
+    it('should return empty string and log error if date is invalid in formatDateTimeISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeISO(new Date('invalid date'));
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        jasmine.any(Date)
+      );
+    });
+
+    it('should return empty string and log error if date is incomplete in formatDateTimeISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeISO('2024-01' as unknown as Date);
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        '2024-01'
+      );
+    });
+
+    it('should return empty string but do not log error if date is null in formatDateTimeISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeISO(null as unknown as Date);
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
 

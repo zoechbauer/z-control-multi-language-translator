@@ -89,7 +89,6 @@ describe('TabSettingsPage', () => {
     };
 
     const versionInfo = component.versionInfo;
-    console.log('Version Info:', versionInfo);
 
     expect(versionInfo).toBeDefined();
     expect(typeof versionInfo).toBe('string');
