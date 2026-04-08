@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { TranslateDefaultParser, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
 
 import { GetStatisticsComponent } from './get-statistics.component';
@@ -11,10 +11,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { DisplayMode } from 'src/app/shared/enums';
 import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 import { environment } from 'src/environments/environment';
-import {
-  DisplayedUserStatistics,
-  FirestoreContingentData,
-} from 'src/app/shared/firebase-firestore.interfaces';
+import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.interfaces';
 
 describe('GetStatisticsComponent', () => {
   let component: GetStatisticsComponent;

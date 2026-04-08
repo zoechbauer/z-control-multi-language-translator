@@ -12,6 +12,7 @@ import { HelpModalComponent } from './get-help.component';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { AppConstants } from 'src/app/shared/app.constants';
 
 describe('HelpModalComponent', () => {
   let component: HelpModalComponent;
@@ -265,6 +266,22 @@ describe('HelpModalComponent', () => {
       expect(component.languageChangeButtonHelpText).toBe('Translated Text');
       expect(mockTranslateService.instant).toHaveBeenCalledWith(
         'HELP_LANGUAGE_CHANGE_WEB_BUTTON'
+      );
+    });
+
+    it('should return max input length from AppConstants', () => {
+      expect(component.maxInputLength).toBe(AppConstants.maxInputLength);
+    });
+
+    it('should return max target languages from AppConstants', () => {
+      expect(component.maxTargetLanguages).toBe(
+        AppConstants.maxTargetLanguages
+      );
+    });
+
+    it('should return max free translate chars length per month from AppConstants', () => {
+      expect(component.maxFreeTranslateCharsLengthPerMonth).toBe(
+        AppConstants.maxFreeTranslateCharsPerMonth
       );
     });
   });

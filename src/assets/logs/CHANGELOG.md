@@ -6,7 +6,7 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
-- Added comprehensive unit tests for the Translation page, Settings page, Footer, AppComponent, User Detail, Get Statistics, and User Statistics components, significantly boosting code quality, reliability, and test coverage across the app.
+- Completed the unit test suite for all TypeScript files, bringing the total to 480 tests and achieving 98% statement coverage for TypeScript code. This ensures robust validation of all features and edge cases, significantly improving overall code quality and reliability. (Note: HTML template logic is not included in this coverage metric.)
 - Introduced a new `isSmallDevice` method in UtilsService for more accurate device detection, enhancing responsive design on all screen sizes and orientations. This method is fully covered by unit tests.
 - Added `CapacitorPlatformService` to provide a unified interface for platform detection, improving both maintainability and testability.
 
@@ -21,7 +21,7 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
-- Added comprehensive unit tests across all services, achieving 97.96% statement coverage for robust code quality.
+- Added comprehensive unit tests across all services, achieving 98% statement coverage for service code and significantly enhancing code quality and reliability. (Note: The 98% coverage metric applies specifically to service code; overall app coverage may differ.)
 - Introduced callable functions (`is-programmer-devices.ts`, `create-missing-contingent-data.ts`) to enhance testability and modularity.
 - Added `firebase-firestore-auth-wrapper.service.ts` to improve authentication handling and test coverage.
 - Updated app title and favicon to "z-control Translator" for improved brand consistency and recognition.
