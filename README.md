@@ -69,7 +69,9 @@ multi-language-translator/
 │   ├── standalone-config.md
 │   ├── text-to-speech-integration.md
 │   ├── todo-list.md
-│   └── why-use-runInInjectionContext.md
+│   ├── why-use-runInInjectionContext.md
+│   ├── unit-testing/
+│   └── upload-to-google-playstore/
 │
 ├── functions/                   # Firebase Cloud Functions (backend)
 │   ├── src/
@@ -220,6 +222,19 @@ ionic serve
 ```
 
 See [local-testing-guide-secureTranslate.md](docs/local-testing-guide-secureTranslate.md) for detailed instructions.
+
+### Testing
+
+```bash
+# Run unit tests
+npm test
+
+# Run tests in watch mode (recommended for development)
+npm run test:watch
+
+# Run tests with code coverage
+npm run test:coverage
+```
 
 ### Building for Android
 

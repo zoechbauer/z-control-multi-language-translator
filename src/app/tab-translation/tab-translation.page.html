@@ -30,6 +30,7 @@
       (keydown.enter)="toggleCard()"
       >{{ toggleButtonLabel }}</ion-button
     >
+    <app-spinner *ngIf="speakBtnDisabled"></app-spinner>
   </div>
   } @if(cardInputVisible) {
   <!-- show input card before translation results-->
@@ -87,6 +88,7 @@
       >{{ 'TRANSLATE.CARD.BUTTON.CLEAR' | translate }}</ion-button
     >
   </ion-card>
+  <app-spinner *ngIf="isLoading"></app-spinner>
   } @if(translations.length > 0 && showTranslationResultEnteredTextCard) {
   <!-- show translation results with entered text card before translation results-->
   <ion-card class="translation-results-card-entered-text" color="light">

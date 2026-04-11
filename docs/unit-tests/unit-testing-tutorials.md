@@ -99,8 +99,20 @@ Goal: Learn long-term testing strategy, architecture, and best practices.
 
 ---
 
-## Daily Routine (30-60 min)
+# Tips for Testing Templates
 
-1. Read one small section (15-20 min).
-2. Apply it in one real test file (20-30 min).
-3. Refactor one test for readability (10 min).
+### fixture.debugElement vs fixture.nativeElement
+
+- **fixture.nativeElement**
+  - Direct access to the component’s root DOM element.
+  - Use standard DOM APIs (e.g., `querySelector`) for simple queries and text assertions.
+  - Best for checking rendered HTML or text content.
+
+- **fixture.debugElement**
+  - Angular’s abstraction over the DOM, with richer querying (e.g., `By.css`, `By.directive`).
+  - Lets you access both the native DOM element (`.nativeElement`) and Angular-specific info (like `componentInstance`, event listeners, etc.).
+  - Best for querying Angular components/directives and for more robust, future-proof tests.
+
+**Best Practice:**  
+- Prefer `fixture.debugElement` for most Angular/Ionic component tests, especially when interacting with components, directives, or event bindings.
+- Use `fixture.nativeElement` for simple DOM/text assertions.

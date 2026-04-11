@@ -124,7 +124,7 @@
       <li>
         <strong>
           Shared free monthly quota:
-          {{ maxFreeTranslateCharsLengthPerMonth | number: "1.0-0" : "de" }}
+          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
           characters for all users.
         </strong>
         If this quota is exceeded, costs will be incurred for <i>z-control</i>.
@@ -391,6 +391,72 @@
       <h3 id="troubleshooting">Troubleshooting & Problem Solving</h3>
       <ul class="no-list-style">
         <li *ngIf="isNative">
+          <p>
+            <b>No speaker icon is shown for translated texts (mobile):</b>
+          </p>
+          <p>
+            Here, a <b>problem solution for Samsung phones</b> is described, as
+            the Samsung Text-to-Speech Engine is often used, which does not
+            support all languages.
+          </p>
+          <p>
+            If you use the <i>"Samsung Text-to-Speech Engine"</i>, only a few
+            languages are supported, and the speaker icon will only be displayed
+            for these languages. With the TTS engine
+            <i>"Google Speech Recognition and Synthesis"</i>
+            more languages are available, and the speaker icon will be displayed
+            for these languages.
+          </p>
+          <p><b>Example Samsung J5 (Android 9)</b></p>
+          <ol>
+            <li>Open your device's system settings</li>
+            <li>Go to "General management"</li>
+            <li>Tap on "Language and input"</li>
+            <li>Select the "Text to Speech" option</li>
+            <li>
+              Tap on "Preferred Engine" and select a TTS engine that supports
+              the desired languages, e.g.
+              <b>"Google Speech Recognition and Synthesis"</b>.
+            </li>
+            <li>
+              Then tap on "Language" in Text-to-Speech and select "Use system
+              language".
+            </li>
+          </ol>
+          <p><b>Example Samsung Tab A7 (Android 11)</b></p>
+          <ol>
+            <li>Open your device's system settings</li>
+            <li>Go to "General management"</li>
+            <li>Tap on "Text to Speech"</li>
+            <li>
+              Tap on "Preferred Engine" and select a TTS engine that supports
+              the desired languages, e.g.
+              <b>"Google Speech Recognition and Synthesis"</b>.
+            </li>
+            <li>
+              Then tap on "Language" in Text-to-Speech and select "Use system
+              language".
+            </li>
+          </ol>
+          <p><b>Example Samsung Galaxy A33 (Android 16)</b></p>
+          <ol>
+            <li>Open your device's system settings</li>
+            <li>Go to "Apps"</li>
+            <li>Tap on the "Bixby Vision" app</li>
+            <li>Tap on "Bixby Vision settings"</li>
+            <li>Tap on "Text-to-Speech settings"</li>
+            <li>
+              Tap on "Preferred Engine" and select a TTS engine that supports
+              the desired languages, e.g.
+              <b>"Google Speech Recognition and Synthesis"</b>.
+            </li>
+            <li>
+              Then tap on "Language" in Text-to-Speech and select "Use system
+              language".
+            </li>
+          </ol>
+        </li>
+        <li *ngIf="isNative">
           <p><b>No microphone is shown in the keyboard (mobile):</b></p>
           <p>
             Example: How to enable voice input on a Samsung Galaxy A33 device:
@@ -599,7 +665,7 @@
       <li>
         <strong>
           Gemeinsames kostenloses Monatskontingent:
-          {{ maxFreeTranslateCharsLengthPerMonth | number: "1.0-0" : "de" }}
+          {{ maxFreeTranslateCharsLengthPerMonth | number : "1.0-0" : "de" }}
           Zeichen für alle Nutzer.
         </strong>
         Wird dieses Kontingent überschritten, entstehen für
@@ -912,6 +978,75 @@
     <div>
       <h3 id="troubleshooting-DE">Fehlerbehebung & Problemlösung</h3>
       <ul class="no-list-style">
+        <li *ngIf="isNative">
+          <p>
+            <b
+              >Es wird kein Lautsprecher-Symbol bei den übersetzen Texten
+              angezeigt (Handy):</b
+            >
+          </p>
+          <p>
+            Hier wird eine <b>Problemlösung für Samsung Handies</b> beschrieben,
+            da oftmals die Samsung Text-do-Speech Engine verwendet wird, die
+            nicht alle Sprachen unterstützt.
+          </p>
+          <p>
+            Wenn Sie <i>"Samsung Text-in-Sprache-Engine"</i> verwenden, werden
+            nur wenige Sprachen unterstützt, und das Lautsprecher-Symbol wird
+            nur für diese Sprachen angezeigt. Mit der TTS-Engine
+            <i>"Spracherkennung und -Synthese von Google"</i>
+            stehen mehr Sprachen zur Verfügung, und das Lautsprecher-Symbol wird
+            für diese Sprachen angezeigt.
+          </p>
+          <p><b>Beispiel Samsung J5 (Android 9)</b></p>
+          <ol>
+            <li>Öffnen Sie die Systemeinstellungen Ihres Geräts</li>
+            <li>Gehen Sie zu "Allgemeine Verwaltung"</li>
+            <li>Tippen Sie auf "Sprache und Eingabe"</li>
+            <li>Wählen Sie den Punkt "Text zu Sprache"</li>
+            <li>
+              Tippen Sie auf "Bevorzugte Engine" und wählen Sie eine TTS-Engine
+              aus, die die gewünschten Sprachen unterstützt, z.B.
+              <b>"Spracherkennung und -Synthese von Google"</b>.
+            </li>
+            <li>
+              Tippen Sie dann auf "Sprache" in Text-zu-Sprache und wählen Sie
+              "Systemsprache verwenden" aus.
+            </li>
+          </ol>
+          <p><b>Beispiel Samsung Tab A7 (Android 11)</b></p>
+          <ol>
+            <li>Öffnen Sie die Systemeinstellungen Ihres Geräts</li>
+            <li>Gehen Sie zu "Allgemeine Verwaltung"</li>
+            <li>Tippen Sie auf "Text zu Sprache"</li>
+            <li>
+              Tippen Sie auf "Bevorzugte Engine" und wählen Sie eine TTS-Engine
+              aus, die die gewünschten Sprachen unterstützt, z.B.
+              <b>"Spracherkennung und -Synthese von Google"</b>.
+            </li>
+            <li>
+              Tippen Sie dann auf "Sprache" in Text-zu-Sprache und wählen Sie
+              "Systemsprache verwenden" aus.
+            </li>
+          </ol>
+          <p><b>Beispiel Samsung Galaxy A33 (Android 16)</b></p>
+          <ol>
+            <li>Öffnen Sie die Systemeinstellungen Ihres Geräts</li>
+            <li>Gehen Sie zu "Apps"</li>
+            <li>Tippen Sie auf die App "Bixby Vision"</li>
+            <li>Tippen Sie auf "Bixby Vision-Einstellungen"</li>
+            <li>Tippen Sie auf "Text-zu-Sprache-Einstellungen"</li>
+            <li>
+              Tippen Sie auf "Bevorzugte Engine" und wählen Sie eine TTS-Engine
+              aus, die die gewünschten Sprachen unterstützt, z.B.
+              <b>"Spracherkennung und -Synthese von Google"</b>.
+            </li>
+            <li>
+              Tippen Sie dann auf "Sprache" in Text-zu-Sprache und wählen Sie
+              "Systemsprache verwenden" aus.
+            </li>
+          </ol>
+        </li>
         <li *ngIf="isNative">
           <p><b>Es wird kein Mikrofon in Tastaturangezeigt (Handy):</b></p>
           <p>

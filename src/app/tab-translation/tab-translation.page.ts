@@ -19,7 +19,7 @@ import {
   IonItem,
   IonLabel,
 } from '@ionic/angular/standalone';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { HeaderComponent } from '../ui/components/header/header.component';
@@ -31,9 +31,9 @@ import { LocalStorageService } from '../services/local-storage.service';
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 import { ToastService } from '../services/toast.service';
 import { TextSpeechService } from '../services/text-to-speech.service';
-import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils.service';
 import { UserStatisticComponent } from '../ui/components/user-statistic/user-statistic.component';
+import { SpinnerComponent } from '../ui/components/spinner/spinner.component';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -70,7 +70,9 @@ interface Translation {
     HeaderComponent,
     TranslatePipe,
     AsyncPipe,
+    NgIf,
     UserStatisticComponent,
+    SpinnerComponent,
   ],
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
@@ -87,6 +89,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   cardInputVisible: boolean = true;
   cardResultsVisible: boolean = false;
   settingsIcon: string = '<ion-icon name="settings-outline"></ion-icon>';
+  isLoading = false;
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -97,7 +100,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     public readonly ttsService: TextSpeechService,
     private readonly googleTranslateService: TranslationGoogleTranslateService,
     private readonly toastService: ToastService,
-    private readonly firestoreService: FirebaseFirestoreService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService
   ) {}
 
@@ -160,6 +162,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   async translateTextOrSimulate(): Promise<void> {
+    this.isLoading = true;
     // if contingent is exceeded, simulate translation and show toast
     await this.updateIsContingentExceeded();
 
@@ -171,16 +174,19 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         ),
         ToastAnchor.TRANSLATE_PAGE
       );
+      this.isLoading = false;
       return;
     }
     if (TranslationGoogleTranslateService.SIMULATE_TRANSLATION) {
       this.simulateTranslateText();
       this.toggleCard();
+      this.isLoading = false;
       return;
     }
     if (this.isContingentExceeded) {
       this.simulateTranslationOnContingentExceeded();
       this.toggleCard();
+      this.isLoading = false;
       return;
     }
     this.disableFormControls();
@@ -196,6 +202,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       if (!translations) {
         this.simulateTranslationOnContingentExceeded();
         this.toggleCard();
+        this.isLoading = false;
         return;
       }
       this.translations = Object.entries(translations).map(
@@ -218,6 +225,8 @@ export class TabTranslationPage implements OnInit, OnDestroy {
           ToastAnchor.TRANSLATE_PAGE
         );
       }
+    } finally {
+      this.isLoading = false;
     }
   }
 

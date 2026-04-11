@@ -27,6 +27,7 @@
       }}</ion-label>
       <ion-icon slot="end" name="caret-down-outline"></ion-icon>
     </ion-item>
+    <app-spinner *ngIf="isLoading"></app-spinner>
 
     <ng-container *ngIf="lang === 'de'; else englishTemplate">
       <ng-container *ngTemplateOutlet="germanTemplate"></ng-container>

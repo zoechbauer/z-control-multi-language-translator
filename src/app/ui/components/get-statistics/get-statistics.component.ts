@@ -33,6 +33,7 @@ import {
 import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
   selector: 'app-get-statistics',
@@ -46,7 +47,6 @@ import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firesto
     IonRow,
     IonCol,
     IonSpinner,
-    LogoComponent,
     NgIf,
     NgFor,
     JsonPipe,
@@ -57,6 +57,8 @@ import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firesto
     IonIcon,
     IonRadioGroup,
     IonRadio,
+    LogoComponent,
+    SpinnerComponent
   ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
@@ -100,6 +102,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     return (
       this.utilsService.isPortrait || this.displayMode === DisplayMode.User
     );
+  }
+
+  get isNative(): boolean {
+    return this.utilsService.isNative;
   }
 
   get isFirebaseEmulator(): boolean {

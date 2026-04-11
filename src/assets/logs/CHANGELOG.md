@@ -2,6 +2,14 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.9] – YYYY-MM-DD
+
+### ✨ New Features
+
+- Added a troubleshooting section to the help page: "No speaker icon is shown for translated texts (mobile)", with a clear solution for Samsung devices. The section explains the issue, its cause, and provides step-by-step instructions to resolve it by selecting "Google Speech Recognition and Synthesis" as the TTS engine.
+- Added a Spinner Component to provide a consistent loading indicator across the app, improving user experience during data fetching and processing operations.
+- Added unit tests for the new Spinner Component, ensuring its functionality and reliability across different scenarios.
+
 ## [1.8] – 2026-04-08
 
 ### ✨ New Features

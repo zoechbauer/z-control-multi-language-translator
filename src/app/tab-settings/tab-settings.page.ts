@@ -21,6 +21,8 @@ import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { FireStoreConstants } from '../shared/app.constants';
+import { SpinnerComponent } from '../ui/components/spinner/spinner.component';
+import { NgIf } from '@angular/common';
 
 // Single source of truth for settings accordion IDs.
 // Add new accordion IDs here when extending the settings page.
@@ -42,6 +44,7 @@ type AccordionValue = (typeof ACCORDION_VALUES)[number];
   selector: 'app-tab-settings',
   templateUrl: './tab-settings.page.html',
   imports: [
+    NgIf,
     IonicModule,
     TranslatePipe,
     HeaderComponent,
@@ -54,6 +57,7 @@ type AccordionValue = (typeof ACCORDION_VALUES)[number];
     GetMobileAppAccordionComponent,
     TextToSpeechAccordionComponent,
     GetStatisticsAccordionComponent,
+    SpinnerComponent,
   ],
 })
 export class TabSettingsPage implements OnInit, OnDestroy {
@@ -68,6 +72,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   Tab = Tab;
   textToSpeechValues!: TextToSpeechValues;
   currentYearMonth: string = FireStoreConstants.currentYearMonthPath();
+  isLoading = true;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -79,6 +84,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.showAllAccordions = true;
     this.setupSubscriptions();
     this.utilsService.showOrHideIonTabBar();
@@ -87,11 +93,12 @@ export class TabSettingsPage implements OnInit, OnDestroy {
 
   private setupSubscriptions() {
     this.subscriptions.push(
-      this.localStorage.selectedLanguage$.subscribe((lang) => {
+      this.localStorage.selectedLanguage$.subscribe(async (lang) => {
         this.translate.use(lang);
         this.translate.setDefaultLang(lang);
         this.selectedLanguage = lang;
-        this.localStorage.loadTargetLanguages();
+        await this.localStorage.loadTargetLanguages();
+        this.isLoading = false;
       })
     );
     this.subscriptions.push(

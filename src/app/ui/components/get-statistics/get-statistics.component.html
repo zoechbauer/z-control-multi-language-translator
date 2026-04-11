@@ -1,10 +1,7 @@
 <app-logo [type]="LogoType.Copyright"></app-logo>
 
 <div class="statistics-container">
-  <ng-container *ngIf="isLoading">
-    <ion-spinner name="dots"></ion-spinner>
-    <span>{{ "APP.LOADING_DATA" | translate }}</span>
-  </ng-container>
+  <app-spinner *ngIf="isLoading"></app-spinner>
 
   <ng-container *ngIf="!isLoading">
     <div class="stat-section" *ngIf="isProgrammerDevice">
@@ -251,6 +248,7 @@
       optimieren.
     </p>
   </div>
+  <app-spinner *ngIf="isLoading && isNative"></app-spinner>
 </ng-template>
 
 <!-- G E R M A N   T E M P L A T E -->
@@ -279,4 +277,5 @@
       Web-Mobile), von der aus Übersetzungsanfragen gesendet werden.
     </p>
   </div>
+  <app-spinner *ngIf="isLoading && isNative"></app-spinner>
 </ng-template>

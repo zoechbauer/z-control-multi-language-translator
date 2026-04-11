@@ -1,5 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonAccordion,
@@ -18,6 +25,7 @@ import {
 import { AppConstants } from 'src/app/shared/app.constants';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { LanguageMultiSelectComponent } from '../language-multi-select/language-multi-select.component';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
   selector: 'app-target-languages-accordion',
@@ -31,6 +39,8 @@ import { LanguageMultiSelectComponent } from '../language-multi-select/language-
     TranslateModule,
     CommonModule,
     FormsModule,
+    NgIf,
+    SpinnerComponent,
   ],
 })
 export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
@@ -39,6 +49,7 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
 
   targetLanguages: GoogleLanguage[] = [];
   selectedTargetLanguageCodes: string[] = [];
+  isLoading = false;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -58,6 +69,7 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
   }
 
   async openLanguageSelect(): Promise<void> {
+    this.isLoading = true;
     const modal = await this.modalController.create({
       component: LanguageMultiSelectComponent,
       componentProps: {
@@ -73,6 +85,7 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
       this.selectedTargetLanguageCodes = data;
       this.ionChange.emit(this.selectedTargetLanguageCodes);
     }
+    this.isLoading = false;
   }
 
   private loadSelectedTargetLanguages(): void {
