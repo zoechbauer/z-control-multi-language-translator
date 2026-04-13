@@ -163,7 +163,7 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
-  }
+  } @if(selectedLanguages.length > 0) {
   <ion-accordion-group>
     <ion-accordion value="user-contingent" class="monthly-quota-accordion">
       <ion-item slot="header" color="light">
@@ -176,4 +176,5 @@
       </div>
     </ion-accordion>
   </ion-accordion-group>
+  }
 </ion-content>

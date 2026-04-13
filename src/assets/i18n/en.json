@@ -84,7 +84,8 @@
       "TITLE": "Monthly Quota"
     },
     "CARD": {
-      "TITLE": "Available Quota in Characters for {{yearMonth}}",
+      "TITLE": "Available Quota for {{yearMonth}}",
+      "SUBTITLE": "Number of translated characters",
       "GRID": {
         "USER": "User",
         "USER_NAME_YOU": "You",

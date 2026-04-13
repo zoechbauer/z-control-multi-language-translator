@@ -113,7 +113,7 @@ describe('TextToSpeechAccordionComponent', () => {
     });
   });
 
-  describe('template', () => {
+  describe('template rendering', () => {
     describe('disable reset button', () => {
       it('should disable the reset button if isNative is false', () => {
         component.isNative = false;

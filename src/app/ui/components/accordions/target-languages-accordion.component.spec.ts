@@ -179,7 +179,7 @@ describe('TargetLanguagesAccordionComponent', () => {
     });
   });
 
-  describe('template', () => {
+  describe('template rendering', () => {
     describe('spinner', () => {
       it('should show spinner during openLanguageSelect is loading', async () => {
         // Arrange: set up the modal to delay closing
@@ -207,7 +207,9 @@ describe('TargetLanguagesAccordionComponent', () => {
 
         // Assert: spinner should be visible while loading
         let spinner = fixture.nativeElement.querySelector('app-spinner');
-        expect(component.isLoading).withContext('isLoading during loading').toBeTrue();
+        expect(component.isLoading)
+          .withContext('isLoading during loading')
+          .toBeTrue();
         expect(spinner).withContext('spinner during loading').toBeTruthy();
 
         // Finish loading
@@ -216,7 +218,9 @@ describe('TargetLanguagesAccordionComponent', () => {
         fixture.detectChanges();
 
         // Spinner should be hidden after loading
-        expect(component.isLoading).withContext('isLoading after loading').toBeFalse();
+        expect(component.isLoading)
+          .withContext('isLoading after loading')
+          .toBeFalse();
         spinner = fixture.nativeElement.querySelector('app-spinner');
         expect(spinner).withContext('spinner after loading').toBeNull();
       });

@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 
 import { GetStatisticsComponent } from './get-statistics.component';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
@@ -20,6 +22,10 @@ describe('GetStatisticsComponent', () => {
   let firestoreUtilsServiceSpy: jasmine.SpyObj<FirebaseFirestoreUtilsService>;
   let firestoreServiceSpy: jasmine.SpyObj<FirebaseFirestoreService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+
+  beforeAll(() => {
+    registerLocaleData(localeDe);
+  });
 
   beforeEach(waitForAsync(() => {
     utilsServiceSpy = jasmine.createSpyObj(
@@ -735,7 +741,7 @@ describe('GetStatisticsComponent', () => {
     });
   });
 
-  describe('template', () => {
+  describe('template rendering', () => {
     describe('spinner', () => {
       it('should show spinner when isLoading is true', () => {
         component.isLoading = true;
@@ -785,6 +791,491 @@ describe('GetStatisticsComponent', () => {
 
         const spinners = fixture.nativeElement.querySelectorAll('app-spinner');
         expect(spinners.length).toBe(2);
+      });
+    });
+
+    describe('display statistics', () => {
+      it('should show statistics content when not loading', () => {
+        component.isLoading = false;
+        fixture.detectChanges();
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.stat-section');
+        expect(statisticsContent).toBeTruthy();
+      });
+
+      it('should not show statistics content when loading', () => {
+        component.isLoading = true;
+        fixture.detectChanges();
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.stat-section');
+        expect(statisticsContent).toBeNull();
+      });
+    });
+
+    describe('display mode selection section', () => {
+      it('should show section when programmerDevice is true', () => {
+        component.isProgrammerDevice = true;
+        fixture.detectChanges();
+
+        const statisticsContent = fixture.nativeElement.querySelector(
+          '.display-mode-section'
+        );
+        expect(statisticsContent).toBeTruthy();
+      });
+
+      it('should not show section when programmerDevice is false', () => {
+        component.isProgrammerDevice = false;
+        fixture.detectChanges();
+
+        const statisticsContent = fixture.nativeElement.querySelector(
+          '.display-mode-section'
+        );
+        expect(statisticsContent).toBeNull();
+      });
+    });
+
+    describe('display total contingent', () => {
+      it('should show total difference info when allUsersCharCount is not equal to totalCharCount', () => {
+        component.allUsersCharCount = 100000;
+        component.totalCharCount = 100001;
+        fixture.detectChanges();
+        const totalDifferenceInfo = fixture.nativeElement.querySelector(
+          '.total-difference-info'
+        );
+        expect(totalDifferenceInfo).toBeTruthy();
+      });
+
+      it('should not show total difference info when allUsersCharCount is equal to totalCharCount', () => {
+        component.allUsersCharCount = 100000;
+        component.totalCharCount = 100000;
+        fixture.detectChanges();
+        const totalDifferenceInfo = fixture.nativeElement.querySelector(
+          '.total-difference-info'
+        );
+        expect(totalDifferenceInfo).toBeNull();
+      });
+    });
+
+    describe('statistics overview', () => {
+      it('should show statistics overview section when displaymode is programmer', () => {
+        component.displayMode = DisplayMode.Programmer;
+        fixture.detectChanges();
+
+        const statisticsContent = fixture.nativeElement.querySelector(
+          '.user-statistics-overview'
+        );
+        expect(statisticsContent).toBeTruthy();
+      });
+
+      it('should not show statistics overview section when displaymode is user', () => {
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const statisticsContent = fixture.nativeElement.querySelector(
+          '.user-statistics-overview'
+        );
+        expect(statisticsContent).toBeNull();
+      });
+    });
+
+    describe('Search bar in user statistics details section', () => {
+      it('should show search bar when displaymode is programmer', () => {
+        component.displayMode = DisplayMode.Programmer;
+        fixture.detectChanges();
+
+        const searchBar = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-searchbar'
+        );
+        expect(searchBar).toBeTruthy();
+      });
+
+      it('should not show search bar when displaymode is user', () => {
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const searchBar = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-searchbar'
+        );
+        expect(searchBar).toBeNull();
+      });
+    });
+
+    describe('JSON raw data section', () => {
+      it('should show raw data section when displaymode is programmer', () => {
+        component.displayMode = DisplayMode.Programmer;
+        fixture.detectChanges();
+
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.debug-section');
+        expect(statisticsContent).toBeTruthy();
+      });
+
+      it('should not show raw data section when displaymode is user', () => {
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.debug-section');
+        expect(statisticsContent).toBeNull();
+      });
+    });
+
+    describe('current user selection', () => {
+      function createUserStat(
+        userId: string,
+        translatedCharCount: number,
+        lastTranslationDate: Date | null
+      ): DisplayedUserStatistics {
+        return {
+          userId,
+          userName: `User ${userId}`,
+          userType: userId.startsWith('P') ? 'P' : 'U',
+          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
+          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
+          device: 'Device',
+          isNative: false,
+          deviceInfo: {
+            userAgent: 'User Agent',
+            platform: 'web',
+            language: 'en',
+            appVersion: {
+              major: 1,
+              minor: 0,
+              date: '2026-03-01',
+            },
+          },
+          displayedPlatform: 'web-desktop',
+          displayedModel: 'Model X',
+          translatedCharCount,
+          targetLanguages: ['en'],
+          lastTranslationDate,
+        };
+      }
+
+      beforeEach(() => {
+        component.isLoading = false;
+        component.displayMode = DisplayMode.User;
+        component.userLimit = 10000;
+        component.currentUserUid = 'U-2';
+
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: false,
+          configurable: true,
+        });
+
+        component.statisticsData = {
+          displayedUserStatistics: [
+            createUserStat('U-1', 10000, new Date('2026-03-15T00:00:00Z')),
+            createUserStat('U-2', 9000, null),
+          ],
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
+      });
+
+      it('should add user-contingent-exceeded class when translated chars reach user limit', () => {
+        fixture.detectChanges();
+
+        const rows = fixture.nativeElement.querySelectorAll(
+          '.user-stat-details ion-row.detail-row'
+        );
+
+        expect(rows.length).toBe(2);
+        expect(
+          rows[0].classList.contains('user-contingent-exceeded')
+        ).toBeTrue();
+        expect(
+          rows[1].classList.contains('user-contingent-exceeded')
+        ).toBeFalse();
+      });
+
+      it('should add my-device class only for current user row', () => {
+        fixture.detectChanges();
+
+        const rows = fixture.nativeElement.querySelectorAll(
+          '.user-stat-details ion-row.detail-row'
+        );
+
+        expect(rows.length).toBe(2);
+        expect(rows[0].classList.contains('my-device')).toBeFalse();
+        expect(rows[1].classList.contains('my-device')).toBeTrue();
+      });
+
+      it('should use creationDate when lastTranslationDate is null', () => {
+        utilsServiceSpy.formatDateISO.calls.reset();
+        fixture.detectChanges();
+
+        const formattedDates = utilsServiceSpy.formatDateISO.calls
+          .allArgs()
+          .map((args) => args[0] as Date | null);
+
+        expect(formattedDates).toContain(new Date('2026-03-15T00:00:00Z'));
+        expect(formattedDates).toContain(new Date('2026-03-10T00:00:00Z'));
+      });
+
+      it('should show platform and device model when display mode is Programmer', () => {
+        component.displayMode = DisplayMode.Programmer;
+        fixture.detectChanges();
+
+        const platformColumn = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-col.platform-info'
+        );
+        const platformColumnWithModelInfo = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-col.platform-info .model-info'
+        );
+
+        expect(platformColumn).toBeTruthy();
+        expect(platformColumnWithModelInfo).toBeTruthy();
+      });
+
+      it('should show platform but not device model when display mode is User', () => {
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const platformColumn = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-col.platform-info'
+        );
+        const platformColumnWithModelInfo = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-col.platform-info .model-info'
+        );
+
+        expect(platformColumn).toBeTruthy();
+        expect(platformColumnWithModelInfo).toBeNull();
+      });
+    });
+
+    describe('status and contingent indicators', () => {
+      beforeEach(() => {
+        component.isLoading = false;
+      });
+
+      it('should apply stopped class when translations are globally stopped', () => {
+        component.isStopped = true;
+        fixture.detectChanges();
+
+        const statusText =
+          fixture.nativeElement.querySelector('p.ion-text-center');
+
+        expect(statusText).toBeTruthy();
+        expect(statusText.classList.contains('stopped')).toBeTrue();
+      });
+
+      it('should apply contingent warning classes when checksum differs and no quota remains', () => {
+        component.allUsersCharCount = 1200;
+        component.totalCharCount = 1000;
+        component.totalRemaining = 0;
+        fixture.detectChanges();
+
+        const checksumText = fixture.nativeElement.querySelector(
+          'p.total-all-users-difference'
+        );
+        const remainingValue =
+          fixture.nativeElement.querySelector('span.exceeded');
+
+        expect(checksumText).toBeTruthy();
+        expect(remainingValue).toBeTruthy();
+      });
+    });
+
+    describe('optional grid columns', () => {
+      function createUserStat(
+        userId: string,
+        translatedCharCount: number,
+        lastTranslationDate: Date | null
+      ): DisplayedUserStatistics {
+        return {
+          userId,
+          userName: `User ${userId}`,
+          userType: userId.startsWith('P') ? 'P' : 'U',
+          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
+          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
+          device: 'Device',
+          isNative: false,
+          deviceInfo: {
+            userAgent: 'User Agent',
+            platform: 'web',
+            language: 'en',
+            appVersion: {
+              major: 1,
+              minor: 0,
+              date: '2026-03-01',
+            },
+          },
+          displayedPlatform: 'web-desktop',
+          displayedModel: 'Model X',
+          translatedCharCount,
+          targetLanguages: ['en', 'de'],
+          lastTranslationDate,
+        };
+      }
+
+      beforeEach(() => {
+        component.isLoading = false;
+        component.statisticsData = {
+          displayedUserStatistics: [
+            createUserStat('U-1', 1000, new Date('2026-03-15T00:00:00Z')),
+          ],
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
+      });
+
+      it('should hide the language-count column when display mode is User', () => {
+        component.displayMode = DisplayMode.User;
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: false,
+          configurable: true,
+        });
+
+        fixture.detectChanges();
+
+        const languageHeaderIcon = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-row.header-row ion-icon[name="language-outline"]'
+        );
+        const detailCols = fixture.nativeElement.querySelectorAll(
+          '.user-stat-details ion-row.detail-row ion-col'
+        );
+
+        expect(languageHeaderIcon).toBeNull();
+        expect(detailCols.length).toBe(5);
+      });
+
+      it('should hide the translation-date column in portrait mode', () => {
+        component.displayMode = DisplayMode.Programmer;
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: true,
+          configurable: true,
+        });
+
+        fixture.detectChanges();
+
+        const translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .translation-date'
+        );
+
+        expect(translationDateCell).toBeNull();
+      });
+    });
+
+    describe('info button interactions', () => {
+      function createUserStat(): DisplayedUserStatistics {
+        return {
+          userId: 'U-1',
+          userName: 'User U-1',
+          userType: 'U',
+          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
+          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
+          device: 'Device',
+          isNative: false,
+          deviceInfo: {
+            userAgent: 'User Agent',
+            platform: 'web',
+            language: 'en',
+            appVersion: {
+              major: 1,
+              minor: 0,
+              date: '2026-03-01',
+            },
+          },
+          displayedPlatform: 'web-desktop',
+          displayedModel: 'Model X',
+          translatedCharCount: 500,
+          targetLanguages: ['en'],
+          lastTranslationDate: new Date('2026-03-15T00:00:00Z'),
+        };
+      }
+
+      beforeEach(() => {
+        component.lang = 'en';
+        component.isLoading = false;
+        component.displayMode = DisplayMode.User;
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: false,
+          configurable: true,
+        });
+
+        component.statisticsData = {
+          displayedUserStatistics: [createUserStat()],
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
+      });
+
+      it('should call showDetailInfos when the info button is clicked', () => {
+        const showDetailInfosSpy = spyOn(component, 'showDetailInfos');
+        fixture.detectChanges();
+
+        const button = fixture.nativeElement.querySelector(
+          '.user-stat-details .info-btn'
+        );
+
+        button.dispatchEvent(new Event('click'));
+        fixture.detectChanges();
+
+        expect(showDetailInfosSpy).toHaveBeenCalledWith(
+          'en',
+          jasmine.objectContaining({ userId: 'U-1' })
+        );
+      });
+    });
+
+    describe('language templates', () => {
+      beforeEach(() => {
+        component.isLoading = false;
+      });
+
+      it('should render german template when lang is de', () => {
+        component.lang = 'de';
+        fixture.detectChanges();
+
+        const text = (fixture.nativeElement.textContent || '').replace(
+          /\s+/g,
+          ' '
+        );
+
+        expect(text).toContain(
+          'Google Firebase/Firestore speichert folgende Daten:'
+        );
+        expect(text).not.toContain(
+          'Google Firebase/Firestore stores the following data:'
+        );
+      });
+
+      it('should render english template when lang is en', () => {
+        component.lang = 'en';
+        fixture.detectChanges();
+
+        const text = (fixture.nativeElement.textContent || '').replace(
+          /\s+/g,
+          ' '
+        );
+
+        expect(text).toContain(
+          'Google Firebase/Firestore stores the following data:'
+        );
+        expect(text).not.toContain(
+          'Google Firebase/Firestore speichert folgende Daten:'
+        );
+      });
+
+      it('should fallback to english template when lang is not de', () => {
+        component.lang = 'fr';
+        fixture.detectChanges();
+
+        const text = (fixture.nativeElement.textContent || '').replace(
+          /\s+/g,
+          ' '
+        );
+
+        expect(text).toContain(
+          'Google Firebase/Firestore stores the following data:'
+        );
+        expect(text).not.toContain(
+          'Google Firebase/Firestore speichert folgende Daten:'
+        );
       });
     });
   });

@@ -756,11 +756,14 @@ describe('TabTranslationPage', () => {
     });
   });
 
-  describe('template', () => {
+  describe('template rendering', () => {
     beforeEach(() => {
       spyOn<any>(component, 'initFormControls').and.stub();
       spyOn<any>(component, 'setupSubscriptions').and.stub();
       spyOn<any>(component, 'setupEventListeners').and.stub();
+
+      component.selectedLanguages = ['en'];
+      fixture.detectChanges();
     });
 
     describe('spinner display', () => {
@@ -994,6 +997,113 @@ describe('TabTranslationPage', () => {
             .withContext('Spinner should not be visible after loading')
             .toBeNull();
         });
+      });
+    });
+
+    describe('user setup flow', () => {
+      it('should show no-languages section and  if no languages are selected', () => {
+        component.selectedLanguages = [];
+        fixture.detectChanges();
+
+        const noLanguagesSection = fixture.nativeElement.querySelector(
+          '.no-languages-selected'
+        );
+        expect(noLanguagesSection).toBeTruthy();
+      });
+
+      it('should show translation input card if languages are selected', () => {
+        component.selectedLanguages = ['en'];
+        fixture.detectChanges();
+
+        const translationInputCard = fixture.nativeElement.querySelector(
+          '.translation-input-card'
+        );
+        expect(translationInputCard).toBeTruthy();
+      });
+    });
+
+    describe('main feature flow', () => {
+      it('should show switch button only when translations are available', () => {
+        component.translations = [];
+        fixture.detectChanges();
+
+        let switchButton = fixture.nativeElement.querySelector(
+          '.sticky-toggle-btn ion-button'
+        );
+        expect(switchButton).toBeNull();
+
+        component.translations = [{ language: 'en', translatedText: 'Hello' }];
+        fixture.detectChanges();
+
+        switchButton = fixture.nativeElement.querySelector(
+          '.sticky-toggle-btn ion-button'
+        );
+        expect(switchButton).toBeTruthy();
+      });
+
+      it('should call toggleCard when switch button is clicked', () => {
+        component.translations = [{ language: 'en', translatedText: 'Hello' }];
+        component.clearBtnDisabled = false;
+        const toggleSpy = spyOn(component, 'toggleCard');
+        fixture.detectChanges();
+
+        const switchButton: HTMLElement = fixture.nativeElement.querySelector(
+          '.sticky-toggle-btn ion-button'
+        );
+        expect(switchButton).toBeTruthy();
+
+        switchButton.dispatchEvent(new Event('click'));
+        fixture.detectChanges();
+
+        expect(toggleSpy).toHaveBeenCalled();
+      });
+
+      it('should call translateTextOrSimulate when translate button is clicked', async () => {
+        component.cardInputVisible = true;
+        component.selectedLanguages = ['de'];
+        component.text = 'Hello world';
+        component.translateBtnDisabled = false;
+
+        const translateSpy = spyOn(
+          component,
+          'translateTextOrSimulate'
+        ).and.returnValue(Promise.resolve());
+
+        fixture.detectChanges();
+
+        const translateButton: HTMLElement =
+          fixture.nativeElement.querySelector(
+            '.translation-input-card ion-button'
+          );
+        expect(translateButton).toBeTruthy();
+
+        translateButton.dispatchEvent(new Event('click'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(translateSpy).toHaveBeenCalled();
+      });
+    });
+
+    describe('contingent exceeded flow', () => {
+      it('should show contingent usage statistics if target languages are selected', async () => {
+        component.selectedLanguages = ['en'];
+        fixture.detectChanges();
+
+        const translationInputCard = fixture.nativeElement.querySelector(
+          '.monthly-quota-accordion'
+        );
+        expect(translationInputCard).toBeTruthy();
+      });
+
+      it('should not show contingent usage statistics if no target languages are selected', async () => {
+        component.selectedLanguages = [];
+        fixture.detectChanges();
+
+        const translationInputCard = fixture.nativeElement.querySelector(
+          '.monthly-quota-accordion'
+        );
+        expect(translationInputCard).toBeNull();
       });
     });
   });

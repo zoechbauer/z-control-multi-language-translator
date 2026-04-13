@@ -84,7 +84,8 @@
       "TITLE": "Monatliches Kontingent"
     },
     "CARD": {
-      "TITLE": "Verfügbares Kontingent in Zeichen für {{yearMonth}}",
+      "TITLE": "Verfügbares Kontingent für {{yearMonth}}",
+      "SUBTITLE": "Anzahl der übersetzten Zeichen",
       "GRID": {
         "USER": "Benutzer",
         "USER_NAME_YOU": "Sie",

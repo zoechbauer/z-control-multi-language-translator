@@ -28,7 +28,7 @@ describe('SpinnerComponent', () => {
     });
   });
 
-  describe('template', () => {
+  describe('template rendering', () => {
     it('should display loading text when showText is true', () => {
       component.showText = true;
       fixture.detectChanges();

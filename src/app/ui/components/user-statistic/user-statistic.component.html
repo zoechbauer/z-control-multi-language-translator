@@ -3,6 +3,10 @@
     <ion-card-title>
       {{ "TRANSLATE_STATISTICS.CARD.TITLE" | translate: { yearMonth: yearMonth } }}
     </ion-card-title>
+    <ion-card-subtitle>
+      {{ "TRANSLATE_STATISTICS.CARD.SUBTITLE" | translate }}
+    </ion-card-subtitle>
+
   </ion-card-header>
   <ion-card-content>
     @if (isContingentExceeded) {

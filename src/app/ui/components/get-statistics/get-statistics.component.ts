@@ -10,13 +10,7 @@ import {
   IonRadioGroup,
   IonSearchbar,
 } from '@ionic/angular/standalone';
-import {
-  NgFor,
-  NgIf,
-  NgTemplateOutlet,
-  DecimalPipe,
-  JsonPipe,
-} from '@angular/common';
+import { NgFor, NgIf, NgTemplateOutlet, DecimalPipe, JsonPipe, NgClass } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -58,8 +52,9 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     IonRadioGroup,
     IonRadio,
     LogoComponent,
-    SpinnerComponent
-  ],
+    SpinnerComponent,
+    NgClass
+],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;

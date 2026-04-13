@@ -2,6 +2,16 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.10] – YYYY-MM-DD
+
+### ✨ New Features
+
+- Added 67 template tests, increasing the total test count to 547 specs and improving confidence in the app's most important UI components and pages.
+
+### 🚀 Improvements
+
+- Improved the layout of the statistics page and contingent information component for better readability and usability.
+
 ## [1.9] – 2026-04-11
 
 ### ✨ New Features

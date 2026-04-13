@@ -1,15 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
-import {
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonCard,
-  IonRow,
-  IonGrid,
-  IonCol,
-} from '@ionic/angular/standalone';
+import { IonCardHeader, IonCardTitle, IonCardContent, IonCard, IonRow, IonGrid, IonCol, IonCardSubtitle } from '@ionic/angular/standalone';
 import { NgFor, NgIf, DecimalPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -28,11 +20,12 @@ import { FireStoreConstants } from 'src/app/shared/app.constants';
     IonCardContent,
     IonCardHeader,
     IonCardTitle,
+    IonCardSubtitle,
     TranslatePipe,
     DecimalPipe,
     NgIf,
     NgFor,
-  ],
+],
 })
 export class UserStatisticComponent implements OnInit, OnDestroy {
   isContingentExceeded: boolean = false;

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonContent, IonicModule } from '@ionic/angular';
-import { of } from 'rxjs';
+import { IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { of, EMPTY } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TabSettingsPage } from './tab-settings.page';
@@ -10,6 +12,105 @@ import { TextSpeechService } from '../services/text-to-speech.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { environment } from 'src/environments/environment';
+import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
+import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
+import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
+import { GetSourceAccordionComponent } from '../ui/components/accordions/get-source-accordion.component';
+import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
+import { ChangeLogAccordionComponent } from '../ui/components/accordions/change-log-accordion.component';
+import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/privacy-policy-accordion.component';
+import { FeedbackAccordionComponent } from '../ui/components/accordions/feedback-accordion.component';
+import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
+import { LanguageAccordionComponent } from '../ui/components/accordions/language-accordion.component';
+
+@Component({
+  selector: 'app-language-accordion',
+  template: '',
+  standalone: true,
+})
+class MockLanguageAccordionComponent {
+  @Input() lang!: string;
+  @Output() ionChange = new EventEmitter<any>();
+}
+
+@Component({
+  selector: 'app-target-languages-accordion',
+  template: '',
+  standalone: true,
+})
+class MockTargetLanguagesAccordionComponent {
+  @Input() lang!: string;
+  @Output() ionChange = new EventEmitter<string[]>();
+}
+
+@Component({
+  selector: 'app-text-to-speech-accordion',
+  template: '',
+  standalone: true,
+})
+class MockTextToSpeechAccordionComponent {
+  @Input() lang!: string;
+  @Input() isNative!: boolean;
+  @Input() ngModel: any;
+  @Output() ngModelChange = new EventEmitter<any>();
+}
+
+@Component({
+  selector: 'app-feedback-accordion',
+  template: '',
+  standalone: true,
+})
+class MockFeedbackAccordionComponent {
+  @Input() lang!: string;
+}
+
+@Component({
+  selector: 'app-get-statistics-accordion',
+  template: '',
+  standalone: true,
+})
+class MockGetStatisticsAccordionComponent {
+  @Input() lang!: string;
+  @Input() yearMonth!: string;
+}
+
+@Component({
+  selector: 'app-privacy-policy-accordion',
+  template: '',
+  standalone: true,
+})
+class MockPrivacyPolicyAccordionComponent {
+  @Input() lang!: string;
+}
+
+@Component({
+  selector: 'app-change-log-accordion',
+  template: '',
+  standalone: true,
+})
+class MockChangeLogAccordionComponent {
+  @Input() lang!: string;
+  @Input() versionInfo!: string;
+  @Output() ionChange = new EventEmitter<void>();
+}
+
+@Component({
+  selector: 'app-get-mobile-app-accordion',
+  template: '',
+  standalone: true,
+})
+class MockGetMobileAppAccordionComponent {
+  @Input() lang!: string;
+}
+
+@Component({
+  selector: 'app-get-source-accordion',
+  template: '',
+  standalone: true,
+})
+class MockGetSourceAccordionComponent {
+  @Input() lang!: string;
+}
 
 describe('TabSettingsPage', () => {
   let component: TabSettingsPage;
@@ -24,9 +125,10 @@ describe('TabSettingsPage', () => {
       ['getDeviceInfo', 'showOrHideIonTabBar', 'openChangelog'],
       {
         isNative: false,
-        logoClicked$: of(void 0),
+        logoClicked$: EMPTY,
       }
     );
+
     localStorageServiceSpy = jasmine.createSpyObj(
       'LocalStorageService',
       [
@@ -43,13 +145,36 @@ describe('TabSettingsPage', () => {
         textToSpeechValues$: of({ rate: 1, pitch: 1 }),
       }
     );
+
     textSpeechServiceSpy = jasmine.createSpyObj('TextSpeechService', [
       'updateTtsSupportedLanguagesMap',
     ]);
 
+    const modalControllerSpy = jasmine.createSpyObj('ModalController', [
+      'create',
+    ]);
+    modalControllerSpy.create.and.resolveTo({
+      present: jasmine.createSpy('present').and.resolveTo(),
+      onDidDismiss: jasmine
+        .createSpy('onDidDismiss')
+        .and.resolveTo({ data: null }),
+    });
+
+    const googleTranslateServiceSpy = jasmine.createSpyObj(
+      'TranslationGoogleTranslateService',
+      ['getSupportedLanguagesWithLangCodeInName']
+    );
+    googleTranslateServiceSpy.getSupportedLanguagesWithLangCodeInName.and.returnValue(
+      of([])
+    );
+
     await TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), TabSettingsPage],
       providers: [
+        {
+          provide: TranslationGoogleTranslateService,
+          useValue: googleTranslateServiceSpy,
+        },
         {
           provide: TranslateService,
           useValue: createTranslateServiceMock(),
@@ -70,8 +195,41 @@ describe('TabSettingsPage', () => {
           provide: FirebaseFirestoreService,
           useValue: jasmine.createSpyObj('FirebaseFirestoreService', ['init']),
         },
+        {
+          provide: ModalController,
+          useValue: modalControllerSpy,
+        },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(TabSettingsPage, {
+        remove: {
+          imports: [
+            LanguageAccordionComponent,
+            TargetLanguagesAccordionComponent,
+            TextToSpeechAccordionComponent,
+            FeedbackAccordionComponent,
+            GetStatisticsAccordionComponent,
+            PrivacyPolicyAccordionComponent,
+            ChangeLogAccordionComponent,
+            GetMobileAppAccordionComponent,
+            GetSourceAccordionComponent,
+          ],
+        },
+        add: {
+          imports: [
+            MockLanguageAccordionComponent,
+            MockTargetLanguagesAccordionComponent,
+            MockTextToSpeechAccordionComponent,
+            MockFeedbackAccordionComponent,
+            MockGetStatisticsAccordionComponent,
+            MockPrivacyPolicyAccordionComponent,
+            MockChangeLogAccordionComponent,
+            MockGetMobileAppAccordionComponent,
+            MockGetSourceAccordionComponent,
+          ],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(TabSettingsPage);
     component = fixture.componentInstance;
@@ -130,7 +288,7 @@ describe('TabSettingsPage', () => {
         const event = {
           detail: { value: 'language' },
         } as CustomEvent;
-        const content = {} as IonContent;
+        const content = {} as any;
 
         component.onAccordionGroupChange(event, content);
 
@@ -142,7 +300,7 @@ describe('TabSettingsPage', () => {
         const event = {
           detail: { value: undefined },
         } as CustomEvent;
-        const content = {} as IonContent;
+        const content = {} as any;
 
         component.onAccordionGroupChange(event, content);
 
@@ -156,7 +314,7 @@ describe('TabSettingsPage', () => {
         const event = {
           detail: { value: undefined },
         } as CustomEvent;
-        const content = {} as IonContent;
+        const content = {} as any;
         spyOn(component as any, 'normalizeAccordionValue').and.returnValue(
           undefined
         );
@@ -364,71 +522,244 @@ describe('TabSettingsPage', () => {
       });
 
       it('should subscribe to logoClicked$ and open feedback accordion', () => {
+        const logoClicked$ = new EventEmitter<void>();
+        Object.defineProperty(utilsServiceSpy, 'logoClicked$', {
+          get: () => logoClicked$.asObservable(),
+        });
+
         const openFeedbackAccordionSpy = spyOn(
           component as any,
           'openFeedbackAccordion'
         );
+
         (component as any).setupSubscriptions();
+
+        logoClicked$.emit();
 
         expect(openFeedbackAccordionSpy).toHaveBeenCalled();
       });
     });
   });
 
-  describe('template', () => {
-    it('should display the spinner when isLoading is true', () => {
-      component.isLoading = true;
-      fixture.detectChanges();
-      
-      const spinner = fixture.nativeElement.querySelector('app-spinner');
-      expect(spinner).toBeTruthy();
-    });
-
-    it('should hide the spinner when isLoading is false', async () => {
-      component.isLoading = true;
-      fixture.detectChanges();
+  describe('template rendering', () => {
+    it('should render mocked child accordion hosts (shallow render smoke test)', () => {
+      // Guard test: verifies overrideComponent uses mock accordions, avoiding deep child DI dependencies.
       component.isLoading = false;
+      component.selectedLanguage = 'de';
+      component.showAllAccordions = true;
+      component.openAccordion = null;
       fixture.detectChanges();
-      await fixture.whenStable();
 
-      const spinner = fixture.nativeElement.querySelector('app-spinner');
-      expect(spinner).toBeNull();
+      const language = fixture.nativeElement.querySelector(
+        'app-language-accordion'
+      ) as HTMLElement;
+      const targetLanguages = fixture.nativeElement.querySelector(
+        'app-target-languages-accordion'
+      ) as HTMLElement;
+      const feedback = fixture.nativeElement.querySelector(
+        'app-feedback-accordion'
+      ) as HTMLElement;
+      const stats = fixture.nativeElement.querySelector(
+        'app-get-statistics-accordion'
+      ) as HTMLElement;
+
+      expect(language).toBeTruthy();
+      expect(targetLanguages).toBeTruthy();
+      expect(feedback).toBeTruthy();
+      expect(stats).toBeTruthy();
+
+      // Mock components have empty templates.
+      expect(language.innerHTML.trim()).toBe('');
+      expect(targetLanguages.innerHTML.trim()).toBe('');
+      expect(feedback.innerHTML.trim()).toBe('');
+      expect(stats.innerHTML.trim()).toBe('');
+
+      // Real child templates would render these markers.
+      expect(fixture.nativeElement.querySelector('.notes')).toBeNull();
+      expect(
+        fixture.nativeElement.querySelector('.user-statistics-overview')
+      ).toBeNull();
     });
 
-    it('should show spinner during loadTargetLanguages in ngOnInit', async () => {
-      const loadTargetLanguagesSpy =
-        localStorageServiceSpy.loadTargetLanguages as jasmine.Spy;
-      let resolveLoad: (() => void) | undefined;
-      const loadPromise = new Promise<void>((resolve) => {
-        resolveLoad = resolve;
+    describe('loading spinner', () => {
+      it('should display the spinner when isLoading is true', () => {
+        component.isLoading = true;
+        fixture.detectChanges();
+
+        const spinner = fixture.nativeElement.querySelector('app-spinner');
+        expect(spinner).toBeTruthy();
       });
-      loadTargetLanguagesSpy.and.returnValue(loadPromise);
 
-      component.ngOnInit();
-      fixture.detectChanges();
+      it('should hide the spinner when isLoading is false', async () => {
+        component.isLoading = true;
+        fixture.detectChanges();
+        component.isLoading = false;
+        fixture.detectChanges();
+        await fixture.whenStable();
 
-      // Spinner should be visible while loading
-      let spinner = fixture.nativeElement.querySelector('app-spinner');
-      expect(spinner)
-        .withContext('Spinner should be visible while loading')
-        .toBeTruthy();
-      expect(component.isLoading).toBeTrue();
-      expect(loadTargetLanguagesSpy)
-        .withContext('loadTargetLanguages should be called')
-        .toHaveBeenCalled();
+        const spinner = fixture.nativeElement.querySelector('app-spinner');
+        expect(spinner).toBeNull();
+      });
 
-      // Finish loading
-      resolveLoad?.();
-      await loadPromise;
-      fixture.detectChanges();
-      await fixture.whenStable();
+      it('should show spinner during loadTargetLanguages in ngOnInit', async () => {
+        const loadTargetLanguagesSpy =
+          localStorageServiceSpy.loadTargetLanguages as jasmine.Spy;
+        let resolveLoad: (() => void) | undefined;
+        const loadPromise = new Promise<void>((resolve) => {
+          resolveLoad = resolve;
+        });
+        loadTargetLanguagesSpy.and.returnValue(loadPromise);
 
-      // Spinner should be hidden after loading
-      expect(component.isLoading).toBeFalse();
-      spinner = fixture.nativeElement.querySelector('app-spinner');
-      expect(spinner)
-        .withContext('Spinner should be hidden after loading')
-        .toBeNull();
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        // Spinner should be visible while loading
+        let spinner = fixture.nativeElement.querySelector('app-spinner');
+        expect(spinner)
+          .withContext('Spinner should be visible while loading')
+          .toBeTruthy();
+        expect(component.isLoading).toBeTrue();
+        expect(loadTargetLanguagesSpy)
+          .withContext('loadTargetLanguages should be called')
+          .toHaveBeenCalled();
+
+        // Finish loading
+        resolveLoad?.();
+        await loadPromise;
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        // Spinner should be hidden after loading
+        expect(component.isLoading).toBeFalse();
+        spinner = fixture.nativeElement.querySelector('app-spinner');
+        expect(spinner)
+          .withContext('Spinner should be hidden after loading')
+          .toBeNull();
+      });
+    });
+
+    describe('accordion visibility flow', () => {
+      beforeEach(() => {
+        component.isLoading = false;
+        component.selectedLanguage = 'de';
+        component.showAllAccordions = true;
+        component.openAccordion = null;
+
+        fixture.detectChanges();
+      });
+
+      it('should render all accordion components when no accordion is open', () => {
+        const languageAccordion = fixture.nativeElement.querySelector(
+          'app-language-accordion'
+        );
+        const targetLanguagesAccordion = fixture.nativeElement.querySelector(
+          'app-target-languages-accordion'
+        );
+        const ttsAccordion = fixture.nativeElement.querySelector(
+          'app-text-to-speech-accordion'
+        );
+        const feedbackAccordion = fixture.nativeElement.querySelector(
+          'app-feedback-accordion'
+        );
+        const statisticsAccordion = fixture.nativeElement.querySelector(
+          'app-get-statistics-accordion'
+        );
+        const privacyAccordion = fixture.nativeElement.querySelector(
+          'app-privacy-policy-accordion'
+        );
+        const changeLogAccordion = fixture.nativeElement.querySelector(
+          'app-change-log-accordion'
+        );
+        const sourceAccordion = fixture.nativeElement.querySelector(
+          'app-get-source-accordion'
+        );
+        const closeButtonArea = fixture.nativeElement.querySelector(
+          '.accordion-close-button'
+        );
+
+        expect(languageAccordion).toBeTruthy();
+        expect(targetLanguagesAccordion).toBeTruthy();
+        expect(ttsAccordion).toBeTruthy();
+        expect(feedbackAccordion).toBeTruthy();
+        expect(statisticsAccordion).toBeTruthy();
+        expect(privacyAccordion).toBeTruthy();
+        expect(changeLogAccordion).toBeTruthy();
+        expect(sourceAccordion).toBeTruthy();
+        expect(closeButtonArea).toBeNull();
+      });
+
+      it('should render only selected accordion and close button in single-accordion mode', () => {
+        component.openAccordion = 'language';
+        component.showAllAccordions = false;
+        fixture.detectChanges();
+
+        const languageAccordion = fixture.nativeElement.querySelector(
+          'app-language-accordion'
+        );
+        const targetLanguagesAccordion = fixture.nativeElement.querySelector(
+          'app-target-languages-accordion'
+        );
+        const feedbackAccordion = fixture.nativeElement.querySelector(
+          'app-feedback-accordion'
+        );
+        const closeButtonArea = fixture.nativeElement.querySelector(
+          '.accordion-close-button'
+        );
+
+        expect(languageAccordion).toBeTruthy();
+        expect(targetLanguagesAccordion).toBeNull();
+        expect(feedbackAccordion).toBeNull();
+        expect(closeButtonArea).toBeTruthy();
+      });
+
+      it('should switch to single-accordion mode when ionValueChange emits selected accordion value', () => {
+        const group = fixture.nativeElement.querySelector(
+          'ion-accordion-group'
+        ) as HTMLElement;
+        expect(group).toBeTruthy();
+
+        group.dispatchEvent(
+          new CustomEvent('ionValueChange', {
+            detail: { value: 'language' },
+            bubbles: true,
+          })
+        );
+        fixture.detectChanges();
+
+        expect(component.openAccordion).toBe('language');
+        expect(component.showAllAccordions).toBeFalse();
+
+        const closeButtonArea = fixture.nativeElement.querySelector(
+          '.accordion-close-button'
+        );
+        expect(closeButtonArea).toBeTruthy();
+      });
+
+      it('should show all accordions again when close button is clicked', () => {
+        component.openAccordion = 'language';
+        component.showAllAccordions = false;
+        fixture.detectChanges();
+
+        const closeButton = fixture.nativeElement.querySelector(
+          '.accordion-close-button ion-button'
+        ) as HTMLElement;
+        expect(closeButton).toBeTruthy();
+
+        closeButton.dispatchEvent(new Event('click'));
+        fixture.detectChanges();
+
+        expect(component.openAccordion).toBeNull();
+        expect(component.showAllAccordions).toBeTrue();
+
+        const feedbackAccordion = fixture.nativeElement.querySelector(
+          'app-feedback-accordion'
+        );
+        const closeButtonArea = fixture.nativeElement.querySelector(
+          '.accordion-close-button'
+        );
+        expect(feedbackAccordion).toBeTruthy();
+        expect(closeButtonArea).toBeNull();
+      });
     });
   });
 });
