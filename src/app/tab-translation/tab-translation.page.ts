@@ -34,6 +34,7 @@ import { TextSpeechService } from '../services/text-to-speech.service';
 import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils.service';
 import { UserStatisticComponent } from '../ui/components/user-statistic/user-statistic.component';
 import { SpinnerComponent } from '../ui/components/spinner/spinner.component';
+import { DeviceUtils } from '../services/device-utils.service';
 
 interface TranslationResult {
   [lang: string]: string;
@@ -126,7 +127,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   get deviceInfos(): DeviceInfo {
-    return this.utilsService.getDeviceInfo();
+    return DeviceUtils.getDeviceInfo();
   }
 
   isContingentExceeded: boolean = false;

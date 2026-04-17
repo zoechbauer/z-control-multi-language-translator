@@ -19,6 +19,7 @@ import {
   StatisticsSummaryCategory,
   StatisticsSummaryName,
 } from '../shared/enums';
+import { DeviceUtils } from './device-utils.service';
 
 @Injectable({
   providedIn: 'root',
@@ -111,8 +112,8 @@ export class FirebaseFirestoreUtilsService {
             date: '',
           },
         },
-        displayedPlatform: this.utilsService.getPlatform(userInfo),
-        displayedModel: this.utilsService.getModel(userInfo),
+        displayedPlatform: DeviceUtils.getWebPlatform(userInfo),
+        displayedModel: DeviceUtils.getModel(userInfo),
         // translation infos
         translatedCharCount: userTranslationInfo?.translatedCharCount ?? 0,
         targetLanguages: userTranslationInfo?.targetLanguages ?? [],

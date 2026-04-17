@@ -111,6 +111,61 @@ describe('UtilsService', () => {
       spyOnProperty(service, 'isPortrait', 'get').and.returnValue(true);
       expect(service.isSmallDevice).toBeTrue();
     });
+
+    it('should return isPortrait=true when orientation is portrait', () => {
+      spyOn(globalThis, 'matchMedia').and.returnValue({
+        matches: true,
+      } as MediaQueryList);
+
+      expect(service.isPortrait).toBeTrue();
+      expect(globalThis.matchMedia).toHaveBeenCalledWith(
+        '(orientation: portrait)'
+      );
+    });
+
+    it('should return isPortrait=false when orientation is landscape', () => {
+      spyOn(globalThis, 'matchMedia').and.returnValue({
+        matches: false,
+      } as MediaQueryList);
+
+      expect(service.isPortrait).toBeFalse();
+      expect(globalThis.matchMedia).toHaveBeenCalledWith(
+        '(orientation: portrait)'
+      );
+    });
+
+    it('should return true when system prefers dark mode', () => {
+      spyOn(globalThis, 'matchMedia').and.returnValue({
+        matches: true,
+      } as MediaQueryList);
+
+      expect(service.isDarkMode).toBeTrue();
+      expect(globalThis.matchMedia).toHaveBeenCalledWith(
+        '(prefers-color-scheme: dark)'
+      );
+    });
+
+    it('should return false when system does not prefer dark mode', () => {
+      spyOn(globalThis, 'matchMedia').and.returnValue({
+        matches: false,
+      } as MediaQueryList);
+
+      expect(service.isDarkMode).toBeFalse();
+      expect(globalThis.matchMedia).toHaveBeenCalledWith(
+        '(prefers-color-scheme: dark)'
+      );
+    });
+
+    it('should throw when matchMedia is unavailable for isDarkMode', () => {
+      spyOn(globalThis, 'matchMedia').and.returnValue(
+        undefined as unknown as MediaQueryList
+      );
+
+      expect(() => service.isDarkMode).toThrow();
+      expect(globalThis.matchMedia).toHaveBeenCalledWith(
+        '(prefers-color-scheme: dark)'
+      );
+    });
   });
 
   describe('Tab bar visibility and manipulation', () => {
@@ -349,73 +404,6 @@ describe('UtilsService', () => {
 
       expect(result).toBe('');
       expect(consoleErrorSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Device info and model/platform utilities', () => {
-    it('should return device info with environment app version', () => {
-      const result = service.getDeviceInfo();
-      expect(result).toEqual(
-        jasmine.objectContaining({
-          userAgent: navigator.userAgent,
-          language: navigator.language,
-          appVersion: environment.version,
-        })
-      );
-    });
-
-    it('should return native platform string in normal mode for native users', () => {
-      const userInfo = { isNative: true } as UserType;
-      const result = service.getPlatform(userInfo);
-      expect(result).toBe('native');
-    });
-
-    it('should return native platform string for native users', () => {
-      const userInfo = { isNative: true } as UserType;
-      const result = service.getPlatform(userInfo);
-      expect(result).toBe('native');
-    });
-
-    it('should return web-mobile for mobile user agents', () => {
-      const userInfo = {
-        deviceInfo: { userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' },
-      } as UserType;
-      const result = service.getPlatform(userInfo);
-      expect(result).toBe('web-mobile');
-    });
-
-    it('should return web-desktop for desktop user agents', () => {
-      const userInfo = {
-        deviceInfo: { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-      } as UserType;
-      const result = service.getPlatform(userInfo);
-      expect(result).toBe('web-desktop');
-    });
-
-    it('should normalize android model to uppercase without leading/trailing spaces', () => {
-      const userInfo = {
-        deviceInfo: {
-          userAgent:
-            'Mozilla/5.0 (Linux; Android 14; sm-a556b Build/UP1A.231005.007)',
-        },
-      } as UserType;
-      const result = service.getModel(userInfo);
-      expect(result).toBe('SM-A556B');
-      expect(result.startsWith(' ')).toBeFalse();
-      expect(result.endsWith(' ')).toBeFalse();
-    });
-
-    it('should keep model comparison-friendly formatting for longer android models', () => {
-      const userInfo = {
-        deviceInfo: {
-          userAgent:
-            'Mozilla/5.0 (Linux; Android 14; samsung a53 5g Build/UP1A.231005.007)',
-        },
-      } as UserType;
-      const result = service.getModel(userInfo);
-      expect(result).toBe('SAMSUNG  A53 5G');
-      expect(result.startsWith(' ')).toBeFalse();
-      expect(result.endsWith(' ')).toBeFalse();
     });
   });
 

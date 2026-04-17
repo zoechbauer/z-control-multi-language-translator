@@ -18,6 +18,7 @@ import { ToastAnchor } from '../shared/enums';
 import { environment } from 'src/environments/environment';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
+import { DeviceUtils } from './device-utils.service';
 
 describe('FirebaseFirestoreService', () => {
   let service: FirebaseFirestoreService;
@@ -62,7 +63,6 @@ describe('FirebaseFirestoreService', () => {
     onAuthStateChanged: jasmine
       .createSpy('onAuthStateChanged')
       .and.callFake((auth: any, callback: Function) => {
-        authStateCallback = callback;
         return () => {};
       }),
   };
@@ -72,10 +72,6 @@ describe('FirebaseFirestoreService', () => {
 
   const utilsServiceMock = {
     isNative: false,
-    getDeviceInfo: jasmine.createSpy('getDeviceInfo').and.returnValue({
-      deviceModel: 'Test Device',
-      platform: 'Test Platform',
-    }),
   };
 
   const localStorageServiceMock = {
@@ -88,6 +84,14 @@ describe('FirebaseFirestoreService', () => {
   const toastServiceMock = {
     showToast: jasmine.createSpy('showToast'),
   };
+
+  let getDeviceInfoSpy: jasmine.Spy;
+  const mockDeviceInfo = {
+    userAgent: 'test ua',
+    platform: 'Test Platform',
+    language: 'en',
+    appVersion: { major: 1, minor: 0, date: '2026-03-09' },
+  } as any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -111,10 +115,12 @@ describe('FirebaseFirestoreService', () => {
 
     localStorageServiceMock.saveFirestoreUid.calls.reset();
     toastServiceMock.showToast.calls.reset();
-    utilsServiceMock.getDeviceInfo.calls.reset();
     _currentUser = userStub;
     authWrapperMock.signInAnonymously.calls.reset();
     authWrapperMock.onAuthStateChanged.calls.reset();
+    getDeviceInfoSpy = spyOn(DeviceUtils, 'getDeviceInfo').and.returnValue(
+      mockDeviceInfo
+    );
   });
 
   it('should be created', () => {
@@ -873,11 +879,11 @@ describe('FirebaseFirestoreService', () => {
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('addUser');
       expect(getEnvironmentProgrammerDeviceUIDsSpy).toHaveBeenCalled();
-      expect(utilsServiceMock.getDeviceInfo).toHaveBeenCalled();
+      expect(getDeviceInfoSpy).toHaveBeenCalled();
       expect(callableSpy).toHaveBeenCalledWith({
         userId,
         programmerDeviceUIDs: getEnvironmentProgrammerDeviceUIDsSpy(),
-        deviceInfo: utilsServiceMock.getDeviceInfo(),
+        deviceInfo: mockDeviceInfo,
         isNative: utilsServiceMock.isNative,
       });
     });
@@ -908,7 +914,7 @@ describe('FirebaseFirestoreService', () => {
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('addUser');
       expect(getEnvironmentProgrammerDeviceUIDsSpy).toHaveBeenCalled();
-      expect(utilsServiceMock.getDeviceInfo).toHaveBeenCalled();
+      expect(getDeviceInfoSpy).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalledWith(
         'Error adding user:',
         new Error('call failed')

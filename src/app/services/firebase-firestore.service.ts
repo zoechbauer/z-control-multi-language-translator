@@ -35,6 +35,7 @@ import { ToastService } from './toast.service';
 import { ToastAnchor } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
+import { DeviceUtils } from './device-utils.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
@@ -282,7 +283,7 @@ export class FirebaseFirestoreService {
   }
 
   private get deviceInfo(): DeviceInfo {
-    return this.utilsService.getDeviceInfo();
+    return DeviceUtils.getDeviceInfo();
   }
 
   /**

@@ -7,11 +7,7 @@ import { Subject } from 'rxjs';
 import { DisplayMode, Tab } from '../shared/enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { environment } from 'src/environments/environment';
-import {
-  DeviceInfo,
-  DisplayedUserStatistics,
-  UserType,
-} from '../shared/firebase-firestore.interfaces';
+import { DisplayedUserStatistics } from '../shared/firebase-firestore.interfaces';
 import { UserDetailComponent } from '../ui/components/user-detail/user-detail.component';
 import { HelpModalComponent } from '../ui/components/get-help/get-help.component';
 
@@ -314,67 +310,5 @@ export class UtilsService {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day} ${hours}:${minutes}`;
-  }
-
-  /**
-   * Returns device information such as user agent, platform, language, and app version.
-   */
-  getDeviceInfo(): DeviceInfo {
-    return {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      language: navigator.language,
-      appVersion: environment.version,
-    };
-  }
-
-  /**
-   * Determines the platform type for a given user.
-   * @param userInfo The user information
-   * @returns The platform type as a string ('native', 'web-mobile', 'web-desktop')
-   */
-  getPlatform(userInfo: UserType): string {
-    // Check if native flag is explicitly set
-    if (userInfo?.isNative === true) {
-      return 'native';
-    }
-
-    // For web users, distinguish between mobile and desktop
-    const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
-    const isMobileWeb =
-      /android|iphone|ipad|ipod|mobile|iemobile|windows phone/.test(userAgent);
-
-    return isMobileWeb ? 'web-mobile' : 'web-desktop';
-  }
-
-  /**
-   * Determines the device model for a given user.
-   * @param userInfo The user information
-   * @returns The device model as a string
-   */
-  getModel(userInfo: UserType): string {
-    const userAgent = (userInfo?.deviceInfo?.userAgent || '').toLowerCase();
-    const model = this.getAndroidModelFromUserAgent(userAgent);
-    const normalizedModel = model?.trim().toUpperCase() ?? '';
-
-    if (!normalizedModel) {
-      return '';
-    }
-
-    // Keep long model names readable without introducing leading/trailing spaces.
-    return normalizedModel.length > 8
-      ? `${normalizedModel.substring(0, 8)} ${normalizedModel.substring(8)}`
-      : normalizedModel;
-  }
-
-  /**
-   * Extracts the Android device model from the user agent string.
-   * @param userAgent The user agent string
-   * @returns The Android model name or null if not found
-   */
-  private getAndroidModelFromUserAgent(userAgent: string): string | null {
-    const ua = (userAgent || '').toLowerCase();
-    const match = /android\s+[\d.]+;\s*([^;]+?)\s+build\//i.exec(ua);
-    return match?.[1]?.trim() ?? null;
   }
 }

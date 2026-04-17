@@ -43,3 +43,14 @@ export enum StatisticsSummaryName {
   FiveLanguages = '5',
 }
 
+export enum WebPlatformTypeEnum {
+  Native = 'native',
+  WebMobile = 'web-mobile',
+  WebDesktop = 'web-desktop',
+}
+
+export enum AppleDeviceTypeEnum {
+  iPhone = 'iPhone',
+  iPad = 'iPad',
+  Mac = 'Mac',
+}
