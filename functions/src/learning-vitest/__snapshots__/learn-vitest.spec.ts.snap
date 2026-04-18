@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Learn Vitest > should test snapshot 1`] = `
+{
+  "name": "Vitest",
+  "version": "1.0",
+}
+`;
