@@ -35,10 +35,10 @@
   "TRANSLATE": {
     "CARD": {
       "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
-          "NO_TARGET_LANGUAGES_1": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus:",
-          "NO_TARGET_LANGUAGES_2": "Klicken Sie auf Einstellungen",
-          "NO_TARGET_LANGUAGES_3": "und wählen Sie dann",
-          "NO_TARGET_LANGUAGES_4": "'Zielsprache(n) auswählen / ändern'",
+      "NO_TARGET_LANGUAGES_1": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus:",
+      "NO_TARGET_LANGUAGES_2": "Klicken Sie auf Einstellungen",
+      "NO_TARGET_LANGUAGES_3": "und wählen Sie dann",
+      "NO_TARGET_LANGUAGES_4": "'Zielsprache(n) auswählen / ändern'",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
@@ -211,11 +211,23 @@
         "CHECKSUM_ALL_USERS": "Verbraucht von allen Benutzern",
         "CHARS": "Zeichen",
         "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung",
-        "DISPLAY_MODE": "Anzeigemodus",
-        "DISPLAY_MODE_USER": "Benutzer-Ansicht",
-        "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht",
         "GRID_SEARCH_INFO": "Text=Benutz.|Plattf., <|>=verbraucht, <<|>>=Sprachen",
         "USER_STATISTICS_OVERVIEW": "Benutzer-Statistik Übersicht"
+      },
+      "FILTER": {
+        "LABEL": {
+          "DISPLAY_MODE": "Anzeigemodus und Filter",
+          "DISPLAY_MODE_USER": "Benutzer-Ansicht",
+          "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht",
+          "FILTER_MONTH_DATA": "Monatsdaten filtern",
+          "FILTER_MONTH_DATA_ALL": "Alle Monate",
+          "FILTER_DATA": "Daten filtern"
+        },
+        "TITLE": {
+          "DISPLAY_MODE": "Anzeigemodus wechseln",
+          "FILTER_MONTH_DATA": "Daten des Monats filtern oder alle Daten anzeigen",
+          "FILTER_DATA": "Daten mit ausgewählten Filtern neu laden"
+        }
       },
       "GRID": {
         "USER_CONTINGENT": "Benutzer-Übersetzungskontingent",
@@ -234,8 +246,8 @@
             "USER_CREATED": "Erstellt am",
             "USER_UPDATED": "Aktualisiert am",
             "USER_TYPE": "Typ",
-            "USER_TYPE_USER": "Benutzer-Übersetzung",
-            "USER_TYPE_PROGRAMMER": "Programmierer-Übersetzung"
+            "USER_TYPE_USER": "Benutzer-Gerät",
+            "USER_TYPE_PROGRAMMER": "Programmierer-Gerät"
           }
         },
         "DEVICE_INFORMATION": {

@@ -332,9 +332,54 @@ describe('LocalStorageService', () => {
       const consoleErrorSpy = spyOn(console, 'error');
       const error = new Error('some error');
       storageSpy.set.and.returnValue(Promise.reject(error));
+
       await service.saveStatisticsDisplayMode(DisplayMode.User);
+
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Error saving statistics display mode:',
+        error
+      );
+    });
+  });
+
+  describe('get statistics selected month', () => {
+    it('should get the statistics selected month', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
+      const selectedMonth = await service.getStatisticsSelectedMonth();
+      expect(selectedMonth).toBe('2026-03');
+    });
+
+    it('should return empty string if no selected month is found', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve(null));
+      const selectedMonth = await service.getStatisticsSelectedMonth();
+      expect(selectedMonth).toBe('');
+    });
+
+    it('should set statistics selected month subject based on loaded selected month', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
+      await service.getStatisticsSelectedMonth();
+      expect(service.statisticsSelectedMonthSubject.value).toBe('2026-03');
+    });
+  });
+
+  describe('save statistics selected month', () => {
+    it('should save the statistics selected month', async () => {
+      await service.saveStatisticsSelectedMonth('2026-03');
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        '2026-03'
+      );
+    });
+
+    it('should log an error if saving fails', async () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const error = new Error('some error');
+      storageSpy.set.and.returnValue(Promise.reject(error));
+
+      await service.saveStatisticsSelectedMonth('2026-03');
+      
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error saving statistics selected month:',
         error
       );
     });

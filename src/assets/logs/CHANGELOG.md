@@ -6,15 +6,17 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### ✨ New Features
 
+- In statistics programmer view a new filter has been added to select a specific month or all months for the displayed data, allowing programmers to analyze translation usage patterns over time and monitor monthly trends more effectively.
 - Added Apple device detection in programmer statistics, so iPhone, iPad, and Mac usage is now identified and displayed more clearly.
 - Improved platform visibility in programmer view, making it easier to understand which device categories are used for translations.
 
 ### 🚀 Improvements
 
+- Changed Translation from  'User Translation' to 'User Device' and 'Programmer Translation' to 'Programmer Device' for better clarity.
 - Refactored device and platform detection into a dedicated `DeviceUtilsService` to improve structure, reuse, and maintainability.
 - Introduced dedicated enums for device and platform types, improving consistency and type safety across the app.
 - Improved detection logic for mobile and tablet web clients, with a clearer separation between phone/tablet and desktop behavior.
-- Added 35 unit tests, increasing the total suite to 582 specs and improving confidence in platform/device classification and related UI behavior.
+- Added 58 unit tests, increasing the total suite to 605 specs and improving confidence in platform/device classification and related UI behavior.
 
 ## [1.10] – 2026-04-15
 

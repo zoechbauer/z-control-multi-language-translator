@@ -75,7 +75,7 @@ export class HeaderComponent {
     }, 500);
   }
 
-  async openHelpModal() {
-    this.utilsService.openHelpModal();
+  openHelpModal(): Promise<void> {
+    return this.utilsService.openHelpModal();
   }
 }

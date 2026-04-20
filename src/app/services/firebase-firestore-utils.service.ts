@@ -12,7 +12,6 @@ import {
   UserStatisticsSummary,
   UserTranslationStatistics,
 } from '../shared/firebase-firestore.interfaces';
-import { UtilsService } from './utils.service';
 import { LocalStorageService } from './local-storage.service';
 import {
   DisplayMode,
@@ -28,10 +27,10 @@ export class FirebaseFirestoreUtilsService {
   private readonly statisticsRefreshSubject = new Subject<void>();
   readonly statisticsRefresh$ = this.statisticsRefreshSubject.asObservable();
   private statisticsDisplayMode: DisplayMode = DisplayMode.User;
+  private statisticsSelectedMonth: string = '';
 
   constructor(
     private readonly firestoreService: FirebaseFirestoreService,
-    private readonly utilsService: UtilsService,
     private readonly localStorageService: LocalStorageService
   ) {
     this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
@@ -39,6 +38,11 @@ export class FirebaseFirestoreUtilsService {
         .getStatisticsDisplayMode()
         .then((mode: DisplayMode) => {
           this.statisticsDisplayMode = mode;
+        });
+      this.localStorageService
+        .getStatisticsSelectedMonth()
+        .then((month: string) => {
+          this.statisticsSelectedMonth = month;
         });
     });
   }
@@ -87,6 +91,16 @@ export class FirebaseFirestoreUtilsService {
 
     this.statisticsDisplayMode =
       await this.localStorageService.getStatisticsDisplayMode();
+
+    this.statisticsSelectedMonth =
+      await this.localStorageService.getStatisticsSelectedMonth();
+
+    console.log(
+      'getDisplayedUserStatistics from local storage - Display mode:',
+      this.statisticsDisplayMode,
+      ' and Selected month:',
+      this.statisticsSelectedMonth
+    );
 
     statisticsData.users.forEach((userInfo) => {
       const userTranslationInfo = userTranslationStatistics.find(

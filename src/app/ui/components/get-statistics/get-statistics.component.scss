@@ -3,18 +3,27 @@
   padding: 0;
   border-radius: 8px;
 
+  .filter-section {
+      display: flex;
+      flex-direction: column;
+  }
+
   .display-mode {
     display: flex;
-    justify-content: center;
-    text-align: center;
-
+    justify-content: space-between;
+    
     ion-radio {
-      margin: 0 1.5rem;
+      margin-right: 1.75rem;
     }
   }
+
+  .filter-month {
+    margin-top: 0.5rem;
+  }
+
   .stat-section,
   .debug-section {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     padding: 1rem;
     border-radius: 6px;
   }
@@ -70,9 +79,9 @@
     .detail-row {
       align-items: center;
 
-    .smaller-font {
-      font-size: 0.8rem;
-    }
+      .smaller-font {
+        font-size: 0.8rem;
+      }
 
       .info-button {
         background: none;

@@ -211,11 +211,23 @@
         "CHECKSUM_ALL_USERS": "Used by all users",
         "CHARS": "Characters",
         "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation",
-        "DISPLAY_MODE": "Display Mode",
-        "DISPLAY_MODE_USER": "User View",
-        "DISPLAY_MODE_PROGRAMMER": "Programmer View",
         "GRID_SEARCH_INFO": "Text=User & Platform, <|>=used chars, <<|>>=lang",
         "USER_STATISTICS_OVERVIEW": "User Statistics Overview"
+      },
+      "FILTER": {
+        "LABEL": {
+          "DISPLAY_MODE": "Display Mode and Filter",
+          "DISPLAY_MODE_USER": "User View",
+          "DISPLAY_MODE_PROGRAMMER": "Programmer View",
+          "FILTER_MONTH_DATA": "Filter Month Data",
+          "FILTER_MONTH_DATA_ALL": "All Months",
+          "FILTER_DATA": "Filter Data"
+        },
+        "TITLE": {
+          "DISPLAY_MODE": "Switch display mode",
+          "FILTER_MONTH_DATA": "Filter current month data or show all data",
+          "FILTER_DATA": "Reload data with selected filters"
+        }
       },
       "GRID": {
         "USER_CONTINGENT": "User Translation Contingent",
@@ -234,8 +246,8 @@
             "USER_CREATED": "Created At",
             "USER_UPDATED": "Updated At",
             "USER_TYPE": "Type",
-            "USER_TYPE_USER": "User Translation",
-            "USER_TYPE_PROGRAMMER": "Programmer Translation"
+            "USER_TYPE_USER": "User Device",
+            "USER_TYPE_PROGRAMMER": "Programmer Device"
           }
         },
         "DEVICE_INFORMATION": {

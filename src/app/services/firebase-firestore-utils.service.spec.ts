@@ -58,14 +58,16 @@ describe('FirebaseFirestoreUtilsService', () => {
     );
     localStorageServiceMock = jasmine.createSpyObj(
       'LocalStorageService',
-      ['getStatisticsDisplayMode'],
+      ['getStatisticsDisplayMode', 'getStatisticsSelectedMonth'],
       {
         statisticsDisplayMode$: of(DisplayMode.User),
+        statisticsSelectedMonth$: of('2026-04'),
       }
     );
     localStorageServiceMock.getStatisticsDisplayMode.and.resolveTo(
       DisplayMode.User
     );
+    localStorageServiceMock.getStatisticsSelectedMonth.and.resolveTo('2026-04');
 
     TestBed.configureTestingModule({
       providers: [

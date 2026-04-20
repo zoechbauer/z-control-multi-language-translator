@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
 import { DisplayMode, Tab } from '../shared/enums';
@@ -26,6 +27,7 @@ export class UtilsService {
   private currentModal: HTMLIonModalElement | null = null;
 
   constructor(
+    private readonly translate: TranslateService,
     private readonly modalController: ModalController,
     private readonly router: Router
   ) {
@@ -310,5 +312,42 @@ export class UtilsService {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day} ${hours}:${minutes}`;
+  }
+
+  /**
+   * Formats a Date object to a Firestore search string in the format 'YYYY-MM'.
+   * @param date The date to format or null
+   * @returns The formatted date string or an empty string if formatting fails
+   */
+  formatDateTimeFirestoreSearchString(date: Date | null): string {
+    if (date == null) return '';
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+      console.error('Invalid date provided for formatting:', date);
+      return '';
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+
+  /**
+   * Generates an array of Firestore search strings for each month from a start date to the current date.
+   * @returns An array of formatted date strings in the format 'YYYY-MM' and 'all'
+   */
+  getAllFirestoreSearchStringsForMonth(): string[] {
+    const startDate = new Date('2026-02-01');
+    const endDate = new Date();
+    const searchStrings: string[] = [];
+
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const searchString = this.formatDateTimeFirestoreSearchString(currentDate);
+      searchStrings.push(searchString);
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+    const allMonthsString = this.translate.instant('SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL');
+    searchStrings.push(allMonthsString);
+
+    return searchStrings;
   }
 }

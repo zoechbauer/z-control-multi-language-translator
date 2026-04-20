@@ -30,7 +30,13 @@ describe('GetStatisticsComponent', () => {
   beforeEach(waitForAsync(() => {
     utilsServiceSpy = jasmine.createSpyObj(
       'UtilsService',
-      ['formatDateTimeISO', 'formatDateISO', 'openUserDetail'],
+      [
+        'formatDateTimeISO',
+        'formatDateISO',
+        'formatDateTimeFirestoreSearchString',
+        'getAllFirestoreSearchStringsForMonth',
+        'openUserDetail',
+      ],
       {
         isPortrait: true,
         isNative: false,
@@ -61,9 +67,12 @@ describe('GetStatisticsComponent', () => {
         'loadFirestoreUid',
         'getStatisticsDisplayMode',
         'saveStatisticsDisplayMode',
+        'getStatisticsSelectedMonth',
+        'saveStatisticsSelectedMonth',
       ],
       {
         statisticsDisplayMode$: of(DisplayMode.User),
+        statisticsSelectedMonth$: of('2026-04'),
       }
     );
 
@@ -439,27 +448,23 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('onDisplayModeChange', () => {
-      it('should change display mode, clear search term, save to local storage and call init', () => {
+      it('should change display mode, and save to local storage', () => {
         localStorageServiceSpy.saveStatisticsDisplayMode.and.returnValue(
           Promise.resolve()
         );
         component.displayMode = DisplayMode.User;
-        component.searchTerm = 'test';
         const event = {
           detail: {
             value: DisplayMode.Programmer,
           },
         };
-        const initSpy = spyOn(component, 'init');
 
         component.onDisplayModeChange(event);
 
         expect(component.displayMode).toBe(DisplayMode.Programmer);
-        expect(component.searchTerm).toBe('');
         expect(
           localStorageServiceSpy.saveStatisticsDisplayMode
         ).toHaveBeenCalledWith(DisplayMode.Programmer);
-        expect(initSpy).toHaveBeenCalled();
       });
 
       it('should handle error when saving display mode to local storage', async () => {
@@ -473,13 +478,11 @@ describe('GetStatisticsComponent', () => {
             value: DisplayMode.Programmer,
           },
         };
-        const initSpy = spyOn(component, 'init');
 
         component.onDisplayModeChange(event);
         await Promise.resolve();
 
         expect(component.displayMode).toBe(DisplayMode.Programmer);
-        expect(component.searchTerm).toBe('');
         expect(
           localStorageServiceSpy.saveStatisticsDisplayMode
         ).toHaveBeenCalledWith(DisplayMode.Programmer);
@@ -487,7 +490,6 @@ describe('GetStatisticsComponent', () => {
           'Error saving display mode to local storage:',
           new Error('Storage error')
         );
-        expect(initSpy).toHaveBeenCalled(); // will change display mode to localStorage value
       });
 
       it('should not change display mode and searchTerm if value is invalid', () => {
@@ -498,7 +500,6 @@ describe('GetStatisticsComponent', () => {
             value: 'invalid-value',
           },
         };
-        const initSpy = spyOn(component, 'init');
 
         component.onDisplayModeChange(event);
 
@@ -507,7 +508,78 @@ describe('GetStatisticsComponent', () => {
         expect(
           localStorageServiceSpy.saveStatisticsDisplayMode
         ).not.toHaveBeenCalled();
-        expect(initSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('onSelectedMonthChange', () => {
+      it('should change filter selected month, and save to local storage', () => {
+        localStorageServiceSpy.saveStatisticsSelectedMonth.and.returnValue(
+          Promise.resolve()
+        );
+        component.filterSelectedMonth = '2026-03';
+        const event = {
+          detail: {
+            value: '2026-04',
+          },
+        };
+
+        component.onSelectedMonthChange(event);
+
+        expect(component.filterSelectedMonth).toBe('2026-04');
+        expect(
+          localStorageServiceSpy.saveStatisticsSelectedMonth
+        ).toHaveBeenCalledWith('2026-04');
+      });
+
+      it('should handle error when saving selected month to local storage', async () => {
+        const consoleErrorSpy = spyOn(console, 'error');
+        localStorageServiceSpy.saveStatisticsSelectedMonth.and.returnValue(
+          Promise.reject(new Error('Storage error'))
+        );
+        component.filterSelectedMonth = '2026-03';
+        const event = {
+          detail: {
+            value: '2026-04',
+          },
+        };
+
+        component.onSelectedMonthChange(event);
+        await Promise.resolve();
+
+        expect(component.filterSelectedMonth).toBe('2026-04');
+        expect(component.searchTerm).toBe('');
+        expect(
+          localStorageServiceSpy.saveStatisticsSelectedMonth
+        ).toHaveBeenCalledWith('2026-04');
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Error saving selected month to local storage:',
+          new Error('Storage error')
+        );
+      });
+    });
+
+    describe('onFilterData', () => {
+      it('should call init to refresh data', () => {
+        spyOn(component, 'init');
+        component.onFilterData();
+        expect(component.init).toHaveBeenCalled();
+      });
+
+      it('should clear search term when filter data', () => {
+        component.searchTerm = 'test';
+        component.onFilterData();
+
+        expect(component.searchTerm).toBe('');
+      });
+
+      it('should not change filter fields when filter data', () => {
+        const originalFilterSelectedMonth = component.filterSelectedMonth;
+        const originalDisplayMode = component.displayMode;
+
+        component.onFilterData();
+
+        expect(component.filterSelectedMonth).toBe(originalFilterSelectedMonth);
+        expect(component.displayMode).toBe(originalDisplayMode);
       });
     });
 
@@ -631,7 +703,7 @@ describe('GetStatisticsComponent', () => {
       });
 
       describe('init', () => {
-        it('should load current user uid, display mode, isProgrammerDevice and contingent data', async () => {
+        it('should clear search term, load current user uid, display mode, isProgrammerDevice and contingent data', async () => {
           const isProgrammerDeviceSpy = Object.defineProperty(
             firestoreServiceSpy,
             'isProgrammerDevice',
@@ -652,9 +724,11 @@ describe('GetStatisticsComponent', () => {
               Promise.resolve({ StopTranslationForAllUsers: false })
             );
           component.isProgrammerDevice = false;
+          component.searchTerm = 'test';
 
           await component.init();
 
+          expect(component.searchTerm).toBe('');
           expect(loadFirestoreUidSpy).toHaveBeenCalled();
           expect(getStatisticsDisplayModeSpy).toHaveBeenCalled();
           expect(readContingentDataSpy).toHaveBeenCalled();
@@ -812,25 +886,53 @@ describe('GetStatisticsComponent', () => {
       });
     });
 
-    describe('display mode selection section', () => {
-      it('should show section when programmerDevice is true', () => {
+    describe('display flter section', () => {
+      it('should show flter section when programmerDevice is true', () => {
         component.isProgrammerDevice = true;
         fixture.detectChanges();
 
-        const statisticsContent = fixture.nativeElement.querySelector(
-          '.display-mode-section'
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.filter-section');
+        const displayModeSegment = fixture.nativeElement.querySelector(
+          '.filter-section .display-mode'
         );
-        expect(statisticsContent).toBeTruthy();
+        const filterByMonthSegment = fixture.nativeElement.querySelector(
+          '.filter-section .filter-month'
+        );
+        const filterDataButton = fixture.nativeElement.querySelector(
+          '.filter-section .filter-data-btn'
+        );
+        expect(statisticsContent).withContext('statisticsContent').toBeTruthy();
+        expect(displayModeSegment)
+          .withContext('displayModeSegment')
+          .toBeTruthy();
+        expect(filterByMonthSegment)
+          .withContext('filterByMonthSegment')
+          .toBeTruthy();
+        expect(filterDataButton).withContext('filterDataButton').toBeTruthy();
       });
 
-      it('should not show section when programmerDevice is false', () => {
+      it('should not show flter section when programmerDevice is false', () => {
         component.isProgrammerDevice = false;
         fixture.detectChanges();
 
-        const statisticsContent = fixture.nativeElement.querySelector(
-          '.display-mode-section'
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.filter-section');
+        const displayModeSegment = fixture.nativeElement.querySelector(
+          '.filter-section .display-mode'
         );
-        expect(statisticsContent).toBeNull();
+        const filterByMonthSegment = fixture.nativeElement.querySelector(
+          '.filter-section .filter-month'
+        );
+        const filterDataButton = fixture.nativeElement.querySelector(
+          '.filter-section .filter-data-btn'
+        );
+        expect(statisticsContent).withContext('statisticsContent').toBeNull();
+        expect(displayModeSegment).withContext('displayModeSegment').toBeNull();
+        expect(filterByMonthSegment)
+          .withContext('filterByMonthSegment')
+          .toBeNull();
+        expect(filterDataButton).withContext('filterDataButton').toBeNull();
       });
     });
 
@@ -1055,7 +1157,7 @@ describe('GetStatisticsComponent', () => {
         fixture.detectChanges();
 
         const statusText =
-          fixture.nativeElement.querySelector('p.ion-text-center');
+          fixture.nativeElement.querySelector('p.global-stop-flag');
 
         expect(statusText).toBeTruthy();
         expect(statusText.classList.contains('stopped')).toBeTrue();

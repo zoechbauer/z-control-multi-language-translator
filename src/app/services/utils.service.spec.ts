@@ -13,6 +13,8 @@ import {
   DisplayedUserStatistics,
   UserType,
 } from '../shared/firebase-firestore.interfaces';
+import { createTranslateServiceMock } from '../testing/translate-service.mock';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('UtilsService', () => {
   let service: UtilsService;
@@ -28,6 +30,10 @@ describe('UtilsService', () => {
     TestBed.configureTestingModule({
       providers: [
         UtilsService,
+        {
+          provide: TranslateService,
+          useValue: createTranslateServiceMock(),
+        },
         { provide: ModalController, useValue: modalControllerSpy },
         { provide: Router, useValue: routerSpy },
       ],
@@ -404,6 +410,81 @@ describe('UtilsService', () => {
 
       expect(result).toBe('');
       expect(consoleErrorSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('DateTime formatting for Firestore Search string', () => {
+    it('should format date to YYYY-MM string', () => {
+      const result = service.formatDateTimeFirestoreSearchString(
+        new Date(2024, 0, 5, 9, 7)
+      );
+      expect(result).toBe('2024-01');
+    });
+
+    it('should return empty string and log error if date is invalid', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeFirestoreSearchString(
+        new Date('invalid date')
+      );
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        jasmine.any(Date)
+      );
+    });
+
+    it('should return empty string and log error if date is incomplete in formatDateTimeISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeFirestoreSearchString(
+        '2024-01' as unknown as Date
+      );
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid date provided for formatting:',
+        '2024-01'
+      );
+    });
+
+    it('should return empty string but do not log error if date is null in formatDateTimeISO', () => {
+      const consoleErrorSpy = spyOn(console, 'error');
+      const result = service.formatDateTimeFirestoreSearchString(
+        null as unknown as Date
+      );
+
+      expect(result).toBe('');
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getAllFirestoreSearchStringsForMonth', () => {
+    it('should return array of month strings for current month is 2026-04', () => {
+      const result: string[] = service.getAllFirestoreSearchStringsForMonth();
+      expect(result.length).toBe(4);
+      expect(result[0]).toBe('2026-02');
+      expect(result[1]).toBe('2026-03');
+      expect(result[2]).toBe('2026-04');
+      expect(result[3]).toBe(
+        'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
+      );
+    });
+
+    it('should return array of month strings for for current month is 2027-02', () => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date(2027, 1, 15));
+
+      try {
+        const result: string[] = service.getAllFirestoreSearchStringsForMonth();
+        expect(result.length).toBe(14);
+        expect(result[0]).toBe('2026-02');
+        expect(result[12]).toBe('2027-02');
+        expect(result[13]).toBe(
+          'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
+        );
+      } finally {
+        jasmine.clock().uninstall();
+      }
     });
   });
 

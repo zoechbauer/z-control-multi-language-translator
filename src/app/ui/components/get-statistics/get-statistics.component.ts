@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
-  IonSpinner,
   IonGrid,
   IonCol,
   IonRow,
@@ -8,9 +7,18 @@ import {
   IonButton,
   IonRadio,
   IonRadioGroup,
+  IonSelect,
+  IonSelectOption,
   IonSearchbar,
 } from '@ionic/angular/standalone';
-import { NgFor, NgIf, NgTemplateOutlet, DecimalPipe, JsonPipe, NgClass } from '@angular/common';
+import {
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+  DecimalPipe,
+  JsonPipe,
+  NgClass,
+} from '@angular/common';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -28,6 +36,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-get-statistics',
@@ -40,7 +49,6 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     IonButton,
     IonRow,
     IonCol,
-    IonSpinner,
     NgIf,
     NgFor,
     JsonPipe,
@@ -51,19 +59,24 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     IonIcon,
     IonRadioGroup,
     IonRadio,
+    IonSelect,
+    IonSelectOption,
     LogoComponent,
     SpinnerComponent,
-    NgClass
-],
+    FormsModule,
+    NgClass,
+  ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;
+
   LogoType = LogoType;
   DisplayMode = DisplayMode;
   displayMode: DisplayMode = DisplayMode.User;
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
-
+  filterSelectedMonth: string = '';
+  allFilterMonthValues: string[] = [];
   searchTerm: string = '';
   platformFilter: 'all' | 'web' | 'native' = 'all';
   onlyExceeded = false;
@@ -188,15 +201,18 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       }),
       this.localStorageService.statisticsDisplayMode$.subscribe((mode) => {
         this.displayMode = mode;
+      }),
+      this.localStorageService.statisticsSelectedMonth$.subscribe((month) => {
+        this.filterSelectedMonth = month;
       })
     );
   }
 
   async init() {
     this.isLoading = true;
+    this.searchTerm = '';
     this.isProgrammerDevice = this.firestoreService.isProgrammerDevice;
-    this.displayMode =
-      await this.localStorageService.getStatisticsDisplayMode();
+    await this.setFilterValues();
 
     try {
       this.currentUserUid = await this.localStorageService.loadFirestoreUid();
@@ -244,6 +260,40 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     }
   }
 
+  private async setFilterValues(): Promise<void> {
+    this.displayMode =
+      await this.localStorageService.getStatisticsDisplayMode();
+
+    this.allFilterMonthValues =
+      this.utilsService.getAllFirestoreSearchStringsForMonth();
+    this.filterSelectedMonth =
+      await this.localStorageService.getStatisticsSelectedMonth();
+    if (!this.filterSelectedMonth) {
+      // use currrent month as default if no value is stored
+      this.filterSelectedMonth =
+        this.utilsService.formatDateTimeFirestoreSearchString(new Date());
+    }
+  }
+
+  onFilterData(): void {
+    // Trigger data reload with current filters
+    this.init();
+  }
+
+  onSelectedMonthChange(event: any): void {
+    const value = event?.detail?.value;
+    if (value) {
+      this.filterSelectedMonth = value;
+
+      // Store selected month in local storage
+      this.localStorageService
+        .saveStatisticsSelectedMonth(this.filterSelectedMonth)
+        .catch((error) => {
+          console.error('Error saving selected month to local storage:', error);
+        });
+    }
+  }
+
   isCurrentUser(userId: string): boolean {
     return userId === this.currentUserUid;
   }
@@ -252,7 +302,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     const value = event?.detail?.value;
     if (value === DisplayMode.User || value === DisplayMode.Programmer) {
       this.displayMode = value;
-      this.searchTerm = '';
 
       // Store display mode in local storage
       this.localStorageService
@@ -260,8 +309,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
         .catch((error) => {
           console.error('Error saving display mode to local storage:', error);
         });
-      // Refresh statistics data to apply display mode change
-      this.init();
     }
   }
 

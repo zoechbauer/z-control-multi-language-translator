@@ -79,46 +79,111 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  describe('class logic', () => {
+    it('should create the app', () => {
+      const fixture = TestBed.createComponent(AppComponent);
+      const app = fixture.componentInstance;
+      expect(app).toBeTruthy();
+    });
 
-  describe('ngOnInit', () => {
-    it('should call initializeApp', () => {
-      spyOn(component, 'initializeApp');
-      component.ngOnInit();
-      expect(component.initializeApp).toHaveBeenCalled();
+    describe('ngOnInit', () => {
+      it('should call initializeApp', () => {
+        spyOn(component, 'initializeApp');
+        component.ngOnInit();
+        expect(component.initializeApp).toHaveBeenCalled();
+      });
+    });
+
+    describe('initializeApp', () => {
+      it('should initialize services and set system bars for native app', async () => {
+        component.isNativeApp = true;
+
+        const safeAreaInsetsService = TestBed.inject(
+          SafeAreaInsetsService
+        ) as jasmine.SpyObj<SafeAreaInsetsService>;
+        const systemBarsService = TestBed.inject(
+          SystemBarsService
+        ) as jasmine.SpyObj<SystemBarsService>;
+        const firestoreService = TestBed.inject(
+          FirebaseFirestoreService
+        ) as jasmine.SpyObj<FirebaseFirestoreService>;
+        const textSpeechService = TestBed.inject(
+          TextSpeechService
+        ) as jasmine.SpyObj<TextSpeechService>;
+        const localStorageService = TestBed.inject(LocalStorageService) as any;
+
+        await component.initializeApp();
+
+        expect(safeAreaInsetsService.setSafeAreaInsetsFix).toHaveBeenCalled();
+        expect(systemBarsService.getCurrentIsDarkMode).toHaveBeenCalled();
+        expect(systemBarsService.setBars).toHaveBeenCalled();
+        expect(firestoreService.init).toHaveBeenCalled();
+        expect(textSpeechService.init).toHaveBeenCalled();
+        expect(localStorageService.initializeServicesAsync).toHaveBeenCalled();
+      });
     });
   });
 
-  describe('initializeApp', () => {
-    it('should initialize services and set system bars for native app', async () => {
-      component.isNativeApp = true;
+  describe('template rendering', () => {
+    it('should render ion-app element', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('ion-app')).toBeTruthy();
+    });
 
-      const safeAreaInsetsService = TestBed.inject(
-        SafeAreaInsetsService
-      ) as jasmine.SpyObj<SafeAreaInsetsService>;
-      const systemBarsService = TestBed.inject(
-        SystemBarsService
-      ) as jasmine.SpyObj<SystemBarsService>;
-      const firestoreService = TestBed.inject(
-        FirebaseFirestoreService
-      ) as jasmine.SpyObj<FirebaseFirestoreService>;
-      const textSpeechService = TestBed.inject(
-        TextSpeechService
-      ) as jasmine.SpyObj<TextSpeechService>;
-      const localStorageService = TestBed.inject(LocalStorageService) as any;
+    it('should render ion-router-outlet element', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.querySelector('ion-router-outlet')).toBeTruthy();
+    });
 
-      await component.initializeApp();
+    describe('should add or remove classes on body element based on platform', () => {
+      it('should add native-app class to body for native platform', async () => {
+        component.isNativeApp = true;
+        await component.initializeApp();
+        expect(document.body.classList.contains('native-app')).toBeTrue();
+      });
 
-      expect(safeAreaInsetsService.setSafeAreaInsetsFix).toHaveBeenCalled();
-      expect(systemBarsService.getCurrentIsDarkMode).toHaveBeenCalled();
-      expect(systemBarsService.setBars).toHaveBeenCalled();
-      expect(firestoreService.init).toHaveBeenCalled();
-      expect(textSpeechService.init).toHaveBeenCalled();
-      expect(localStorageService.initializeServicesAsync).toHaveBeenCalled();
+      it('should add web-app class for web platform', async () => {
+        component.isNativeApp = false;
+        await component.initializeApp();
+        expect(document.body.classList.contains('web-app'))
+          .withContext('web-app class')
+          .toBeTrue();
+      });
+    });
+
+    describe('should add or remove classes on body.div element based on platform and tabs bar visibility', () => {
+      it('should add web-app-width to body for web platform', async () => {
+        component.isNativeApp = false;
+        fixture.detectChanges();
+
+        const bodyDiv = fixture.nativeElement.querySelector('div');
+        expect(bodyDiv?.classList.contains('web-app-width')).toBeTrue();
+      });
+
+      it('should add native-app-height-show-tabs-bar for native platform with tabs bar', async () => {
+        component.isNativeApp = true;
+        component.showTabsBar = true;
+        fixture.detectChanges();
+
+        const bodyDiv = fixture.nativeElement.querySelector('div');
+        expect(
+          bodyDiv?.classList.contains('native-app-height-show-tabs-bar')
+        ).toBeTrue();
+      });
+
+      it('should not add native-app-height-show-tabs-bar for native platform without tabs bar', async () => {
+        component.isNativeApp = true;
+        component.showTabsBar = false;
+        fixture.detectChanges();
+
+        const bodyDiv = fixture.nativeElement.querySelector('div');
+        expect(bodyDiv.classList.contains('native-app-height-show-tabs-bar'))
+          .withContext('native-app-height-show-tabs-bar class')
+          .toBeFalse();
+        expect(bodyDiv.classList.contains('native-app-height-hide-tabs-bar'))
+          .withContext('native-app-height-hide-tabs-bar class')
+          .toBeTrue();
+      });
     });
   });
 });

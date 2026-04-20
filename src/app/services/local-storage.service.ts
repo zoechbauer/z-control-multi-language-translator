@@ -12,6 +12,7 @@ enum LocalStorage {
   TextToSpeechValues = 'textToSpeechValues',
   CurrentUser = 'mlt_currentUser',
   StatisticsDisplayMode = 'statisticsDisplayMode',
+  StatisticsSelectedMonth = 'statisticsSelectedMonth',
 }
 
 @Injectable({
@@ -87,6 +88,15 @@ export class LocalStorageService {
    * Observable for the current display mode for statistics.
    */
   statisticsDisplayMode$ = this.statisticsDisplayModeSubject.asObservable();
+
+  /**
+   * Emits the currently selected month for statistics filtering.
+   */
+  statisticsSelectedMonthSubject = new BehaviorSubject<string>('');
+  /**
+   * Observable for the currently selected month for statistics filtering.
+   */
+  statisticsSelectedMonth$ = this.statisticsSelectedMonthSubject.asObservable();
 
   constructor(
     private readonly storage: Storage,
@@ -329,6 +339,38 @@ export class LocalStorageService {
       this.statisticsDisplayModeSubject.next(displayMode);
     } catch (error) {
       console.error('Error saving statistics display mode:', error);
+    }
+  }
+
+  async getStatisticsSelectedMonth(): Promise<string> {
+    let selectedMonth: string;
+    const rawValue = await this.storage.get(
+      LocalStorage.StatisticsSelectedMonth
+    );
+
+    if (rawValue) {
+      selectedMonth = rawValue as string;
+    } else {
+      selectedMonth = '';
+    }
+
+    this.statisticsSelectedMonthSubject.next(selectedMonth);
+    return selectedMonth;
+  }
+
+  /**
+   * Saves the selected month for statistics in local storage.
+   * @param selectedMonth The month to save in local storage
+   */
+  async saveStatisticsSelectedMonth(selectedMonth: string): Promise<void> {
+    try {
+      await this.storage.set(
+        LocalStorage.StatisticsSelectedMonth,
+        selectedMonth
+      );
+      this.statisticsSelectedMonthSubject.next(selectedMonth);
+    } catch (error) {
+      console.error('Error saving statistics selected month:', error);
     }
   }
 }

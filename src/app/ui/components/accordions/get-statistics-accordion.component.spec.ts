@@ -18,6 +18,7 @@ describe('GetStatisticsAccordionComponent', () => {
   };
   const localStorageServiceMock = {
     statisticsDisplayMode$: new Subject<void>(),
+    statisticsSelectedMonth$: new Subject<void>(),
   };
 
   beforeEach(() => {
