@@ -54,3 +54,8 @@ export enum AppleDeviceTypeEnum {
   iPad = 'iPad',
   Mac = 'Mac',
 }
+
+export enum AllMonthsOption {
+  localStorageValue = 'all',
+  SelectOptionValue = 'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL',
+}

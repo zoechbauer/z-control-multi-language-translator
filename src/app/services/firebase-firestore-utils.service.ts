@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 
 import { FirebaseFirestoreService } from './firebase-firestore.service';
 import { environment } from 'src/environments/environment';
-import { FireStoreConstants } from '../shared/app.constants';
 import {
   DisplayedUserContingentData,
   DisplayedUserStatistics,
@@ -14,11 +13,13 @@ import {
 } from '../shared/firebase-firestore.interfaces';
 import { LocalStorageService } from './local-storage.service';
 import {
+  AllMonthsOption,
   DisplayMode,
   StatisticsSummaryCategory,
   StatisticsSummaryName,
 } from '../shared/enums';
 import { DeviceUtils } from './device-utils.service';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,8 @@ export class FirebaseFirestoreUtilsService {
 
   constructor(
     private readonly firestoreService: FirebaseFirestoreService,
-    private readonly localStorageService: LocalStorageService
+    private readonly localStorageService: LocalStorageService,
+    private readonly utilsService: UtilsService
   ) {
     this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
       this.localStorageService
@@ -77,23 +79,11 @@ export class FirebaseFirestoreUtilsService {
       programmerDeviceUIDs: [],
     };
 
-    const userTranslationStatistics: UserTranslationStatistics[] =
-      await this.firestoreService.getAllUserTranslationStatistics();
-
-    statisticsData.userTranslationStatistics = userTranslationStatistics;
-
-    statisticsData.users = await this.firestoreService.getUsers();
-
-    if (this.firestoreService.isProgrammerDevice) {
-      statisticsData.programmerDeviceUIDs =
-        await this.firestoreService.getProgrammerDeviceUIDs();
-    }
-
     this.statisticsDisplayMode =
       await this.localStorageService.getStatisticsDisplayMode();
 
     this.statisticsSelectedMonth =
-      await this.localStorageService.getStatisticsSelectedMonth();
+      (await this.localStorageService.getStatisticsSelectedMonth(AllMonthsOption.localStorageValue));
 
     console.log(
       'getDisplayedUserStatistics from local storage - Display mode:',
@@ -101,6 +91,18 @@ export class FirebaseFirestoreUtilsService {
       ' and Selected month:',
       this.statisticsSelectedMonth
     );
+
+    const userTranslationStatistics: UserTranslationStatistics[] =
+      await this.firestoreService.getAllUserTranslationStatistics(this.statisticsSelectedMonth);
+
+    statisticsData.userTranslationStatistics = userTranslationStatistics;
+
+    statisticsData.users = await this.firestoreService.getUsers(this.statisticsSelectedMonth);
+
+    if (this.firestoreService.isProgrammerDevice) {
+      statisticsData.programmerDeviceUIDs =
+        await this.firestoreService.getProgrammerDeviceUIDs();
+    }
 
     statisticsData.users.forEach((userInfo) => {
       const userTranslationInfo = userTranslationStatistics.find(
@@ -463,8 +465,6 @@ export class FirebaseFirestoreUtilsService {
   async getDisplayedUserContingentData(): Promise<
     DisplayedUserContingentData[]
   > {
-    // Auto-refresh month context if the month has changed
-    await this.autrefreshMonthContextIfNeeded();
     // Read all control flags from Firestore
     const contingentData: FirestoreContingentData =
       await this.firestoreService.readContingentData();
@@ -512,7 +512,7 @@ export class FirebaseFirestoreUtilsService {
    * If translation simulation is enabled, it returns false to allow unlimited translations
    * for testing and development purposes without affecting real usage data.
    *
-   * This method auto-refreshes the month context if the month has changed, then verifies, in order:
+   * This method verifies, in order:
    * 1. If translation is globally stopped for all users.
    * 2. If the total contingent for all users is exceeded.
    * 3. If the contingent for the current user is exceeded.
@@ -526,9 +526,6 @@ export class FirebaseFirestoreUtilsService {
     if (environment.app.simulateTranslation) {
       return false;
     }
-
-    // Auto-refresh month context if the month has changed
-    await this.autrefreshMonthContextIfNeeded();
 
     // Read all control flags from Firestore
     const flags: FirestoreContingentData =
@@ -572,18 +569,4 @@ export class FirebaseFirestoreUtilsService {
     return charCount >= limit - buffer;
   }
 
-  // Auto-refresh month context if the month has changed
-  private async autrefreshMonthContextIfNeeded(): Promise<void> {
-    const currentMonth =
-      this.firestoreService['monthlyTranslationsMonthDocPath'];
-    const expectedMonth = `${
-      FireStoreConstants.COLLECTION_TRANSLATIONS
-    }/${FireStoreConstants.currentYearMonthPath()}`;
-    if (currentMonth !== expectedMonth) {
-      console.log(
-        'Month has changed. Re-initializing FirestoreService for new month context.'
-      );
-      await this.firestoreService.init();
-    }
-  }
 }

@@ -2,7 +2,8 @@
   "------ global": "-------",
   "APP": {
     "NAME": "z-control Übersetzer",
-    "LOADING_DATA": "Daten werden geladen..."
+    "LOADING_DATA": "Daten werden geladen...",
+    "UNDER_CONSTRUCTION": "Diese Funktion ist in Arbeit."
   },
   "------ header page": "-------",
   "HEADER": {
@@ -212,21 +213,21 @@
         "CHARS": "Zeichen",
         "GRID_INFO_NOTE": "Absteigend sortiert nach Datum der letzten Übersetzung",
         "GRID_SEARCH_INFO": "Text=Benutz.|Plattf., <|>=verbraucht, <<|>>=Sprachen",
-        "USER_STATISTICS_OVERVIEW": "Benutzer-Statistik Übersicht"
+        "USER_STATISTICS_OVERVIEW": "Benutzer-Statistik Übersicht",
+        "JSON_DATA": "Rohdaten (JSON) - nur für Debug"
       },
       "FILTER": {
         "LABEL": {
-          "DISPLAY_MODE": "Anzeigemodus und Filter",
-          "DISPLAY_MODE_USER": "Benutzer-Ansicht",
-          "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht",
+          "FILTER_HEADER": "Filter und Anzeigemodus",
           "FILTER_MONTH_DATA": "Monatsdaten filtern",
           "FILTER_MONTH_DATA_ALL": "Alle Monate",
-          "FILTER_DATA": "Daten filtern"
+          "FILTER_DATA": "Daten filtern",
+          "DISPLAY_MODE_USER": "Benutzer-Ansicht",
+          "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht"
         },
         "TITLE": {
-          "DISPLAY_MODE": "Anzeigemodus wechseln",
           "FILTER_MONTH_DATA": "Daten des Monats filtern oder alle Daten anzeigen",
-          "FILTER_DATA": "Daten mit ausgewählten Filtern neu laden"
+          "FILTER_DATA": "Daten mit ausgewähltem Monat neu laden"
         }
       },
       "GRID": {

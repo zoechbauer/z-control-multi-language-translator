@@ -12,11 +12,14 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### 🚀 Improvements
 
-- Changed Translation from  'User Translation' to 'User Device' and 'Programmer Translation' to 'Programmer Device' for better clarity.
+- The user statistics accordion now always displays up-to-date quota data when opened or re-opened, even if the month has changed and no new translations have been made.
+- The monthly statistics accordion now always displays up-to-date data when re-opened, showing both your own translations and those from other users. Previously, this refresh only occurred when a new translation was made.
+- Changed Translation from 'User Translation' to 'User Device' and 'Programmer Translation' to 'Programmer Device' for better clarity.
 - Refactored device and platform detection into a dedicated `DeviceUtilsService` to improve structure, reuse, and maintainability.
 - Introduced dedicated enums for device and platform types, improving consistency and type safety across the app.
 - Improved detection logic for mobile and tablet web clients, with a clearer separation between phone/tablet and desktop behavior.
-- Added 58 unit tests, increasing the total suite to 605 specs and improving confidence in platform/device classification and related UI behavior.
+- Programmer-only sections in the statistics view are now correctly restricted to authorized devices.
+- Added 61 unit tests, increasing the total suite to 608 specs and improving confidence in platform/device classification and related UI behavior.
 
 ## [1.10] – 2026-04-15
 

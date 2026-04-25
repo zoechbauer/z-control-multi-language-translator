@@ -289,9 +289,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   }
 
   getTextareaRows(): string {
-    return this.utilsService.isSmallScreen
-      ? '4'
-      : '2';
+    return this.utilsService.isSmallScreen ? '4' : '2';
   }
 
   toggleCard(): void {
@@ -337,6 +335,13 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.textareaDisabled = true;
     this.clearBtnDisabled = false;
     this.translateBtnDisabled = true;
+  }
+
+  onAccordionGroupChange(event: CustomEvent, content: IonContent) {
+    const accordionValue = event?.detail?.value;
+    if (accordionValue) {
+      this.firestoreUtilsService.requestStatisticsRefresh();
+    }
   }
 
   ngOnDestroy(): void {

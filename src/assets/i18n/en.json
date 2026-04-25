@@ -2,7 +2,8 @@
   "------ global": "-------",
   "APP": {
     "NAME": "z-control Translator",
-    "LOADING_DATA": "Loading data..."
+    "LOADING_DATA": "Loading data...",
+    "UNDER_CONSTRUCTION": "This feature is under construction."
   },
   "------ header page": "-------",
   "HEADER": {
@@ -212,21 +213,21 @@
         "CHARS": "Characters",
         "GRID_INFO_NOTE": "Sorted in descending order by the date of the last translation",
         "GRID_SEARCH_INFO": "Text=User & Platform, <|>=used chars, <<|>>=lang",
-        "USER_STATISTICS_OVERVIEW": "User Statistics Overview"
+        "USER_STATISTICS_OVERVIEW": "User Statistics Overview",
+        "JSON_DATA": "Raw Data (JSON) - Debug Only"
       },
       "FILTER": {
         "LABEL": {
-          "DISPLAY_MODE": "Display Mode and Filter",
-          "DISPLAY_MODE_USER": "User View",
-          "DISPLAY_MODE_PROGRAMMER": "Programmer View",
+          "FILTER_HEADER": "Filter and Display Mode",
           "FILTER_MONTH_DATA": "Filter Month Data",
           "FILTER_MONTH_DATA_ALL": "All Months",
-          "FILTER_DATA": "Filter Data"
+          "FILTER_DATA": "Filter Data",
+          "DISPLAY_MODE_USER": "User View",
+          "DISPLAY_MODE_PROGRAMMER": "Programmer View"
         },
         "TITLE": {
-          "DISPLAY_MODE": "Switch display mode",
           "FILTER_MONTH_DATA": "Filter current month data or show all data",
-          "FILTER_DATA": "Reload data with selected filters"
+          "FILTER_DATA": "Reload data with selected month"
         }
       },
       "GRID": {

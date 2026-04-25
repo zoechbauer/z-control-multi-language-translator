@@ -9,6 +9,7 @@
   }
 
   .display-mode {
+    margin-top: 0.5rem;
     display: flex;
     justify-content: space-between;
     
@@ -17,8 +18,8 @@
     }
   }
 
-  .filter-month {
-    margin-top: 0.5rem;
+  .filter-data-btn {
+    margin-top: 1.5rem;
   }
 
   .stat-section,

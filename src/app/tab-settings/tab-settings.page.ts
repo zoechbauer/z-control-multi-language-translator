@@ -2,11 +2,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { IonContent, IonicModule } from '@ionic/angular';
+import { NgIf } from '@angular/common';
 
-import { LocalStorageService } from '../services/local-storage.service';
 import { environment } from 'src/environments/environment';
-import { UtilsService } from '../services/utils.service';
 import { LogoType, Tab } from '../shared/enums';
+import { TextToSpeechValues } from '../shared/app.interfaces';
+import { FireStoreConstants } from '../shared/app.constants';
+import { LocalStorageService } from '../services/local-storage.service';
+import { UtilsService } from '../services/utils.service';
+import { TextSpeechService } from '../services/text-to-speech.service';
+import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils.service';
 import { HeaderComponent } from '../ui/components/header/header.component';
 import { LanguageAccordionComponent } from '../ui/components/accordions/language-accordion.component';
 import { FeedbackAccordionComponent } from '../ui/components/accordions/feedback-accordion.component';
@@ -16,13 +21,8 @@ import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/pri
 import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
 import { GetMobileAppAccordionComponent } from '../ui/components/accordions/get-mobile-app-accordion.component';
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
-import { TextSpeechService } from '../services/text-to-speech.service';
-import { TextToSpeechValues } from '../shared/app.interfaces';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
-import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
-import { FireStoreConstants } from '../shared/app.constants';
 import { SpinnerComponent } from '../ui/components/spinner/spinner.component';
-import { NgIf } from '@angular/common';
 
 // Single source of truth for settings accordion IDs.
 // Add new accordion IDs here when extending the settings page.
@@ -80,7 +80,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     public readonly localStorage: LocalStorageService,
     public readonly utilsService: UtilsService,
     private readonly textToSpeechService: TextSpeechService,
-    private readonly firestoreService: FirebaseFirestoreService
+    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService
   ) {}
 
   ngOnInit() {
@@ -136,6 +136,11 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     // Ignore bubbled value-change events from nested controls (e.g. radio groups).
     if (value === undefined) {
       return;
+    }
+
+    // refresh statistic on open to update data on month change - we need to do this before setting the openAccordion value, because the accordion content gets destroyed on close and recreated on open - so we need to update the data before that happens
+    if (value === 'get-statistics') {
+      this.firestoreUtilsService.requestStatisticsRefresh();
     }
 
     this.openAccordion = value;

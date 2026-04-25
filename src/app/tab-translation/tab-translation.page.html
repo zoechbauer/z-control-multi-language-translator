@@ -164,7 +164,9 @@
     </ion-card-content>
   </ion-card>
   } @if(selectedLanguages.length > 0) {
-  <ion-accordion-group>
+  <ion-accordion-group
+    (ionValueChange)="onAccordionGroupChange($event, content)"
+  >
     <ion-accordion value="user-contingent" class="monthly-quota-accordion">
       <ion-item slot="header" color="light">
         <ion-label

@@ -5,14 +5,22 @@ import { of } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
 import { DisplayMode } from '../shared/enums';
+import { TranslateService } from '@ngx-translate/core';
+import { ModalController } from '@ionic/angular';
+import { UtilsService } from './utils.service';
 
 describe('LocalStorageService', () => {
   let service: LocalStorageService;
   let storageSpy: jasmine.SpyObj<Storage>;
   let translateSpy: jasmine.SpyObj<TranslationGoogleTranslateService>;
+  let utilsServiceSpy: jasmine.SpyObj<UtilsService>;
 
   const createTranslateServiceSpy = () =>
     jasmine.createSpyObj('TranslateService', ['get', 'setDefaultLang', 'use']);
+  const modalControllerSpy = jasmine.createSpyObj('ModalController', [
+    'dismiss',
+    'create',
+  ]);
 
   beforeEach(() => {
     storageSpy = jasmine.createSpyObj('Storage', [
@@ -40,12 +48,16 @@ describe('LocalStorageService', () => {
     translateSpy.getFormattedTargetLanguageNamesForCodes.and.returnValue(
       Promise.resolve('')
     );
+    utilsServiceSpy = jasmine.createSpyObj('UtilsService', ['getCurrentMonth']);
 
     TestBed.configureTestingModule({
       providers: [
         LocalStorageService,
         { provide: Storage, useValue: storageSpy },
+        { provide: TranslateService, useValue: createTranslateServiceSpy() },
         { provide: TranslationGoogleTranslateService, useValue: translateSpy },
+        { provide: ModalController, useValue: modalControllerSpy },
+        { provide: UtilsService, useValue: utilsServiceSpy },
       ],
     });
     service = TestBed.inject(LocalStorageService);
@@ -349,10 +361,12 @@ describe('LocalStorageService', () => {
       expect(selectedMonth).toBe('2026-03');
     });
 
-    it('should return empty string if no selected month is found', async () => {
+    it('should return current month from utilsService if no selected month is found', async () => {
       storageSpy.get.and.returnValue(Promise.resolve(null));
+      utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
+      
       const selectedMonth = await service.getStatisticsSelectedMonth();
-      expect(selectedMonth).toBe('');
+      expect(selectedMonth).toBe('2026-04');
     });
 
     it('should set statistics selected month subject based on loaded selected month', async () => {
@@ -377,7 +391,7 @@ describe('LocalStorageService', () => {
       storageSpy.set.and.returnValue(Promise.reject(error));
 
       await service.saveStatisticsSelectedMonth('2026-03');
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Error saving statistics selected month:',
         error

@@ -53,7 +53,6 @@ describe('FirebaseFirestoreUtilsService', () => {
       {
         programmerDeviceRefresh$: of(void 0),
         isProgrammerDevice: true,
-        monthlyTranslationsMonthDocPath: `${FireStoreConstants.COLLECTION_TRANSLATIONS}/2026-03`,
       }
     );
     localStorageServiceMock = jasmine.createSpyObj(
@@ -167,42 +166,6 @@ describe('FirebaseFirestoreUtilsService', () => {
       } finally {
         environment.app.simulateTranslation = origEnvSimulateTranslation;
       }
-    });
-  });
-
-  describe('autrefreshMonthContextIfNeeded', () => {
-    it('should call refreshMonthContextIfNeeded and log if month changes', async () => {
-      spyOn(console, 'log');
-      spyOn(FireStoreConstants, 'currentYearMonthPath').and.returnValue(
-        '2026-04'
-      );
-
-      await (service as any).autrefreshMonthContextIfNeeded();
-
-      expect(firestoreServiceMock.init).toHaveBeenCalled();
-      expect(console.log).toHaveBeenCalled();
-      (console.log as jasmine.Spy).calls.reset();
-    });
-
-    it('should not call refreshMonthContextIfNeeded if month does not change', async () => {
-      spyOn(console, 'log');
-      spyOn(FireStoreConstants, 'currentYearMonthPath').and.returnValue(
-        '2026-03'
-      );
-
-      await (service as any).autrefreshMonthContextIfNeeded();
-      (console.log as jasmine.Spy).calls.reset();
-
-      expect(console.log).not.toHaveBeenCalled();
-      expect(firestoreServiceMock.init).not.toHaveBeenCalled();
-    });
-
-    it('should not throw if Firestore service throws', async () => {
-      firestoreServiceMock.init.and.rejectWith('Firestore init error');
-      (FireStoreConstants as any).COLLECTION_TRANSLATIONS = 'translations';
-      try {
-        await (service as any).autrefreshMonthContextIfNeeded();
-      } catch {}
     });
   });
 

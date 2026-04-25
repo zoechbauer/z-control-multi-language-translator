@@ -17,13 +17,12 @@ import {
   NgTemplateOutlet,
   DecimalPipe,
   JsonPipe,
-  NgClass,
 } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { DisplayMode, LogoType } from 'src/app/shared/enums';
+import { AllMonthsOption, DisplayMode, LogoType } from 'src/app/shared/enums';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import {
@@ -37,6 +36,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-get-statistics',
@@ -64,7 +64,6 @@ import { FormsModule } from '@angular/forms';
     LogoComponent,
     SpinnerComponent,
     FormsModule,
-    NgClass,
   ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
@@ -73,9 +72,11 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   LogoType = LogoType;
   DisplayMode = DisplayMode;
   displayMode: DisplayMode = DisplayMode.User;
+  selectedDisplayMode: DisplayMode = DisplayMode.User;
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
   filterSelectedMonth: string = '';
+  selectedMonthForStatisticsSections: string = '';
   allFilterMonthValues: string[] = [];
   searchTerm: string = '';
   platformFilter: 'all' | 'web' | 'native' = 'all';
@@ -96,10 +97,12 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
+    private readonly translate: TranslateService,
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
     private readonly localStorageService: LocalStorageService,
-    private readonly utilsService: UtilsService
+    private readonly utilsService: UtilsService,
+    private readonly toastService: ToastService
   ) {}
 
   get hideColumn(): boolean {
@@ -180,8 +183,8 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.init();
     this.setupSubscriptions();
+    this.init();
   }
 
   private setupSubscriptions(): void {
@@ -198,12 +201,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
         if (this.isProgrammerDevice !== newValue) {
           this.isProgrammerDevice = newValue;
         }
-      }),
-      this.localStorageService.statisticsDisplayMode$.subscribe((mode) => {
-        this.displayMode = mode;
-      }),
-      this.localStorageService.statisticsSelectedMonth$.subscribe((month) => {
-        this.filterSelectedMonth = month;
       })
     );
   }
@@ -218,7 +215,9 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.currentUserUid = await this.localStorageService.loadFirestoreUid();
 
       // Read control flags
-      this.contingentData = await this.firestoreService.readContingentData();
+      this.contingentData = await this.firestoreService.readContingentData(
+        this.filterSelectedMonth
+      );
       this.isStopped = !!this.contingentData.StopTranslationForAllUsers;
 
       // Total contingent
@@ -228,7 +227,9 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.totalBuffer =
         this.contingentData.maxFreeTranslateCharsBufferPerMonth ??
         environment.app.maxFreeTranslateCharsBufferPerMonth;
-      this.totalCharCount = await this.firestoreService.getTotalCharCount();
+      this.totalCharCount = await this.firestoreService.getTotalCharCount(
+        this.filterSelectedMonth
+      );
       this.totalRemaining = Math.max(
         0,
         this.totalLimit - this.totalBuffer - this.totalCharCount
@@ -257,59 +258,75 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       console.error('GetStatisticsComponent: Error loading statistics', error);
     } finally {
       this.isLoading = false;
+      if (
+        this.selectedMonthForStatisticsSections ===
+        AllMonthsOption.SelectOptionValue
+      ) {
+        this.toastService.showToast(
+          this.translate.instant('APP.UNDER_CONSTRUCTION') +
+            ': ' +
+            this.translate.instant(
+              'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_DATA'
+            ) + ' ' + this.translate.instant(
+              'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
+            )
+        );
+      }
     }
+  }
+
+  getSectionHeader(translationKey: string): string {
+    let selectedMonth: string;
+    if (
+      this.selectedMonthForStatisticsSections ===
+        AllMonthsOption.SelectOptionValue &&
+      (translationKey === 'SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS' ||
+        translationKey === 'SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT')
+    ) {
+      selectedMonth = this.utilsService.getCurrentMonth();
+    } else {
+      selectedMonth = this.translate.instant(
+        this.selectedMonthForStatisticsSections
+      );
+    }
+
+    return `${this.translate.instant(translationKey)}: ${selectedMonth}`;
   }
 
   private async setFilterValues(): Promise<void> {
     this.displayMode =
       await this.localStorageService.getStatisticsDisplayMode();
+    this.selectedDisplayMode = this.displayMode;
 
     this.allFilterMonthValues =
       this.utilsService.getAllFirestoreSearchStringsForMonth();
     this.filterSelectedMonth =
       await this.localStorageService.getStatisticsSelectedMonth();
-    if (!this.filterSelectedMonth) {
-      // use currrent month as default if no value is stored
-      this.filterSelectedMonth =
-        this.utilsService.formatDateTimeFirestoreSearchString(new Date());
-    }
+    this.selectedMonthForStatisticsSections = this.filterSelectedMonth;
   }
 
-  onFilterData(): void {
+  async onFilterData(): Promise<void> {
+    this.selectedMonthForStatisticsSections = this.filterSelectedMonth;
+    this.displayMode = this.selectedDisplayMode;
+
+    // Store selected month in local storage
+    await this.localStorageService
+      .saveStatisticsSelectedMonth(this.filterSelectedMonth)
+      .catch((error) => {
+        console.error('Error saving selected month to local storage:', error);
+      });
+    // Store display mode in local storage
+    await this.localStorageService
+      .saveStatisticsDisplayMode(this.displayMode)
+      .catch((error) => {
+        console.error('Error saving display mode to local storage:', error);
+      });
     // Trigger data reload with current filters
-    this.init();
-  }
-
-  onSelectedMonthChange(event: any): void {
-    const value = event?.detail?.value;
-    if (value) {
-      this.filterSelectedMonth = value;
-
-      // Store selected month in local storage
-      this.localStorageService
-        .saveStatisticsSelectedMonth(this.filterSelectedMonth)
-        .catch((error) => {
-          console.error('Error saving selected month to local storage:', error);
-        });
-    }
+    await this.init();
   }
 
   isCurrentUser(userId: string): boolean {
     return userId === this.currentUserUid;
-  }
-
-  onDisplayModeChange(event: any): void {
-    const value = event?.detail?.value;
-    if (value === DisplayMode.User || value === DisplayMode.Programmer) {
-      this.displayMode = value;
-
-      // Store display mode in local storage
-      this.localStorageService
-        .saveStatisticsDisplayMode(this.displayMode)
-        .catch((error) => {
-          console.error('Error saving display mode to local storage:', error);
-        });
-    }
   }
 
   async showDetailInfos(

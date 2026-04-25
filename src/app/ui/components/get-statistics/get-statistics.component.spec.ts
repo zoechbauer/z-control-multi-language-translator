@@ -15,6 +15,38 @@ import { createTranslateServiceMock } from 'src/app/testing/translate-service.mo
 import { environment } from 'src/environments/environment';
 import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.interfaces';
 
+function createUserStat(
+  userId = 'U-1',
+  translatedCharCount = 500,
+  lastTranslationDate: Date | null = new Date('2026-03-15T00:00:00Z'),
+  targetLanguages: string[] = ['en']
+): DisplayedUserStatistics {
+  return {
+    userId,
+    userName: `User ${userId}`,
+    userType: userId.startsWith('P') ? 'P' : 'U',
+    userCreatedAt: new Date('2026-03-10T00:00:00Z'),
+    userLastUpdated: new Date('2026-03-15T00:00:00Z'),
+    device: 'Device',
+    isNative: false,
+    deviceInfo: {
+      userAgent: 'User Agent',
+      platform: 'web',
+      language: 'en',
+      appVersion: {
+        major: 1,
+        minor: 0,
+        date: '2026-03-01',
+      },
+    },
+    displayedPlatform: 'web-desktop',
+    displayedModel: 'Model X',
+    translatedCharCount,
+    targetLanguages,
+    lastTranslationDate,
+  };
+}
+
 describe('GetStatisticsComponent', () => {
   let component: GetStatisticsComponent;
   let fixture: ComponentFixture<GetStatisticsComponent>;
@@ -447,88 +479,45 @@ describe('GetStatisticsComponent', () => {
       });
     });
 
-    describe('onDisplayModeChange', () => {
-      it('should change display mode, and save to local storage', () => {
+    describe('onFilterData', () => {
+      beforeEach(() => {
         localStorageServiceSpy.saveStatisticsDisplayMode.and.returnValue(
           Promise.resolve()
         );
-        component.displayMode = DisplayMode.User;
-        const event = {
-          detail: {
-            value: DisplayMode.Programmer,
-          },
-        };
-
-        component.onDisplayModeChange(event);
-
-        expect(component.displayMode).toBe(DisplayMode.Programmer);
-        expect(
-          localStorageServiceSpy.saveStatisticsDisplayMode
-        ).toHaveBeenCalledWith(DisplayMode.Programmer);
-      });
-
-      it('should handle error when saving display mode to local storage', async () => {
-        const consoleErrorSpy = spyOn(console, 'error');
-        localStorageServiceSpy.saveStatisticsDisplayMode.and.returnValue(
-          Promise.reject(new Error('Storage error'))
-        );
-        component.displayMode = DisplayMode.User;
-        const event = {
-          detail: {
-            value: DisplayMode.Programmer,
-          },
-        };
-
-        component.onDisplayModeChange(event);
-        await Promise.resolve();
-
-        expect(component.displayMode).toBe(DisplayMode.Programmer);
-        expect(
-          localStorageServiceSpy.saveStatisticsDisplayMode
-        ).toHaveBeenCalledWith(DisplayMode.Programmer);
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Error saving display mode to local storage:',
-          new Error('Storage error')
-        );
-      });
-
-      it('should not change display mode and searchTerm if value is invalid', () => {
-        component.displayMode = DisplayMode.User;
-        component.searchTerm = 'test';
-        const event = {
-          detail: {
-            value: 'invalid-value',
-          },
-        };
-
-        component.onDisplayModeChange(event);
-
-        expect(component.displayMode).toBe(DisplayMode.User);
-        expect(component.searchTerm).toBe('test');
-        expect(
-          localStorageServiceSpy.saveStatisticsDisplayMode
-        ).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('onSelectedMonthChange', () => {
-      it('should change filter selected month, and save to local storage', () => {
         localStorageServiceSpy.saveStatisticsSelectedMonth.and.returnValue(
           Promise.resolve()
         );
+
+        component.filterSelectedMonth = '2026-04';
+        component.selectedMonthForStatisticsSections = '2026-04';
+        component.displayMode = DisplayMode.User;
+        component.selectedDisplayMode = DisplayMode.User;
+      });
+
+      it('should persist selected display mode', async () => {
+        spyOn(component, 'init').and.resolveTo();
+        component.selectedDisplayMode = DisplayMode.Programmer;
+
+        await component.onFilterData();
+
+        expect(component.displayMode).toBe(DisplayMode.Programmer);
+        expect(
+          localStorageServiceSpy.saveStatisticsDisplayMode
+        ).toHaveBeenCalledWith(DisplayMode.Programmer);
+      });
+
+      it('should save filter selected month to local storage', async () => {
+        spyOn(component, 'init').and.resolveTo();
         component.filterSelectedMonth = '2026-03';
-        const event = {
-          detail: {
-            value: '2026-04',
-          },
-        };
+        component.selectedMonthForStatisticsSections = '2026-02';
 
-        component.onSelectedMonthChange(event);
+        await component.onFilterData();
 
-        expect(component.filterSelectedMonth).toBe('2026-04');
+        expect(component.filterSelectedMonth).toBe('2026-03');
+        expect(component.selectedMonthForStatisticsSections).toBe('2026-03');
         expect(
           localStorageServiceSpy.saveStatisticsSelectedMonth
-        ).toHaveBeenCalledWith('2026-04');
+        ).toHaveBeenCalledWith('2026-03');
       });
 
       it('should handle error when saving selected month to local storage', async () => {
@@ -536,50 +525,79 @@ describe('GetStatisticsComponent', () => {
         localStorageServiceSpy.saveStatisticsSelectedMonth.and.returnValue(
           Promise.reject(new Error('Storage error'))
         );
+        spyOn(component, 'init').and.resolveTo();
         component.filterSelectedMonth = '2026-03';
-        const event = {
-          detail: {
-            value: '2026-04',
-          },
-        };
 
-        component.onSelectedMonthChange(event);
-        await Promise.resolve();
+        await component.onFilterData();
 
-        expect(component.filterSelectedMonth).toBe('2026-04');
+        expect(component.filterSelectedMonth).toBe('2026-03');
+        expect(component.selectedMonthForStatisticsSections).toBe('2026-03');
         expect(component.searchTerm).toBe('');
         expect(
           localStorageServiceSpy.saveStatisticsSelectedMonth
-        ).toHaveBeenCalledWith('2026-04');
+        ).toHaveBeenCalledWith('2026-03');
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           'Error saving selected month to local storage:',
           new Error('Storage error')
         );
       });
-    });
 
-    describe('onFilterData', () => {
-      it('should call init to refresh data', () => {
-        spyOn(component, 'init');
-        component.onFilterData();
+      it('should save display mode to local storage', async () => {
+        spyOn(component, 'init').and.resolveTo();
+        component.displayMode = DisplayMode.Programmer;
+        component.selectedDisplayMode = DisplayMode.User;
+        component.filterSelectedMonth = '2026-04';
+
+        await component.onFilterData();
+
+        expect(component.displayMode).toBe(DisplayMode.User);
+        expect(
+          localStorageServiceSpy.saveStatisticsDisplayMode
+        ).toHaveBeenCalledWith(DisplayMode.User);
+      });
+
+      it('should handle error when saving display mode to local storage', async () => {
+        const consoleErrorSpy = spyOn(console, 'error');
+        localStorageServiceSpy.saveStatisticsDisplayMode.and.returnValue(
+          Promise.reject(new Error('Storage error'))
+        );
+        component.displayMode = DisplayMode.Programmer;
+        spyOn(component, 'init').and.resolveTo();
+
+        await component.onFilterData();
+
+        expect(component.displayMode).toBe(DisplayMode.User);
+        expect(
+          localStorageServiceSpy.saveStatisticsDisplayMode
+        ).toHaveBeenCalledWith(DisplayMode.User);
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Error saving display mode to local storage:',
+          new Error('Storage error')
+        );
+      });
+
+      it('should call init to refresh data', async () => {
+        spyOn(component, 'init').and.resolveTo();
+        await component.onFilterData();
         expect(component.init).toHaveBeenCalled();
       });
 
-      it('should clear search term when filter data', () => {
+      it('should clear search term when filter data', async () => {
         component.searchTerm = 'test';
-        component.onFilterData();
+        await component.onFilterData();
 
         expect(component.searchTerm).toBe('');
       });
 
-      it('should not change filter fields when filter data', () => {
+      it('should not change filter fields when filter data', async () => {
+        spyOn(component, 'init').and.resolveTo();
         const originalFilterSelectedMonth = component.filterSelectedMonth;
-        const originalDisplayMode = component.displayMode;
+        const originalDisplayMode = component.selectedDisplayMode;
 
-        component.onFilterData();
+        await component.onFilterData();
 
         expect(component.filterSelectedMonth).toBe(originalFilterSelectedMonth);
-        expect(component.displayMode).toBe(originalDisplayMode);
+        expect(component.selectedDisplayMode).toBe(originalDisplayMode);
       });
     });
 
@@ -622,21 +640,6 @@ describe('GetStatisticsComponent', () => {
         (component as any).subscriptions = [];
         (component as any).ngOnDestroy();
         // No errors should occur, and the test will pass if it reaches this point without throwing
-      });
-
-      it('should subscribe to localStorageService.statisticsDisplayMode$ and update displayMode', () => {
-        Object.defineProperty(
-          localStorageServiceSpy,
-          'statisticsDisplayMode$',
-          {
-            get: () => of(DisplayMode.User),
-          }
-        );
-        component.displayMode = DisplayMode.Programmer;
-
-        (component as any).setupSubscriptions();
-
-        expect(component.displayMode).toBe(DisplayMode.User);
       });
 
       it('should subscribe to firestoreUtilsService.statisticsRefresh$ and call init if not loading', () => {
@@ -959,8 +962,9 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('statistics overview', () => {
-      it('should show statistics overview section when displaymode is programmer', () => {
+      it('should show statistics overview section when displaymode is programmer and is programmer device', () => {
         component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = true;
         fixture.detectChanges();
 
         const statisticsContent = fixture.nativeElement.querySelector(
@@ -971,6 +975,18 @@ describe('GetStatisticsComponent', () => {
 
       it('should not show statistics overview section when displaymode is user', () => {
         component.displayMode = DisplayMode.User;
+        component.isProgrammerDevice = true;
+        fixture.detectChanges();
+
+        const statisticsContent = fixture.nativeElement.querySelector(
+          '.user-statistics-overview'
+        );
+        expect(statisticsContent).toBeNull();
+      });
+
+      it('should not show statistics overview section when not programmer device', () => {
+        component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = false;
         fixture.detectChanges();
 
         const statisticsContent = fixture.nativeElement.querySelector(
@@ -981,8 +997,9 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('Search bar in user statistics details section', () => {
-      it('should show search bar when displaymode is programmer', () => {
+      it('should show search bar when displaymode is programmer and is programmer device', () => {
         component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = true;
         fixture.detectChanges();
 
         const searchBar = fixture.nativeElement.querySelector(
@@ -993,6 +1010,18 @@ describe('GetStatisticsComponent', () => {
 
       it('should not show search bar when displaymode is user', () => {
         component.displayMode = DisplayMode.User;
+        component.isProgrammerDevice = true;
+        fixture.detectChanges();
+
+        const searchBar = fixture.nativeElement.querySelector(
+          '.user-stat-details ion-searchbar'
+        );
+        expect(searchBar).toBeNull();
+      });
+
+      it('should not show search bar when not programmer device', () => {
+        component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = false;
         fixture.detectChanges();
 
         const searchBar = fixture.nativeElement.querySelector(
@@ -1003,8 +1032,9 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('JSON raw data section', () => {
-      it('should show raw data section when displaymode is programmer', () => {
+      it('should show raw data section when displaymode is programmer and is programmer device', () => {
         component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = true;
         fixture.detectChanges();
 
         const statisticsContent =
@@ -1014,6 +1044,17 @@ describe('GetStatisticsComponent', () => {
 
       it('should not show raw data section when displaymode is user', () => {
         component.displayMode = DisplayMode.User;
+        component.isProgrammerDevice = true;
+        fixture.detectChanges();
+
+        const statisticsContent =
+          fixture.nativeElement.querySelector('.debug-section');
+        expect(statisticsContent).toBeNull();
+      });
+
+      it('should not show raw data section when not programmer device', () => {
+        component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = false;
         fixture.detectChanges();
 
         const statisticsContent =
@@ -1023,40 +1064,10 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('current user selection', () => {
-      function createUserStat(
-        userId: string,
-        translatedCharCount: number,
-        lastTranslationDate: Date | null
-      ): DisplayedUserStatistics {
-        return {
-          userId,
-          userName: `User ${userId}`,
-          userType: userId.startsWith('P') ? 'P' : 'U',
-          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
-          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
-          device: 'Device',
-          isNative: false,
-          deviceInfo: {
-            userAgent: 'User Agent',
-            platform: 'web',
-            language: 'en',
-            appVersion: {
-              major: 1,
-              minor: 0,
-              date: '2026-03-01',
-            },
-          },
-          displayedPlatform: 'web-desktop',
-          displayedModel: 'Model X',
-          translatedCharCount,
-          targetLanguages: ['en'],
-          lastTranslationDate,
-        };
-      }
-
       beforeEach(() => {
         component.isLoading = false;
         component.displayMode = DisplayMode.User;
+        component.isProgrammerDevice = false;
         component.userLimit = 10000;
         component.currentUserUid = 'U-2';
 
@@ -1118,6 +1129,7 @@ describe('GetStatisticsComponent', () => {
 
       it('should show platform and device model when display mode is Programmer', () => {
         component.displayMode = DisplayMode.Programmer;
+        component.isProgrammerDevice = true;
         fixture.detectChanges();
 
         const platformColumn = fixture.nativeElement.querySelector(
@@ -1181,42 +1193,14 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('optional grid columns', () => {
-      function createUserStat(
-        userId: string,
-        translatedCharCount: number,
-        lastTranslationDate: Date | null
-      ): DisplayedUserStatistics {
-        return {
-          userId,
-          userName: `User ${userId}`,
-          userType: userId.startsWith('P') ? 'P' : 'U',
-          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
-          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
-          device: 'Device',
-          isNative: false,
-          deviceInfo: {
-            userAgent: 'User Agent',
-            platform: 'web',
-            language: 'en',
-            appVersion: {
-              major: 1,
-              minor: 0,
-              date: '2026-03-01',
-            },
-          },
-          displayedPlatform: 'web-desktop',
-          displayedModel: 'Model X',
-          translatedCharCount,
-          targetLanguages: ['en', 'de'],
-          lastTranslationDate,
-        };
-      }
-
       beforeEach(() => {
         component.isLoading = false;
         component.statisticsData = {
           displayedUserStatistics: [
-            createUserStat('U-1', 1000, new Date('2026-03-15T00:00:00Z')),
+            createUserStat('U-1', 1000, new Date('2026-03-15T00:00:00Z'), [
+              'en',
+              'de',
+            ]),
           ],
           userTranslationStatistics: [],
           users: [],
@@ -1262,33 +1246,6 @@ describe('GetStatisticsComponent', () => {
     });
 
     describe('info button interactions', () => {
-      function createUserStat(): DisplayedUserStatistics {
-        return {
-          userId: 'U-1',
-          userName: 'User U-1',
-          userType: 'U',
-          userCreatedAt: new Date('2026-03-10T00:00:00Z'),
-          userLastUpdated: new Date('2026-03-15T00:00:00Z'),
-          device: 'Device',
-          isNative: false,
-          deviceInfo: {
-            userAgent: 'User Agent',
-            platform: 'web',
-            language: 'en',
-            appVersion: {
-              major: 1,
-              minor: 0,
-              date: '2026-03-01',
-            },
-          },
-          displayedPlatform: 'web-desktop',
-          displayedModel: 'Model X',
-          translatedCharCount: 500,
-          targetLanguages: ['en'],
-          lastTranslationDate: new Date('2026-03-15T00:00:00Z'),
-        };
-      }
-
       beforeEach(() => {
         component.lang = 'en';
         component.isLoading = false;

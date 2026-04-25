@@ -11,3 +11,8 @@ export interface SecureTranslateData {
 export interface TranslationResult {
   translations: Record<string, string>;
 }
+
+export interface FilterMonthOption {
+  value: string;
+  display: string;
+}

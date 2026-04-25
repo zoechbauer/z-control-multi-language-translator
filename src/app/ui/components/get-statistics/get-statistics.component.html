@@ -6,13 +6,32 @@
   <ng-container *ngIf="!isLoading">
     <!-- filter section -->
     <div class="stat-section filter-section" *ngIf="isProgrammerDevice">
-      <!-- Select displaymode: user-mode or programmer-mode -->
-      <h3>{{ "SETTINGS.STATISTICS.FILTER.LABEL.DISPLAY_MODE" | translate }}</h3>
-      <ion-radio-group
-        [value]="displayMode"
-        (ionChange)="onDisplayModeChange($event)"
-        class="display-mode"
+      <h3>
+        {{ "SETTINGS.STATISTICS.FILTER.LABEL.FILTER_HEADER" | translate }}
+      </h3>
+      <!-- Select month filter or choose all months -->
+      <ion-select
+        class="filter-month"
+        label="{{
+          'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA' | translate
+        }}"
+        label-placement="stacked"
+        [(ngModel)]="filterSelectedMonth"
+        interface="popover"
+        title="{{
+          'SETTINGS.STATISTICS.FILTER.TITLE.FILTER_MONTH_DATA' | translate
+        }}"
       >
+        <ion-select-option
+          *ngFor="let month of allFilterMonthValues"
+          [value]="month"
+          >{{
+            month.length === 7 ? month : (month | translate)
+          }}</ion-select-option
+        >
+      </ion-select>
+      <!-- Select display mode: user-mode or programmer-mode -->
+      <ion-radio-group [(ngModel)]="selectedDisplayMode" class="display-mode">
         <ion-radio [value]="DisplayMode.Programmer">
           {{
             "SETTINGS.STATISTICS.FILTER.LABEL.DISPLAY_MODE_PROGRAMMER"
@@ -23,26 +42,6 @@
           {{ "SETTINGS.STATISTICS.FILTER.LABEL.DISPLAY_MODE_USER" | translate }}
         </ion-radio>
       </ion-radio-group>
-      <!-- Select month filter or choose all months -->
-      <ion-select
-        class="filter-month"
-        label="{{
-          'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA' | translate
-        }}"
-        label-placement="stacked"
-        [(ngModel)]="filterSelectedMonth"
-        (ionChange)="onSelectedMonthChange($event)"
-        interface="popover"
-        title="{{
-          'SETTINGS.STATISTICS.FILTER.TITLE.FILTER_MONTH_DATA' | translate
-        }}"
-      >
-        <ion-select-option
-          *ngFor="let month of allFilterMonthValues"
-          [value]="month"
-          >{{ month }}</ion-select-option
-        >
-      </ion-select>
       <ion-button
         class="filter-data-btn"
         size="block"
@@ -56,7 +55,9 @@
 
     <!-- Section: Global Stop Flag -->
     <div class="stat-section">
-      <h3>{{ "SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS" | translate }}</h3>
+      <h3>
+        {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS") }}
+      </h3>
       <p [class.stopped]="isStopped" class="global-stop-flag">
         {{
           isStopped
@@ -68,7 +69,9 @@
 
     <!-- Section: Total Contingent -->
     <div class="stat-section">
-      <h3>{{ "SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT" | translate }}</h3>
+      <h3>
+        {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT") }}
+      </h3>
       <p
         *ngIf="allUsersCharCount !== totalCharCount"
         class="total-difference-info"
@@ -115,9 +118,11 @@
     </div>
 
     <!-- Section: User Statistics Overview -->
-    <div class="stat-section" *ngIf="displayMode === DisplayMode.Programmer">
+    <div class="stat-section" *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
       <h3>
-        {{ "SETTINGS.STATISTICS.LABEL.USER_STATISTICS_OVERVIEW" | translate }}
+        {{
+          getSectionHeader("SETTINGS.STATISTICS.LABEL.USER_STATISTICS_OVERVIEW")
+        }}
       </h3>
       <ion-grid class="user-statistics-overview">
         <ion-row class="header-row">
@@ -150,11 +155,13 @@
 
     <!-- Section: User Statistics Details-->
     <div class="stat-section user-stat-details">
-      <h3>{{ "SETTINGS.STATISTICS.GRID.USER_CONTINGENT" | translate }}</h3>
+      <h3>
+        {{ getSectionHeader("SETTINGS.STATISTICS.GRID.USER_CONTINGENT") }}
+      </h3>
       <div class="info-note">
         {{ "SETTINGS.STATISTICS.LABEL.GRID_INFO_NOTE" | translate }}
       </div>
-      <div *ngIf="displayMode === DisplayMode.Programmer">
+      <div *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
         <ion-searchbar
           [value]="searchTerm"
           (ionInput)="searchTerm = $any($event.detail).value || ''"
@@ -207,7 +214,7 @@
             >{{ userStat.displayedPlatform
             }}<span
               class="model-info"
-              *ngIf="displayMode === DisplayMode.Programmer"
+              *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer"
               class="model-info"
               ><br />{{ userStat.displayedModel }}</span
             >
@@ -233,10 +240,12 @@
     </div>
 
     <!-- Section: Raw Data Debug -->
-    <div class="debug-section" *ngIf="displayMode === DisplayMode.Programmer">
+    <div class="debug-section" *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
       <hr />
       <details>
-        <summary>Raw Data (JSON) - Debug Only</summary>
+        <summary>
+          {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.JSON_DATA") }}
+        </summary>
 
         <details>
           <summary>Displayed values</summary>

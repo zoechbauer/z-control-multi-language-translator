@@ -22,6 +22,7 @@ import { PrivacyPolicyAccordionComponent } from '../ui/components/accordions/pri
 import { FeedbackAccordionComponent } from '../ui/components/accordions/feedback-accordion.component';
 import { TextToSpeechAccordionComponent } from '../ui/components/accordions/text-to-speech-accordion.component';
 import { LanguageAccordionComponent } from '../ui/components/accordions/language-accordion.component';
+import { FirebaseFirestoreUtilsService } from '../services/firebase-firestore-utils.service';
 
 @Component({
   selector: 'app-language-accordion',
@@ -118,6 +119,7 @@ describe('TabSettingsPage', () => {
   let utilsServiceSpy: jasmine.SpyObj<UtilsService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let textSpeechServiceSpy: jasmine.SpyObj<TextSpeechService>;
+  let firebaseFirestoreUtilsServiceSpy: jasmine.SpyObj<FirebaseFirestoreUtilsService>;
 
   beforeEach(async () => {
     utilsServiceSpy = jasmine.createSpyObj(
@@ -144,6 +146,11 @@ describe('TabSettingsPage', () => {
         textToSpeechValuesSubject: { getValue: () => ({ rate: 1, pitch: 1 }) },
         textToSpeechValues$: of({ rate: 1, pitch: 1 }),
       }
+    );
+
+    const firebaseFirestoreUtilsServiceSpy = jasmine.createSpyObj(
+      'FirebaseFirestoreUtilsService',
+      [ 'requestStatisticsRefresh']
     );
 
     textSpeechServiceSpy = jasmine.createSpyObj('TextSpeechService', [
@@ -194,6 +201,10 @@ describe('TabSettingsPage', () => {
         {
           provide: FirebaseFirestoreService,
           useValue: jasmine.createSpyObj('FirebaseFirestoreService', ['init']),
+        },
+        {
+          provide: FirebaseFirestoreUtilsService,
+          useValue: firebaseFirestoreUtilsServiceSpy,
         },
         {
           provide: ModalController,

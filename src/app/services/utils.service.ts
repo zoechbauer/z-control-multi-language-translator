@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { DisplayMode, Tab } from '../shared/enums';
+import { AllMonthsOption, DisplayMode, Tab } from '../shared/enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { environment } from 'src/environments/environment';
 import { DisplayedUserStatistics } from '../shared/firebase-firestore.interfaces';
@@ -341,13 +341,23 @@ export class UtilsService {
 
     const currentDate = new Date(startDate);
     while (currentDate <= endDate) {
-      const searchString = this.formatDateTimeFirestoreSearchString(currentDate);
+      const searchString =
+        this.formatDateTimeFirestoreSearchString(currentDate);
       searchStrings.push(searchString);
       currentDate.setMonth(currentDate.getMonth() + 1);
     }
-    const allMonthsString = this.translate.instant('SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL');
-    searchStrings.push(allMonthsString);
+    searchStrings.push(AllMonthsOption.SelectOptionValue);
 
     return searchStrings;
+  }
+
+  /**
+   * Returns the current month.
+   * @returns {string} The current month
+   */
+  getCurrentMonth(): string {
+    return this.formatDateTimeFirestoreSearchString(
+      new Date()
+    );
   }
 }

@@ -4,7 +4,8 @@ import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
 import { TextToSpeechValues } from '../shared/app.interfaces';
-import { DisplayMode } from '../shared/enums';
+import { AllMonthsOption, DisplayMode } from '../shared/enums';
+import { UtilsService } from './utils.service';
 
 enum LocalStorage {
   SelectedLanguage = 'selectedLanguage',
@@ -100,7 +101,8 @@ export class LocalStorageService {
 
   constructor(
     private readonly storage: Storage,
-    private readonly googleTranslateService: TranslationGoogleTranslateService
+    private readonly googleTranslateService: TranslationGoogleTranslateService,
+    private readonly utilsService: UtilsService
   ) {}
 
   private async initStorage() {
@@ -342,16 +344,22 @@ export class LocalStorageService {
     }
   }
 
-  async getStatisticsSelectedMonth(): Promise<string> {
+  /**
+   * Returns the currently selected month for statistics.
+   * If value has not YYYY-MM format then it is converted into Select Option value all.
+   * @returns The selected month or the current month if not set
+   */
+  async getStatisticsSelectedMonth(allMonthsOptionFormat: AllMonthsOption = AllMonthsOption.SelectOptionValue): Promise<string> {
     let selectedMonth: string;
-    const rawValue = await this.storage.get(
+    const rawValue: string = await this.storage.get(
       LocalStorage.StatisticsSelectedMonth
     );
 
     if (rawValue) {
-      selectedMonth = rawValue as string;
+      selectedMonth = rawValue.length === 7 ? rawValue : allMonthsOptionFormat;
     } else {
-      selectedMonth = '';
+      selectedMonth = this.utilsService.getCurrentMonth();
+      await this.saveStatisticsSelectedMonth(selectedMonth);
     }
 
     this.statisticsSelectedMonthSubject.next(selectedMonth);
@@ -360,15 +368,17 @@ export class LocalStorageService {
 
   /**
    * Saves the selected month for statistics in local storage.
-   * @param selectedMonth The month to save in local storage
+   * If selectedMonth has not YYYY-MM format then it is converted into Local storage value for all.
+   * @param selectedMonth The month object to save in local storage
    */
   async saveStatisticsSelectedMonth(selectedMonth: string): Promise<void> {
     try {
+      const convertedSelectedMonth = selectedMonth.length === 7 ? selectedMonth : AllMonthsOption.localStorageValue;
       await this.storage.set(
         LocalStorage.StatisticsSelectedMonth,
-        selectedMonth
+        convertedSelectedMonth
       );
-      this.statisticsSelectedMonthSubject.next(selectedMonth);
+      this.statisticsSelectedMonthSubject.next(convertedSelectedMonth);
     } catch (error) {
       console.error('Error saving statistics selected month:', error);
     }

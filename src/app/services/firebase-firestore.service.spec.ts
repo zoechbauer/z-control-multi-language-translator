@@ -72,6 +72,13 @@ describe('FirebaseFirestoreService', () => {
 
   const utilsServiceMock = {
     isNative: false,
+    getCurrentMonth: () => '2026-04',
+    formatDateTimeFirestoreSearchString: (date: Date | null) => {
+      if (!date) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return year + '-' + month;
+    },
   };
 
   const localStorageServiceMock = {
@@ -467,7 +474,7 @@ describe('FirebaseFirestoreService', () => {
       spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
       spyOn<any>(service, 'getDocs').and.resolveTo(snapshotMock);
 
-      const result = await service.getAllUserTranslationStatistics();
+      const result = await service.getAllUserTranslationStatistics('2026-03');
 
       expect(result).toEqual([
         {
@@ -508,7 +515,7 @@ describe('FirebaseFirestoreService', () => {
       spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
       spyOn<any>(service, 'getDocs').and.resolveTo(snapshotMock);
 
-      const result = await service.getAllUserTranslationStatistics();
+      const result = await service.getAllUserTranslationStatistics('2026-03');
 
       expect(result).toEqual([
         {
@@ -533,7 +540,7 @@ describe('FirebaseFirestoreService', () => {
         new Error('getDocs failed')
       );
 
-      const result = await service.getAllUserTranslationStatistics();
+      const result = await service.getAllUserTranslationStatistics('2026-03');
 
       expect(result).toEqual([]);
       expect(console.error).toHaveBeenCalledWith(
@@ -927,72 +934,123 @@ describe('FirebaseFirestoreService', () => {
   });
 
   describe('getUsers', () => {
-    it('should return users from Firestore', async () => {
-      const users: UserType[] = [
-        {
-          userId: 'uid1',
-          name: 'Device 1',
-          type: 'P',
-          isNative: true,
-          createdAt: new Date(),
-          lastUpdated: new Date(),
-          device: 'Test Device',
-          deviceInfo: {
-            language: 'en-GB',
-            platform: 'Win32',
-            userAgent: 'Test User Agent',
-            appVersion: { date: '2026-01-01', major: 1, minor: 0 },
-          },
+    const users: UserType[] = [
+      {
+        userId: 'uid1',
+        name: 'Device 1',
+        type: 'P',
+        isNative: true,
+        createdAt: new Date('2026-03-01T00:00:00.000Z'),
+        lastUpdated: new Date('2026-04-01T00:00:00.000Z'),
+        device: 'Test Device',
+        deviceInfo: {
+          language: 'en-GB',
+          platform: 'Win32',
+          userAgent: 'Test User Agent',
+          appVersion: { date: '2026-01-01', major: 1, minor: 0 },
         },
-        {
-          userId: 'uid2',
-          name: 'Device 2',
-          type: 'U',
-          isNative: false,
-          createdAt: new Date(),
-          lastUpdated: undefined,
-          device: 'unknown',
-          deviceInfo: {
-            language: 'de-AT',
-            platform: 'Linux',
-            userAgent: 'Some User Agent',
-            appVersion: { date: '2026-01-01', major: 1, minor: 0 },
-          },
+      },
+      {
+        userId: 'uid2',
+        name: 'Device 2',
+        type: 'U',
+        isNative: false,
+        createdAt: new Date('2026-04-20T00:00:00.000Z'),
+        lastUpdated: undefined,
+        device: 'unknown',
+        deviceInfo: {
+          language: 'de-AT',
+          platform: 'Linux',
+          userAgent: 'Some User Agent',
+          appVersion: { date: '2026-01-01', major: 1, minor: 0 },
         },
-      ];
+      },
+    ];
 
-      const collectionRefMock = {} as any;
-      spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
-
-      const snapshotMock = {
+    function createSnapshotMock(data: UserType[]) {
+      return {
         forEach: (callback: (docSnap: any) => void) => {
-          users.forEach((user) => {
+          data.forEach((user) => {
             callback({
               data: () => user,
             });
           });
         },
       };
+    }
 
+    beforeEach(() => {
+      const collectionRefMock = {} as any;
+      spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
+    });
+
+    it('should return users created in selected month', async () => {
       const getDocsSpy = spyOn<any>(service, 'getDocs').and.resolveTo(
-        snapshotMock
+        createSnapshotMock(users) as any
       );
 
-      const result = await service.getUsers();
+      const result = await service.getUsers('2026-03');
 
       expect(getDocsSpy).toHaveBeenCalled();
-      expect(result).toEqual(users);
+      expect(result).toEqual([users[0]]);
+    });
+
+    it('should return users for another selected month', async () => {
+      const getDocsSpy = spyOn<any>(service, 'getDocs').and.resolveTo(
+        createSnapshotMock(users) as any
+      );
+
+      const result = await service.getUsers('2026-04');
+
+      expect(getDocsSpy).toHaveBeenCalled();
+      expect(result).toEqual([users[1]]);
+    });
+
+    it('should include user from another creation month when cached translations exist for selected month', async () => {
+      spyOn<any>(service, 'getDocs').and.resolveTo(
+        createSnapshotMock(users) as any
+      );
+
+      (service as any).cachedTranslations.set('2026-03', [
+        {
+          userId: 'uid2',
+          translatedCharCount: 10,
+          targetLanguages: ['de'],
+          lastTranslationDate: new Date('2026-03-10T00:00:00.000Z'),
+        },
+      ]);
+
+      const result = await service.getUsers('2026-03');
+
+      expect(result).toEqual([users[0], users[1]]);
+    });
+
+    it('should not include user from another month when cached translatedCharCount is zero', async () => {
+      spyOn<any>(service, 'getDocs').and.resolveTo(
+        createSnapshotMock(users) as any
+      );
+
+      (service as any).cachedTranslations.set('2026-03', [
+        {
+          userId: 'uid2',
+          translatedCharCount: 0,
+          targetLanguages: ['de'],
+          lastTranslationDate: new Date('2026-03-10T00:00:00.000Z'),
+        },
+      ]);
+
+      const result = await service.getUsers('2026-03');
+
+      expect(result).toEqual([users[0]]);
     });
 
     it('should log error, show toast and return empty array when getDocs fails', async () => {
       spyOn(console, 'error');
-      const collectionRefMock = {} as any;
-      spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
       const getDocsSpy = spyOn<any>(service, 'getDocs').and.rejectWith(
         new Error('getDocs failed')
       );
 
-      const result = await service.getUsers();
+      const result = await service.getUsers('2026-03');
 
       expect(getDocsSpy).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalledWith(

@@ -45,16 +45,28 @@ export class FireStoreConstants {
     return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/users`;
   };
 
-  static readonly getUsersCollectionPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/users`;
+  static readonly getUsersCollectionPath = (selectedMonth: string | undefined = undefined) => {
+    let month = this.currentYearMonthPath();
+    if (selectedMonth) {
+      month = selectedMonth;
+    }
+    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/users`;
   };
 
-  static readonly getMetaTotalCharsDocumentPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/meta/totalChars`;
+  static readonly getMetaTotalCharsDocumentPath = (selectedMonth: string | undefined = undefined) => {
+    let month = this.currentYearMonthPath();
+    if (selectedMonth) {
+      month = selectedMonth;
+    }
+    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/meta/totalChars`;
   };
 
-  static readonly getMetaContingentDataDocumentPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${this.currentYearMonthPath()}/meta/contingentData`;
+  static readonly getMetaContingentDataDocumentPath = (selectedMonth: string | undefined = undefined) => {
+    let month = this.currentYearMonthPath();
+    if (selectedMonth) {
+      month = selectedMonth;
+    }
+    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/meta/contingentData`;
   };
 
   /**
