@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import {
-  IonSpinner,
   IonGrid,
   IonCol,
   IonRow,
@@ -8,14 +7,22 @@ import {
   IonButton,
   IonRadio,
   IonRadioGroup,
+  IonSelect,
+  IonSelectOption,
   IonSearchbar,
 } from '@ionic/angular/standalone';
-import { NgFor, NgIf, NgTemplateOutlet, DecimalPipe, JsonPipe, NgClass } from '@angular/common';
+import {
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+  DecimalPipe,
+  JsonPipe,
+} from '@angular/common';
 import { Subscription } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { DisplayMode, LogoType } from 'src/app/shared/enums';
+import { AllMonthsOption, DisplayMode, LogoType } from 'src/app/shared/enums';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { environment } from 'src/environments/environment';
 import {
@@ -28,7 +35,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
-
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-get-statistics',
 
@@ -40,7 +47,6 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     IonButton,
     IonRow,
     IonCol,
-    IonSpinner,
     NgIf,
     NgFor,
     JsonPipe,
@@ -51,19 +57,25 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     IonIcon,
     IonRadioGroup,
     IonRadio,
+    IonSelect,
+    IonSelectOption,
     LogoComponent,
     SpinnerComponent,
-    NgClass
-],
+    FormsModule,
+  ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
   @Input() lang!: string;
+
   LogoType = LogoType;
   DisplayMode = DisplayMode;
   displayMode: DisplayMode = DisplayMode.User;
+  selectedDisplayMode: DisplayMode = DisplayMode.User;
   currentUserUid: string | null = null;
   isProgrammerDevice: boolean = false;
-
+  filterSelectedMonth: string = '';
+  selectedMonthForStatisticsSections: string = '';
+  allFilterMonthValues: string[] = [];
   searchTerm: string = '';
   platformFilter: 'all' | 'web' | 'native' = 'all';
   onlyExceeded = false;
@@ -83,6 +95,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
+    private readonly translate: TranslateService,
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
     private readonly localStorageService: LocalStorageService,
@@ -105,6 +118,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
 
   get isFirebaseEmulator(): boolean {
     return environment.app.useFirebaseEmulator;
+  }
+
+  get isAllMonthsSelected(): boolean {
+    return this.filterSelectedMonth === AllMonthsOption.SelectOptionValue;
   }
 
   /**
@@ -167,8 +184,8 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.init();
     this.setupSubscriptions();
+    this.init();
   }
 
   private setupSubscriptions(): void {
@@ -185,24 +202,23 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
         if (this.isProgrammerDevice !== newValue) {
           this.isProgrammerDevice = newValue;
         }
-      }),
-      this.localStorageService.statisticsDisplayMode$.subscribe((mode) => {
-        this.displayMode = mode;
       })
     );
   }
 
   async init() {
     this.isLoading = true;
+    this.searchTerm = '';
     this.isProgrammerDevice = this.firestoreService.isProgrammerDevice;
-    this.displayMode =
-      await this.localStorageService.getStatisticsDisplayMode();
+    await this.setFilterValues();
 
     try {
       this.currentUserUid = await this.localStorageService.loadFirestoreUid();
 
       // Read control flags
-      this.contingentData = await this.firestoreService.readContingentData();
+      this.contingentData = await this.firestoreService.readContingentData(
+        this.filterSelectedMonth
+      );
       this.isStopped = !!this.contingentData.StopTranslationForAllUsers;
 
       // Total contingent
@@ -212,7 +228,9 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       this.totalBuffer =
         this.contingentData.maxFreeTranslateCharsBufferPerMonth ??
         environment.app.maxFreeTranslateCharsBufferPerMonth;
-      this.totalCharCount = await this.firestoreService.getTotalCharCount();
+      this.totalCharCount = await this.firestoreService.getTotalCharCount(
+        this.filterSelectedMonth
+      );
       this.totalRemaining = Math.max(
         0,
         this.totalLimit - this.totalBuffer - this.totalCharCount
@@ -244,25 +262,56 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isCurrentUser(userId: string): boolean {
-    return userId === this.currentUserUid;
+  getSectionHeader(translationKey: string): string {
+    let selectedMonth: string;
+
+    if (this.isAllMonthsSelected) {
+      selectedMonth = this.translate.instant(
+        AllMonthsOption.SelectOptionValue
+      );
+    } else {
+      selectedMonth = this.translate.instant(
+        this.selectedMonthForStatisticsSections
+      );
+    }
+
+    return `${this.translate.instant(translationKey)}: ${selectedMonth}`;
   }
 
-  onDisplayModeChange(event: any): void {
-    const value = event?.detail?.value;
-    if (value === DisplayMode.User || value === DisplayMode.Programmer) {
-      this.displayMode = value;
-      this.searchTerm = '';
+  private async setFilterValues(): Promise<void> {
+    this.displayMode =
+      await this.localStorageService.getStatisticsDisplayMode();
+    this.selectedDisplayMode = this.displayMode;
 
-      // Store display mode in local storage
-      this.localStorageService
-        .saveStatisticsDisplayMode(this.displayMode)
-        .catch((error) => {
-          console.error('Error saving display mode to local storage:', error);
-        });
-      // Refresh statistics data to apply display mode change
-      this.init();
-    }
+    this.allFilterMonthValues =
+      this.utilsService.getAllFirestoreSearchStringsForMonth();
+    this.filterSelectedMonth =
+      await this.localStorageService.getStatisticsSelectedMonth();
+    this.selectedMonthForStatisticsSections = this.filterSelectedMonth;
+  }
+
+  async onFilterData(): Promise<void> {
+    this.selectedMonthForStatisticsSections = this.filterSelectedMonth;
+    this.displayMode = this.selectedDisplayMode;
+
+    // Store selected month in local storage
+    await this.localStorageService
+      .saveStatisticsSelectedMonth(this.filterSelectedMonth)
+      .catch((error) => {
+        console.error('Error saving selected month to local storage:', error);
+      });
+    // Store display mode in local storage
+    await this.localStorageService
+      .saveStatisticsDisplayMode(this.displayMode)
+      .catch((error) => {
+        console.error('Error saving display mode to local storage:', error);
+      });
+    // Trigger data reload with current filters
+    await this.init();
+  }
+
+  isCurrentUser(userId: string): boolean {
+    return userId === this.currentUserUid;
   }
 
   async showDetailInfos(

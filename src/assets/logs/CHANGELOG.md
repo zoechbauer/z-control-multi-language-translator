@@ -2,6 +2,36 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.12] – 2026-04-29
+
+### ✨ New Features
+
+- When selecting "All Months" in the programmer statistics filter, data across all available months is aggregated and displayed in a single view, enabling a comprehensive overview of translation usage over time.
+
+### 🔧 Internal
+
+- Extended test suite with 52 additional unit tests (Firebase Firestore service, user detail component, statistics filter), reaching 660 specs and 99.38% coverage on all frontend code.
+- Added CSS classes to statistics elements to improve selector stability in tests.
+
+## [1.11] – 2026-04-25
+
+### ✨ New Features
+
+- In statistics programmer view a new filter has been added to select a specific month or all months for the displayed data, allowing programmers to analyze translation usage patterns over time and monitor monthly trends more effectively.
+- Added Apple device detection in programmer statistics, so iPhone, iPad, and Mac usage is now identified and displayed more clearly.
+- Improved platform visibility in programmer view, making it easier to understand which device categories are used for translations.
+
+### 🚀 Improvements
+
+- The user statistics accordion now always displays up-to-date quota data when opened or re-opened, even if the month has changed and no new translations have been made.
+- The monthly statistics accordion now always displays up-to-date data when re-opened, showing both your own translations and those from other users. Previously, this refresh only occurred when a new translation was made.
+- Changed Translation from 'User Translation' to 'User Device' and 'Programmer Translation' to 'Programmer Device' for better clarity.
+- Refactored device and platform detection into a dedicated `DeviceUtilsService` to improve structure, reuse, and maintainability.
+- Introduced dedicated enums for device and platform types, improving consistency and type safety across the app.
+- Improved detection logic for mobile and tablet web clients, with a clearer separation between phone/tablet and desktop behavior.
+- Programmer-only sections in the statistics view are now correctly restricted to authorized devices.
+- Added 61 unit tests, increasing the total suite to 608 specs and improving confidence in platform/device classification and related UI behavior.
+
 ## [1.10] – 2026-04-15
 
 ### ✨ New Features

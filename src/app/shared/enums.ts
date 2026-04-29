@@ -43,3 +43,19 @@ export enum StatisticsSummaryName {
   FiveLanguages = '5',
 }
 
+export enum WebPlatformTypeEnum {
+  Native = 'native',
+  WebMobile = 'web-mobile',
+  WebDesktop = 'web-desktop',
+}
+
+export enum AppleDeviceTypeEnum {
+  iPhone = 'iPhone',
+  iPad = 'iPad',
+  Mac = 'Mac',
+}
+
+export enum AllMonthsOption {
+  localStorageValue = 'all',
+  SelectOptionValue = 'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL',
+}

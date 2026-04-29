@@ -17,6 +17,7 @@ import { ToastAnchor } from '../shared/enums';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { UserStatisticComponent } from '../ui/components/user-statistic/user-statistic.component';
 import { SpinnerComponent } from '../ui/components/spinner/spinner.component';
+import { DeviceUtils } from '../services/device-utils.service';
 
 @Component({
   selector: 'app-user-statistic',
@@ -44,7 +45,6 @@ describe('TabTranslationPage', () => {
 
   beforeEach(async () => {
     utilsServiceSpy = jasmine.createSpyObj('UtilsService', [
-      'getDeviceInfo',
       'showOrHideIonTabBar',
     ]);
     firestoreUtilsServiceSpy = jasmine.createSpyObj(
@@ -130,7 +130,7 @@ describe('TabTranslationPage', () => {
         expect(component.maxTargetLanguages).toBe(5);
       });
 
-      it('should return the device info from UtilsService', () => {
+      it('should return the device info from static DeviceUtils', () => {
         const deviceInfo: DeviceInfo = {
           userAgent: 'user agent string',
           platform: 'web-desktop',
@@ -141,11 +141,14 @@ describe('TabTranslationPage', () => {
             date: '2026-03-09',
           },
         };
-        utilsServiceSpy.getDeviceInfo.and.returnValue(deviceInfo);
+        const getDeviceInfoSpy = spyOn(
+          DeviceUtils,
+          'getDeviceInfo'
+        ).and.returnValue(deviceInfo);
 
         expect(component.deviceInfos).toBe(deviceInfo);
 
-        expect(utilsServiceSpy.getDeviceInfo).toHaveBeenCalled();
+        expect(getDeviceInfoSpy).toHaveBeenCalled();
       });
     });
 
@@ -614,6 +617,20 @@ describe('TabTranslationPage', () => {
       });
     });
 
+    describe('onAccordionGroupChange', () => {
+      it('should refresh statistics when user contingent accordion is opened', () => {
+        const requestStatisticsRefreshSpy = TestBed.inject(FirebaseFirestoreUtilsService).requestStatisticsRefresh as jasmine.Spy;
+        const event = {
+          detail: { value: 'user-contingent' },
+        } as CustomEvent;
+        const content = {} as any;
+
+        component.onAccordionGroupChange(event, content);
+
+        expect(requestStatisticsRefreshSpy).toHaveBeenCalled();
+      });
+    });
+
     describe('ngOnInit', () => {
       it('should call showOrHideIonTabBar, setupEventListeners, setupSubscriptions, updateIsContingentExceeded, initFormControls, and getTranslationPlaceholder', async () => {
         const showOrHideIonTabBarSpy = utilsServiceSpy.showOrHideIonTabBar;
@@ -635,7 +652,8 @@ describe('TabTranslationPage', () => {
           'getTranslationPlaceholder'
         );
 
-        await component.ngOnInit();
+        component.ngOnInit();
+        await fixture.whenStable();
 
         expect(showOrHideIonTabBarSpy).toHaveBeenCalled();
         expect(setupEventListenersSpy).toHaveBeenCalled();
@@ -675,7 +693,7 @@ describe('TabTranslationPage', () => {
         component = fixture.componentInstance;
 
         // Call ngOnInit (will pause at the unresolved promise)
-        const ngOnInitPromise = component.ngOnInit();
+        component.ngOnInit();
 
         // Before promise resolves, these should not have been called
         expect(initFormControlsSpy).not.toHaveBeenCalled();
@@ -683,7 +701,7 @@ describe('TabTranslationPage', () => {
 
         // Resolve the promise to simulate async completion
         resolvePromise!();
-        await ngOnInitPromise;
+        await fixture.whenStable();
 
         expect(initFormControlsSpy).toHaveBeenCalled();
         expect(getTranslationPlaceholderSpy).toHaveBeenCalled();

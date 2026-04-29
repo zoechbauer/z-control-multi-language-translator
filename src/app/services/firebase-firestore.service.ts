@@ -32,9 +32,10 @@ import {
   CharCountResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
-import { ToastAnchor } from '../shared/enums';
+import { AllMonthsOption, ToastAnchor } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
+import { DeviceUtils } from './device-utils.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
@@ -44,10 +45,11 @@ export class FirebaseFirestoreService {
 
   private readonly injector: Injector;
   private user!: angularFireAuth.User;
-  private readonly monthlyTranslationsMonthDocPath = `${
-    FireStoreConstants.COLLECTION_TRANSLATIONS
-  }/${FireStoreConstants.currentYearMonthPath()}`;
   private cachedIsProgrammerDevice: boolean = false;
+  private readonly cachedTranslations = new Map<
+    string,
+    UserTranslationStatistics[]
+  >();
 
   constructor(
     private readonly auth: angularFireAuth.Auth,
@@ -73,6 +75,7 @@ export class FirebaseFirestoreService {
   async init() {
     await this.authenticateUser();
     this.cachedIsProgrammerDevice = await this.getIsProgrammerDevice();
+    this.programmerDeviceRefreshSubject.next();
   }
 
   /**
@@ -211,11 +214,14 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves all user mappings from Firestore.
+   * Retrieves all user mappings from Firestore for a given month.
    * User mappings are stored in the collection: .../MLT_translations_statistics/userMapping/users
    * Each document contains: userId, name, type ('P' or 'U'), createdAt
+   *
+   * @param selectedMonth The month for which to retrieve user translation statistics.
+   * @returns An array of UserType objects representing users in the user mapping collection for the specified month.
    */
-  public async getUsers(): Promise<UserType[]> {
+  public async getUsers(selectedMonth: string): Promise<UserType[]> {
     // Path: .../MLT_translations_statistics/userMapping/users
     const usersCollectionPath = `${FireStoreConstants.getUserMappingUsersCollectionPath()}`;
     try {
@@ -226,16 +232,26 @@ export class FirebaseFirestoreService {
       const users: UserType[] = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        users.push({
-          userId: data['userId'],
-          name: data['name'],
-          type: data['type'],
-          isNative: data['isNative'] || false,
-          createdAt: this.getFirestoreDate(data['createdAt'])!,
-          lastUpdated: this.getFirestoreDate(data['lastUpdated']) || undefined,
-          device: data['device'],
-          deviceInfo: data['deviceInfo'],
-        });
+        const userCreated = this.getFirestoreDate(data['createdAt']) || null;
+        const userCreatedYYYYMM =
+          this.utilsService.formatDateTimeFirestoreSearchString(userCreated);
+        if (
+          selectedMonth === AllMonthsOption.localStorageValue ||            // all months
+          userCreatedYYYYMM === selectedMonth ||                            // created in selected month
+          this.userHasTranslationsInMonth(data['userId'], selectedMonth)    // has translations in selected month
+        ) {
+          users.push({
+            userId: data['userId'],
+            name: data['name'],
+            type: data['type'],
+            isNative: data['isNative'] || false,
+            createdAt: this.getFirestoreDate(data['createdAt'])!,
+            lastUpdated:
+              this.getFirestoreDate(data['lastUpdated']) || undefined,
+            device: data['device'],
+            deviceInfo: data['deviceInfo'],
+          });
+        }
       });
       return users;
     } catch (error) {
@@ -248,6 +264,17 @@ export class FirebaseFirestoreService {
       );
       return [];
     }
+  }
+
+  private userHasTranslationsInMonth(userId: string, month: string): boolean {
+    const translationsForMonth = this.cachedTranslations.get(month);
+    if (translationsForMonth) {
+      const hasTranslations = translationsForMonth.some(
+        (stat) => stat.userId === userId && stat.translatedCharCount > 0
+      );
+      return hasTranslations;
+    }
+    return false;
   }
 
   /**
@@ -282,7 +309,7 @@ export class FirebaseFirestoreService {
   }
 
   private get deviceInfo(): DeviceInfo {
-    return this.utilsService.getDeviceInfo();
+    return DeviceUtils.getDeviceInfo();
   }
 
   /**
@@ -318,7 +345,6 @@ export class FirebaseFirestoreService {
       const result = await runInInjectionContext(this.injector, () =>
         (callable as any)({})
       );
-      this.programmerDeviceRefreshSubject.next();
       return result.data.isProgrammerDevice as boolean;
     } catch (error) {
       console.error('Error getting programmer device status:', error);
@@ -411,17 +437,25 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Reads the contingent data document for the current month from Firestore.
+   * Reads the contingent data document for the selected month from Firestore.
    * Retrieves the meta contingent data containing configuration and limits.
    * If the document does not exist, returns an empty object and logs an error.
    *
+   * @param selectedMonth The month for which to read the contingent data.
    * @returns Promise<FirestoreContingentData> The contingent data object,
    * or an empty object if not found or on error.
    */
-  async readContingentData(): Promise<FirestoreContingentData> {
+  async readContingentData(
+    selectedMonth: string | undefined = undefined
+  ): Promise<FirestoreContingentData> {
     try {
+      if (selectedMonth === AllMonthsOption.SelectOptionValue) {
+        return {};  // contingent data is not displayed for 'all months' option
+      }
       // Path: .../MLT_translations_statistics/{yyyy-mm}/control/control
-      const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath()}`;
+      const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath(
+        selectedMonth
+      )}`;
       const dataSnap = await runInInjectionContext(this.injector, () => {
         const dataRef = this.getFirestoreDoc(dataDocPath);
         return this.getFirestoreDocSnapshot(dataRef);
@@ -481,17 +515,20 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves the total number of translated characters across all users for the current month from Firestore.
+   * Retrieves the total number of translated characters across all users for the selected month from Firestore.
    * If the total document does not exist (e.g., at the start of a new month), the function returns 0.
    *
-   * @returns Promise<number> Resolves to the total translated character count for all users for the current month.
+   * @param selectedMonth The month for which to retrieve the total character count.
+   * @returns Promise<number> Resolves to the total translated character count for all users for the specified month.
    */
-  async getTotalCharCount(): Promise<number> {
+  async getTotalCharCount(
+    selectedMonth: string | undefined = undefined
+  ): Promise<number> {
     try {
       if (!this.user) return 0;
       const usageSnap = await runInInjectionContext(this.injector, () => {
         const usageRef = this.getFirestoreDoc(
-          `${FireStoreConstants.getMetaTotalCharsDocumentPath()}`
+          `${FireStoreConstants.getMetaTotalCharsDocumentPath(selectedMonth)}`
         );
         return this.getFirestoreDocSnapshot(usageRef);
       });
@@ -512,14 +549,60 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves translation statistics for all users for the current month from Firestore.
-   * Returns an array of UserTranslationStatistics objects.
+   * Retrieves translation statistics for all users for the selected month or all months from Firestore.
+   *  @param selectedMonth The month for which to retrieve user translation statistics or all for all user translation statistics.
+   *  @returns An array of UserTranslationStatistics objects.
    */
-  async getAllUserTranslationStatistics(): Promise<
-    UserTranslationStatistics[]
-  > {
-    const usersCollectionPath = `${this.monthlyTranslationsMonthDocPath}/users`;
+  async getAllUserTranslationStatistics(
+    selectedMonth: string
+  ): Promise<UserTranslationStatistics[]> {
     try {
+      let result: UserTranslationStatistics[] = [];
+
+      if (selectedMonth === AllMonthsOption.localStorageValue) {
+        const allMonths =
+          this.utilsService.getAllFirestoreSearchStringsForMonth();
+
+        for (const month of allMonths) {
+          if (month !== AllMonthsOption.localStorageValue) {
+            const statsForMonth =
+              await this.getAllUserTranslationStatisticsForMonth(month);
+            result = result.concat(statsForMonth);
+          }
+        }
+      } else {
+        result = await this.getAllUserTranslationStatisticsForMonth(
+          selectedMonth
+        );
+      }
+      return result;
+    } catch (error) {
+      console.error(
+        `Error fetching all user statistics for month ${selectedMonth}:`,
+        error
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Retrieves translation statistics for all users for the selected month.
+   *  @param selectedMonth The month for which to retrieve user translation statistics.
+   *  @returns An array of UserTranslationStatistics objects.
+   */
+  private async getAllUserTranslationStatisticsForMonth(
+    selectedMonth: string
+  ): Promise<UserTranslationStatistics[]> {
+    try {
+      const cachedStatistics =
+        this.getCachedTranslationsForPreviousMonth(selectedMonth);
+      if (cachedStatistics) {
+        return cachedStatistics;
+      }
+      // get statistics from firestore
+      const usersCollectionPath = `${FireStoreConstants.getUsersCollectionPath(
+        selectedMonth
+      )}`;
       const usersRef = this.getCollection(usersCollectionPath);
       const snapshot = await runInInjectionContext(this.injector, () =>
         this.getDocs(usersRef)
@@ -534,11 +617,54 @@ export class FirebaseFirestoreService {
           lastTranslationDate: this.getFirestoreDate(data['lastUpdated']),
         });
       });
+
+      this.saveCachedTranslationsForMonth(selectedMonth, result);
       return result;
     } catch (error) {
-      console.error('Error fetching all user statistics:', error);
+      console.error(
+        `Error fetching all user statistics for month ${selectedMonth}:`,
+        error
+      );
       return [];
     }
+  }
+
+  /**
+   * Returns cached translation statistics for a non-current month.
+   *
+   * The current month is intentionally excluded so fresh data is always
+   * loaded from Firestore for ongoing translations.
+   *
+   * @param month Month key in YYYY-MM format.
+   * @returns Cached statistics for the month, or undefined if not cached
+   *          or when the requested month is the current month.
+   */
+  private getCachedTranslationsForPreviousMonth(
+    month: string
+  ): UserTranslationStatistics[] | undefined {
+    const currentMonth = this.utilsService.getCurrentMonth();
+    if (currentMonth !== month) {
+      const cached = this.cachedTranslations.get(month);
+      if (cached) {
+        return cached;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Stores translation statistics in the month cache.
+   *
+   * Existing entries for the same month are replaced.
+   *
+   * @param month Month key in YYYY-MM format.
+   * @param data Translation statistics to cache for the given month.
+   */
+  private saveCachedTranslationsForMonth(
+    month: string,
+    data: UserTranslationStatistics[]
+  ): void {
+    this.cachedTranslations.set(month, data);
   }
 
   private getCollection(path: string) {
