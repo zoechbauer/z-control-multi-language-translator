@@ -10,10 +10,13 @@ import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.se
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { DisplayMode } from 'src/app/shared/enums';
+import { AllMonthsOption, DisplayMode } from 'src/app/shared/enums';
 import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
 import { environment } from 'src/environments/environment';
-import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.interfaces';
+import {
+  DisplayedUserStatistics,
+  StatisticsData,
+} from 'src/app/shared/firebase-firestore.interfaces';
 
 function createUserStat(
   userId = 'U-1',
@@ -171,6 +174,22 @@ describe('GetStatisticsComponent', () => {
         component.getFormatDateTime(null);
         expect(utilsServiceSpy.formatDateTimeISO).toHaveBeenCalledWith(null);
       });
+
+      it('should format date using utilsService.formatDateTimeISO if user type is programmer', () => {
+        component.displayMode = DisplayMode.Programmer;
+        component.getFormatDateTime(new Date('2026-03-09T00:00:00Z'));
+        expect(utilsServiceSpy.formatDateTimeISO).toHaveBeenCalledWith(
+          new Date('2026-03-09T00:00:00Z')
+        );
+      });
+
+      it('should format date using utilsService.formatDateISO if user type is user', () => {
+        component.displayMode = DisplayMode.User;
+        component.getFormatDateTime(new Date('2026-03-09T00:00:00Z'));
+        expect(utilsServiceSpy.formatDateISO).toHaveBeenCalledWith(
+          new Date('2026-03-09T00:00:00Z')
+        );
+      });
     });
 
     describe('formatDateISO()', () => {
@@ -199,6 +218,38 @@ describe('GetStatisticsComponent', () => {
       it('should call UtilsService.formatDateISO when dateTime is null', () => {
         component.getFormatDateTime(null);
         expect(utilsServiceSpy.formatDateISO).toHaveBeenCalledWith(null);
+      });
+    });
+
+    describe('getSectionHeader', () => {
+      it('should return header with selected month when a specific month is selected', () => {
+        component.filterSelectedMonth = '2026-03';
+        component.selectedMonthForStatisticsSections = '2026-03';
+
+        const result = component.getSectionHeader('SECTION.HEADER_KEY');
+
+        expect(result).toBe('SECTION.HEADER_KEY: 2026-03');
+      });
+
+      it('should return header with AllMonthsOption label when all months is selected', () => {
+        component.filterSelectedMonth = AllMonthsOption.SelectOptionValue;
+        component.selectedMonthForStatisticsSections =
+          AllMonthsOption.SelectOptionValue;
+
+        const result = component.getSectionHeader('SECTION.HEADER_KEY');
+
+        expect(result).toBe(
+          `SECTION.HEADER_KEY: ${AllMonthsOption.SelectOptionValue}`
+        );
+      });
+
+      it('should use selectedMonthForStatisticsSections, not filterSelectedMonth, for the month label', () => {
+        component.filterSelectedMonth = '2026-04';
+        component.selectedMonthForStatisticsSections = '2026-03';
+
+        const result = component.getSectionHeader('SECTION.HEADER_KEY');
+
+        expect(result).toBe('SECTION.HEADER_KEY: 2026-03');
       });
     });
 
@@ -814,6 +865,62 @@ describe('GetStatisticsComponent', () => {
             new Error('Failed to load statistics')
           );
         });
+
+        it('should call setFilterValues', async () => {
+          const setFilterValuesSpy = spyOn(
+            component as any,
+            'setFilterValues'
+          ).and.callThrough();
+
+          await component.init();
+          expect(setFilterValuesSpy).toHaveBeenCalled();
+        });
+      });
+
+      describe('setFilterValues', () => {
+        it('should set displayMode, filterSelectedMonth based on local storage values, and load allFilterMonthValues', async () => {
+          localStorageServiceSpy.getStatisticsDisplayMode.and.returnValue(
+            Promise.resolve(DisplayMode.Programmer)
+          );
+          localStorageServiceSpy.getStatisticsSelectedMonth.and.returnValue(
+            Promise.resolve('2026-04')
+          );
+          const getAllFirestoreSearchStringsForMonthSpy =
+            utilsServiceSpy.getAllFirestoreSearchStringsForMonth.and.returnValue(
+              ['2026-02', '2026-03', '2026-04']
+            );
+          component.displayMode = DisplayMode.User;
+          component.selectedDisplayMode = DisplayMode.User;
+          component.filterSelectedMonth = '2026-03';
+          component.selectedMonthForStatisticsSections = '2026-03';
+
+          await (component as any).setFilterValues();
+          await fixture.whenStable();
+
+          expect(
+            localStorageServiceSpy.getStatisticsDisplayMode
+          ).toHaveBeenCalled();
+          expect(
+            localStorageServiceSpy.getStatisticsSelectedMonth
+          ).toHaveBeenCalled();
+          expect(getAllFirestoreSearchStringsForMonthSpy).toHaveBeenCalled();
+
+          expect(component.displayMode)
+            .withContext('displayMode')
+            .toBe(DisplayMode.Programmer);
+          expect(component.selectedDisplayMode)
+            .withContext('selectedDisplayMode')
+            .toBe(DisplayMode.Programmer);
+          expect(component.filterSelectedMonth)
+            .withContext('filterSelectedMonth')
+            .toBe('2026-04');
+          expect(component.selectedMonthForStatisticsSections)
+            .withContext('selectedMonthForStatisticsSections')
+            .toBe('2026-04');
+          expect(component.allFilterMonthValues)
+            .withContext('allFilterMonthValues')
+            .toEqual(['2026-02', '2026-03', '2026-04']);
+        });
       });
     });
   });
@@ -939,13 +1046,68 @@ describe('GetStatisticsComponent', () => {
       });
     });
 
+    describe('display stop translation for all users message', () => {
+      it('should not show section if isAllMonthsSelected is true', () => {
+        component.filterSelectedMonth = AllMonthsOption.SelectOptionValue;
+        fixture.detectChanges();
+        const stopTranslationSection = fixture.nativeElement.querySelector(
+          '.global-stop-section'
+        );
+        expect(stopTranslationSection).toBeNull();
+      });
+
+      it('should show stop translation message when isStopped is true', () => {
+        component.isStopped = true;
+        fixture.detectChanges();
+        const stopTranslationMessage = fixture.nativeElement.querySelector(
+          '.stopped.global-stop-flag'
+        );
+        expect(stopTranslationMessage).toBeTruthy();
+      });
+
+      it('should not show stop translation message when isStopped is false', () => {
+        component.isStopped = false;
+        fixture.detectChanges();
+        const stopTranslationMessage = fixture.nativeElement.querySelector(
+          '.stopped.global-stop-flag'
+        );
+        expect(stopTranslationMessage).toBeNull();
+      });
+    });
+
     describe('display total contingent', () => {
+      it('should show monthly section if isAllMonthsSelected is false', () => {
+        component.filterSelectedMonth = '2026-03';
+        fixture.detectChanges();
+        const monthlySection = fixture.nativeElement.querySelector(
+          '.total-contingent-monthly'
+        );
+        const allMonthsSection = fixture.nativeElement.querySelector(
+          '.total-contingent-all-months'
+        );
+        expect(monthlySection).toBeTruthy();
+        expect(allMonthsSection).toBeNull();
+      });
+
+      it('should show all months section if isAllMonthsSelected is true', () => {
+        component.filterSelectedMonth = AllMonthsOption.SelectOptionValue;
+        fixture.detectChanges();
+        const monthlySection = fixture.nativeElement.querySelector(
+          '.total-contingent-monthly'
+        );
+        const allMonthsSection = fixture.nativeElement.querySelector(
+          '.total-contingent-all-months'
+        );
+        expect(monthlySection).toBeNull();
+        expect(allMonthsSection).toBeTruthy();
+      });
+
       it('should show total difference info when allUsersCharCount is not equal to totalCharCount', () => {
         component.allUsersCharCount = 100000;
         component.totalCharCount = 100001;
         fixture.detectChanges();
         const totalDifferenceInfo = fixture.nativeElement.querySelector(
-          '.total-difference-info'
+          '.total-all-users-difference'
         );
         expect(totalDifferenceInfo).toBeTruthy();
       });
@@ -955,7 +1117,7 @@ describe('GetStatisticsComponent', () => {
         component.totalCharCount = 100000;
         fixture.detectChanges();
         const totalDifferenceInfo = fixture.nativeElement.querySelector(
-          '.total-difference-info'
+          '.total-all-users-difference'
         );
         expect(totalDifferenceInfo).toBeNull();
       });
@@ -1242,6 +1404,135 @@ describe('GetStatisticsComponent', () => {
         );
 
         expect(translationDateCell).toBeNull();
+      });
+    });
+
+    describe('translation date', () => {
+      let translationDate: Date;
+      let createdDate: Date;
+      let statisticData: StatisticsData;
+
+      beforeEach(() => {
+        translationDate = new Date('2026-03-15T12:34:56Z');
+        createdDate = new Date('2026-03-10T08:00:00Z');
+
+        statisticData = {
+          displayedUserStatistics: [
+            {
+              ...createUserStat('U-1', 1000, translationDate, ['en', 'de']),
+              userCreatedAt: createdDate,
+            },
+          ],
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
+
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: false,
+          configurable: true,
+        });
+      });
+
+      it('should display lastTranslationDate when available', () => {
+        spyOn(component, 'getFormatDateTime').and.callFake((date: Date) => {
+          return date ? date.toISOString().split('T')[0] : '';
+        });
+
+        component.statisticsData = statisticData;
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .detail-row .translation-date'
+        );
+
+        expect(translationDateCell).toBeTruthy();
+        expect(translationDateCell.textContent.trim()).toBe('2026-03-15');
+      });
+
+      it('should use creationDate when lastTranslationDate is null', () => {
+        spyOn(component, 'getFormatDateTime').and.callFake((date: Date) => {
+          return date ? date.toISOString().split('T')[0] : '';
+        });
+
+        statisticData.displayedUserStatistics[0].lastTranslationDate = null;
+        component.statisticsData = statisticData;
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        const translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .detail-row .translation-date'
+        );
+
+        expect(translationDateCell).toBeTruthy();
+        expect(translationDateCell.textContent.trim()).toBe('2026-03-10');
+      });
+
+      it('should hide translation-date column when hideColumn is true', () => {
+        spyOn(component, 'getFormatDateTime').and.returnValue('2026-03-15');
+
+        component.statisticsData = statisticData;
+        component.displayMode = DisplayMode.User;
+        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+          value: true,
+          configurable: true,
+        });
+
+        fixture.detectChanges();
+
+        const translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .detail-row .translation-date'
+        );
+
+        expect(translationDateCell).toBeNull();
+      });
+
+      it('should call getFormatDateTime with correct date parameter', () => {
+        const getFormatDateTimeSpy = spyOn(
+          component,
+          'getFormatDateTime'
+        ).and.returnValue('2026-03-15');
+
+        component.statisticsData = statisticData;
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        expect(getFormatDateTimeSpy).toHaveBeenCalledWith(translationDate);
+      });
+
+      it('should verify conditional logic: uses lastTranslationDate when present, falls back to userCreatedAt when null', () => {
+        spyOn(component, 'getFormatDateTime').and.callFake((date: Date) => {
+          return date ? date.toISOString().split('T')[0] : '';
+        });
+
+        // Test case 1: lastTranslationDate present
+        component.statisticsData = statisticData;
+        component.displayMode = DisplayMode.User;
+        fixture.detectChanges();
+
+        let translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .detail-row .translation-date'
+        );
+        const dateWithLastTranslation = translationDateCell.textContent.trim();
+
+        // Test case 2: lastTranslationDate null
+        statisticData.displayedUserStatistics[0].lastTranslationDate = null;
+        component.statisticsData = {
+          ...statisticData,
+          displayedUserStatistics: [...statisticData.displayedUserStatistics],
+        };
+        fixture.detectChanges();
+
+        translationDateCell = fixture.nativeElement.querySelector(
+          '.user-stat-details .detail-row .translation-date'
+        );
+        const dateWithCreation = translationDateCell.textContent.trim();
+
+        // Verify they use different dates
+        expect(dateWithLastTranslation).toBe('2026-03-15');
+        expect(dateWithCreation).toBe('2026-03-10');
+        expect(dateWithLastTranslation).not.toEqual(dateWithCreation);
       });
     });
 

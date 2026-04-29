@@ -4,17 +4,20 @@ import { Firestore } from '@angular/fire/firestore';
 import { Functions } from '@angular/fire/functions';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import * as firestoreFns from '@angular/fire/firestore';
+import * as functionsFns from '@angular/fire/functions';
 
 import { FirebaseFirestoreService } from './firebase-firestore.service';
 import { UtilsService } from './utils.service';
 import {
   FirestoreContingentData,
   ProgrammerDeviceUID,
+  UserTranslationStatistics,
   UserType,
 } from '../shared/firebase-firestore.interfaces';
 import { LocalStorageService } from './local-storage.service';
 import { ToastService } from './toast.service';
-import { ToastAnchor } from '../shared/enums';
+import { ToastAnchor, AllMonthsOption } from '../shared/enums';
 import { environment } from 'src/environments/environment';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
@@ -79,6 +82,7 @@ describe('FirebaseFirestoreService', () => {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       return year + '-' + month;
     },
+    getAllFirestoreSearchStringsForMonth: () => [] as string[],
   };
 
   const localStorageServiceMock = {
@@ -199,6 +203,13 @@ describe('FirebaseFirestoreService', () => {
         fakeRef
       );
       expect(result).toEqual(flags);
+    });
+
+    it('should return empty object when selected month is "all"', async () => {
+      const result = await service.readContingentData(
+        AllMonthsOption.SelectOptionValue
+      );
+      expect(result).toEqual({});
     });
 
     it('should return empty object when document does not exist', async () => {
@@ -445,12 +456,12 @@ describe('FirebaseFirestoreService', () => {
     });
   });
 
-  describe('getAllUserTranslationStatistics', () => {
+  describe('getAllUserTranslationStatisticsForMonth', () => {
     it('should return mapped user translation statistics when snapshot has docs', async () => {
       const snapshotMock = {
         forEach: (cb: (doc: any) => void) => {
           cb({
-            id: 'user1',
+            id: 'U-1',
             data: () => ({
               charCount: 100,
               targetLanguages: ['en'],
@@ -460,11 +471,13 @@ describe('FirebaseFirestoreService', () => {
             }),
           });
           cb({
-            id: 'user2',
+            id: 'U-2',
             data: () => ({
               charCount: 200,
               targetLanguages: ['fr'],
-              lastUpdated: null,
+              lastUpdated: {
+                toDate: () => new Date('2026-03-01T00:00:00.000Z'),
+              },
             }),
           });
         },
@@ -474,20 +487,22 @@ describe('FirebaseFirestoreService', () => {
       spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
       spyOn<any>(service, 'getDocs').and.resolveTo(snapshotMock);
 
-      const result = await service.getAllUserTranslationStatistics('2026-03');
+      const result = await (
+        service as any
+      ).getAllUserTranslationStatisticsForMonth('2026-03');
 
       expect(result).toEqual([
         {
-          userId: 'user1',
+          userId: 'U-1',
           translatedCharCount: 100,
           targetLanguages: ['en'],
           lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
         },
         {
-          userId: 'user2',
+          userId: 'U-2',
           translatedCharCount: 200,
           targetLanguages: ['fr'],
-          lastTranslationDate: undefined,
+          lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
         },
       ]);
     });
@@ -496,7 +511,7 @@ describe('FirebaseFirestoreService', () => {
       const snapshotMock = {
         forEach: (cb: (doc: any) => void) => {
           cb({
-            id: 'user1',
+            id: 'U-1',
             data: () => ({
               charCount: 100,
               lastUpdated: {
@@ -505,7 +520,7 @@ describe('FirebaseFirestoreService', () => {
             }),
           });
           cb({
-            id: 'user2',
+            id: 'U-2',
             data: () => ({}), // missing charCount and targetLanguages
           });
         },
@@ -515,22 +530,47 @@ describe('FirebaseFirestoreService', () => {
       spyOn<any>(service, 'getCollection').and.returnValue(collectionRefMock);
       spyOn<any>(service, 'getDocs').and.resolveTo(snapshotMock);
 
-      const result = await service.getAllUserTranslationStatistics('2026-03');
+      const result = await (
+        service as any
+      ).getAllUserTranslationStatisticsForMonth('2026-03');
 
       expect(result).toEqual([
         {
-          userId: 'user1',
+          userId: 'U-1',
           translatedCharCount: 100,
           targetLanguages: [],
           lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
         },
         {
-          userId: 'user2',
+          userId: 'U-2',
           translatedCharCount: 0,
           targetLanguages: [],
           lastTranslationDate: undefined,
         },
       ]);
+    });
+
+    it('should return cached data on subsequent calls for same month', async () => {
+      const userTranslationStatistics: UserTranslationStatistics[] = [
+        {
+          userId: 'U-1',
+          translatedCharCount: 100,
+          targetLanguages: ['en'],
+          lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
+        },
+      ];
+      spyOn<any>(
+        service,
+        'getCachedTranslationsForPreviousMonth'
+      ).and.returnValue(userTranslationStatistics);
+      spyOn<any>(service, 'getDocs').and.resolveTo({} as any); // should not be called
+
+      const result = await (
+        service as any
+      ).getAllUserTranslationStatisticsForMonth('2026-03');
+
+      expect(result).toEqual(userTranslationStatistics);
+      expect(service['getDocs']).not.toHaveBeenCalled();
     });
 
     it('should log error and return empty array when getDocs throws', async () => {
@@ -540,12 +580,188 @@ describe('FirebaseFirestoreService', () => {
         new Error('getDocs failed')
       );
 
-      const result = await service.getAllUserTranslationStatistics('2026-03');
+      const result = await (
+        service as any
+      ).getAllUserTranslationStatisticsForMonth('2026-03');
 
       expect(result).toEqual([]);
       expect(console.error).toHaveBeenCalledWith(
-        'Error fetching all user statistics:',
+        'Error fetching all user statistics for month 2026-03:',
         new Error('getDocs failed')
+      );
+    });
+
+    describe('getCachedTranslationsForPreviousMonth', () => {
+      const previousMonth = '2026-03';
+      const cachedData: UserTranslationStatistics[] = [
+        {
+          userId: 'U-1',
+          translatedCharCount: 100,
+          targetLanguages: ['en'],
+          lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
+        },
+      ];
+
+      beforeEach(() => {
+        spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-04');
+      });
+
+      it('should return cached data for previous month', () => {
+        (service as any).cachedTranslations.set(previousMonth, cachedData);
+
+        const result = (service as any).getCachedTranslationsForPreviousMonth(
+          previousMonth
+        );
+
+        expect(result).toEqual(cachedData);
+      });
+
+      it('should return undefined for current month even if data is cached', () => {
+        const currentMonth = utilsServiceMock.getCurrentMonth();
+        (service as any).cachedTranslations.set(currentMonth, cachedData);
+
+        const result = (service as any).getCachedTranslationsForPreviousMonth(
+          currentMonth
+        );
+
+        expect(result).toBeUndefined();
+      });
+
+      it('should return undefined when no cached data exists for previous month', () => {
+        // do not populate the cache
+        const result = (service as any).getCachedTranslationsForPreviousMonth(
+          previousMonth
+        );
+
+        expect(result).toBeUndefined();
+      });
+
+      it('should return undefined when cache is empty', () => {
+        (service as any).cachedTranslations.clear();
+
+        const result = (service as any).getCachedTranslationsForPreviousMonth(
+          previousMonth
+        );
+
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe('getAllUserTranslationStatistics', () => {
+    it('should delegate to getAllUserTranslationStatisticsForMonth for a specific month', async () => {
+      const stats: UserTranslationStatistics[] = [
+        {
+          userId: 'U-1',
+          translatedCharCount: 100,
+          targetLanguages: ['en'],
+          lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
+        },
+      ];
+      spyOn<any>(
+        service,
+        'getAllUserTranslationStatisticsForMonth'
+      ).and.resolveTo(stats);
+
+      const result = await service.getAllUserTranslationStatistics('2026-03');
+
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).toHaveBeenCalledOnceWith('2026-03');
+      expect(result).toEqual(stats);
+    });
+
+    it('should concatenate results for all months when selectedMonth is "all"', async () => {
+      const allMonths = [
+        AllMonthsOption.localStorageValue,
+        '2026-03',
+        '2026-02',
+      ];
+      spyOn(
+        utilsServiceMock,
+        'getAllFirestoreSearchStringsForMonth'
+      ).and.returnValue(allMonths);
+
+      const statsForMarch: UserTranslationStatistics[] = [
+        {
+          userId: 'U-1',
+          translatedCharCount: 100,
+          targetLanguages: ['en'],
+          lastTranslationDate: new Date('2026-03-01T00:00:00.000Z'),
+        },
+      ];
+      const statsForFeb: UserTranslationStatistics[] = [
+        {
+          userId: 'U-2',
+          translatedCharCount: 200,
+          targetLanguages: ['fr'],
+          lastTranslationDate: new Date('2026-02-01T00:00:00.000Z'),
+        },
+      ];
+      spyOn<any>(
+        service,
+        'getAllUserTranslationStatisticsForMonth'
+      ).and.callFake(async (month: string) =>
+        month === '2026-03' ? statsForMarch : statsForFeb
+      );
+
+      const result = await service.getAllUserTranslationStatistics(
+        AllMonthsOption.localStorageValue
+      );
+
+      expect(
+        utilsServiceMock.getAllFirestoreSearchStringsForMonth
+      ).toHaveBeenCalled();
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).toHaveBeenCalledWith('2026-03');
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).toHaveBeenCalledWith('2026-02');
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).not.toHaveBeenCalledWith(AllMonthsOption.localStorageValue);
+      expect(result).toEqual([...statsForMarch, ...statsForFeb]);
+    });
+
+    it('should skip "all" entry when iterating months', async () => {
+      const allMonths = [AllMonthsOption.localStorageValue, '2026-03'];
+      spyOn(
+        utilsServiceMock,
+        'getAllFirestoreSearchStringsForMonth'
+      ).and.returnValue(allMonths);
+      spyOn<any>(
+        service,
+        'getAllUserTranslationStatisticsForMonth'
+      ).and.resolveTo([]);
+
+      await service.getAllUserTranslationStatistics(
+        AllMonthsOption.localStorageValue
+      );
+
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        (service as any).getAllUserTranslationStatisticsForMonth
+      ).not.toHaveBeenCalledWith(AllMonthsOption.localStorageValue);
+    });
+
+    it('should log error and return empty array when getAllFirestoreSearchStringsForMonth throws', async () => {
+      spyOn(console, 'error');
+      spyOn(
+        utilsServiceMock,
+        'getAllFirestoreSearchStringsForMonth'
+      ).and.throwError('unexpected failure');
+
+      const result = await service.getAllUserTranslationStatistics(
+        AllMonthsOption.localStorageValue
+      );
+
+      expect(result).toEqual([]);
+      expect(console.error).toHaveBeenCalledWith(
+        `Error fetching all user statistics for month ${AllMonthsOption.localStorageValue}:`,
+        jasmine.any(Error)
       );
     });
   });
@@ -1121,55 +1337,143 @@ describe('FirebaseFirestoreService', () => {
   });
 
   describe('authenticateUser', () => {
-    it('should authenticate user and save UID to localStorage if not native mode', async () => {
-      authMock.currentUser = userStub;
-      const testUid = 'anonymous-uid';
+    beforeEach(() => {
+      (service as any).utilsService.isNative = false;
+    });
+
+    it('should reuse existing web user, add user, save uid and run setup calls', async () => {
+      const getIdTokenSpy = jasmine
+        .createSpy('getIdToken')
+        .and.resolveTo('token');
+      authMock.currentUser = {
+        ...userStub,
+        uid: 'anonymous-uid',
+        getIdToken: getIdTokenSpy,
+      } as any;
+
+      const waitForAuthReadySpy = spyOn<any>(
+        service,
+        'waitForAuthReady'
+      ).and.resolveTo();
       const addUserSpy = spyOn(service, 'addUser').and.resolveTo();
+      const createMissingContingentDataSpy = spyOn(
+        service,
+        'createMissingContingentData'
+      ).and.resolveTo();
+      const updateProgrammerDeviceUIDsSpy = spyOn(
+        service,
+        'updateProgrammerDeviceUIDs'
+      ).and.resolveTo();
+      const signInAnonymouslySpy = spyOn<any>(
+        service,
+        'signInAnonymously'
+      ).and.resolveTo();
 
       await (service as any).authenticateUser();
 
-      expect(addUserSpy).toHaveBeenCalledWith(testUid);
+      expect(waitForAuthReadySpy).toHaveBeenCalled();
+      expect(addUserSpy).toHaveBeenCalledWith('anonymous-uid');
       expect(localStorageServiceMock.saveFirestoreUid).toHaveBeenCalledWith(
-        testUid
+        'anonymous-uid'
       );
+      expect(getIdTokenSpy).toHaveBeenCalledWith(true);
+      expect(createMissingContingentDataSpy).toHaveBeenCalled();
+      expect(updateProgrammerDeviceUIDsSpy).toHaveBeenCalled();
+      expect(signInAnonymouslySpy).not.toHaveBeenCalled();
     });
 
-    it('should call signInAnonymously if no user is authenticated and not native mode', async () => {
+    it('should not add or save uid when current user has no uid, but still run setup calls', async () => {
+      const getIdTokenSpy = jasmine
+        .createSpy('getIdToken')
+        .and.resolveTo('token');
+      authMock.currentUser = {
+        ...userStub,
+        uid: undefined,
+        getIdToken: getIdTokenSpy,
+      } as any;
+
+      spyOn<any>(service, 'waitForAuthReady').and.resolveTo();
+      const addUserSpy = spyOn(service, 'addUser').and.resolveTo();
+      const createMissingContingentDataSpy = spyOn(
+        service,
+        'createMissingContingentData'
+      ).and.resolveTo();
+      const updateProgrammerDeviceUIDsSpy = spyOn(
+        service,
+        'updateProgrammerDeviceUIDs'
+      ).and.resolveTo();
+
+      await (service as any).authenticateUser();
+
+      expect(addUserSpy).not.toHaveBeenCalled();
+      expect(localStorageServiceMock.saveFirestoreUid).not.toHaveBeenCalled();
+      expect(getIdTokenSpy).toHaveBeenCalledWith(true);
+      expect(createMissingContingentDataSpy).toHaveBeenCalled();
+      expect(updateProgrammerDeviceUIDsSpy).toHaveBeenCalled();
+    });
+
+    it('should call signInAnonymously when no web user exists', async () => {
       authMock.currentUser = null;
-      const signInAnonymouslySpy = spyOn(
-        service as any,
+
+      spyOn<any>(service, 'waitForAuthReady').and.resolveTo();
+      const signInAnonymouslySpy = spyOn<any>(
+        service,
         'signInAnonymously'
+      ).and.resolveTo();
+      const createMissingContingentDataSpy = spyOn(
+        service,
+        'createMissingContingentData'
+      ).and.resolveTo();
+      const updateProgrammerDeviceUIDsSpy = spyOn(
+        service,
+        'updateProgrammerDeviceUIDs'
       ).and.resolveTo();
 
       await (service as any).authenticateUser();
 
       expect(signInAnonymouslySpy).toHaveBeenCalled();
+      expect(createMissingContingentDataSpy).toHaveBeenCalled();
+      expect(updateProgrammerDeviceUIDsSpy).toHaveBeenCalled();
     });
 
-    it('should call signInAnonymously if native mode', async () => {
-      authMock.currentUser = null;
+    it('should use native path and always call signInAnonymously plus setup calls', async () => {
       (service as any).utilsService.isNative = true;
-      const signInAnonymouslySpy = spyOn(
-        service as any,
+      authMock.currentUser = null;
+
+      spyOn<any>(service, 'waitForAuthReady').and.resolveTo();
+      const signInAnonymouslySpy = spyOn<any>(
+        service,
         'signInAnonymously'
+      ).and.resolveTo();
+      const createMissingContingentDataSpy = spyOn(
+        service,
+        'createMissingContingentData'
+      ).and.resolveTo();
+      const updateProgrammerDeviceUIDsSpy = spyOn(
+        service,
+        'updateProgrammerDeviceUIDs'
       ).and.resolveTo();
 
       await (service as any).authenticateUser();
 
       expect(signInAnonymouslySpy).toHaveBeenCalled();
+      expect(createMissingContingentDataSpy).toHaveBeenCalled();
+      expect(updateProgrammerDeviceUIDsSpy).toHaveBeenCalled();
     });
 
-    it('should log error if authentication fails', async () => {
+    it('should log error if signInAnonymously fails', async () => {
       spyOn(console, 'error');
       authMock.currentUser = null;
-      const signInAnonymouslySpy = spyOn(
-        service as any,
-        'signInAnonymously'
-      ).and.rejectWith(new Error('signInAnonymously failed'));
+
+      spyOn<any>(service, 'waitForAuthReady').and.resolveTo();
+      spyOn<any>(service, 'signInAnonymously').and.rejectWith(
+        new Error('signInAnonymously failed')
+      );
+      spyOn(service, 'createMissingContingentData').and.resolveTo();
+      spyOn(service, 'updateProgrammerDeviceUIDs').and.resolveTo();
 
       await (service as any).authenticateUser();
 
-      expect(signInAnonymouslySpy).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalledWith(
         'Error during Firebase authentication:',
         jasmine.any(Error)
@@ -1178,33 +1482,121 @@ describe('FirebaseFirestoreService', () => {
   });
 
   describe('waitForAuthReady', () => {
-    it('should resolve immediately if auth is already ready', async () => {
-      (service as any).authReady = true;
-      await expectAsync((service as any).waitForAuthReady()).toBeResolved();
+    afterEach(() => {
+      delete (service as any).auth.authStateReady;
     });
 
-    it('should wait for auth to be ready if not already ready', async () => {
-      (service as any).authReady = false;
-      const resolveSpy = jasmine.createSpy('resolveSpy');
-      setTimeout(() => {
-        (service as any).authReady = true;
-      }, 100);
-
-      await (service as any).waitForAuthReady().then(resolveSpy);
-
-      expect(resolveSpy).toHaveBeenCalled();
-    });
-
-    it('should wait for auth if authStateReady is a function that resolves', async () => {
+    it('should use authStateReady when available', async () => {
       const authStateReadySpy = jasmine
         .createSpy('authStateReady')
         .and.resolveTo();
-      (service as any).authReady = false;
       (service as any).auth.authStateReady = authStateReadySpy;
 
       await (service as any).waitForAuthReady();
 
       expect(authStateReadySpy).toHaveBeenCalled();
+      expect(authWrapperMock.onAuthStateChanged).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to onAuthStateChanged and unsubscribe after callback', async () => {
+      const unsubSpy = jasmine.createSpy('unsub');
+
+      authWrapperMock.onAuthStateChanged.and.callFake(
+        (_auth: any, cb: Function) => {
+          Promise.resolve().then(() => cb());
+          return unsubSpy;
+        }
+      );
+
+      await (service as any).waitForAuthReady();
+
+      expect(authWrapperMock.onAuthStateChanged).toHaveBeenCalled();
+      expect(unsubSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('wrapper coverage via public methods', () => {
+    describe('getHttpsCallable', () => {
+      it('should execute getHttpsCallable path in createMissingContingentData and handle failure', async () => {
+        spyOn(console, 'error');
+
+        // Do not spy on service.getHttpsCallable here.
+        await service.createMissingContingentData();
+
+        expect(console.error).toHaveBeenCalledWith(
+          'Error creating missing contingent data:',
+          jasmine.anything()
+        );
+        expect(toastServiceMock.showToast).toHaveBeenCalledWith(
+          'Error creating missing contingent data.',
+          ToastAnchor.TRANSLATE_PAGE
+        );
+      });
+    });
+
+    describe('getFirestoreDocSnapshot and getFirestoreDoc', () => {
+      it('should execute getFirestoreDocSnapshot path directly in readContingentData and handle failure', async () => {
+        spyOn(console, 'error');
+        spyOn<any>(service, 'getFirestoreDoc').and.returnValue({
+          id: 'mock-ref',
+        } as any);
+
+        const result = await service.readContingentData('2026-03');
+
+        expect(result).toEqual({});
+        expect(console.error).toHaveBeenCalledWith(
+          'Error reading contingent data:',
+          jasmine.anything()
+        );
+      });
+
+      it('should execute getFirestoreDoc path directly in readContingentData and handle failure', async () => {
+        spyOn(console, 'error');
+        // Do NOT spy on getFirestoreDoc — let lines 479-481 execute (doc() will throw with empty firestoreMock)
+
+        const result = await service.readContingentData('2026-03');
+
+        expect(result).toEqual({});
+        expect(console.error).toHaveBeenCalledWith(
+          'Error reading contingent data:',
+          jasmine.anything()
+        );
+      });
+    });
+
+    describe('getCollection and getDocs', () => {
+      it('should execute getCollection path directly in getAllUserTranslationStatisticsForMonth and handle failure', async () => {
+        spyOn(console, 'error');
+        spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-03');
+
+        // month !== currentMonth to avoid cache shortcut
+        const result = await (
+          service as any
+        ).getAllUserTranslationStatisticsForMonth('2026-02');
+
+        expect(result).toEqual([]);
+        expect(console.error).toHaveBeenCalledWith(
+          'Error fetching all user statistics for month 2026-02:',
+          jasmine.anything()
+        );
+      });
+
+      it('should execute getDocs path directly in getAllUserTranslationStatisticsForMonth and handle failure', async () => {
+        spyOn(console, 'error');
+        spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-03');
+        spyOn<any>(service, 'getCollection').and.returnValue({} as any);
+
+        // month !== currentMonth to avoid cache shortcut
+        const result = await (
+          service as any
+        ).getAllUserTranslationStatisticsForMonth('2026-02');
+
+        expect(result).toEqual([]);
+        expect(console.error).toHaveBeenCalledWith(
+          'Error fetching all user statistics for month 2026-02:',
+          jasmine.anything()
+        );
+      });
     });
   });
 });

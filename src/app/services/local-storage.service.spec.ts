@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { LocalStorageService } from './local-storage.service';
 import { TranslationGoogleTranslateService } from './translation-google-translate.service';
-import { DisplayMode } from '../shared/enums';
+import { AllMonthsOption, DisplayMode } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
 import { UtilsService } from './utils.service';
@@ -364,9 +364,20 @@ describe('LocalStorageService', () => {
     it('should return current month from utilsService if no selected month is found', async () => {
       storageSpy.get.and.returnValue(Promise.resolve(null));
       utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
-      
+
       const selectedMonth = await service.getStatisticsSelectedMonth();
       expect(selectedMonth).toBe('2026-04');
+    });
+
+    it('should return AllMonthsOption.SelectOptionValue if stored value length is not 7', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('all'));
+
+      const selectedMonth = await service.getStatisticsSelectedMonth();
+
+      expect(selectedMonth).toBe(AllMonthsOption.SelectOptionValue);
+      expect(service.statisticsSelectedMonthSubject.value).toBe(
+        AllMonthsOption.SelectOptionValue
+      );
     });
 
     it('should set statistics selected month subject based on loaded selected month', async () => {
@@ -382,6 +393,20 @@ describe('LocalStorageService', () => {
       expect(storageSpy.set).toHaveBeenCalledWith(
         'statisticsSelectedMonth',
         '2026-03'
+      );
+    });
+
+    it('should save AllMonthsOption.localStorageValue if selected month length is not 7', async () => {
+      await service.saveStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue
+      );
+
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        AllMonthsOption.localStorageValue
+      );
+      expect(service.statisticsSelectedMonthSubject.value).toBe(
+        AllMonthsOption.localStorageValue
       );
     });
 

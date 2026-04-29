@@ -307,6 +307,17 @@ describe('TabSettingsPage', () => {
         expect(component.showAllAccordions).toBeFalse();
       });
 
+      it('should refresh statistics when statistics accordion is opened', () => {
+        const requestStatisticsRefreshSpy = TestBed.inject(FirebaseFirestoreUtilsService).requestStatisticsRefresh as jasmine.Spy;
+        const event = {
+          detail: { value: 'get-statistics' },
+        } as CustomEvent;
+        const content = {} as any;
+        component.onAccordionGroupChange(event, content);
+
+        expect(requestStatisticsRefreshSpy).toHaveBeenCalled();
+      });
+
       it('should ignore undefined values on accordion change', () => {
         const event = {
           detail: { value: undefined },

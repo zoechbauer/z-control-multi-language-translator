@@ -36,8 +36,6 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { FormsModule } from '@angular/forms';
-import { ToastService } from 'src/app/services/toast.service';
-
 @Component({
   selector: 'app-get-statistics',
 
@@ -101,8 +99,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     private readonly firestoreService: FirebaseFirestoreService,
     private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
     private readonly localStorageService: LocalStorageService,
-    private readonly utilsService: UtilsService,
-    private readonly toastService: ToastService
+    private readonly utilsService: UtilsService
   ) {}
 
   get hideColumn(): boolean {
@@ -121,6 +118,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
 
   get isFirebaseEmulator(): boolean {
     return environment.app.useFirebaseEmulator;
+  }
+
+  get isAllMonthsSelected(): boolean {
+    return this.filterSelectedMonth === AllMonthsOption.SelectOptionValue;
   }
 
   /**
@@ -258,32 +259,16 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
       console.error('GetStatisticsComponent: Error loading statistics', error);
     } finally {
       this.isLoading = false;
-      if (
-        this.selectedMonthForStatisticsSections ===
-        AllMonthsOption.SelectOptionValue
-      ) {
-        this.toastService.showToast(
-          this.translate.instant('APP.UNDER_CONSTRUCTION') +
-            ': ' +
-            this.translate.instant(
-              'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_DATA'
-            ) + ' ' + this.translate.instant(
-              'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
-            )
-        );
-      }
     }
   }
 
   getSectionHeader(translationKey: string): string {
     let selectedMonth: string;
-    if (
-      this.selectedMonthForStatisticsSections ===
-        AllMonthsOption.SelectOptionValue &&
-      (translationKey === 'SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS' ||
-        translationKey === 'SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT')
-    ) {
-      selectedMonth = this.utilsService.getCurrentMonth();
+
+    if (this.isAllMonthsSelected) {
+      selectedMonth = this.translate.instant(
+        AllMonthsOption.SelectOptionValue
+      );
     } else {
       selectedMonth = this.translate.instant(
         this.selectedMonthForStatisticsSections

@@ -62,14 +62,22 @@ export class FirebaseFirestoreUtilsService {
   /**
    * Retrieves displayed user statistics from Firestore.
    *
-   * Fetches all user translation statistics and user information, then combines them
-   * into a single DisplayedUserStatistics array. Filters data to include only users with
-   * translation activity (translatedCharCount > 0) or if running on a programmer device.
-   * The results are sorted by last translation date in descending order, with ties broken
-   * by user creation date.
+   * Fetches all user translation statistics and user information for the selected month
+   * (or all months), then aggregates and combines them into a StatisticsData result.
+   *
+   * When the same userId appears in multiple records (e.g. across months), the records
+   * are aggregated: char counts are summed, target languages are unioned, and the latest
+   * translation date is kept.
+   *
+   * Users with no translation activity (translatedCharCount === 0) are excluded unless
+   * the display mode is Programmer. Results are sorted by last translation date descending,
+   * with ties broken by user creation date descending.
+   *
+   * On a programmer device, programmer device UIDs are also fetched and included.
    *
    * @returns {Promise<StatisticsData>} A promise resolving to statistics data containing
-   *          filtered displayed user statistics, user translation statistics, and all users.
+   *          displayed user statistics, raw user translation statistics, all users,
+   *          and programmer device UIDs (empty if not a programmer device).
    */
   async getDisplayedUserStatistics(): Promise<StatisticsData> {
     let statisticsData: StatisticsData = {
@@ -83,21 +91,20 @@ export class FirebaseFirestoreUtilsService {
       await this.localStorageService.getStatisticsDisplayMode();
 
     this.statisticsSelectedMonth =
-      (await this.localStorageService.getStatisticsSelectedMonth(AllMonthsOption.localStorageValue));
-
-    console.log(
-      'getDisplayedUserStatistics from local storage - Display mode:',
-      this.statisticsDisplayMode,
-      ' and Selected month:',
-      this.statisticsSelectedMonth
-    );
+      await this.localStorageService.getStatisticsSelectedMonth(
+        AllMonthsOption.localStorageValue
+      );
 
     const userTranslationStatistics: UserTranslationStatistics[] =
-      await this.firestoreService.getAllUserTranslationStatistics(this.statisticsSelectedMonth);
+      await this.firestoreService.getAllUserTranslationStatistics(
+        this.statisticsSelectedMonth
+      );
 
     statisticsData.userTranslationStatistics = userTranslationStatistics;
 
-    statisticsData.users = await this.firestoreService.getUsers(this.statisticsSelectedMonth);
+    statisticsData.users = await this.firestoreService.getUsers(
+      this.statisticsSelectedMonth
+    );
 
     if (this.firestoreService.isProgrammerDevice) {
       statisticsData.programmerDeviceUIDs =
@@ -105,12 +112,43 @@ export class FirebaseFirestoreUtilsService {
     }
 
     statisticsData.users.forEach((userInfo) => {
-      const userTranslationInfo = userTranslationStatistics.find(
+      const userTranslationInfos = userTranslationStatistics.filter(
         (u) => u.userId === userInfo.userId
       );
 
+      const aggregatedTranslationInfo: UserTranslationStatistics | undefined =
+        userTranslationInfos.length > 0
+          ? {
+              userId: userInfo.userId,
+              translatedCharCount: userTranslationInfos.reduce(
+                (sum, info) => sum + (info.translatedCharCount || 0),
+                0
+              ),
+              targetLanguages: Array.from(
+                new Set(
+                  userTranslationInfos.reduce<string[]>(
+                    (allLanguages, info) =>
+                      allLanguages.concat(info.targetLanguages || []),
+                    []
+                  )
+                )
+              ),
+              lastTranslationDate: userTranslationInfos.reduce<
+                Date | undefined
+              >((latest, info) => {
+                const current = info.lastTranslationDate;
+                /* istanbul ignore next */
+                if (!current) return latest;
+                if (!latest || current.getTime() > latest.getTime()) {
+                  return current;
+                }
+                /* istanbul ignore next */
+                return latest;
+              }, undefined),
+            }
+          : undefined;
+
       const stat: DisplayedUserStatistics = {
-        // user infos
         userId: userInfo.userId,
         userName: userInfo.name,
         userType: userInfo.type,
@@ -130,18 +168,21 @@ export class FirebaseFirestoreUtilsService {
         },
         displayedPlatform: DeviceUtils.getWebPlatform(userInfo),
         displayedModel: DeviceUtils.getModel(userInfo),
-        // translation infos
-        translatedCharCount: userTranslationInfo?.translatedCharCount ?? 0,
-        targetLanguages: userTranslationInfo?.targetLanguages ?? [],
-        lastTranslationDate: userTranslationInfo?.lastTranslationDate ?? null,
+        translatedCharCount:
+          aggregatedTranslationInfo?.translatedCharCount ?? 0,
+        targetLanguages: aggregatedTranslationInfo?.targetLanguages ?? [],
+        lastTranslationDate:
+          aggregatedTranslationInfo?.lastTranslationDate ?? null,
       };
+
       if (
-        this.statisticsDisplayMode == DisplayMode.Programmer ||
+        this.statisticsDisplayMode === DisplayMode.Programmer ||
         stat.translatedCharCount > 0
       ) {
         statisticsData.displayedUserStatistics.push(stat);
       }
     });
+
     statisticsData.displayedUserStatistics.sort(
       (a, b) =>
         (b.lastTranslationDate?.getTime() ?? 0) -
@@ -286,13 +327,14 @@ export class FirebaseFirestoreUtilsService {
     category: StatisticsSummaryCategory,
     statisticsData: DisplayedUserStatistics[]
   ): UserStatisticsSummary[] {
-    const types = [
-      StatisticsSummaryName.OneLanguage,
-      StatisticsSummaryName.TwoLanguages,
-      StatisticsSummaryName.ThreeLanguages,
-      StatisticsSummaryName.FourLanguages,
-      StatisticsSummaryName.FiveLanguages,
-    ];
+    const maxLanguageCount = Math.max(
+      1,
+      ...statisticsData.map((userStat) => userStat.targetLanguages.length)
+    );
+
+    const types = Array.from({ length: maxLanguageCount }, (_, index) =>
+      String(index + 1)
+    );
 
     return this.buildStatisticsSummaryRows(category, types, statisticsData);
   }
@@ -339,6 +381,12 @@ export class FirebaseFirestoreUtilsService {
     type: StatisticsSummaryName | string
   ): number {
     return statisticsData.filter((userStat) => {
+      if (this.isLanguageCountType(type)) {
+        return (
+          userStat.targetLanguages.length === Number(type) &&
+          userStat.translatedCharCount > 0
+        );
+      }
       switch (type) {
         case StatisticsSummaryName.Programmer:
         case StatisticsSummaryName.User:
@@ -350,15 +398,6 @@ export class FirebaseFirestoreUtilsService {
             userStat.displayedPlatform === type &&
             userStat.translatedCharCount > 0
           );
-        case StatisticsSummaryName.OneLanguage:
-        case StatisticsSummaryName.TwoLanguages:
-        case StatisticsSummaryName.ThreeLanguages:
-        case StatisticsSummaryName.FourLanguages:
-        case StatisticsSummaryName.FiveLanguages:
-          return (
-            userStat.targetLanguages.length === Number(type) &&
-            userStat.translatedCharCount > 0
-          );
         default:
           return (
             this.normalizeModelForCompare(userStat.displayedModel) ===
@@ -367,6 +406,10 @@ export class FirebaseFirestoreUtilsService {
           );
       }
     }).length;
+  }
+
+  private isLanguageCountType(type: string): boolean {
+    return /^\d+$/.test(type);
   }
 
   /**
@@ -383,6 +426,12 @@ export class FirebaseFirestoreUtilsService {
     type: StatisticsSummaryName | string
   ): number {
     return statisticsData.filter((userStat) => {
+      if (this.isLanguageCountType(type)) {
+        return (
+          userStat.targetLanguages.length === Number(type) &&
+          userStat.translatedCharCount === 0
+        );
+      }
       switch (type) {
         case StatisticsSummaryName.Programmer:
         case StatisticsSummaryName.User:
@@ -394,15 +443,6 @@ export class FirebaseFirestoreUtilsService {
         case StatisticsSummaryName.WebDesktop:
           return (
             userStat.displayedPlatform === type &&
-            userStat.translatedCharCount === 0
-          );
-        case StatisticsSummaryName.OneLanguage:
-        case StatisticsSummaryName.TwoLanguages:
-        case StatisticsSummaryName.ThreeLanguages:
-        case StatisticsSummaryName.FourLanguages:
-        case StatisticsSummaryName.FiveLanguages:
-          return (
-            userStat.targetLanguages.length === Number(type) &&
             userStat.translatedCharCount === 0
           );
         default:
@@ -568,5 +608,4 @@ export class FirebaseFirestoreUtilsService {
     const charCount = await this.firestoreService.getTotalCharCount();
     return charCount >= limit - buffer;
   }
-
 }

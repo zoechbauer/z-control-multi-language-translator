@@ -39,7 +39,7 @@
             | translate
         }}:</ion-col
       >
-      <ion-col size="8" class="value">{{
+      <ion-col size="8" class="value user-type">{{
         userStatistic.userType === "U"
           ? ("SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_TYPE_USER"
             | translate)
@@ -48,7 +48,7 @@
       }}</ion-col>
     </ion-row>
     @if (displayMode === DisplayMode.Programmer) {
-    <ion-row class="data-row">
+    <ion-row class="data-row user-id-row">
       <ion-col size="4" class="label"
         >{{
           "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_ID"
@@ -59,7 +59,7 @@
         userStatistic.userId
       }}</ion-col>
     </ion-row>
-    <ion-row class="data-row">
+    <ion-row class="data-row user-created-row">
       <ion-col size="4" class="label"
         >{{
           "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_CREATED"
@@ -70,7 +70,7 @@
         getFormatDateTime(userStatistic.userCreatedAt)
       }}</ion-col>
     </ion-row>
-    <ion-row class="data-row" *ngIf="userStatistic.userLastUpdated">
+    <ion-row class="data-row user-updated-row">
       <ion-col size="4" class="label"
         >{{
           "SETTINGS.STATISTICS.USER_DETAIL.USER_INFORMATION.LABEL.USER_UPDATED"
@@ -100,7 +100,7 @@
             | translate
         }}:</ion-col
       >
-      <ion-col size="8" class="value">{{ getDisplayedPlatform() }} </ion-col>
+      <ion-col size="8" class="value displayed-platform">{{ getDisplayedPlatform() }} </ion-col>
     </ion-row>
     <ion-row class="data-row">
       <ion-col size="4" class="label"
@@ -114,7 +114,7 @@
       }}</ion-col>
     </ion-row>
     @if (displayMode === DisplayMode.Programmer) {
-    <ion-row class="data-row" *ngIf="userStatistic.device !== 'unknown'">
+    <ion-row class="data-row device-row" *ngIf="userStatistic.device !== 'unknown'">
       <ion-col size="4" class="label"
         >{{
           "SETTINGS.STATISTICS.USER_DETAIL.DEVICE_INFORMATION.LABEL.DEVICE"

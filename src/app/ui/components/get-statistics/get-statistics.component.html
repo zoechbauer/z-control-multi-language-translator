@@ -54,7 +54,7 @@
     </div>
 
     <!-- Section: Global Stop Flag -->
-    <div class="stat-section">
+    <div class="stat-section global-stop-section" *ngIf="!isAllMonthsSelected">
       <h3>
         {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.GLOBAL_TRANS_STATUS") }}
       </h3>
@@ -72,53 +72,65 @@
       <h3>
         {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.TOTAL_CONTINGENT") }}
       </h3>
-      <p
-        *ngIf="allUsersCharCount !== totalCharCount"
-        class="total-difference-info"
-        [class.total-all-users-difference]="
-          allUsersCharCount !== totalCharCount
-        "
-      >
-        {{ "SETTINGS.STATISTICS.LABEL.CHECKSUM_ALL_USERS" | translate }}:
-        {{
-          allUsersCharCount
-            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
-        }}
-        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
-      </p>
-      <p>
-        <strong>{{ "SETTINGS.STATISTICS.LABEL.USED" | translate }}:</strong>
-        {{
-          totalCharCount
-            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
-        }}
-        /
-        {{
-          totalLimit | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
-        }}
-        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
-      </p>
-      <p>
-        <strong>{{ "SETTINGS.STATISTICS.LABEL.BUFFER" | translate }}:</strong>
-        {{
-          totalBuffer | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
-        }}
-        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
-      </p>
-      <p>
-        <strong
-          >{{ "SETTINGS.STATISTICS.LABEL.AVAILABLE" | translate }}:
-        </strong>
-        <span [class.exceeded]="totalRemaining === 0">{{
-          totalRemaining
-            | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
-        }}</span>
-        {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
-      </p>
+      <div *ngIf="!isAllMonthsSelected" class="total-contingent-monthly">
+        <p
+          *ngIf="allUsersCharCount !== totalCharCount"
+          class="total-all-users-difference"
+        >
+          {{ "SETTINGS.STATISTICS.LABEL.CHECKSUM_ALL_USERS" | translate }}:
+          {{
+            allUsersCharCount
+              | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}
+          {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+        </p>
+        <p>
+          <strong>{{ "SETTINGS.STATISTICS.LABEL.USED" | translate }}:</strong>
+          {{
+            totalCharCount
+              | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}
+          /
+          {{
+            totalLimit | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}
+          {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+        </p>
+        <p>
+          <strong>{{ "SETTINGS.STATISTICS.LABEL.BUFFER" | translate }}:</strong>
+          {{
+            totalBuffer | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}
+          {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+        </p>
+        <p>
+          <strong
+            >{{ "SETTINGS.STATISTICS.LABEL.AVAILABLE" | translate }}:
+          </strong>
+          <span [class.exceeded]="totalRemaining === 0">{{
+            totalRemaining
+              | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}</span>
+          {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+        </p>
+      </div>
+      <div *ngIf="isAllMonthsSelected" class="total-contingent-all-months">
+        <p>
+          {{ "SETTINGS.STATISTICS.LABEL.CHECKSUM_ALL_USERS" | translate }}:
+          {{
+            allUsersCharCount
+              | number : "1.0-0" : (lang === "de" ? "de-DE" : "en-US")
+          }}
+          {{ "SETTINGS.STATISTICS.LABEL.CHARS" | translate }}
+        </p>
+      </div>
     </div>
 
     <!-- Section: User Statistics Overview -->
-    <div class="stat-section" *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
+    <div
+      class="stat-section"
+      *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer"
+    >
       <h3>
         {{
           getSectionHeader("SETTINGS.STATISTICS.LABEL.USER_STATISTICS_OVERVIEW")
@@ -214,7 +226,9 @@
             >{{ userStat.displayedPlatform
             }}<span
               class="model-info"
-              *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer"
+              *ngIf="
+                isProgrammerDevice && displayMode === DisplayMode.Programmer
+              "
               class="model-info"
               ><br />{{ userStat.displayedModel }}</span
             >
@@ -240,7 +254,10 @@
     </div>
 
     <!-- Section: Raw Data Debug -->
-    <div class="debug-section" *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
+    <div
+      class="debug-section"
+      *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer"
+    >
       <hr />
       <details>
         <summary>

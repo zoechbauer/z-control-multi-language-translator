@@ -617,6 +617,20 @@ describe('TabTranslationPage', () => {
       });
     });
 
+    describe('onAccordionGroupChange', () => {
+      it('should refresh statistics when user contingent accordion is opened', () => {
+        const requestStatisticsRefreshSpy = TestBed.inject(FirebaseFirestoreUtilsService).requestStatisticsRefresh as jasmine.Spy;
+        const event = {
+          detail: { value: 'user-contingent' },
+        } as CustomEvent;
+        const content = {} as any;
+
+        component.onAccordionGroupChange(event, content);
+
+        expect(requestStatisticsRefreshSpy).toHaveBeenCalled();
+      });
+    });
+
     describe('ngOnInit', () => {
       it('should call showOrHideIonTabBar, setupEventListeners, setupSubscriptions, updateIsContingentExceeded, initFormControls, and getTranslationPlaceholder', async () => {
         const showOrHideIonTabBarSpy = utilsServiceSpy.showOrHideIonTabBar;

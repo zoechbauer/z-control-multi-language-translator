@@ -32,7 +32,7 @@ import {
   CharCountResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
-import { ToastAnchor } from '../shared/enums';
+import { AllMonthsOption, ToastAnchor } from '../shared/enums';
 import { TranslateService } from '@ngx-translate/core';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
 import { DeviceUtils } from './device-utils.service';
@@ -67,7 +67,6 @@ export class FirebaseFirestoreService {
   get isProgrammerDevice(): boolean {
     return this.cachedIsProgrammerDevice;
   }
-
 
   /**
    * Initializes the Firestore service.
@@ -237,8 +236,9 @@ export class FirebaseFirestoreService {
         const userCreatedYYYYMM =
           this.utilsService.formatDateTimeFirestoreSearchString(userCreated);
         if (
-          userCreatedYYYYMM === selectedMonth ||
-          this.userHasTranslationsInMonth(data['userId'], selectedMonth)
+          selectedMonth === AllMonthsOption.localStorageValue ||            // all months
+          userCreatedYYYYMM === selectedMonth ||                            // created in selected month
+          this.userHasTranslationsInMonth(data['userId'], selectedMonth)    // has translations in selected month
         ) {
           users.push({
             userId: data['userId'],
@@ -449,6 +449,9 @@ export class FirebaseFirestoreService {
     selectedMonth: string | undefined = undefined
   ): Promise<FirestoreContingentData> {
     try {
+      if (selectedMonth === AllMonthsOption.SelectOptionValue) {
+        return {};  // contingent data is not displayed for 'all months' option
+      }
       // Path: .../MLT_translations_statistics/{yyyy-mm}/control/control
       const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath(
         selectedMonth
@@ -546,11 +549,48 @@ export class FirebaseFirestoreService {
   }
 
   /**
-   * Retrieves translation statistics for all users for the selected month from Firestore.
-   *  @param selectedMonth The month for which to retrieve user translation statistics.
+   * Retrieves translation statistics for all users for the selected month or all months from Firestore.
+   *  @param selectedMonth The month for which to retrieve user translation statistics or all for all user translation statistics.
    *  @returns An array of UserTranslationStatistics objects.
    */
   async getAllUserTranslationStatistics(
+    selectedMonth: string
+  ): Promise<UserTranslationStatistics[]> {
+    try {
+      let result: UserTranslationStatistics[] = [];
+
+      if (selectedMonth === AllMonthsOption.localStorageValue) {
+        const allMonths =
+          this.utilsService.getAllFirestoreSearchStringsForMonth();
+
+        for (const month of allMonths) {
+          if (month !== AllMonthsOption.localStorageValue) {
+            const statsForMonth =
+              await this.getAllUserTranslationStatisticsForMonth(month);
+            result = result.concat(statsForMonth);
+          }
+        }
+      } else {
+        result = await this.getAllUserTranslationStatisticsForMonth(
+          selectedMonth
+        );
+      }
+      return result;
+    } catch (error) {
+      console.error(
+        `Error fetching all user statistics for month ${selectedMonth}:`,
+        error
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Retrieves translation statistics for all users for the selected month.
+   *  @param selectedMonth The month for which to retrieve user translation statistics.
+   *  @returns An array of UserTranslationStatistics objects.
+   */
+  private async getAllUserTranslationStatisticsForMonth(
     selectedMonth: string
   ): Promise<UserTranslationStatistics[]> {
     try {
@@ -581,7 +621,10 @@ export class FirebaseFirestoreService {
       this.saveCachedTranslationsForMonth(selectedMonth, result);
       return result;
     } catch (error) {
-      console.error('Error fetching all user statistics:', error);
+      console.error(
+        `Error fetching all user statistics for month ${selectedMonth}:`,
+        error
+      );
       return [];
     }
   }

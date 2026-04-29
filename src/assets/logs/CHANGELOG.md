@@ -2,6 +2,17 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.12] – YYYY-MM-DD
+
+### ✨ New Features
+
+- When selecting "All Months" in the programmer statistics filter, data across all available months is aggregated and displayed in a single view, enabling a comprehensive overview of translation usage over time.
+
+### 🔧 Internal
+
+- Extended test suite with 52 additional unit tests (Firebase Firestore service, user detail component, statistics filter), reaching 660 specs and 99.38% coverage on all frontend code.
+- Added CSS classes to statistics elements to improve selector stability in tests.
+
 ## [1.11] – 2026-04-25
 
 ### ✨ New Features
