@@ -24,16 +24,25 @@ Frontend tests are separate and continue to use Jasmine and Karma.
 
 ## Installed packages
 
-In `functions/package.json`, Vitest was added as a development dependency:
+In `functions/package.json`, the following were added as development dependencies:
 
-- `vitest`
+- `vitest` — test runner
+- `@vitest/coverage-istanbul` — coverage provider with accurate TypeScript source mapping
+- `@vitest/ui` — browser-based test dashboard
 
-Install command used:
+Install commands used:
 
 ```bash
 cd functions
 npm install
+npm install -D @vitest/coverage-istanbul
+npm install -D @vitest/ui
 ```
+
+### Why istanbul over v8
+
+V8 instruments at bytecode level and can misreport source positions after TypeScript transpilation.
+Istanbul instruments at source level, giving accurate line and branch highlighting in HTML reports.
 
 ## Installation workflow used (and alternatives)
 
@@ -74,16 +83,30 @@ In `functions/package.json`, these scripts were added:
 ```json
 "test": "vitest run",
 "test:watch": "vitest",
+"test:ui": "vitest --ui",
+"test:ui:coverage": "vitest --ui --coverage",
 "test:learn": "vitest run --config vitest.learn.config.ts",
-"test:learn:watch": "vitest --config vitest.learn.config.ts"
+"test:learn:watch": "vitest --config vitest.learn.config.ts",
+"test:coverage": "vitest run --coverage"
 ```
 
-Meaning:
+### Script reference
 
-- `npm test` runs all backend unit tests once.
-- `npm run test:watch` runs tests in watch mode.
-- `npm run test:learn` runs only learning/tutorial tests.
-- `npm run test:learn:watch` runs only learning/tutorial tests in watch mode.
+| Script             | What it does                                       |
+| ------------------ | -------------------------------------------------- |
+| `test`             | Run all tests once, terminal output only           |
+| `test:watch`       | Re-run tests on file save, terminal output         |
+| `test:ui`          | Browser dashboard, re-runs on file save            |
+| `test:ui:coverage` | Browser dashboard + coverage highlighting          |
+| `test:learn`       | Run only `learning-vitest` specs once              |
+| `test:learn:watch` | Re-run only `learning-vitest` specs on save        |
+| `test:coverage`    | Run all tests once + generate HTML coverage report |
+
+### Practical daily use
+
+- **While developing:** `npm run test:ui` — browser watch mode with live results
+- **Before committing:** `npm run test:coverage` — full coverage report at `functions/coverage/index.html`
+- **Learning specs only:** `npm run test:learn`
 
 ## Config file added
 
@@ -102,6 +125,11 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.spec.ts"],
     exclude: ["src/learning-vitest/**"],
+    coverage: {
+      provider: "istanbul",
+      reporter: ["text", "html", "lcov"],
+      reportsDirectory: "./coverage",
+    },
   },
 });
 ```
@@ -111,6 +139,8 @@ Notes:
 - `environment: 'node'` is required for backend function tests.
 - Tests are discovered under `functions/src/**/*.spec.ts`.
 - Learning tests are excluded from the default test run.
+- `provider: 'istanbul'` gives accurate TypeScript line/branch mapping in the HTML report.
+- Coverage output goes to `functions/coverage/` (ignored by git via `coverage/` in `.gitignore`).
 
 Learning config:
 
