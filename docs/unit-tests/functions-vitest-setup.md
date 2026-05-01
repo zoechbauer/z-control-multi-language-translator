@@ -2,33 +2,29 @@
 
 ## Purpose
 
-This document describes the current backend unit test setup for Firebase Functions in this repository.
+This document describes the backend unit test setup for Firebase Functions in this repository.
 
 It records:
 
-- what was installed
-- what was configured
-- which files were created or changed
-- how to run tests
-- how to extend the setup safely
-
-When the function test system changes later, update this document accordingly.
+- Installed packages
+- Current configuration
+- How to create and run tests
 
 ## Scope
 
-This setup applies to:
+Applies to:
 
 - `functions/`
 
-Frontend tests are separate and continue to use Jasmine and Karma.
+Frontend tests remain separate and continue to use Jasmine + Karma.
 
-## Installed packages
+## Installed Packages
 
-In `functions/package.json`, the following were added as development dependencies:
+In `functions/package.json`, the following dev dependencies are used:
 
-- `vitest` — test runner
-- `@vitest/coverage-istanbul` — coverage provider with accurate TypeScript source mapping
-- `@vitest/ui` — browser-based test dashboard
+- `vitest` for test execution
+- `@vitest/coverage-istanbul` for accurate TypeScript coverage mapping
+- `@vitest/ui` for the browser test dashboard
 
 Install commands used:
 
@@ -39,46 +35,33 @@ npm install -D @vitest/coverage-istanbul
 npm install -D @vitest/ui
 ```
 
-### Why istanbul over v8
+### Why Istanbul Instead Of V8
 
-V8 instruments at bytecode level and can misreport source positions after TypeScript transpilation.
-Istanbul instruments at source level, giving accurate line and branch highlighting in HTML reports.
+- V8 coverage works at bytecode level and can misalign lines after TypeScript transpilation.
+- Istanbul works at source level and produces accurate line and branch highlighting in HTML reports.
 
-## Installation workflow used (and alternatives)
+## Vitest Installation
 
-Two common npm workflows are valid:
+Two valid npm workflows:
 
-1. CLI-first (most common in daily local work)
+1. CLI-first (common for day-to-day work)
 
 ```bash
 npm install -D vitest
 ```
 
-This updates `package.json` and the lockfile automatically.
-
 2. Manifest-first (used in this setup)
 
-- Update `package.json` first (dependencies and scripts)
+- Update `package.json` first (scripts and dependencies)
 - Then run:
 
 ```bash
 npm install
 ```
 
-Why manifest-first was used here:
+## Package Scripts
 
-- It keeps config changes explicit in one patch (scripts + dependency together).
-- It fits automation/agent workflows where multiple related changes are staged before a single install.
-- The final result is the same after install: dependency is installed and lockfile is synced.
-
-Important:
-
-- Both workflows are correct.
-- Always commit both manifest and lockfile changes together.
-
-## Package scripts added
-
-In `functions/package.json`, these scripts were added:
+In `functions/package.json`, these scripts are available:
 
 ```json
 "test": "vitest run",
@@ -90,32 +73,37 @@ In `functions/package.json`, these scripts were added:
 "test:coverage": "vitest run --coverage"
 ```
 
-### Script reference
+### Script Reference
 
-| Script             | What it does                                       |
-| ------------------ | -------------------------------------------------- |
-| `test`             | Run all tests once, terminal output only           |
-| `test:watch`       | Re-run tests on file save, terminal output         |
-| `test:ui`          | Browser dashboard, re-runs on file save            |
-| `test:ui:coverage` | Browser dashboard + coverage highlighting          |
-| `test:learn`       | Run only `learning-vitest` specs once              |
-| `test:learn:watch` | Re-run only `learning-vitest` specs on save        |
-| `test:coverage`    | Run all tests once + generate HTML coverage report |
+| Script             | Purpose                                |
+| ------------------ | -------------------------------------- |
+| `test`             | Run all backend tests once in terminal |
+| `test:watch`       | Watch mode in terminal                 |
+| `test:ui`          | Browser dashboard with watch mode      |
+| `test:ui:coverage` | Browser dashboard with live coverage   |
+| `test:learn`       | Run only `learning-vitest` tests once  |
+| `test:learn:watch` | Watch mode for `learning-vitest` tests |
+| `test:coverage`    | Run once and generate coverage report  |
 
-### Practical daily use
+### Recommended Daily Usage
 
-- **While developing:** `npm run test:ui` — browser watch mode with live results
-- **Before committing:** `npm run test:coverage` — full coverage report at `functions/coverage/index.html`
-- **Learning specs only:** `npm run test:learn`
+- During development: `npm run test:ui`
+- Before commit: `npm run test:coverage`
+- Learning-only workflow: `npm run test:learn`
 
-## Config file added
+Coverage report location:
 
-A Vitest config was added:
+- `functions/coverage/index.html`
+
+## Config Files
+
+Vitest uses:
 
 - `functions/vitest.config.ts`
 - `functions/vitest.learn.config.ts`
+- `functions/src/vitest.setup.ts`
 
-Current config:
+Current main config:
 
 ```ts
 import { defineConfig } from "vitest/config";
@@ -123,24 +111,48 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "node",
+    setupFiles: ["src/vitest.setup.ts"],
     include: ["src/**/*.spec.ts"],
     exclude: ["src/learning-vitest/**"],
     coverage: {
       provider: "istanbul",
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "./coverage",
+      include: ["src/**/*.ts"],
+      exclude: ["src/**/*.spec.ts", "src/learning-vitest/**"],
     },
   },
 });
 ```
 
-Notes:
+Main config notes:
 
-- `environment: 'node'` is required for backend function tests.
-- Tests are discovered under `functions/src/**/*.spec.ts`.
-- Learning tests are excluded from the default test run.
-- `provider: 'istanbul'` gives accurate TypeScript line/branch mapping in the HTML report.
-- Coverage output goes to `functions/coverage/` (ignored by git via `coverage/` in `.gitignore`).
+- `environment: 'node'` is required for backend tests.
+- `setupFiles` loads shared test setup before specs run.
+- `coverage.include` ensures untested source files appear as `0%`.
+- `coverage.exclude` removes specs and learning files from metrics.
+
+Shared setup file:
+
+```ts
+import { afterEach, beforeEach, vi } from "vitest";
+
+beforeEach(() => {
+  vi.spyOn(console, "log").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+```
+
+Shared setup purpose:
+
+- Keep test output quiet by default
+- Reset spies and mocks after each test
+- Avoid repeating console setup in each spec file
 
 Learning config:
 
@@ -155,105 +167,79 @@ export default defineConfig({
 });
 ```
 
-Learning test folder:
+Learning folder:
 
 - `functions/src/learning-vitest/`
 
 Purpose:
 
-- Keep tutorial experiments separate from app-focused backend tests.
-- Prevent tutorial tests from affecting CI or normal test runs.
+- Keep tutorial and exploration specs separate from production backend tests.
+- Prevent learning tests from running during normal CI or `npm test` runs.
 
-## First baseline test added
+## Adding Function Tests
 
-A first working unit test file was created:
-
-- `functions/src/firebase-firestore-utils.service.spec.ts`
-
-What it currently validates:
-
-- `FirebaseFirestoreUtilsService.isDeepEqual` returns true for equal objects with different key order
-- `FirebaseFirestoreUtilsService.isDeepEqual` returns false for nested value differences
-
-This baseline confirms:
-
-- Vitest setup works
-- TypeScript + ESM import style works
-- Test discovery works
-
-## Verified execution
-
-Test command executed successfully:
-
-```bash
-cd functions
-npm test
-```
-
-Result at setup time:
-
-- test files: 1 passed
-- tests: 2 passed
-
-## How to add new function tests
-
-1. Create new spec files under `functions/src` with pattern `*.spec.ts`.
+1. Create spec files in `functions/src` with `*.spec.ts` naming.
 2. Use Vitest APIs:
 
 ```ts
 import { describe, it, expect, vi } from "vitest";
 ```
 
-3. Mock external dependencies (Firestore, fetch, secrets, Firebase SDK wrappers) to keep tests deterministic.
-4. Run:
+3. Mock external dependencies (Firestore, network, runtime secrets, SDK wrappers).
+4. Run `npm test`.
 
-```bash
-npm test
+### Mocking Modules: vi.mock() Hoisting
+
+Vitest automatically hoists `vi.mock()` calls to the top of the file before any imports run.
+This means `vi.mock()` must always be placed before the imports it affects — even though it looks like it will run after them.
+
+```ts
+// ✅ Correct — vi.mock() is hoisted before the import
+vi.mock("./firebase-firestore.service.js", () => ({
+  FirebaseFirestoreService: vi.fn(),
+}));
+
+import { MyClass } from "./my-class.js";
 ```
 
-## Recommended test priority (backend)
+Why this matters:
 
-1. `firebase-firestore-utils.service.ts`
+- If you use an arrow function in `mockImplementation()` for a class constructor, `this` will be wrong.
+- Use a regular function with `this: any` instead so `new` binds correctly:
 
-- contingent limit branches
-- `validateContingentOrThrow`
-- deep equality helper
+```ts
+// ✅ Correct — regular function so 'new' binds 'this' to the fresh instance
+vi.mocked(FirebaseFirestoreService).mockImplementation(function (this: any) {
+  this.myMethod = vi.fn().mockResolvedValue(true);
+} as any);
 
-2. Callable validators and delegation
-
-- `add-user.ts`
-- `create-missing-contingent-data.ts`
-
-3. Translation flow
-
-- `secure-translate.ts`
-- validation + contingent check + usage update + fetch behavior
+// ❌ Wrong — arrow function does not have its own 'this'
+vi.mocked(FirebaseFirestoreService).mockImplementation(() => {
+  this.myMethod = vi.fn(); // 'this' is not the new instance
+});
+```
 
 ## Troubleshooting
 
-### No tests found
+### No Tests Found
 
 Check:
 
-- file name ends with `.spec.ts`
-- file is under `functions/src`
+- File name ends with `.spec.ts`
+- File is under `functions/src`
 - `vitest.config.ts` include pattern
 
-### ESM import errors
+### ESM Import Errors
 
 Check:
 
-- `functions/package.json` has `"type": "module"`
-- imports use project-compatible ESM paths
+- `functions/package.json` contains `"type": "module"`
+- Imports use ESM-compatible paths
 
-### Backend dependencies causing flaky tests
+### Flaky Backend Tests
 
-Prefer mocking instead of calling real services:
+Prefer mocks instead of calling real services:
 
 - Firestore reads/writes
-- network fetch
-- runtime secrets
-
-## Maintenance rule
-
-If backend test tooling or configuration changes (scripts, config, runner, discovery path, test style), update this file in the same change set.
+- Network fetch
+- Runtime secrets
