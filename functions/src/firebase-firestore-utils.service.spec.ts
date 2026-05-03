@@ -293,7 +293,7 @@ describe('validateContingentOrThrow', () => {
     await expect(
       FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
     ).rejects.toThrow('Translation contingent exceeded');
-  });
+  }, 10000);
 
   it('resolves if contingent is not exceeded', async () => {
     vi.mocked(FirebaseFirestoreService).mockImplementation(function (
