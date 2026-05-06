@@ -46,6 +46,7 @@ Download now for free and translate, listen, and learn with ease!
 - **Build Tool**: Angular CLI
 - **Icons**: Ionicons
 - **State Management**: RxJS (BehaviorSubject, Subject)
+- **Testing**: Karma + Jasmine (frontend), Vitest + Istanbul (backend)
 - **Deployment**: Firebase Hosting, Capacitor (Android)
 
 ## 📁 Project Structure
@@ -225,6 +226,8 @@ See [local-testing-guide-secureTranslate.md](docs/local-testing-guide-secureTran
 
 ### Testing
 
+#### Frontend Tests (Karma + Jasmine)
+
 ```bash
 # Run unit tests
 npm test
@@ -234,6 +237,21 @@ npm run test:watch
 
 # Run tests with code coverage
 npm run test:coverage
+```
+#### Backend Tests (Vitest + Istanbul)
+
+```bash
+# Run backend tests
+npm --prefix functions run test
+
+# Run backend tests with Vitest UI (browser dashboard)
+cd functions && npm run test:ui
+
+# Run backend tests with Vitest UI and coverage
+cd functions && npm run test:ui:coverage
+
+# Run backend tests with coverage and auto-exit
+npm --prefix functions run test:coverage
 ```
 
 ### Building for Android

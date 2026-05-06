@@ -415,7 +415,7 @@ export class FirebaseFirestoreService {
       const collectionRef = this.db.collection(
         `${FireStoreConstants.getUserMappingUsersCollectionPath()}`
       );
-      return collectionRef
+      return await collectionRef
         .where('type', '==', type)
         .get()
         .then((snapshot) => snapshot.size || 0);
