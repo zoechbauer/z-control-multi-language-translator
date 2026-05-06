@@ -154,6 +154,8 @@ Shared setup purpose:
 - Reset spies and mocks after each test
 - Avoid repeating console setup in each spec file
 
+- Important note: Use **console.info** for temporary test debugging. console.log, console.warn, and console.error are mocked by setup to reduce noise, but console.info is intentionally left unmocked.
+
 Learning config:
 
 ```ts

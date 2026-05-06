@@ -6,8 +6,8 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### 🔧 Internal
 
-- Set up Vitest for backend unit tests in the `functions` package, including Istanbul-based coverage reporting and an interactive browser dashboard for test execution and debugging.
-- Added 58 unit tests for `firebase-firestore-utils.service`, `add-user`,`is-programmer-device`, `create-missing-contingent-data`, `get-programmer-deviceUIDs`, `update-programmer-deviceUIDs` and `utils`, achieving 100% statement and branch coverage on all 7 files.
+- Added a complete backend Vitest setup for Firebase Functions, including Istanbul coverage reporting and Vitest UI.
+- Added 123 unit tests across 9 backend files, achieving 100% statement and branch coverage.
 
 ## [1.12] – 2026-04-29
 
