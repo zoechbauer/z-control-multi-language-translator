@@ -4,10 +4,15 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ## [1.13] – YYYY-MM-DD
 
+### 🐛 Fixes
+
+- Fixed an issue in the statistics month filter where user devices could still show data from the previous month. The app now automatically detects a month change and updates the stored month, so users always see current statistics without needing to create a new translation.
+
 ### 🔧 Internal
 
 - Added a complete backend Vitest setup for Firebase Functions, including Istanbul coverage reporting and Vitest UI.
-- Added 123 unit tests across 9 backend files, achieving 100% statement and branch coverage.
+- Added 123 unit tests across 9 backend files, achieving 100% statement and branch coverage of backend code.
+- Updated frontend unit tests after fixing the local-storage month-change issue, reaching 664 tests and 99.3% frontend coverage.
 
 ## [1.12] – 2026-04-29
 

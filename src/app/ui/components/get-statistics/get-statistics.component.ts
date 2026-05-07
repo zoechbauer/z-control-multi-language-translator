@@ -243,7 +243,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
 
       // user statistics and info
       this.statisticsData =
-        await this.firestoreUtilsService.getDisplayedUserStatistics();
+        await this.firestoreUtilsService.getDisplayedUserStatistics(this.isProgrammerDevice);
       this.userStatisticsSummaryData =
         this.firestoreUtilsService.getUserStatisticsSummary(
           this.statisticsData?.displayedUserStatistics ?? []
@@ -266,9 +266,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     let selectedMonth: string;
 
     if (this.isAllMonthsSelected) {
-      selectedMonth = this.translate.instant(
-        AllMonthsOption.SelectOptionValue
-      );
+      selectedMonth = this.translate.instant(AllMonthsOption.SelectOptionValue);
     } else {
       selectedMonth = this.translate.instant(
         this.selectedMonthForStatisticsSections
@@ -286,7 +284,10 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     this.allFilterMonthValues =
       this.utilsService.getAllFirestoreSearchStringsForMonth();
     this.filterSelectedMonth =
-      await this.localStorageService.getStatisticsSelectedMonth();
+      await this.localStorageService.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        this.isProgrammerDevice
+      );
     this.selectedMonthForStatisticsSections = this.filterSelectedMonth;
   }
 

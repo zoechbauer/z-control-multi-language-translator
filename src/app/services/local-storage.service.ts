@@ -345,24 +345,63 @@ export class LocalStorageService {
   }
 
   /**
-   * Returns the currently selected month for statistics.
-   * If value has not YYYY-MM format then it is converted into Select Option value all.
-   * @returns The selected month or the current month if not set
+   * Resolves the effective month filter used by the statistics view.
+   *
+   * Behavior:
+   * - If no value exists in storage, the current month is used and persisted.
+   * - If a valid month string (YYYY-MM) exists:
+   *   - On non-programmer devices, past months are automatically replaced with the current month and persisted.
+   *   - On programmer devices, the stored month is kept (including past months).
+   * - If the stored value is not in YYYY-MM format, the method falls back to the provided
+   *   all-months format and persists it via saveStatisticsSelectedMonth.
+   *
+   * Notes:
+   * - Month comparison is done lexicographically on YYYY-MM values.
+   * - Persistence is normalized through saveStatisticsSelectedMonth.
+   *
+   * @param allMonthsOptionFormat Value to return when the stored month is invalid
+   * (for example, select-label value or storage value for all months).
+   * @param isProgrammerDevice Whether past month selections are allowed without auto-reset.
+   * @returns Resolved month filter value for statistics.
    */
-  async getStatisticsSelectedMonth(allMonthsOptionFormat: AllMonthsOption = AllMonthsOption.SelectOptionValue): Promise<string> {
+  async getStatisticsSelectedMonth(
+    allMonthsOptionFormat: AllMonthsOption,
+    isProgrammerDevice = false
+  ): Promise<string> {
     let selectedMonth: string;
     const rawValue: string = await this.storage.get(
       LocalStorage.StatisticsSelectedMonth
     );
+    const currentMonth = this.utilsService.getCurrentMonth();
 
-    if (rawValue) {
-      selectedMonth = rawValue.length === 7 ? rawValue : allMonthsOptionFormat;
-    } else {
-      selectedMonth = this.utilsService.getCurrentMonth();
-      await this.saveStatisticsSelectedMonth(selectedMonth);
+    if (rawValue === currentMonth) {
+      this.statisticsSelectedMonthSubject.next(currentMonth);
+      return currentMonth;
     }
 
-    this.statisticsSelectedMonthSubject.next(selectedMonth);
+    // no value in storage → set current month
+    if (!rawValue) {
+      selectedMonth = currentMonth;
+      await this.saveStatisticsSelectedMonth(selectedMonth);
+      return selectedMonth;
+    }
+
+    // value in storage has correct format → check if it is the previous month and update if necessary
+    if (rawValue.length === 7) {
+      if (rawValue < currentMonth && !isProgrammerDevice) {
+        selectedMonth = currentMonth;
+        await this.saveStatisticsSelectedMonth(selectedMonth);
+      } else {
+        selectedMonth = rawValue;
+        await this.saveStatisticsSelectedMonth(selectedMonth);
+      }
+
+      return selectedMonth;
+    }
+
+    // value in storage has wrong format → set to all
+    selectedMonth = allMonthsOptionFormat;
+    await this.saveStatisticsSelectedMonth(selectedMonth);
     return selectedMonth;
   }
 
@@ -373,7 +412,10 @@ export class LocalStorageService {
    */
   async saveStatisticsSelectedMonth(selectedMonth: string): Promise<void> {
     try {
-      const convertedSelectedMonth = selectedMonth.length === 7 ? selectedMonth : AllMonthsOption.localStorageValue;
+      const convertedSelectedMonth =
+        selectedMonth.length === 7
+          ? selectedMonth
+          : AllMonthsOption.localStorageValue;
       await this.storage.set(
         LocalStorage.StatisticsSelectedMonth,
         convertedSelectedMonth

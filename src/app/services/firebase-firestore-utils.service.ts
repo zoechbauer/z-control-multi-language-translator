@@ -41,11 +41,6 @@ export class FirebaseFirestoreUtilsService {
         .then((mode: DisplayMode) => {
           this.statisticsDisplayMode = mode;
         });
-      this.localStorageService
-        .getStatisticsSelectedMonth()
-        .then((month: string) => {
-          this.statisticsSelectedMonth = month;
-        });
     });
   }
 
@@ -75,11 +70,12 @@ export class FirebaseFirestoreUtilsService {
    *
    * On a programmer device, programmer device UIDs are also fetched and included.
    *
+   * @param {boolean} isProgrammerDevice - Indicates whether the device is a programmer device.
    * @returns {Promise<StatisticsData>} A promise resolving to statistics data containing
    *          displayed user statistics, raw user translation statistics, all users,
    *          and programmer device UIDs (empty if not a programmer device).
    */
-  async getDisplayedUserStatistics(): Promise<StatisticsData> {
+  async getDisplayedUserStatistics(isProgrammerDevice: boolean): Promise<StatisticsData> {
     let statisticsData: StatisticsData = {
       displayedUserStatistics: [],
       userTranslationStatistics: [],
@@ -92,7 +88,8 @@ export class FirebaseFirestoreUtilsService {
 
     this.statisticsSelectedMonth =
       await this.localStorageService.getStatisticsSelectedMonth(
-        AllMonthsOption.localStorageValue
+        AllMonthsOption.localStorageValue,
+        isProgrammerDevice
       );
 
     const userTranslationStatistics: UserTranslationStatistics[] =

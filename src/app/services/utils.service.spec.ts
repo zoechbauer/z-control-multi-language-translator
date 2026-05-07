@@ -9,10 +9,7 @@ import { environment } from 'src/environments/environment';
 import { HelpModalComponent } from '../ui/components/get-help/get-help.component';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { UserDetailComponent } from '../ui/components/user-detail/user-detail.component';
-import {
-  DisplayedUserStatistics,
-  UserType,
-} from '../shared/firebase-firestore.interfaces';
+import { DisplayedUserStatistics } from '../shared/firebase-firestore.interfaces';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -459,7 +456,17 @@ describe('UtilsService', () => {
   });
 
   describe('getAllFirestoreSearchStringsForMonth', () => {
+    beforeEach(() => {
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
     it('should return array of month strings for current month is 2026-04', () => {
+      jasmine.clock().mockDate(new Date(2026, 3, 15));
+
       const result: string[] = service.getAllFirestoreSearchStringsForMonth();
       expect(result.length).toBe(4);
       expect(result[0]).toBe('2026-02');
@@ -470,25 +477,20 @@ describe('UtilsService', () => {
       );
     });
 
-    it('should return array of month strings for for current month is 2027-02', () => {
-      jasmine.clock().install();
+    it('should return array of month strings for current month is 2027-02', () => {
       jasmine.clock().mockDate(new Date(2027, 1, 15));
 
-      try {
-        const result: string[] = service.getAllFirestoreSearchStringsForMonth();
-        expect(result.length).toBe(14);
-        expect(result[0]).toBe('2026-02');
-        expect(result[12]).toBe('2027-02');
-        expect(result[13]).toBe(
-          'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
-        );
-      } finally {
-        jasmine.clock().uninstall();
-      }
+      const result: string[] = service.getAllFirestoreSearchStringsForMonth();
+      expect(result.length).toBe(14);
+      expect(result[0]).toBe('2026-02');
+      expect(result[12]).toBe('2027-02');
+      expect(result[13]).toBe(
+        'SETTINGS.STATISTICS.FILTER.LABEL.FILTER_MONTH_DATA_ALL'
+      );
     });
-  });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
   });
 });

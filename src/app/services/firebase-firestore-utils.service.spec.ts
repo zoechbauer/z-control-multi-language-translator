@@ -464,11 +464,12 @@ describe('FirebaseFirestoreUtilsService', () => {
     });
 
     it('should load statistics and users with selected month all', async () => {
-      await service.getDisplayedUserStatistics();
+      const isProgrammerDevice = true;
+      await service.getDisplayedUserStatistics(isProgrammerDevice);
 
       expect(
         localStorageServiceMock.getStatisticsSelectedMonth
-      ).toHaveBeenCalledWith(AllMonthsOption.localStorageValue);
+      ).toHaveBeenCalledWith(AllMonthsOption.localStorageValue, isProgrammerDevice);
       expect(
         firestoreServiceMock.getAllUserTranslationStatistics
       ).toHaveBeenCalledWith(AllMonthsOption.localStorageValue);
@@ -478,7 +479,8 @@ describe('FirebaseFirestoreUtilsService', () => {
     });
 
     it('should include all users in programmer mode, including 60% users without translations', async () => {
-      const result = await service.getDisplayedUserStatistics();
+      const isProgrammerDevice = true;
+      const result = await service.getDisplayedUserStatistics(isProgrammerDevice);
 
       expect(result.users.length).withContext('users length').toBe(10);
       expect(result.displayedUserStatistics.length)
@@ -496,7 +498,8 @@ describe('FirebaseFirestoreUtilsService', () => {
     });
 
     it('should aggregate same userId translations across all months (target behavior)', async () => {
-      const result = await service.getDisplayedUserStatistics();
+      const isProgrammerDevice = true;
+      const result = await service.getDisplayedUserStatistics(isProgrammerDevice);
 
       const u1 = result.displayedUserStatistics.find((u) => u.userId === 'U-1');
       const u2 = result.displayedUserStatistics.find((u) => u.userId === 'U-2');
@@ -516,7 +519,8 @@ describe('FirebaseFirestoreUtilsService', () => {
     });
 
     it('should keep users not present in translations with zero char count', async () => {
-      const result = await service.getDisplayedUserStatistics();
+      const isProgrammerDevice = true;
+      const result = await service.getDisplayedUserStatistics(isProgrammerDevice);
 
       ['U-4', 'U-5', 'U-6', 'U-7', 'P-2', 'P-3'].forEach((id) => {
         const user = result.displayedUserStatistics.find(
@@ -621,8 +625,9 @@ describe('FirebaseFirestoreUtilsService', () => {
       });
 
       it('should return user translations', async () => {
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const userTranslResult = result.userTranslationStatistics;
 
         expect(userTranslResult.length).toBe(3);
@@ -657,8 +662,9 @@ describe('FirebaseFirestoreUtilsService', () => {
       });
 
       it('should return user statistics', async () => {
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const userStatsResult = result.displayedUserStatistics;
 
         expect(userStatsResult.length).toBe(3);
@@ -697,8 +703,9 @@ describe('FirebaseFirestoreUtilsService', () => {
       });
 
       it('should return users', async () => {
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const usersResult = result.users;
 
         expect(usersResult.length).toBe(5);
@@ -757,8 +764,9 @@ describe('FirebaseFirestoreUtilsService', () => {
       });
 
       it('should return programmer devices if called from a programmer device', async () => {
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const programmerDevicesResult = result.programmerDeviceUIDs;
 
         expect(programmerDevicesResult.length).toBe(2);
@@ -789,8 +797,9 @@ describe('FirebaseFirestoreUtilsService', () => {
           get: () => false,
         });
 
+        const isProgrammerDevice = false;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const programmerDevicesResult = result.programmerDeviceUIDs;
 
         expect(programmerDevicesResult.length).toBe(0);
@@ -816,8 +825,9 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
 
         // Act
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
 
         // Assert: All users (including those with 0 char count) should be included in displayedUserStatistics
         expect(result.displayedUserStatistics.length).toBe(
@@ -835,8 +845,9 @@ describe('FirebaseFirestoreUtilsService', () => {
 
       it('should not add user with 0 char count to statistics if displaymode is user view', async () => {
         // Act
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
 
         // Assert: Only users with translations should be included in displayedUserStatistics
         expect(result.displayedUserStatistics.length).toBe(
@@ -860,8 +871,9 @@ describe('FirebaseFirestoreUtilsService', () => {
           DisplayMode.Programmer
         );
 
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
         const userStatsResult = result.displayedUserStatistics;
 
         expect(userStatsResult.length).toBe(5);
@@ -887,8 +899,9 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
 
         // Act
+        const isProgrammerDevice = true;
         const result: StatisticsData =
-          await service.getDisplayedUserStatistics();
+          await service.getDisplayedUserStatistics(isProgrammerDevice);
 
         // Assert: Users not in the users list should be excluded from displayedUserStatistics
         const excludedUser = result.displayedUserStatistics.find(

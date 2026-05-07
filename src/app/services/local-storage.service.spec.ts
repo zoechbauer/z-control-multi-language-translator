@@ -357,32 +357,125 @@ describe('LocalStorageService', () => {
   describe('get statistics selected month', () => {
     it('should get the statistics selected month', async () => {
       storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
-      const selectedMonth = await service.getStatisticsSelectedMonth();
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        false
+      );
       expect(selectedMonth).toBe('2026-03');
     });
 
-    it('should return current month from utilsService if no selected month is found', async () => {
+    it('should return current month from utilsService and save in local storage if no selected month is found', async () => {
       storageSpy.get.and.returnValue(Promise.resolve(null));
       utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
 
-      const selectedMonth = await service.getStatisticsSelectedMonth();
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        false
+      );
       expect(selectedMonth).toBe('2026-04');
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        '2026-04'
+      );
+    });
+
+    it('should update to current month if stored month is past and device is not programmer', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
+      utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
+      const isProgrammerDevice = false;
+
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        isProgrammerDevice
+      );
+      expect(selectedMonth).toBe('2026-04');
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        '2026-04'
+      );
+    });
+
+    it('should update to current month if stored month is past and device is not set', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
+      utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
+
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue
+      );
+      expect(selectedMonth).toBe('2026-04');
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        '2026-04'
+      );
+    });
+
+    it('should not update to current month if stored month is past and device is programmer', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
+      utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
+      const isProgrammerDevice = true;
+
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        isProgrammerDevice
+      );
+      expect(selectedMonth).toBe('2026-03');
+      expect(storageSpy.set).toHaveBeenCalledWith(
+        'statisticsSelectedMonth',
+        '2026-03'
+      );
+    });
+
+    it('should not update local storage if month did not change', async () => {
+      storageSpy.get.and.returnValue(Promise.resolve('2026-04'));
+      utilsServiceSpy.getCurrentMonth.and.returnValue('2026-04');
+      
+      let isProgrammerDevice = true;
+      let selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        isProgrammerDevice
+      );
+      expect(selectedMonth)
+        .withContext('Programmer device - selectedMonth')
+        .toBe('2026-04');
+      expect(storageSpy.set)
+        .withContext('Programmer device - storage set')
+        .not.toHaveBeenCalled();
+
+      isProgrammerDevice = false;
+      selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        isProgrammerDevice
+      );
+      expect(selectedMonth)
+        .withContext('User device - selectedMonth')
+        .toBe('2026-04');
+      expect(storageSpy.set)
+        .withContext('User device - storage set')
+        .not.toHaveBeenCalled();
     });
 
     it('should return AllMonthsOption.SelectOptionValue if stored value length is not 7', async () => {
       storageSpy.get.and.returnValue(Promise.resolve('all'));
 
-      const selectedMonth = await service.getStatisticsSelectedMonth();
-
-      expect(selectedMonth).toBe(AllMonthsOption.SelectOptionValue);
-      expect(service.statisticsSelectedMonthSubject.value).toBe(
-        AllMonthsOption.SelectOptionValue
+      const selectedMonth = await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        true
       );
+
+      expect(selectedMonth)
+        .withContext('selectedMonth')
+        .toBe(AllMonthsOption.SelectOptionValue);
+      expect(service.statisticsSelectedMonthSubject.value)
+        .withContext('statisticsSelectedMonthSubject')
+        .toBe(AllMonthsOption.localStorageValue);
     });
 
     it('should set statistics selected month subject based on loaded selected month', async () => {
       storageSpy.get.and.returnValue(Promise.resolve('2026-03'));
-      await service.getStatisticsSelectedMonth();
+      await service.getStatisticsSelectedMonth(
+        AllMonthsOption.SelectOptionValue,
+        false
+      );
       expect(service.statisticsSelectedMonthSubject.value).toBe('2026-03');
     });
   });
