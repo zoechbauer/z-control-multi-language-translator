@@ -43,13 +43,55 @@
           <strong>{{ maxTargetLanguages }} target languages</strong>
           simultaneously.
         </p>
+        <p>How to select target languages:</p>
+        <ol>
+          <li>Click Select target language(s).</li>
+          <li>The list with all available target languages opens.</li>
+          <li>
+            Select 1 to 5 target languages by clicking the checkbox on the
+            right.
+          </li>
+          <li>
+            Click the checkbox again to remove a language from the selection.
+          </li>
+          <li>You can scroll through the list or use the search function.</li>
+          <li>Type in the search field to quickly find matching languages.</li>
+          <li>
+            Click
+            <ion-icon name="checkbox-outline"></ion-icon>
+            on the left side of the search bar to show only selected target
+            languages.
+          </li>
+          <li>
+            Click
+            <ion-icon name="trash-outline"></ion-icon>, to reset both filters
+            (search text and selection) and show all languages again.
+          </li>
+          <li>
+            The number and language codes of selected target languages are
+            always shown at the top.
+          </li>
+          <li>When you are done, close the selection with X.</li>
+          <li>You will then return to this page.</li>
+          <li>Click Back to Settings to stay in the settings area.</li>
+          <li>
+            Or click
+            <ion-icon name="language-outline" aria-hidden="true"></ion-icon>
+            in the header to go directly to the translation page.
+          </li>
+        </ol>
+
+        <p>Note about the base language</p>
         <p>
           The base language cannot be selected as a target language and is
-          excluded from the list.
+          therefore not included in the list.
         </p>
         <p>
           To change the base language, go to Settings > Language / Base
-          Language.
+          language.
+        </p>
+        <p>
+          You can change the base language and target languages at any time.
         </p>
         <p>Please select your desired target languages.</p>
       </div>
@@ -60,18 +102,68 @@
     <ng-template #germanTemplate>
       <div class="notes">
         <p>Hinweis</p>
-        <p>
+        <div>
           Sie können Text von der Basissprache in bis zu
           <strong>{{ maxTargetLanguages }} Zielsprachen</strong> gleichzeitig
           übersetzen.
-        </p>
+        </div>
+
+        <p>So wählen Sie Zielsprachen aus:</p>
+        <ol>
+          <li>Klicken Sie auf Zielsprache(n) auswählen.</li>
+          <li>Es öffnet sich die Liste mit allen verfügbaren Zielsprachen.</li>
+          <li>
+            Wählen Sie 1 bis 5 Zielsprachen aus, indem Sie rechts auf das
+            Auswahlfeld klicken.
+          </li>
+          <li>
+            Ein erneuter Klick auf das Auswahlfeld entfernt die Sprache wieder.
+          </li>
+          <li>
+            Sie können in der Liste scrollen oder die Suchfunktion verwenden.
+          </li>
+          <li>
+            Geben Sie im Suchfeld einen Text ein, um passende Sprachen schneller
+            zu finden.
+          </li>
+          <li>
+            Klicken Sie links in der Suchleiste auf
+            <ion-icon name="checkbox-outline"></ion-icon>, um nur ausgewählte
+            Zielsprachen anzuzeigen.
+          </li>
+          <li>
+            Klicken Sie auf
+            <ion-icon name="trash-outline"></ion-icon>, um beide Filter
+            (Suchtext und Auswahl) zurückzusetzen und alle Sprachen anzuzeigen.
+          </li>
+          <li>
+            Oben sehen Sie jederzeit die Anzahl und Kürzel der ausgewählten
+            Zielsprachen.
+          </li>
+          <li>Wenn Sie fertig sind, schließen Sie die Auswahl mit X.</li>
+          <li>Sie gelangen danach zurück auf diese Seite.</li>
+          <li>
+            Klicken Sie auf Zurück zu Einstellungen, um in den Einstellungen zu
+            bleiben.
+          </li>
+          <li>
+            Oder klicken Sie im Kopfbereich auf
+            <ion-icon name="language-outline" aria-hidden="true"></ion-icon>, um
+            direkt zur Übersetzungsseite zu wechseln.
+          </li>
+        </ol>
+
+        <p>Hinweis zur Basissprache</p>
         <p>
           Die Basissprache kann nicht als Zielsprache ausgewählt werden und ist
-          daher nicht in der Liste enthalten.
+          deshalb nicht in der Liste enthalten.
         </p>
         <p>
           Um die Basissprache zu ändern, gehen Sie zu Einstellungen > Sprache /
           Basissprache.
+        </p>
+        <p>
+          Sie können die Basissprache und die Zielsprachen jederzeit ändern.
         </p>
         <p>Bitte wählen Sie die gewünschten Zielsprachen aus.</p>
       </div>

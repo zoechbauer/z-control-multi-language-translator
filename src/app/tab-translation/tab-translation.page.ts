@@ -6,7 +6,6 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardSubtitle,
   IonCardContent,
   IonCol,
   IonContent,
@@ -57,7 +56,6 @@ interface Translation {
     IonCard,
     IonCardHeader,
     IonCardTitle,
-    IonCardSubtitle,
     IonCardContent,
     IonCol,
     IonContent,
@@ -133,12 +131,14 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   isContingentExceeded: boolean = false;
 
   ngOnInit() {
+    this.isLoading = true;
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
     this.setupSubscriptions();
     this.updateIsContingentExceeded().then(() => {
       this.initFormControls();
       this.getTranslationPlaceholder();
+      this.isLoading = false;
     });
   }
 

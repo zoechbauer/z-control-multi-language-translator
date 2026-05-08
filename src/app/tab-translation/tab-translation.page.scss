@@ -64,6 +64,17 @@
     ion-textarea {
       margin-top: 32px;
     }
+
+    .languages-card {
+      margin-top: 16px;
+      border: none;
+      box-shadow: none;
+      background: transparent;
+
+      ion-card-content {
+        padding: 8px;
+      }
+    }
   }
 
   .monthly-quota-accordion {

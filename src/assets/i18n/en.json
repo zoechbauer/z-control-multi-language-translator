@@ -35,11 +35,18 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "INFO": "You can translate a text of up to {{maxInputLength}} characters into up to {{maxTargetLanguages}} selected languages.",
+      "INFO": "The captured or spoken text will be translated into the selected target language(s).",
       "NO_TARGET_LANGUAGES_1": "Please select at least one target language first:",
       "NO_TARGET_LANGUAGES_2": "Click on Settings",
-      "NO_TARGET_LANGUAGES_3": "and then choose",
-      "NO_TARGET_LANGUAGES_4": "'Select / Change Target Language(s)'",
+      "NO_TARGET_LANGUAGES_3": "in the header and then choose",
+      "NO_TARGET_LANGUAGES_4": "'Select / Change Target Language(s)'.",
+      "NO_TARGET_LANGUAGES_5": "There, open",
+      "NO_TARGET_LANGUAGES_6": "'Select Target Language(s)'",
+      "NO_TARGET_LANGUAGES_7": "and select the desired target language(s).",
+      "NO_TARGET_LANGUAGES_8": "Then click on Translate",
+      "NO_TARGET_LANGUAGES_9": "in the header to return to the translation page and start the translation.",
+      "NO_TARGET_LANGUAGES_10": "With the buttons",
+      "NO_TARGET_LANGUAGES_11": "you can switch between settings and translation at any time.",
       "LABEL": {
         "BASE_LANGUAGE": "Base Language",
         "SELECTED_TARGET_LANGUAGES": "Selected Target Language(s)",

@@ -184,6 +184,10 @@ describe('FirebaseFirestoreService', () => {
   });
 
   describe('readContingentData', () => {
+    beforeEach(() => {
+        spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-04');
+      });
+      
     it('should return contingent data when document exists', async () => {
       const flags: FirestoreContingentData = {
         StopTranslationForAllUsers: true,
@@ -196,7 +200,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => flags,
       } as any);
 
-      const result = await service.readContingentData();
+      const result = await service.readContingentData('2026-04');
 
       expect((service as any).getFirestoreDoc).toHaveBeenCalled();
       expect((service as any).getFirestoreDocSnapshot).toHaveBeenCalledWith(
@@ -220,7 +224,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => undefined,
       } as any);
 
-      const result = await service.readContingentData();
+      const result = await service.readContingentData('2026-04');
 
       expect(result).toEqual({});
     });
@@ -233,7 +237,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => undefined,
       } as any);
 
-      const result = await service.readContingentData();
+      const result = await service.readContingentData('2026-04');
 
       expect(result).toEqual({});
     });
@@ -246,7 +250,7 @@ describe('FirebaseFirestoreService', () => {
         new Error('firestore read failed')
       );
 
-      const result = await service.readContingentData();
+      const result = await service.readContingentData('2026-04');
 
       expect(result).toEqual({});
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(

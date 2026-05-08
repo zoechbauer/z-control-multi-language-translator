@@ -2,6 +2,22 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.14] – YYYY-MM-DD
+
+### 🚀 Improvements
+
+- Improved the translation page layout for better readability and usability. The base language and selected target languages are now shown below the input card, so action buttons are no longer hidden by the keyboard or microphone on mobile devices.
+- Improved the help text in the Select Target Languages accordion with clearer, step-by-step guidance on choosing target languages and starting translation.
+- Improved the message shown when no target languages are selected on the translation page, making it clearer that target languages must be selected in Settings before translating.
+
+### 🐛 Fixes
+
+- Fixed a red message briefly appearing on mobile devices even when languages were selected. The app now waits for language selection to load from Firestore before showing the message.
+
+### 🔧 Internal
+
+- Updated translation-page unit tests for the new layout and messages, including checks for base/target language display below the input card and the updated no-target-languages message. Total: 666 tests, 99.4% frontend coverage.
+
 ## [1.13] – 2026-05-07
 
 ### 🐛 Fixes

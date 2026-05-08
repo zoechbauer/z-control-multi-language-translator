@@ -619,7 +619,9 @@ describe('TabTranslationPage', () => {
 
     describe('onAccordionGroupChange', () => {
       it('should refresh statistics when user contingent accordion is opened', () => {
-        const requestStatisticsRefreshSpy = TestBed.inject(FirebaseFirestoreUtilsService).requestStatisticsRefresh as jasmine.Spy;
+        const requestStatisticsRefreshSpy = TestBed.inject(
+          FirebaseFirestoreUtilsService
+        ).requestStatisticsRefresh as jasmine.Spy;
         const event = {
           detail: { value: 'user-contingent' },
         } as CustomEvent;
@@ -843,7 +845,7 @@ describe('TabTranslationPage', () => {
 
           // Assert: Spinner should not be visible
           const compiled = fixture.nativeElement as HTMLElement;
-          expect(compiled.querySelector('app-spinner'))
+          expect(compiled.querySelector('.sticky-toggle-btn app-spinner'))
             .withContext('Spinner should not be visible if not speaking')
             .toBeNull();
         });
@@ -863,6 +865,7 @@ describe('TabTranslationPage', () => {
           ).and.stub();
           spyOn(component, 'toggleCard').and.stub();
           spyOn(component as any, 'disableFormControls').and.stub();
+          component.cardInputVisible = true;
         });
 
         it('should not show spinner if no text is entered', async () => {
@@ -872,7 +875,7 @@ describe('TabTranslationPage', () => {
           await component.translateTextOrSimulate();
 
           const compiled = fixture.nativeElement as HTMLElement;
-          expect(compiled.querySelector('app-spinner'))
+          expect(compiled.querySelector('.translation-input-card app-spinner'))
             .withContext('Spinner should not be visible if no text')
             .toBeNull();
         });
@@ -884,7 +887,7 @@ describe('TabTranslationPage', () => {
           await component.translateTextOrSimulate();
 
           const compiled = fixture.nativeElement as HTMLElement;
-          expect(compiled.querySelector('app-spinner'))
+          expect(compiled.querySelector('.translation-input-cardapp-spinner'))
             .withContext('Spinner should not be visible if no target languages')
             .toBeNull();
         });
@@ -898,7 +901,7 @@ describe('TabTranslationPage', () => {
           await component.translateTextOrSimulate();
 
           const compiled = fixture.nativeElement as HTMLElement;
-          expect(compiled.querySelector('app-spinner'))
+          expect(compiled.querySelector('.translation-input-cardapp-spinner'))
             .withContext(
               'Spinner should not be visible if SIMULATE_TRANSLATION is true'
             )
@@ -1019,24 +1022,69 @@ describe('TabTranslationPage', () => {
     });
 
     describe('user setup flow', () => {
-      it('should show no-languages section and  if no languages are selected', () => {
+      it('should not show any sections if loading and no languages are selected', () => {
         component.selectedLanguages = [];
+        component.isLoading = true;
         fixture.detectChanges();
 
         const noLanguagesSection = fixture.nativeElement.querySelector(
           '.no-languages-selected'
         );
-        expect(noLanguagesSection).toBeTruthy();
+        const translationInputCard = fixture.nativeElement.querySelector(
+          '.translation-input-card'
+        );
+        const languagesCard =
+          fixture.nativeElement.querySelector('.languages-card');
+        expect(noLanguagesSection)
+          .withContext('No-languages section')
+          .toBeFalsy();
+        expect(translationInputCard)
+          .withContext('Translation input card')
+          .toBeFalsy();
+        expect(languagesCard).withContext('Languages card').toBeFalsy();
       });
 
-      it('should show translation input card if languages are selected', () => {
-        component.selectedLanguages = ['en'];
+      it('should show only no-languages section and hide other sections if no languages are selected and not loading', () => {
+        component.selectedLanguages = [];
+        component.isLoading = false;
+        fixture.detectChanges();
+
+        const noLanguagesSection = fixture.nativeElement.querySelector(
+          '.no-languages-selected'
+        );
+        const translationInputCard = fixture.nativeElement.querySelector(
+          '.translation-input-card'
+        );
+        const languagesCard =
+          fixture.nativeElement.querySelector('.languages-card');
+        expect(noLanguagesSection)
+          .withContext('No-languages section')
+          .toBeTruthy();
+        expect(translationInputCard)
+          .withContext('Translation input card')
+          .toBeFalsy();
+        expect(languagesCard).withContext('Languages card').toBeFalsy();
+      });
+
+      it('should show translation input card and languages card and hide no-languages section if languages are selected', () => {
+        component.selectedLanguages = ['en', 'fr'];
         fixture.detectChanges();
 
         const translationInputCard = fixture.nativeElement.querySelector(
           '.translation-input-card'
         );
-        expect(translationInputCard).toBeTruthy();
+        const languagesCard =
+          fixture.nativeElement.querySelector('.languages-card');
+        const noLanguagesSection = fixture.nativeElement.querySelector(
+          '.no-languages-selected'
+        );
+        expect(translationInputCard)
+          .withContext('Translation input card')
+          .toBeTruthy();
+        expect(languagesCard).withContext('Languages card').toBeTruthy();
+        expect(noLanguagesSection)
+          .withContext('No-languages section')
+          .toBeFalsy();
       });
     });
 

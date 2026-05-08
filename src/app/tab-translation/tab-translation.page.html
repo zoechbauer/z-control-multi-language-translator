@@ -9,7 +9,7 @@
   class="translation-content"
   [class.landscape]="!utilsService.isPortrait"
 >
-  @if (selectedLanguages.length === 0) {
+  @if (selectedLanguages.length === 0 && !isLoading) {
   <div class="no-languages-selected">
     {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_1' | translate }}
     <br /><br />
@@ -19,8 +19,25 @@
     {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_3' | translate }}
     <br />
     {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_4' | translate }}
+    <br /><br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_5' | translate }}
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_6' | translate }}
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_7' | translate }}
+    <br /><br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_8' | translate }}
+    <ion-icon name="language-outline" aria-hidden="true"></ion-icon>
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_9' | translate }}
+    <br /><br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_10' | translate }}
+    <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>,
+    <ion-icon name="language-outline" aria-hidden="true"></ion-icon>
+    <br />
+    {{ 'TRANSLATE.CARD.NO_TARGET_LANGUAGES_11' | translate }}
   </div>
-  } @if(translations.length > 0) {
+  } @if(selectedLanguages.length > 0) { @if(translations.length > 0) {
   <!-- show switch buttons for input/results cards -->
   <div class="sticky-toggle-btn">
     <ion-button
@@ -41,23 +58,6 @@
         {{ 'TRANSLATE.CARD.INFO' | translate:{ maxInputLength: maxInputLength,
         maxTargetLanguages: maxTargetLanguages } }}
       </p>
-      @if (localStorage.targetLanguagesNameWithLineBreaks$) {
-      <ion-card-subtitle>
-        <div>
-          <strong>{{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}</strong
-          >: {{ baseLangString }}
-        </div>
-        <div class="selected-target-languages">
-          <strong
-            >{{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate
-            }}</strong
-          >:<br />
-          <span
-            [innerHTML]="localStorage.targetLanguagesNameWithLineBreaks$ | async"
-          ></span>
-        </div>
-      </ion-card-subtitle>
-      }
     </ion-card-header>
     <ion-card-content>
       <ion-textarea
@@ -87,6 +87,23 @@
       (keydown.enter)="clear()"
       >{{ 'TRANSLATE.CARD.BUTTON.CLEAR' | translate }}</ion-button
     >
+    <ion-card class="languages-card">
+      <ion-card-content>
+        <div>
+          <strong>{{ 'TRANSLATE.CARD.LABEL.BASE_LANGUAGE' | translate }}</strong
+          >: {{ baseLangString }}
+        </div>
+        <div class="selected-target-languages">
+          <strong
+            >{{ 'TRANSLATE.CARD.LABEL.SELECTED_TARGET_LANGUAGES' | translate
+            }}</strong
+          >:<br />
+          <span
+            [innerHTML]="localStorage.targetLanguagesNameWithLineBreaks$ | async"
+          ></span>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </ion-card>
   <app-spinner *ngIf="isLoading"></app-spinner>
   } @if(translations.length > 0 && showTranslationResultEnteredTextCard) {
@@ -163,7 +180,7 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
-  } @if(selectedLanguages.length > 0) {
+  }
   <ion-accordion-group
     (ionValueChange)="onAccordionGroupChange($event, content)"
   >

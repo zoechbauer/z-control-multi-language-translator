@@ -446,7 +446,7 @@ export class FirebaseFirestoreService {
    * or an empty object if not found or on error.
    */
   async readContingentData(
-    selectedMonth: string | undefined = undefined
+    selectedMonth: string
   ): Promise<FirestoreContingentData> {
     try {
       if (selectedMonth === AllMonthsOption.SelectOptionValue) {

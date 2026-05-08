@@ -504,7 +504,7 @@ export class FirebaseFirestoreUtilsService {
   > {
     // Read all control flags from Firestore
     const contingentData: FirestoreContingentData =
-      await this.firestoreService.readContingentData();
+      await this.firestoreService.readContingentData(this.utilsService.getCurrentMonth());
     const displayedContingentData: DisplayedUserContingentData[] = [];
     // calculate data for current user
     const { charCount: userCharCount } =
@@ -566,7 +566,7 @@ export class FirebaseFirestoreUtilsService {
 
     // Read all control flags from Firestore
     const flags: FirestoreContingentData =
-      await this.firestoreService.readContingentData();
+      await this.firestoreService.readContingentData(this.utilsService.getCurrentMonth());
 
     // 1. If translation is globally stopped for all users
     if (flags.StopTranslationForAllUsers) {

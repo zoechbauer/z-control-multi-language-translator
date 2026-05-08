@@ -42,6 +42,7 @@ describe('FirebaseFirestoreUtilsService', () => {
     utilsServiceMock = jasmine.createSpyObj('UtilsService', [
       'getPlatform',
       'getModel',
+      'getCurrentMonth',
     ]);
 
     firestoreServiceMock = jasmine.createSpyObj(

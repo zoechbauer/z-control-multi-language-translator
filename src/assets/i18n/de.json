@@ -35,11 +35,18 @@
   "------ translate page": "-------",
   "TRANSLATE": {
     "CARD": {
-      "INFO": "Sie können einen Text in der Länge von bis zu {{maxInputLength}} Zeichen in bis zu {{maxTargetLanguages}} ausgewählte Sprachen übersetzen lassen.",
+      "INFO": "Der erfasste oder gesprochene Text wird in die ausgewählten Zielsprache(n) übersetzt.",
       "NO_TARGET_LANGUAGES_1": "Bitte wählen Sie zuerst mindestens eine Zielsprache aus:",
       "NO_TARGET_LANGUAGES_2": "Klicken Sie auf Einstellungen",
-      "NO_TARGET_LANGUAGES_3": "und wählen Sie dann",
-      "NO_TARGET_LANGUAGES_4": "'Zielsprache(n) auswählen / ändern'",
+      "NO_TARGET_LANGUAGES_3": "in der Kopfzeile und wählen Sie dann",
+      "NO_TARGET_LANGUAGES_4": "'Zielsprache(n) auswählen / ändern'.",
+      "NO_TARGET_LANGUAGES_5": "Dort öffnen Sie dann",
+      "NO_TARGET_LANGUAGES_6": "'Zielsprache(n) auswählen'",
+      "NO_TARGET_LANGUAGES_7": "und wählen die gewünschte(n) Zielsprache(n) aus.",
+      "NO_TARGET_LANGUAGES_8": "Danach klicken Sie auf Übersetzen",
+      "NO_TARGET_LANGUAGES_9": "in der Kopfzeile damit Sie zur Übersetzungsseite zurückkehren und die Übersetzung starten können.",
+      "NO_TARGET_LANGUAGES_10": "Mit den Buttons",
+      "NO_TARGET_LANGUAGES_11": "können Sie jederzeit zwischen Einstellungen und Übersetzung wechseln.",
       "LABEL": {
         "BASE_LANGUAGE": "Basissprache",
         "SELECTED_TARGET_LANGUAGES": "Ausgewählte Zielsprache(n)",
