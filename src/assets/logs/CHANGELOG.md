@@ -2,7 +2,7 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
-## [1.15] – YYYY-MM-DD
+## [1.15] – 2026-05-18
 
 ### 🚀 Improvements
 
