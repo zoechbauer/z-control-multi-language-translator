@@ -15,6 +15,7 @@ import { createTranslateServiceMock } from 'src/app/testing/translate-service.mo
 import { environment } from 'src/environments/environment';
 import {
   DisplayedUserStatistics,
+  DisplayedUserStatisticsRow,
   StatisticsData,
 } from 'src/app/shared/firebase-firestore.interfaces';
 
@@ -23,7 +24,7 @@ function createUserStat(
   translatedCharCount = 500,
   lastTranslationDate: Date | null = new Date('2026-03-15T00:00:00Z'),
   targetLanguages: string[] = ['en']
-): DisplayedUserStatistics {
+): DisplayedUserStatisticsRow {
   return {
     userId,
     userName: `User ${userId}`,
@@ -47,6 +48,8 @@ function createUserStat(
     translatedCharCount,
     targetLanguages,
     lastTranslationDate,
+    formattedLastActivityDate: '2026-03-15',
+    isCurrentUser: false,
   };
 }
 
@@ -255,24 +258,78 @@ describe('GetStatisticsComponent', () => {
 
     describe('getter', () => {
       describe('hideColumn', () => {
-        it('should hide column when device is portrait', () => {
-          Object.defineProperty(utilsServiceSpy, 'isPortrait', { value: true });
+        it('should use cached orientation value', () => {
+          (component as any).isPortrait = true;
+          expect(component.hideColumn).toBeTrue();
+
+          (component as any).isPortrait = false;
+          expect(component.hideColumn).toBeFalse();
+        });
+
+        it('should not change when only service property changes (cache not synced yet)', () => {
+          (component as any).isPortrait = false;
+
+          Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+            get: () => true,
+            configurable: true,
+          });
+
+          expect(component.hideColumn).toBeFalse();
+        });
+
+        it('should sync cached orientation on resize event', () => {
+          let portraitValue = false;
+          Object.defineProperty(utilsServiceSpy, 'isPortrait', {
+            get: () => portraitValue,
+            configurable: true,
+          });
+
+          (component as any).isPortrait = false;
+          expect(component.hideColumn).toBeFalse();
+
+          portraitValue = true;
+          window.dispatchEvent(new Event('resize'));
+
           expect(component.hideColumn).toBeTrue();
         });
       });
 
       describe('hideColumnIfUserOrPortrait', () => {
-        it('should hide column when device is portrait', () => {
-          Object.defineProperty(utilsServiceSpy, 'isPortrait', { value: true });
-          component.displayMode = DisplayMode.Programmer;
+        it('should be true when display mode is User even in landscape', () => {
+          (component as any).isPortrait = false;
+          component.displayMode = DisplayMode.User;
+
           expect(component.hideColumnIfUserOrPortrait).toBeTrue();
         });
 
-        it('should hide column when display mode is User', () => {
+        it('should be true when portrait in Programmer mode', () => {
+          (component as any).isPortrait = true;
+          component.displayMode = DisplayMode.Programmer;
+
+          expect(component.hideColumnIfUserOrPortrait).toBeTrue();
+        });
+
+        it('should be false when landscape in Programmer mode', () => {
+          (component as any).isPortrait = false;
+          component.displayMode = DisplayMode.Programmer;
+
+          expect(component.hideColumnIfUserOrPortrait).toBeFalse();
+        });
+
+        it('should update after orientationchange sync', () => {
+          let portraitValue = false;
           Object.defineProperty(utilsServiceSpy, 'isPortrait', {
-            value: false,
+            get: () => portraitValue,
+            configurable: true,
           });
-          component.displayMode = DisplayMode.User;
+
+          (component as any).isPortrait = false;
+          component.displayMode = DisplayMode.Programmer;
+          expect(component.hideColumnIfUserOrPortrait).toBeFalse();
+
+          portraitValue = true;
+          window.dispatchEvent(new Event('orientationchange'));
+
           expect(component.hideColumnIfUserOrPortrait).toBeTrue();
         });
       });
@@ -289,244 +346,281 @@ describe('GetStatisticsComponent', () => {
         });
       });
 
-      describe('filteredUserStats', () => {
-        let statisticsData: DisplayedUserStatistics[] = [];
-
-        function addStatisticsData(
-          userId: string,
-          device: string,
-          displayedModel: string,
-          isNative: boolean,
-          platform: string,
-          translatedCharCount: number,
-          targetLanguages: string[]
-        ) {
-          const createdAt = new Date('2026-03-10');
-          const lastUpdated = new Date('2026-03-15');
-
-          statisticsData.push({
-            userId,
-            userName: 'User Name for ' + userId,
-            userType: userId.startsWith('P') ? 'P' : 'U',
-            userCreatedAt: createdAt,
-            userLastUpdated: lastUpdated,
-            device,
-            isNative,
-            deviceInfo: {
-              userAgent: 'User Agent',
-              platform: platform,
-              language: 'de',
-              appVersion: {
-                major: 1,
-                minor: 0,
-                date: '2026-03-01',
-              },
-            },
-            displayedPlatform: platform,
-            displayedModel,
-            translatedCharCount,
-            targetLanguages,
-            lastTranslationDate: translatedCharCount > 0 ? lastUpdated : null,
-          });
-        }
-
-        function createStatiticsData(): DisplayedUserStatistics[] {
-          statisticsData = [];
-          addStatisticsData(
-            'U-1',
-            'Device 1',
-            'Model 1',
-            false,
-            'web-desktop',
-            1000,
-            ['en', 'nl']
-          );
-          addStatisticsData(
-            'U-2',
-            'Device 1',
-            'Model 1',
-            false,
-            'web-mobile',
-            2000,
-            ['en', 'nl', 'fr']
-          );
-          addStatisticsData(
-            'U-4',
-            'Device 3',
-            'Model 3',
-            false,
-            'web-mobile',
-            0,
-            []
-          );
-          addStatisticsData(
-            'P-1',
-            'Device 4',
-            'Model 4',
-            true,
-            'native',
-            3000,
-            ['en', 'nl', 'fr', 'es', 'it']
-          );
-          addStatisticsData(
-            'P-2',
-            'Device 4',
-            'Model 4',
-            true,
-            'web-desktop',
-            0,
-            []
-          );
-          return statisticsData;
-        }
-
-        beforeEach(() => {
-          statisticsData = createStatiticsData();
-          component['statisticsData'] = {
-            displayedUserStatistics: statisticsData,
-            userTranslationStatistics: [],
-            users: [],
-            programmerDeviceUIDs: [],
-          };
+      describe('isCurrentUser', () => {
+        it('should return true if current user is the same as the provided user', () => {
+          const user = { id: '123' };
+          component.currentUserUid = '123';
+          expect(component.isCurrentUser(user.id)).toBeTrue();
         });
 
-        it('should show all records if no filters are applied', () => {
-          component.searchTerm = '';
-          const result = component.filteredUserStats;
-          expect(result).toEqual(statisticsData);
-        });
-
-        it('should return all records if filter text is undefined', () => {
-          component.searchTerm = undefined as unknown as string;
-          let result = component.filteredUserStats;
-          expect(result).toEqual(statisticsData);
-        });
-
-        it('should filter by user id', () => {
-          component.searchTerm = 'U-1';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(1);
-          expect(result[0].userId).toBe('U-1');
-        });
-
-        it('should filter by user name', () => {
-          component.searchTerm = 'User Name for U-1';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(1);
-          expect(result[0].userId).toBe('U-1');
-        });
-
-        it('should filter by user type user', () => {
-          component.searchTerm = 'U-';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(3);
-        });
-
-        it('should filter by user type programmer', () => {
-          component.searchTerm = 'P-';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(2);
-        });
-
-        it('should filter by platform', () => {
-          component.searchTerm = 'web-desktop';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(2);
-          expect(result[0].displayedPlatform).toBe('web-desktop');
-          expect(result[1].displayedPlatform).toBe('web-desktop');
-        });
-
-        it('should filter by model', () => {
-          component.searchTerm = 'Model 1';
-          const result = component.filteredUserStats;
-          expect(result.length).toBe(2);
-          expect(result[0].displayedModel).toBe('Model 1');
-          expect(result[1].displayedModel).toBe('Model 1');
-        });
-
-        it('should return empty array if statisticsData is null', () => {
-          component['statisticsData'] = null;
-          component.searchTerm = 'test';
-          let result = component.filteredUserStats;
-          expect(result).toEqual([]);
-        });
-
-        it('should return rows which have at least 3 target languages with >> operator', () => {
-          component.searchTerm = '>>3';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(2);
-          expect(result[0].userId).toBe('P-1');
-          expect(result[1].userId).toBe('U-2');
-        });
-
-        it('should return rows which have less or equal to 3 target languages with << operator', () => {
-          component.searchTerm = '<<3';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(4);
-          expect(result[0].userId).toBe('P-2');
-          expect(result[1].userId).toBe('U-1');
-          expect(result[2].userId).toBe('U-2');
-          expect(result[3].userId).toBe('U-4');
-        });
-
-        it('should return rows which have not target languages with << operator', () => {
-          component.searchTerm = '<<0';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(2);
-          expect(result[0].userId).toBe('P-2');
-          expect(result[1].userId).toBe('U-4');
-        });
-
-        it('should return rows which have at least 2000 translated chars with > operator', () => {
-          component.searchTerm = '>2000';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(2);
-          expect(result[0].userId).toBe('P-1');
-          expect(result[1].userId).toBe('U-2');
-        });
-
-        it('should return rows which have less or equal to 1000 translated chars with < operator', () => {
-          component.searchTerm = '<1000';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(3);
-          expect(result[0].userId).toBe('P-2');
-          expect(result[1].userId).toBe('U-1');
-          expect(result[2].userId).toBe('U-4');
-        });
-
-        it('should return rows which have no translated chars with < operator', () => {
-          component.searchTerm = '<0';
-          const result = component.filteredUserStats;
-          result.sort((a, b) => a.userId.localeCompare(b.userId));
-
-          expect(result.length).toBe(2);
-          expect(result[0].userId).toBe('P-2');
-          expect(result[1].userId).toBe('U-4');
+        it('should return false if current user is different from the provided user', () => {
+          const user = { id: '123' };
+          component.currentUserUid = '456';
+          expect(component.isCurrentUser(user.id)).toBeFalse();
         });
       });
     });
 
-    describe('isCurrentUser', () => {
-      it('should return true if current user is the same as the provided user', () => {
-        const user = { id: '123' };
-        component.currentUserUid = '123';
-        expect(component.isCurrentUser(user.id)).toBeTrue();
+    describe('onSearchTermChange', () => {
+      let statisticsData: DisplayedUserStatisticsRow[] = [];
+
+      function addStatisticsData(
+        userId: string,
+        device: string,
+        displayedModel: string,
+        isNative: boolean,
+        platform: string,
+        translatedCharCount: number,
+        targetLanguages: string[],
+        formattedLastActivityDate: string,
+        isCurrentUser = false
+      ) {
+        const createdAt = new Date('2026-03-10');
+        const lastUpdated = new Date('2026-03-15');
+
+        statisticsData.push({
+          userId,
+          userName: 'User Name for ' + userId,
+          userType: userId.startsWith('P') ? 'P' : 'U',
+          userCreatedAt: createdAt,
+          userLastUpdated: lastUpdated,
+          device,
+          isNative,
+          deviceInfo: {
+            userAgent: 'User Agent',
+            platform: platform,
+            language: 'de',
+            appVersion: {
+              major: 1,
+              minor: 0,
+              date: '2026-03-01',
+            },
+          },
+          displayedPlatform: platform,
+          displayedModel,
+          translatedCharCount,
+          targetLanguages,
+          lastTranslationDate: translatedCharCount > 0 ? lastUpdated : null,
+          formattedLastActivityDate,
+          isCurrentUser,
+        });
+      }
+
+      function createStatiticsData(): DisplayedUserStatisticsRow[] {
+        statisticsData = [];
+        addStatisticsData(
+          'U-1',
+          'Device 1',
+          'Model 1',
+          false,
+          'web-desktop',
+          1000,
+          ['en', 'nl'],
+          '2026-03-15'
+        );
+        addStatisticsData(
+          'U-2',
+          'Device 1',
+          'Model 1',
+          false,
+          'web-mobile',
+          2000,
+          ['en', 'nl', 'fr'],
+          '2026-03-15'
+        );
+        addStatisticsData(
+          'U-4',
+          'Device 3',
+          'Model 3',
+          false,
+          'web-mobile',
+          0,
+          [],
+          '2026-03-10'
+        );
+        addStatisticsData(
+          'P-1',
+          'Device 4',
+          'Model 4',
+          true,
+          'native',
+          3000,
+          ['en', 'nl', 'fr', 'es', 'it'],
+          '2026-03-15'
+        );
+        addStatisticsData(
+          'P-2',
+          'Device 4',
+          'Model 4',
+          true,
+          'web-desktop',
+          0,
+          [],
+          '2026-03-10'
+        );
+        return statisticsData;
+      }
+
+      beforeEach(() => {
+        statisticsData = createStatiticsData();
+        component['statisticsData'] = {
+          displayedUserStatistics: statisticsData,
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
       });
 
-      it('should return false if current user is different from the provided user', () => {
-        const user = { id: '123' };
-        component.currentUserUid = '456';
-        expect(component.isCurrentUser(user.id)).toBeFalse();
+      it('should call applyUserStatsFilter when onSearchTermChange is used', () => {
+        const spy = spyOn<any>(
+          component,
+          'applyUserStatsFilter'
+        ).and.callThrough();
+
+        component.onSearchTermChange('U-1');
+
+        expect(spy).toHaveBeenCalled();
+        expect(component.searchTerm).toBe('U-1');
+      });
+
+      it('should show all records if no filters are applied', () => {
+        const expectedIds = statisticsData.map((r) => r.userId);
+
+        component.onSearchTermChange('');
+        expect(component.filteredUserStatsRows.length).toBe(5);
+        expect(component.filteredUserStatsRows.map((r) => r.userId)).toEqual(
+          expectedIds
+        );
+
+        component.onSearchTermChange(undefined);
+        expect(component.filteredUserStatsRows.length).toBe(5);
+        expect(component.filteredUserStatsRows.map((r) => r.userId)).toEqual(
+          expectedIds
+        );
+
+        component.onSearchTermChange(null);
+        expect(component.filteredUserStatsRows.length).toBe(5);
+        expect(component.filteredUserStatsRows.map((r) => r.userId)).toEqual(
+          expectedIds
+        );
+      });
+
+      it('should filter by user id', () => {
+        component.onSearchTermChange('U-1');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['U-1']
+        );
+      });
+
+      it('should filter by user name', () => {
+        component.onSearchTermChange('User Name for U-1');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['U-1']
+        );
+      });
+
+      it('should filter by user type user', () => {
+        component.onSearchTermChange('U-');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['U-1', 'U-2', 'U-4']
+        );
+      });
+
+      it('should filter by user type programmer', () => {
+        component.onSearchTermChange('P-');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-1', 'P-2']
+        );
+      });
+
+      it('should filter by platform', () => {
+        component.onSearchTermChange('web-desktop');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['U-1', 'P-2']
+        );
+      });
+
+      it('should filter by model', () => {
+        component.onSearchTermChange('Model 1');
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['U-1', 'U-2']
+        );
+      });
+
+      it('should clear filtered rows when statisticsData is null', () => {
+        component.statisticsData = null;
+        expect(component.filteredUserStatsRows).toEqual([]);
+
+        component.onSearchTermChange('test');
+        expect(component.filteredUserStatsRows).toEqual([]);
+      });
+
+      it('should clear filtered rows when statisticsData is undefined', () => {
+        component.statisticsData = undefined as unknown as StatisticsData;
+        expect(component.filteredUserStatsRows).toEqual([]);
+
+        component.onSearchTermChange('test');
+        expect(component.filteredUserStatsRows).toEqual([]);
+      });
+
+      it('should filter rows which have at least 3 target languages with >> operator', () => {
+        component.onSearchTermChange('>>2');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-1', 'U-2']
+        );
+      });
+
+      it('should filter rows which have less or equal to 3 target languages with << operator', () => {
+        component.onSearchTermChange('<<4');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-2', 'U-1', 'U-2', 'U-4']
+        );
+      });
+
+      it('should filter rows which have not target languages with << operator', () => {
+        component.onSearchTermChange('<<1');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-2', 'U-4']
+        );
+      });
+
+      it('should filter rows which have at least 2000 translated chars with > operator', () => {
+        component.onSearchTermChange('>1999');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-1', 'U-2']
+        );
+      });
+
+      it('should filter rows which have less or equal to 1000 translated chars with < operator', () => {
+        component.onSearchTermChange('<1001');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-2', 'U-1', 'U-4']
+        );
+      });
+
+      it('should filter rows which have no translated chars with < operator', () => {
+        component.onSearchTermChange('<1');
+        component['filteredUserStatsRows'].sort((a, b) =>
+          a.userId.localeCompare(b.userId)
+        );
+        expect(component['filteredUserStatsRows'].map((r) => r.userId)).toEqual(
+          ['P-2', 'U-4']
+        );
       });
     });
 
@@ -1225,6 +1319,102 @@ describe('GetStatisticsComponent', () => {
       });
     });
 
+    describe('JSON raw data section - details toggles', () => {
+      let rawDebugRoot: HTMLDetailsElement;
+      let displayedValuesDetail: HTMLDetailsElement;
+      let translationStatsDetail: HTMLDetailsElement;
+      let userMappingDetail: HTMLDetailsElement;
+      let programmerDevicesDetail: HTMLDetailsElement;
+
+      function toggle(el: HTMLDetailsElement, open: boolean): void {
+        el.open = open;
+        el.dispatchEvent(new Event('toggle'));
+        fixture.detectChanges();
+      }
+
+      beforeEach(() => {
+        component.isLoading = false;
+        component.isProgrammerDevice = true;
+        component.displayMode = DisplayMode.Programmer;
+        component.statisticsData = {
+          displayedUserStatistics: [],
+          userTranslationStatistics: [],
+          users: [],
+          programmerDeviceUIDs: [],
+        };
+
+        component.showRawDebugDetails = false;
+        component.showDisplayedValuesDetail = false;
+        component.showTranslationStatisticsDetail = false;
+        component.showUserMappingDetail = false;
+        component.showProgrammerDevicesDetail = false;
+
+        fixture.detectChanges();
+
+        const details = fixture.nativeElement.querySelectorAll(
+          '.debug-section details'
+        ) as NodeListOf<HTMLDetailsElement>;
+
+        rawDebugRoot = details[0];
+        displayedValuesDetail = details[1];
+        translationStatsDetail = details[2];
+        userMappingDetail = details[3];
+        programmerDevicesDetail = details[4];
+      });
+
+      it('should flip only displayed values boolean when its details is toggled', () => {
+        toggle(displayedValuesDetail, true);
+
+        expect(component.showDisplayedValuesDetail).toBeTrue();
+        expect(component.showTranslationStatisticsDetail).toBeFalse();
+        expect(component.showUserMappingDetail).toBeFalse();
+        expect(component.showProgrammerDevicesDetail).toBeFalse();
+      });
+
+      it('should flip only translation statistics boolean when its details is toggled', () => {
+        toggle(translationStatsDetail, true);
+
+        expect(component.showDisplayedValuesDetail).toBeFalse();
+        expect(component.showTranslationStatisticsDetail).toBeTrue();
+        expect(component.showUserMappingDetail).toBeFalse();
+        expect(component.showProgrammerDevicesDetail).toBeFalse();
+      });
+
+      it('should flip only user mapping boolean when its details is toggled', () => {
+        toggle(userMappingDetail, true);
+
+        expect(component.showDisplayedValuesDetail).toBeFalse();
+        expect(component.showTranslationStatisticsDetail).toBeFalse();
+        expect(component.showUserMappingDetail).toBeTrue();
+        expect(component.showProgrammerDevicesDetail).toBeFalse();
+      });
+
+      it('should flip only programmer devices boolean when its details is toggled', () => {
+        toggle(programmerDevicesDetail, true);
+
+        expect(component.showDisplayedValuesDetail).toBeFalse();
+        expect(component.showTranslationStatisticsDetail).toBeFalse();
+        expect(component.showUserMappingDetail).toBeFalse();
+        expect(component.showProgrammerDevicesDetail).toBeTrue();
+      });
+
+      it('collapsing parent should not force nested booleans to true', () => {
+        toggle(rawDebugRoot, true);
+        expect(component.showRawDebugDetails).toBeTrue();
+        expect(component.showDisplayedValuesDetail).toBeFalse();
+        expect(component.showTranslationStatisticsDetail).toBeFalse();
+        expect(component.showUserMappingDetail).toBeFalse();
+        expect(component.showProgrammerDevicesDetail).toBeFalse();
+
+        toggle(rawDebugRoot, false);
+        expect(component.showRawDebugDetails).toBeFalse();
+        expect(component.showDisplayedValuesDetail).toBeFalse();
+        expect(component.showTranslationStatisticsDetail).toBeFalse();
+        expect(component.showUserMappingDetail).toBeFalse();
+        expect(component.showProgrammerDevicesDetail).toBeFalse();
+      });
+    });
+
     describe('current user selection', () => {
       beforeEach(() => {
         component.isLoading = false;
@@ -1278,7 +1468,6 @@ describe('GetStatisticsComponent', () => {
       });
 
       it('should use creationDate when lastTranslationDate is null', () => {
-        utilsServiceSpy.formatDateISO.calls.reset();
         fixture.detectChanges();
 
         const formattedDates = utilsServiceSpy.formatDateISO.calls
@@ -1372,10 +1561,7 @@ describe('GetStatisticsComponent', () => {
 
       it('should hide the language-count column when display mode is User', () => {
         component.displayMode = DisplayMode.User;
-        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
-          value: false,
-          configurable: true,
-        });
+        (component as any).isPortrait = false;
 
         fixture.detectChanges();
 
@@ -1428,10 +1614,7 @@ describe('GetStatisticsComponent', () => {
           programmerDeviceUIDs: [],
         };
 
-        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
-          value: false,
-          configurable: true,
-        });
+        (component as any).isPortrait = false;
       });
 
       it('should display lastTranslationDate when available', () => {
@@ -1469,15 +1652,12 @@ describe('GetStatisticsComponent', () => {
         expect(translationDateCell.textContent.trim()).toBe('2026-03-10');
       });
 
-      it('should hide translation-date column when hideColumn is true', () => {
+      it('should hide translation-date column when portrait mode', () => {
         spyOn(component, 'getFormatDateTime').and.returnValue('2026-03-15');
 
         component.statisticsData = statisticData;
         component.displayMode = DisplayMode.User;
-        Object.defineProperty(utilsServiceSpy, 'isPortrait', {
-          value: true,
-          configurable: true,
-        });
+        (component as any).isPortrait = true;
 
         fixture.detectChanges();
 

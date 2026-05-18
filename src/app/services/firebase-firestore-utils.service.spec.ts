@@ -43,6 +43,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       'getPlatform',
       'getModel',
       'getCurrentMonth',
+      'formatDateTimeISO'
     ]);
 
     firestoreServiceMock = jasmine.createSpyObj(
@@ -55,6 +56,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         'getUsers',
         'getProgrammerDeviceUIDs',
         'init',
+        'getCurrentUserId'
       ],
       {
         programmerDeviceRefresh$: of(void 0),

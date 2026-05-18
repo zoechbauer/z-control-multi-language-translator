@@ -27,7 +27,10 @@ export interface DisplayedUserStatistics {
   targetLanguages: string[];
   lastTranslationDate: Date | null;
 }
-
+export interface DisplayedUserStatisticsRow extends DisplayedUserStatistics {
+  formattedLastActivityDate: string;
+  isCurrentUser: boolean;
+};
 export interface UserStatisticsSummary {
   category: string;
   name: string;

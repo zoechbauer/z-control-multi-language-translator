@@ -176,7 +176,7 @@
       <div *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer">
         <ion-searchbar
           [value]="searchTerm"
-          (ionInput)="searchTerm = $any($event.detail).value || ''"
+          (ionInput)="onSearchTermChange($any($event.detail).value)"
         >
         </ion-searchbar>
         <div class="searchbar-info">
@@ -208,11 +208,11 @@
         </ion-row>
         <ion-row
           class="detail-row"
-          *ngFor="let userStat of filteredUserStats"
+          *ngFor="let userStat of filteredUserStatsRows; trackBy: trackByUserId"
           [class.user-contingent-exceeded]="
             userStat.translatedCharCount >= userLimit
           "
-          [class.my-device]="isCurrentUser(userStat.userId)"
+          [class.my-device]="userStat.isCurrentUser"
         >
           <ion-col>{{ userStat.userName }}</ion-col>
           <ion-col class="used-chars">{{
@@ -234,9 +234,7 @@
             >
           </ion-col>
           <ion-col *ngIf="!hideColumn" class="translation-date">{{
-            userStat.lastTranslationDate
-              ? getFormatDateTime(userStat.lastTranslationDate)
-              : getFormatDateTime(userStat.userCreatedAt)
+            userStat.formattedLastActivityDate
           }}</ion-col>
           <ion-col size="1">
             <ion-button
@@ -259,29 +257,51 @@
       *ngIf="isProgrammerDevice && displayMode === DisplayMode.Programmer"
     >
       <hr />
-      <details>
+      <details #rawDebugRoot (toggle)="showRawDebugDetails = rawDebugRoot.open">
         <summary>
           {{ getSectionHeader("SETTINGS.STATISTICS.LABEL.JSON_DATA") }}
         </summary>
 
-        <details>
+        <details
+          #displayedValuesDetail
+          (toggle)="showDisplayedValuesDetail = displayedValuesDetail.open"
+        >
           <summary>Displayed values</summary>
-          <pre>{{ statisticsData?.displayedUserStatistics | json }}</pre>
+          <pre *ngIf="showDisplayedValuesDetail">{{
+            statisticsData?.displayedUserStatistics | json
+          }}</pre>
         </details>
 
-        <details>
+        <details
+          #translationStatsDetail
+          (toggle)="
+            showTranslationStatisticsDetail = translationStatsDetail.open
+          "
+        >
           <summary>Translation Statistics</summary>
-          <pre>{{ statisticsData?.userTranslationStatistics | json }}</pre>
+          <pre *ngIf="showTranslationStatisticsDetail">{{
+            statisticsData?.userTranslationStatistics | json
+          }}</pre>
         </details>
 
-        <details>
+        <details
+          #userMappingDetail
+          (toggle)="showUserMappingDetail = userMappingDetail.open"
+        >
           <summary>User Mapping</summary>
-          <pre>{{ statisticsData?.users | json }}</pre>
+          <pre *ngIf="showUserMappingDetail">{{
+            statisticsData?.users | json
+          }}</pre>
         </details>
 
-        <details>
+        <details
+          #programmerDevicesDetail
+          (toggle)="showProgrammerDevicesDetail = programmerDevicesDetail.open"
+        >
           <summary>Programmer Devices</summary>
-          <pre>{{ statisticsData?.programmerDeviceUIDs | json }}</pre>
+          <pre *ngIf="showProgrammerDevicesDetail">{{
+            statisticsData?.programmerDeviceUIDs | json
+          }}</pre>
         </details>
       </details>
       <hr />

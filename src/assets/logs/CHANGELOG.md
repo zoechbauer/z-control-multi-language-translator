@@ -2,6 +2,17 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.15] – YYYY-MM-DD
+
+### 🚀 Improvements
+
+- Improved the statistics page on mobile devices so switching to landscape mode is noticeably faster and smoother.
+
+### 🔧 Internal
+
+- Optimized statistics rendering by caching orientation state, precomputing displayed statistics rows, and loading debug JSON sections only when expanded.
+- Updated unit tests for statistics filtering, cached orientation behavior, and debug-section toggles. Total: 676 tests, 99.4% frontend coverage.
+
 ## [1.14] – 2026-05-08
 
 ### 🚀 Improvements
