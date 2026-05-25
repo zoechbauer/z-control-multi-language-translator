@@ -2,6 +2,14 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.16] – YYYY-MM-DD
+
+### 🔧 Internal
+
+- Improved backend handling for statistics in multi-app setups: the app now sends an appId, and the backend automatically stores data in the correct Firestore collection.
+- Improved reliability of backend requests by validating appId consistently and returning clear errors for unsupported appId values.
+- Updated tests for the new appId parameters so the app remains stable after the refactor.
+
 ## [1.15] – 2026-05-18
 
 ### 🚀 Improvements

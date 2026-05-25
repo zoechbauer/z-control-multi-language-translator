@@ -16,6 +16,7 @@ import {
   SecureTranslateData,
   TranslationResult,
 } from '../shared/app.interfaces';
+import { FireStoreConstants } from '../shared/app.constants';
 
 interface GoogleTranslateResponse {
   data: {
@@ -59,6 +60,7 @@ export class TranslationGoogleTranslateService {
     try {
       const callable = this.createSecureTranslateCallable();
       const response = await callable({
+        appId: FireStoreConstants.APP_ID,
         text,
         baseLang,
         selectedLanguages,

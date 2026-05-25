@@ -39,10 +39,11 @@ export class AppConstants {
 // src/app/shared/app.constants.ts
 
 export class FireStoreConstants {
-  static readonly COLLECTION_TRANSLATIONS = 'MLT_translations_statistics';
+  static readonly COLLECTION_NAME = 'MLT_translations_statistics';
+   static readonly APP_ID = 'translator';
 
   static readonly getUserMappingUsersCollectionPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/users`;
+    return `${FireStoreConstants.COLLECTION_NAME}/userMapping/users`;
   };
 
   static readonly getUsersCollectionPath = (selectedMonth: string | undefined = undefined) => {
@@ -50,7 +51,7 @@ export class FireStoreConstants {
     if (selectedMonth) {
       month = selectedMonth;
     }
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/users`;
+    return `${FireStoreConstants.COLLECTION_NAME}/${month}/users`;
   };
 
   static readonly getMetaTotalCharsDocumentPath = (selectedMonth: string | undefined = undefined) => {
@@ -58,7 +59,7 @@ export class FireStoreConstants {
     if (selectedMonth) {
       month = selectedMonth;
     }
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/meta/totalChars`;
+    return `${FireStoreConstants.COLLECTION_NAME}/${month}/meta/totalChars`;
   };
 
   static readonly getMetaContingentDataDocumentPath = (selectedMonth: string | undefined = undefined) => {
@@ -66,7 +67,7 @@ export class FireStoreConstants {
     if (selectedMonth) {
       month = selectedMonth;
     }
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/${month}/meta/contingentData`;
+    return `${FireStoreConstants.COLLECTION_NAME}/${month}/meta/contingentData`;
   };
 
   /**

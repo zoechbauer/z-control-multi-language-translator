@@ -238,6 +238,7 @@ describe('isContingentForUserExceeded', () => {
 
 describe('validateContingentOrThrow', () => {
   const userId = 'testUserId';
+  const collection = 'testCollection';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -264,7 +265,7 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(false);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId, collection)
     ).resolves.toBeUndefined();
 
     expect(logSpy).toHaveBeenCalledWith(
@@ -272,7 +273,7 @@ describe('validateContingentOrThrow', () => {
     );
     expect(
       FirebaseFirestoreService as unknown as { mock: { instances: any[] } }
-    ).toHaveBeenCalledWith(userId);
+    ).toHaveBeenCalledWith(collection, userId);
   });
 
   it('throws if contingent is exceeded', async () => {
@@ -291,7 +292,7 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(true);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).rejects.toThrow('Translation contingent exceeded');
   }, 10000);
 
@@ -311,7 +312,7 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(false);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).resolves.toBeUndefined();
   });
 });

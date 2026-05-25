@@ -4,6 +4,7 @@ export interface TextToSpeechValues {
 }
 
 export interface SecureTranslateData {
+  appId: string;
   text: string;
   baseLang: string;
   selectedLanguages: string[];

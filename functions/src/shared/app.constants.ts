@@ -1,34 +1,44 @@
+import { HttpsError } from 'firebase-functions/v2/https';
+
 // IMPORTANT: Do not change the path of FireStoreConstants as it is used in both the functions and the Angular app.
 // functions/src/shared/app.constants.ts
 // src/app/shared/app.constants.ts
 
 export class FireStoreConstants {
-  static readonly COLLECTION_TRANSLATIONS = 'MLT_translations_statistics';
+  static readonly COLLECTION_NAME = 'MLT_translations_statistics';
 
-  static readonly getUserMappingUsersCollectionPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/users`;
+  private static readonly APP_TO_COLLECTION: Record<string, string> = {
+    translator: FireStoreConstants.COLLECTION_NAME,
   };
 
-  static readonly getUserMappingProgrammerDevicesCollectionPath = () => {
-    return `${FireStoreConstants.COLLECTION_TRANSLATIONS}/userMapping/programmerDevices`;
+  static readonly getCollectionByAppId = (appId: string): string => {
+    const collection = FireStoreConstants.APP_TO_COLLECTION[appId];
+    if (!collection) {
+      throw new HttpsError('invalid-argument', `Unsupported appId: ${appId}`);
+    }
+    return collection;
   };
 
-  static readonly getUsersCollectionPath = () => {
-    return `${
-      FireStoreConstants.COLLECTION_TRANSLATIONS
-    }/${this.currentYearMonthPath()}/users`;
+  static readonly getUserMappingUsersCollectionPath = (collection: string) => {
+    return `${collection}/userMapping/users`;
   };
 
-  static readonly getMetaTotalCharsDocumentPath = () => {
-    return `${
-      FireStoreConstants.COLLECTION_TRANSLATIONS
-    }/${this.currentYearMonthPath()}/meta/totalChars`;
+  static readonly getUserMappingProgrammerDevicesCollectionPath = (
+    collection: string
+  ) => {
+    return `${collection}/userMapping/programmerDevices`;
   };
 
-  static readonly getMetaContingentDataDocumentPath = () => {
-    return `${
-      FireStoreConstants.COLLECTION_TRANSLATIONS
-    }/${this.currentYearMonthPath()}/meta/contingentData`;
+  static readonly getUsersCollectionPath = (collection: string) => {
+    return `${collection}/${this.currentYearMonthPath()}/users`;
+  };
+
+  static readonly getMetaTotalCharsDocumentPath = (collection: string) => {
+    return `${collection}/${this.currentYearMonthPath()}/meta/totalChars`;
+  };
+
+  static readonly getMetaContingentDataDocumentPath = (collection: string) => {
+    return `${collection}/${this.currentYearMonthPath()}/meta/contingentData`;
   };
 
   /**

@@ -8,9 +8,11 @@ import {
 describe('FirebaseFirestoreService', () => {
   let FirebaseFirestoreService: any;
   let mockIncrement: any;
+  let collection: string;
 
   beforeEach(async () => {
     vi.resetModules();
+    collection = 'testCollection';
 
     mockIncrement = vi.fn((n: number) => ({ __incrementBy: n }));
 
@@ -36,10 +38,11 @@ describe('FirebaseFirestoreService', () => {
       expect(FirebaseFirestoreService).toBeDefined();
     });
 
-    it('should create an instance with userId', () => {
-      const service = new FirebaseFirestoreService('testUserId');
+    it('should create an instance with userId and collection', () => {
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       expect(service).toBeInstanceOf(FirebaseFirestoreService);
       expect(service.userId).toBe('testUserId');
+      expect(service.collection).toBe(collection);
     });
 
     it('should have all expected methods defined', () => {
@@ -77,7 +80,7 @@ describe('FirebaseFirestoreService', () => {
 
       expect(data, 'data').toEqual(mockDocData);
       expect(mockDoc, 'mockDoc current month').toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -96,7 +99,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc, 'mockDoc contingentData').toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -192,7 +195,7 @@ describe('FirebaseFirestoreService', () => {
 
       expect(totalCharCount).toEqual(mockDocData.charCount);
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -210,7 +213,7 @@ describe('FirebaseFirestoreService', () => {
 
       expect(totalCharCount).toEqual(0);
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -233,7 +236,7 @@ describe('FirebaseFirestoreService', () => {
         expect.any(Error)
       );
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -253,7 +256,7 @@ describe('FirebaseFirestoreService', () => {
       await service.createMissingContingentData();
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledWith(
@@ -277,7 +280,7 @@ describe('FirebaseFirestoreService', () => {
       await service.createMissingContingentData();
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalledWith();
       expect(mockSet).not.toHaveBeenCalled();
@@ -301,7 +304,7 @@ describe('FirebaseFirestoreService', () => {
         expect.any(Error)
       );
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -462,7 +465,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -500,7 +503,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -533,7 +536,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -575,7 +578,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -613,7 +616,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -640,7 +643,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toEqual(mockCollectionData);
     });
@@ -659,7 +662,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toEqual([]);
       expect(mockConsoleLog).toHaveBeenCalledWith(
@@ -711,7 +714,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(true);
     });
@@ -730,7 +733,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(false);
     });
@@ -749,7 +752,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(false);
       expect(mockConsoleLog).toHaveBeenCalledWith(
@@ -773,7 +776,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(mockConsoleError).toHaveBeenCalledWith(
         'Error checking if device is a programmer device from Firestore:',
@@ -823,7 +826,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo, isNative);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -863,7 +866,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -903,7 +906,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo, isNative);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -961,7 +964,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -1007,7 +1010,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -1049,7 +1052,7 @@ describe('FirebaseFirestoreService', () => {
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).not.toHaveBeenCalled();
@@ -1161,7 +1164,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await (service as any).countUser(UserType.Programmer);
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingUsersCollectionPath()
+        FireStoreConstants.getUserMappingUsersCollectionPath(collection)
       );
       expect(mockWhere).toHaveBeenCalledWith('type', '==', UserType.Programmer);
       expect(result).toBe(3);
@@ -1178,7 +1181,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await (service as any).countUser(UserType.User);
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingUsersCollectionPath()
+        FireStoreConstants.getUserMappingUsersCollectionPath(collection)
       );
       expect(mockWhere).toHaveBeenCalledWith('type', '==', UserType.User);
       expect(result).toBe(0);
@@ -1290,7 +1293,7 @@ describe('FirebaseFirestoreService', () => {
       await (service as any).updateUserCharCount(count, selectedLanguages);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUsersCollectionPath()}/${service.userId}`
+        `${FireStoreConstants.getUsersCollectionPath(collection)}/${service.userId}`
       );
       expect(mockIncrement).toHaveBeenCalledWith(count);
       expect(mockSet).toHaveBeenCalledWith(
@@ -1317,7 +1320,7 @@ describe('FirebaseFirestoreService', () => {
       await (service as any).updateTotalCharCount(count);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockIncrement).toHaveBeenCalledWith(count);
       expect(mockSet).toHaveBeenCalledWith(

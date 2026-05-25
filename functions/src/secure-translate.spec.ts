@@ -42,6 +42,7 @@ import { SecureTranslateData } from './shared/firebase-firestore.interfaces.js';
 describe('secureTranslate', () => {
   const USER_ID = 'user1';
   const VALID_DATA: SecureTranslateData = {
+    appId: 'MLT_APP',
     text: 'Hallo',
     baseLang: 'de',
     selectedLanguages: ['en'],
@@ -85,31 +86,27 @@ describe('secureTranslate', () => {
     const invalidCases: Array<{ name: string; data: SecureTranslateData }> = [
       {
         name: 'empty text and base language and empty selected languages',
-        data: { text: '', baseLang: '', selectedLanguages: [] },
+        data: { appId: 'MLT_APP', text: '', baseLang: '', selectedLanguages: [] },
       },
       {
         name: 'missing base language',
-        data: { text: 'Hallo', baseLang: '', selectedLanguages: [] },
+        data: { appId: 'MLT_APP', text: 'Hallo', baseLang: '', selectedLanguages: [] },
       },
       {
         name: 'empty selected languages',
-        data: { text: 'Hallo', baseLang: 'de', selectedLanguages: [] },
+        data: { appId: 'MLT_APP', text: 'Hallo', baseLang: 'de', selectedLanguages: [] },
       },
       {
         name: 'missing base language with selected language present',
-        data: { text: 'Hallo', baseLang: '', selectedLanguages: ['en'] },
+        data: { appId: 'MLT_APP', text: 'Hallo', baseLang: '', selectedLanguages: ['en'] },
       },
       {
         name: 'missing text',
-        data: { text: '', baseLang: 'de', selectedLanguages: [] },
+        data: { appId: 'MLT_APP', text: '', baseLang: 'de', selectedLanguages: [] },
       },
       {
         name: 'selectedLanguages is not an array',
-        data: {
-          text: 'Hallo',
-          baseLang: 'de',
-          selectedLanguages: 'en' as unknown as string[],
-        },
+        data: { appId: 'MLT_APP', text: 'Hallo', baseLang: 'de', selectedLanguages: 'en' as unknown as string[] },
       },
       {
         name: 'payload object is empty',
@@ -117,11 +114,11 @@ describe('secureTranslate', () => {
       },
       {
         name: 'selectedLanguages is missing',
-        data: { text: 'Hallo', baseLang: 'de' } as SecureTranslateData,
+        data: { appId: 'MLT_APP', text: 'Hallo', baseLang: 'de' } as SecureTranslateData,
       },
       {
         name: 'baseLang and selectedLanguages are missing',
-        data: { text: 'Hallo' } as SecureTranslateData,
+        data: { appId: 'MLT_APP', text: 'Hallo' } as SecureTranslateData,
       },
     ];
 
@@ -159,7 +156,7 @@ describe('secureTranslate', () => {
       );
 
       await expect(
-        invoke({ text, baseLang: 'de', selectedLanguages }, USER_ID)
+        invoke({ appId: 'MLT_APP', text, baseLang: 'de', selectedLanguages }, USER_ID)
       ).rejects.toThrow();
 
       expect(vi.mocked(FirebaseFirestoreService)).toHaveBeenCalledWith(USER_ID);
@@ -211,7 +208,7 @@ describe('secureTranslate', () => {
       vi.stubGlobal('fetch', fetchMock);
 
       await expect(
-        invoke({ text, baseLang, selectedLanguages }, USER_ID)
+        invoke({ appId: 'MLT_APP', text, baseLang, selectedLanguages }, USER_ID)
       ).resolves.toEqual({
         translations: {
           en: 'Translated Hallo from de to en',
@@ -317,6 +314,7 @@ describe('secureTranslate', () => {
       await expect(
         invoke(
           {
+            appId: 'MLT_APP',
             text: 'Hallo',
             baseLang: 'de',
             selectedLanguages: ['en', 'fr', 'nl'],

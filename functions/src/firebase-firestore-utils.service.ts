@@ -57,8 +57,11 @@ export class FirebaseFirestoreUtilsService {
   /**
    * Validates the contingent for the user and throws if exceeded or not found.
    */
-  static async validateContingentOrThrow(userId: string): Promise<void> {
-    const firestoreService = new FirebaseFirestoreService(userId);
+  static async validateContingentOrThrow(
+    collection: string,
+    userId: string
+  ): Promise<void> {
+    const firestoreService = new FirebaseFirestoreService(collection, userId);
     let flags = await firestoreService.readContingentData();
     if (!flags) {
       // could occur on change to next month

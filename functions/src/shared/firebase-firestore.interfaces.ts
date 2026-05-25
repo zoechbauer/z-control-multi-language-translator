@@ -8,6 +8,7 @@ export interface FirestoreContingentData {
 }
 
 export interface SecureTranslateData {
+  appId: string;
   text: string;
   baseLang: string;
   selectedLanguages: string[];
@@ -33,3 +34,17 @@ export interface ProgrammerDeviceUID {
   userId: string;
   name: string;
 }
+
+export interface AddUserData {
+  appId: string;
+  userId?: string;
+  programmerDeviceUIDs: ProgrammerDeviceUID[];
+  deviceInfo: DeviceInfo;
+  isNative?: boolean;
+};
+
+export interface UpdateProgrammerDeviceUIDsData {
+  appId: string;
+  userId?: string;
+  programmerDeviceUIDs: ProgrammerDeviceUID[];
+};

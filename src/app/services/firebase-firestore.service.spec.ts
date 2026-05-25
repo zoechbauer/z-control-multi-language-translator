@@ -255,7 +255,7 @@ describe('FirebaseFirestoreService', () => {
       expect(result).toEqual({});
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'Error reading contingent data.',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     });
   });
@@ -299,7 +299,7 @@ describe('FirebaseFirestoreService', () => {
       expect(callableSpy).toHaveBeenCalledWith({});
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'Error creating missing contingent data.',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     });
   });
@@ -908,7 +908,7 @@ describe('FirebaseFirestoreService', () => {
       );
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICE_STATUS',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       expect(result).toBeFalse();
     });
@@ -955,7 +955,7 @@ describe('FirebaseFirestoreService', () => {
       );
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICES',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       expect(result).toEqual([]);
     });
@@ -1031,7 +1031,7 @@ describe('FirebaseFirestoreService', () => {
       );
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'TRANSLATE.CARD_RESULTS.TOAST.ERROR_UPDATING_PROGRAMMER_DEVICES',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     });
 
@@ -1148,7 +1148,7 @@ describe('FirebaseFirestoreService', () => {
       );
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'TRANSLATE.CARD_RESULTS.TOAST.ERROR_ADDING_USER',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     });
   });
@@ -1279,7 +1279,7 @@ describe('FirebaseFirestoreService', () => {
       );
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'TRANSLATE.CARD_RESULTS.TOAST.ERROR_LOADING_USERS',
-        ToastAnchor.SETTINGS_PAGE
+        ToastAnchor.SettingsPage
       );
       expect(result).toEqual([]);
     });
@@ -1533,7 +1533,7 @@ describe('FirebaseFirestoreService', () => {
         );
         expect(toastServiceMock.showToast).toHaveBeenCalledWith(
           'Error creating missing contingent data.',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
       });
     });

@@ -79,6 +79,6 @@ export class ToastService {
       return undefined; // Do not set anchor on desktop
     }
     // On mobile devices, display toast below the header prevent it from being obscured by the header bar.
-    return anchorId || ToastAnchor.SETTINGS_PAGE;
+    return anchorId || ToastAnchor.SettingsPage;
   }
 }
