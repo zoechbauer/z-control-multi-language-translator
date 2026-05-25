@@ -16,7 +16,7 @@ export interface SecureTranslateData {
 export interface TranslationResult {
   translations: Record<string, string>;
 }
-export interface CharCountResult {
+export interface CharCountAndTargetLangsResult {
   charCount: number;
   targetLanguages: string[];
 }

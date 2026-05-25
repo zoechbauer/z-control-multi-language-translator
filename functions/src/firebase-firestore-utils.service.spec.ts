@@ -208,7 +208,7 @@ describe('isContingentForUserExceeded', () => {
       maxFreeTranslateCharsPerMonthForUser: 10_000,
     } as any;
     const firestoreServiceMock = {
-      getCharCountForUser: async () => ({ charCount: 10_000 }),
+      getCharCountAndTargetLangsForUser: async () => ({ charCount: 10_000 }),
     };
     const service = new FirebaseFirestoreUtilsService(
       firestoreServiceMock as any
@@ -223,7 +223,7 @@ describe('isContingentForUserExceeded', () => {
   it('returns true if user contingent data is undefined', async () => {
     const firestoreContingentData = {};
     const firestoreServiceMock = {
-      getCharCountForUser: async () => ({ charCount: 10_000 }),
+      getCharCountAndTargetLangsForUser: async () => ({ charCount: 10_000 }),
     };
     const service = new FirebaseFirestoreUtilsService(
       firestoreServiceMock as any
@@ -255,7 +255,7 @@ describe('validateContingentOrThrow', () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce({ any: 'flags' });
       this.createMissingContingentData = vi.fn().mockResolvedValue(undefined);
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 
@@ -282,7 +282,7 @@ describe('validateContingentOrThrow', () => {
     ) {
       this.readContingentData = vi.fn().mockResolvedValue({ any: 'flags' });
       this.createMissingContingentData = vi.fn();
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 
@@ -302,7 +302,7 @@ describe('validateContingentOrThrow', () => {
     ) {
       this.readContingentData = vi.fn().mockResolvedValue({ any: 'flags' });
       this.createMissingContingentData = vi.fn();
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 

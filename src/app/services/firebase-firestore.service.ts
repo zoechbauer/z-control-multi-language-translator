@@ -29,7 +29,7 @@ import {
   UserType,
   ProgrammerDeviceUID,
   DeviceInfo,
-  CharCountResult,
+  CharCountAndTargetLangsResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
 import { AllMonthsOption, ToastAnchor } from '../shared/enums';
@@ -494,7 +494,7 @@ export class FirebaseFirestoreService {
    * Retrieves the current character count and last selected target languages for the authenticated user from Firestore.
    * @returns Promise resolving to the user's current character count and target languages.
    */
-  async getCharCountForUser(): Promise<CharCountResult> {
+  async getCharCountAndTargetLangsForUser(): Promise<CharCountAndTargetLangsResult> {
     try {
       if (!this.user) {
         return { charCount: 0, targetLanguages: [] };
@@ -505,7 +505,7 @@ export class FirebaseFirestoreService {
         );
         return this.getFirestoreDocSnapshot(usageRef);
       });
-      const charCountResult: CharCountResult = usageSnap.exists()
+      const charCountResult: CharCountAndTargetLangsResult = usageSnap.exists()
         ? {
             charCount: (usageSnap.data() as any)['charCount'] || 0,
             targetLanguages: (usageSnap.data() as any)['targetLanguages'] || [],

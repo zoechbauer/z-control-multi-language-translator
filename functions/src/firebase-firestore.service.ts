@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import { FireStoreConstants, UserType } from './shared/app.constants.js';
 import {
-  CharCountResult,
+  CharCountAndTargetLangsResult,
   DeviceInfo,
   FirestoreContingentData,
   ProgrammerDeviceUID,
@@ -42,7 +42,7 @@ export class FirebaseFirestoreService {
    * @returns Promise resolving to an object with charCount and targetLanguages array.
    * @throws Error if the document read operation fails.
    */
-  async getCharCountForUser(): Promise<CharCountResult> {
+  async getCharCountAndTargetLangsForUser(): Promise<CharCountAndTargetLangsResult> {
     const doc = await this.db
       .doc(`${FireStoreConstants.getUsersCollectionPath(this.collection)}/${this.userId}`)
       .get();

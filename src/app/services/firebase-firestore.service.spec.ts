@@ -304,7 +304,7 @@ describe('FirebaseFirestoreService', () => {
     });
   });
 
-  describe('getCharCountForUser', () => {
+  describe('getCharCountAndTargetLangsForUser', () => {
     it('should return character count and target languages for user when document exist', async () => {
       (service as any).user = { uid: 'test-uid' } as any;
       const expectedResult = {
@@ -319,7 +319,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => expectedResult,
       } as any);
 
-      const result = await service.getCharCountForUser();
+      const result = await service.getCharCountAndTargetLangsForUser();
 
       expect((service as any).getFirestoreDoc).toHaveBeenCalled();
       expect((service as any).getFirestoreDocSnapshot).toHaveBeenCalledWith(
@@ -330,7 +330,7 @@ describe('FirebaseFirestoreService', () => {
 
     it('should return zero character count and empty target languages when user does not exist', async () => {
       (service as any).user = null;
-      const result = await service.getCharCountForUser();
+      const result = await service.getCharCountAndTargetLangsForUser();
       expect(result).toEqual({ charCount: 0, targetLanguages: [] });
     });
 
@@ -343,7 +343,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => ({}),
       } as any);
 
-      const result = await service.getCharCountForUser();
+      const result = await service.getCharCountAndTargetLangsForUser();
 
       expect(result).toEqual({ charCount: 0, targetLanguages: [] });
     });
@@ -357,7 +357,7 @@ describe('FirebaseFirestoreService', () => {
         data: () => undefined,
       } as any);
 
-      const result = await service.getCharCountForUser();
+      const result = await service.getCharCountAndTargetLangsForUser();
 
       expect((service as any).getFirestoreDoc).toHaveBeenCalled();
       expect((service as any).getFirestoreDocSnapshot).toHaveBeenCalledWith(
@@ -375,7 +375,7 @@ describe('FirebaseFirestoreService', () => {
         new Error('firestore read failed')
       );
 
-      const result = await service.getCharCountForUser();
+      const result = await service.getCharCountAndTargetLangsForUser();
 
       expect(console.error).toHaveBeenCalledWith(
         'Error fetching char count for user:',

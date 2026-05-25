@@ -48,7 +48,7 @@ describe('FirebaseFirestoreService', () => {
     it('should have all expected methods defined', () => {
       const service = new FirebaseFirestoreService('testUserId');
       expect(service.readContingentData).toBeDefined();
-      expect(service.getCharCountForUser).toBeDefined();
+      expect(service.getCharCountAndTargetLangsForUser).toBeDefined();
       expect(service.getTotalCharCount).toBeDefined();
       expect(service.createMissingContingentData).toBeDefined();
       expect(service.updateProgrammerDeviceUIDs).toBeDefined();
@@ -105,7 +105,7 @@ describe('FirebaseFirestoreService', () => {
     });
   });
 
-  describe('getCharCountForUser', () => {
+  describe('getCharCountAndTargetLangsForUser', () => {
     it('should return char count and target languages for the user', async () => {
       const mockDocData = {
         charCount: 1234,
@@ -120,7 +120,7 @@ describe('FirebaseFirestoreService', () => {
       const service = new FirebaseFirestoreService('testUserId');
       service.db = { doc: mockDoc };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(mockDocData);
       expect(mockDoc).toHaveBeenCalledWith(
@@ -146,7 +146,7 @@ describe('FirebaseFirestoreService', () => {
         targetLanguages: [],
       };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(expectedResult);
       expect(mockDoc).toHaveBeenCalledWith(
@@ -169,7 +169,7 @@ describe('FirebaseFirestoreService', () => {
       const service = new FirebaseFirestoreService('testUserId');
       service.db = { doc: mockDoc };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(mockDocData);
       expect(mockDoc).toHaveBeenCalledWith(
