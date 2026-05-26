@@ -21,8 +21,10 @@ import { updateProgrammerDeviceUIDs } from './update-programmer-deviceUIDs.js';
 import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 
 describe('updateProgrammerDeviceUIDs', () => {
-  const makeRequest = (uid?: string) => ({
+  const appId = 'translator';
+  const makeRequest = (uid?: string, appId?: string) => ({
     auth: uid ? { uid } : undefined,
+    data: appId !== undefined ? { appId } : undefined,
   });
 
   beforeEach(() => {
@@ -30,7 +32,7 @@ describe('updateProgrammerDeviceUIDs', () => {
   });
 
   it('should throw unauthenticated HttpsError if request has no auth', async () => {
-    const request = makeRequest(); // { auth: undefined }
+    const request = makeRequest(undefined, appId); // { auth: undefined }
     const call = (updateProgrammerDeviceUIDs as any)(request); // invoke the raw handler → returns a Promise
     const expected = {
       code: 'unauthenticated',
@@ -39,10 +41,34 @@ describe('updateProgrammerDeviceUIDs', () => {
     await expect(call).rejects.toMatchObject(expected);
   });
 
+  it('should throw invalid-argument HttpsError if appId is missing', async () => {
+    const request = makeRequest('user1'); // { auth: { uid: 'user1' }, data: undefined }
+    const call = (updateProgrammerDeviceUIDs as any)(request);
+    const expected = {
+      code: 'invalid-argument',
+      message: 'appId must be provided.',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw internal HttpsError if wrong appId is provided', async () => {
+    const programmerDeviceUIDs = [{ userId: 'user1', name: 'Device 1' }];
+    const request = {
+      ...makeRequest('user1'),
+      data: { appId: 'wrongAppId', programmerDeviceUIDs },
+    };
+    const call = (updateProgrammerDeviceUIDs as any)(request);
+    const expected = {
+      code: 'internal',
+      message: 'Unsupported appId: wrongAppId',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
   it('should throw invalid argument HttpsError if programmerDeviceUIDs is not an array', async () => {
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs: 'not-an-array' },
+      data: { appId, programmerDeviceUIDs: 'not-an-array' },
     };
     const call = (updateProgrammerDeviceUIDs as any)(request);
     const expected = {
@@ -61,7 +87,7 @@ describe('updateProgrammerDeviceUIDs', () => {
     ];
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs },
+      data: { appId, programmerDeviceUIDs },
     };
     const call = (updateProgrammerDeviceUIDs as any)(request);
     const expected = {
@@ -79,7 +105,10 @@ describe('updateProgrammerDeviceUIDs', () => {
     } as any);
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }] },
+      data: {
+        appId,
+        programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }],
+      },
     };
     const call = (updateProgrammerDeviceUIDs as any)(request);
     const expected = { success: true };
@@ -97,7 +126,10 @@ describe('updateProgrammerDeviceUIDs', () => {
 
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }] },
+      data: {
+        appId,
+        programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }],
+      },
     };
     const call = (updateProgrammerDeviceUIDs as any)(request);
     const expected = {
@@ -117,7 +149,10 @@ describe('updateProgrammerDeviceUIDs', () => {
 
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }] },
+      data: {
+        appId,
+        programmerDeviceUIDs: [{ userId: 'user1', name: 'Device 1' }],
+      },
     };
     const call = (updateProgrammerDeviceUIDs as any)(request);
     const expected = {

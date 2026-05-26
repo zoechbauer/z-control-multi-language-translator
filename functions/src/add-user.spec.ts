@@ -27,9 +27,11 @@ import {
 describe('addUser', () => {
   let deviceInfo: DeviceInfo;
   let programmerDeviceUIDs: ProgrammerDeviceUID[];
-  
-  const makeRequest = (uid?: string) => ({
+
+  const appId = 'translator';
+  const makeRequest = (uid?: string, appId?: string) => ({
     auth: uid ? { uid } : undefined,
+    data: appId !== undefined ? { appId } : undefined,
   });
 
   beforeEach(() => {
@@ -60,10 +62,63 @@ describe('addUser', () => {
     await expect(call).rejects.toMatchObject(expected);
   });
 
+  it('should throw invalid-argument HttpsError if appId is missing', async () => {
+    const request = {
+      ...makeRequest('user1'),
+      data: {
+        programmerDeviceUIDs,
+        deviceInfo,
+        isNative: true,
+      },
+    };
+    const call = (addUser as any)(request);
+    const expected = {
+      code: 'invalid-argument',
+      message: 'appId must be provided.',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw internal HttpsError if wrong appId is provided', async () => {
+    const request = {
+      ...makeRequest('user1'),
+      data: {
+        appId: 'wrongAppId',
+        programmerDeviceUIDs,
+        deviceInfo,
+      },
+    };
+    const call = (addUser as any)(request);
+    const expected = {
+      code: 'internal',
+      message: 'Unsupported appId: wrongAppId',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw invalid argument HttpsError if data is missing', async () => {
+    const request = {
+      ...makeRequest('user1'),
+      data: undefined
+    };
+    const call = (addUser as any)(request);
+
+    const expected = {
+      code: 'invalid-argument',
+      message: 'Request data is empty.',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
   it('should throw invalid argument HttpsError if programmerDeviceUIDs is not an array', async () => {
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs: 'not-an-array' },
+      data: {
+        appId,
+        programmerDeviceUIDs: 'not-an-array',
+        deviceInfo,
+        isNative: true,
+      },
     };
     const call = (addUser as any)(request);
 
@@ -87,7 +142,12 @@ describe('addUser', () => {
     ] as any;
     const request = {
       ...makeRequest('user1'),
-      data: { programmerDeviceUIDs },
+      data: {
+        appId,
+        programmerDeviceUIDs,
+        deviceInfo,
+        isNative: false,
+      },
     };
     const call = (addUser as any)(request);
 
@@ -102,7 +162,9 @@ describe('addUser', () => {
     const request = {
       ...makeRequest('user1'),
       data: {
+        appId,
         programmerDeviceUIDs,
+        isNative: true,
       },
     };
     const call = (addUser as any)(request);
@@ -123,6 +185,7 @@ describe('addUser', () => {
     const request = {
       ...makeRequest('user1'),
       data: {
+        appId,
         programmerDeviceUIDs,
         deviceInfo,
       },
@@ -141,6 +204,7 @@ describe('addUser', () => {
     const request = {
       ...makeRequest('user1'),
       data: {
+        appId,
         programmerDeviceUIDs,
         deviceInfo,
       },
@@ -163,6 +227,7 @@ describe('addUser', () => {
     const request = {
       ...makeRequest('user1'),
       data: {
+        appId,
         programmerDeviceUIDs,
         deviceInfo,
       },
@@ -186,6 +251,7 @@ describe('addUser', () => {
     const request = {
       ...makeRequest('user1'),
       data: {
+        appId,
         programmerDeviceUIDs,
         deviceInfo,
       },
@@ -199,11 +265,6 @@ describe('addUser', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'Error adding user.',
       new Error('Some error'),
-      {
-        userId: 'user1',
-        programmerDeviceUIDs,
-        deviceInfo,
-      }
     );
     consoleErrorSpy.mockRestore();
   });

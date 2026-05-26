@@ -65,13 +65,13 @@ export class FirebaseFirestoreUtilsService {
     let flags = await firestoreService.readContingentData();
     if (!flags) {
       // could occur on change to next month
-      console.log(`Contingent data not found for user${userId} -> created`);
+      console.log(`Contingent data not found in collection ${collection} for user ${userId} -> created`);
       await firestoreService.createMissingContingentData();
       flags = await firestoreService.readContingentData();
     }
     const utilsService = new FirebaseFirestoreUtilsService(firestoreService);
     if (await utilsService.isContingentExceeded(flags, userId)) {
-      console.error('Contingent exceeded for user:', userId);
+      console.error(`Contingent exceeded in collection ${collection} for user ${userId}`);
       throw new (await import('firebase-functions/v2/https')).HttpsError(
         'resource-exhausted',
         'Translation contingent exceeded.'

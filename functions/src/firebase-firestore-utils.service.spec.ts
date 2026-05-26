@@ -265,11 +265,11 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(false);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId, collection)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).resolves.toBeUndefined();
 
     expect(logSpy).toHaveBeenCalledWith(
-      `Contingent data not found for user${userId} -> created`
+      `Contingent data not found in collection ${collection} for user ${userId} -> created`
     );
     expect(
       FirebaseFirestoreService as unknown as { mock: { instances: any[] } }

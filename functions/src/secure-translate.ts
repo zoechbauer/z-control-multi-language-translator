@@ -47,27 +47,34 @@ export const secureTranslate = onCall(
       selectedLanguages
     );
 
-    const collection = FireStoreConstants.getCollectionByAppId(appId);
-    await FirebaseFirestoreUtilsService.validateContingentOrThrow(
-      collection,
-      auth!.uid
-    );
+    try {
+      const collection = FireStoreConstants.getCollectionByAppId(appId);
+      await FirebaseFirestoreUtilsService.validateContingentOrThrow(
+        collection,
+        auth!.uid
+      );
 
-    const firestoreService = new FirebaseFirestoreService(
-      collection,
-      auth!.uid
-    );
-    await firestoreService.addTranslatedChars(
-      text.length * selectedLanguages.length,
-      selectedLanguages
-    );
+      const firestoreService = new FirebaseFirestoreService(
+        collection,
+        auth!.uid
+      );
+      await firestoreService.addTranslatedChars(
+        text.length * selectedLanguages.length,
+        selectedLanguages
+      );
 
-    const translationResult = await translateTextOrThrow(
-      text,
-      baseLang,
-      selectedLanguages
-    );
-    return translationResult;
+      const translationResult = await translateTextOrThrow(
+        text,
+        baseLang,
+        selectedLanguages
+      );
+      return translationResult;
+    } catch (error: any) {
+      throw new HttpsError(
+        'internal',
+        error.message || 'Error translating text.'
+      );
+    }
   }
 );
 

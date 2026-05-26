@@ -17,6 +17,9 @@ export const addUser = onCall(async (request) => {
   }
 
   const data = request.data as Partial<AddUserData>;
+  if (!data) {
+    throw new HttpsError('invalid-argument', 'Request data is empty.');
+  }
 
   const appId = data.appId;
   const programmerDeviceUIDs = data.programmerDeviceUIDs;
@@ -30,18 +33,18 @@ export const addUser = onCall(async (request) => {
   if (!Array.isArray(programmerDeviceUIDs)) {
     throw new HttpsError(
       'invalid-argument',
-      'programmerDeviceUIDs must be an array.',
+      'programmerDeviceUIDs must be an array.'
     );
   }
 
   if (
     programmerDeviceUIDs.some(
-      (d) => typeof d !== 'object' || !d.userId || !d.name,
+      (d) => typeof d !== 'object' || !d.userId || !d.name
     )
   ) {
     throw new HttpsError(
       'invalid-argument',
-      'Each device must have userId and name.',
+      'Each device must have userId and name.'
     );
   }
 
@@ -59,7 +62,7 @@ export const addUser = onCall(async (request) => {
       userId,
       programmerDeviceUIDs,
       deviceInfo,
-      isNative ?? false,
+      isNative ?? false
     );
 
     return { success: true };

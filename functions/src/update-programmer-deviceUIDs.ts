@@ -16,7 +16,7 @@ export const updateProgrammerDeviceUIDs = onCall(async (request) => {
     throw new HttpsError('unauthenticated', 'User must be authenticated.');
   }
 
-  const data = request.data as Partial<UpdateProgrammerDeviceUIDsData>;
+  const data = (request.data ?? {}) as Partial<UpdateProgrammerDeviceUIDsData>;
 
   const appId = data.appId;
   if (typeof appId !== 'string' || appId.trim() === '') {
