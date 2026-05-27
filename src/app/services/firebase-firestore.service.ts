@@ -399,7 +399,17 @@ export class FirebaseFirestoreService {
     }
   }
 
+  /**
+   * Retrieves a list of programmer device UIDs from the environment configuration.
+   * The environment variable should be an array of objects with a single key-value pair,
+   * where the key is the device name and the value is the user ID.
+   * If updating programmer devices is disabled, returns an empty array.
+   */
   private getEnvironmentProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
+    if (!environment.app.programmerDevices.updateUsermap) {
+      return [];
+    }
+
     const programmerDeviceUIDs: ProgrammerDeviceUID[] = [];
     const devices = environment.app.programmerDevices.devices;
 

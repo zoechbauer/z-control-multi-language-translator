@@ -25,6 +25,7 @@ import { DeviceUtils } from './device-utils.service';
 
 describe('FirebaseFirestoreService', () => {
   let service: FirebaseFirestoreService;
+  const appId = 'translator';
 
   const userStub: angularFireAuth.User = {
     uid: 'anonymous-uid',
@@ -185,9 +186,9 @@ describe('FirebaseFirestoreService', () => {
 
   describe('readContingentData', () => {
     beforeEach(() => {
-        spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-04');
-      });
-      
+      spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-04');
+    });
+
     it('should return contingent data when document exists', async () => {
       const flags: FirestoreContingentData = {
         StopTranslationForAllUsers: true,
@@ -276,7 +277,7 @@ describe('FirebaseFirestoreService', () => {
       expect(httpsCallableSpy).toHaveBeenCalledWith(
         'createMissingContingentData'
       );
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(toastServiceMock.showToast).not.toHaveBeenCalled();
     });
 
@@ -296,7 +297,7 @@ describe('FirebaseFirestoreService', () => {
       expect(httpsCallableSpy).toHaveBeenCalledWith(
         'createMissingContingentData'
       );
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(toastServiceMock.showToast).toHaveBeenCalledWith(
         'Error creating missing contingent data.',
         ToastAnchor.TranslatePage
@@ -868,7 +869,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getIsProgrammerDevice();
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('isProgrammerDevice');
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(result).toBeTrue();
     });
 
@@ -884,7 +885,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getIsProgrammerDevice();
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('isProgrammerDevice');
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(result).toBeFalse();
     });
 
@@ -901,7 +902,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getIsProgrammerDevice();
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('isProgrammerDevice');
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(console.error).toHaveBeenCalledWith(
         'Error getting programmer device status:',
         new Error('call failed')
@@ -931,7 +932,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('getProgrammerDeviceUIDs');
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(result).toEqual(programmerDevices);
     });
 
@@ -948,7 +949,7 @@ describe('FirebaseFirestoreService', () => {
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(httpsCallableSpy).toHaveBeenCalledWith('getProgrammerDeviceUIDs');
-      expect(callableSpy).toHaveBeenCalledWith({});
+      expect(callableSpy).toHaveBeenCalledWith({ appId });
       expect(console.error).toHaveBeenCalledWith(
         'Error getting all programmer devices:',
         new Error('call failed')
@@ -996,6 +997,7 @@ describe('FirebaseFirestoreService', () => {
         'updateProgrammerDeviceUIDs'
       );
       expect(callableSpy).toHaveBeenCalledWith({
+        appId,
         programmerDeviceUIDs: programmerDevices,
       });
     });
@@ -1023,6 +1025,7 @@ describe('FirebaseFirestoreService', () => {
         'updateProgrammerDeviceUIDs'
       );
       expect(callableSpy).toHaveBeenCalledWith({
+        appId,
         programmerDeviceUIDs: programmerDevices,
       });
       expect(console.error).toHaveBeenCalledWith(
@@ -1052,16 +1055,21 @@ describe('FirebaseFirestoreService', () => {
 
   describe('getEnvironmentProgrammerDeviceUIDs', () => {
     const originalDevices = environment.app.programmerDevices.devices;
+    const originalUpdateUsermap =
+      environment.app.programmerDevices.updateUsermap;
 
     afterEach(() => {
       (environment as any).app.programmerDevices.devices = originalDevices;
+      (environment as any).app.programmerDevices.updateUsermap =
+        originalUpdateUsermap;
     });
 
-    it('should return programmer device UIDs from environment', () => {
+    it('should return programmer device UIDs from environment if updateUsermap is true', () => {
       (environment as any).app.programmerDevices.devices = [
         { 'Device 1': 'uid1' },
         { 'Device 2': 'uid2' },
       ];
+      (environment as any).app.programmerDevices.updateUsermap = true;
 
       const result = (service as any).getEnvironmentProgrammerDeviceUIDs();
 
@@ -1071,8 +1079,12 @@ describe('FirebaseFirestoreService', () => {
       ]);
     });
 
-    it('should return empty array when no programmer devices are defined in environment', () => {
-      (environment as any).app.programmerDevices.devices = [];
+    it('should return empty array when programmer devices are defined in environment but updateUsermap is false', () => {
+      (environment as any).app.programmerDevices.devices = [
+        { 'Device 1': 'uid1' },
+        { 'Device 2': 'uid2' },
+      ];
+      (environment as any).app.programmerDevices.updateUsermap = false;
 
       const result = (service as any).getEnvironmentProgrammerDeviceUIDs();
 
@@ -1108,6 +1120,7 @@ describe('FirebaseFirestoreService', () => {
       expect(getEnvironmentProgrammerDeviceUIDsSpy).toHaveBeenCalled();
       expect(getDeviceInfoSpy).toHaveBeenCalled();
       expect(callableSpy).toHaveBeenCalledWith({
+        appId,
         userId,
         programmerDeviceUIDs: getEnvironmentProgrammerDeviceUIDsSpy(),
         deviceInfo: mockDeviceInfo,

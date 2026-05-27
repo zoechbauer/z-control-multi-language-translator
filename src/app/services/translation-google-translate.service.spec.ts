@@ -16,6 +16,7 @@ import {
 describe('TranslationGoogleTranslateService', () => {
   let service: TranslationGoogleTranslateService;
   let mockedLanguages: GoogleLanguage[];
+  const appId = 'translator';
 
   beforeEach(() => {
     mockedLanguages = [
@@ -327,6 +328,7 @@ describe('TranslationGoogleTranslateService', () => {
 
       expect(createCallableSpy).toHaveBeenCalled();
       expect(callableSpy).toHaveBeenCalledWith({
+        appId,
         text: 'Hello',
         baseLang: 'en',
         selectedLanguages: ['de', 'fr'],
@@ -414,6 +416,7 @@ describe('TranslationGoogleTranslateService', () => {
         'fr',
       ]);
       expect(callableSpy).toHaveBeenCalledWith({
+        appId,
         text: 'Hello',
         baseLang: 'en',
         selectedLanguages: ['de', 'fr'],

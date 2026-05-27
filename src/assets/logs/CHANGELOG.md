@@ -6,10 +6,9 @@ Welcome to our updates and improvements of the **z-control Translator** app!
 
 ### 🔧 Internal
 
-- Improved backend handling for statistics in multi-app setups: the app now sends an appId, and the backend automatically stores data in the correct Firestore collection.
-- Improved reliability of backend requests by validating appId consistently and returning clear errors for unsupported appId values.
-- Renamed the FE/BE function from getCharCountForUser to getCharCountAndTargetLangsForUser to reflect its extended behavior: it now returns both the character count and the user’s last selected target languages. The new z-control Ionic Setup App still uses getCharCountForUser when only the character count is needed, while this app uses the extended function to improve user experience and statistics insights.
-- Updated tests for the new appId parameters so the app remains stable after the refactor. Total: 136 tests, 99.66% backend coverage. TODO: update Frontend tests.
+- Refactored the backend to support upcoming new apps: the app now sends an appId with every request, allowing multiple apps to share the same Firebase backend while keeping their data organized and secure.
+- Improved reliability by validating appId in all backend requests and providing clear error messages if an unsupported appId is used.
+- Updated all unit tests to ensure the app remains stable and compatible with this new multi-app structure. Test coverage: 136 backend tests (99.6%) and 767 frontend tests (99.4%).
 
 ## [1.15] – 2026-05-18
 
