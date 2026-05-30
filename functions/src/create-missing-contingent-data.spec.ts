@@ -21,8 +21,10 @@ import { createMissingContingentData } from './create-missing-contingent-data.js
 import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 
 describe('createMissingContingentData', () => {
-  const makeRequest = (uid?: string) => ({
+  const appId = 'translator';
+  const makeRequest = (uid?: string, appId?: string) => ({
     auth: uid ? { uid } : undefined,
+    data: appId ? { appId } : undefined,
   });
 
   beforeEach(() => {
@@ -40,6 +42,27 @@ describe('createMissingContingentData', () => {
     await expect(call).rejects.toMatchObject(expected);
   });
 
+  it('should throw invalid-argument HttpsError if appId is missing', async () => {
+    const request = makeRequest('user1'); // { auth: { uid: 'user1' }, data: undefined }
+    const call = (createMissingContingentData as any)(request);
+    const expected = {
+      code: 'invalid-argument',
+      message: 'appId must be provided.',
+    };
+
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw internal HttpsError if wrong appId is provided', async () => {
+    const request = makeRequest('user1', 'wrongAppId'); // { auth: { uid: 'user1' }, data
+    const call = (createMissingContingentData as any)(request);
+    const expected = {
+      code: 'internal',
+      message: 'Unsupported appId: wrongAppId',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
   it('should return { success: true } when firestoreService creates missing contingent data successfully', async () => {
     vi.mocked(FirebaseFirestoreService).mockImplementation(function (
       this: any
@@ -48,7 +71,7 @@ describe('createMissingContingentData', () => {
     } as any);
 
     const result = await (createMissingContingentData as any)(
-      makeRequest('user1')
+      makeRequest('user1', appId)
     );
     expect(result).toEqual({ success: true });
   });
@@ -61,7 +84,7 @@ describe('createMissingContingentData', () => {
       this.createMissingContingentData = vi.fn().mockRejectedValue(error);
     } as any);
 
-    const call = (createMissingContingentData as any)(makeRequest('user1'));
+    const call = (createMissingContingentData as any)(makeRequest('user1', appId));
     const expected = {
       code: 'internal',
       message: 'Some error',
@@ -69,6 +92,7 @@ describe('createMissingContingentData', () => {
 
     await expect(call).rejects.toMatchObject(expected);
   });
+  
   it('should throw internal HttpsError with default message if thrown error has no message', async () => {
     vi.mocked(FirebaseFirestoreService).mockImplementation(function (
       this: any
@@ -76,7 +100,7 @@ describe('createMissingContingentData', () => {
       this.createMissingContingentData = vi.fn().mockRejectedValue({});
     } as any);
 
-    const call = (createMissingContingentData as any)(makeRequest('user1'));
+    const call = (createMissingContingentData as any)(makeRequest('user1', appId));
     const expected = {
       code: 'internal',
       message: 'Error creating missing contingent data.',

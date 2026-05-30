@@ -208,7 +208,7 @@ describe('isContingentForUserExceeded', () => {
       maxFreeTranslateCharsPerMonthForUser: 10_000,
     } as any;
     const firestoreServiceMock = {
-      getCharCountForUser: async () => ({ charCount: 10_000 }),
+      getCharCountAndTargetLangsForUser: async () => ({ charCount: 10_000 }),
     };
     const service = new FirebaseFirestoreUtilsService(
       firestoreServiceMock as any
@@ -223,7 +223,7 @@ describe('isContingentForUserExceeded', () => {
   it('returns true if user contingent data is undefined', async () => {
     const firestoreContingentData = {};
     const firestoreServiceMock = {
-      getCharCountForUser: async () => ({ charCount: 10_000 }),
+      getCharCountAndTargetLangsForUser: async () => ({ charCount: 10_000 }),
     };
     const service = new FirebaseFirestoreUtilsService(
       firestoreServiceMock as any
@@ -238,6 +238,7 @@ describe('isContingentForUserExceeded', () => {
 
 describe('validateContingentOrThrow', () => {
   const userId = 'testUserId';
+  const collection = 'testCollection';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -254,7 +255,7 @@ describe('validateContingentOrThrow', () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce({ any: 'flags' });
       this.createMissingContingentData = vi.fn().mockResolvedValue(undefined);
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 
@@ -264,15 +265,15 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(false);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).resolves.toBeUndefined();
 
     expect(logSpy).toHaveBeenCalledWith(
-      `Contingent data not found for user${userId} -> created`
+      `Contingent data not found in collection ${collection} for user ${userId} -> created`
     );
     expect(
       FirebaseFirestoreService as unknown as { mock: { instances: any[] } }
-    ).toHaveBeenCalledWith(userId);
+    ).toHaveBeenCalledWith(collection, userId);
   });
 
   it('throws if contingent is exceeded', async () => {
@@ -281,7 +282,7 @@ describe('validateContingentOrThrow', () => {
     ) {
       this.readContingentData = vi.fn().mockResolvedValue({ any: 'flags' });
       this.createMissingContingentData = vi.fn();
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 
@@ -291,7 +292,7 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(true);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).rejects.toThrow('Translation contingent exceeded');
   }, 10000);
 
@@ -301,7 +302,7 @@ describe('validateContingentOrThrow', () => {
     ) {
       this.readContingentData = vi.fn().mockResolvedValue({ any: 'flags' });
       this.createMissingContingentData = vi.fn();
-      this.getCharCountForUser = vi.fn();
+      this.getCharCountAndTargetLangsForUser = vi.fn();
       this.getTotalCharCount = vi.fn();
     });
 
@@ -311,7 +312,7 @@ describe('validateContingentOrThrow', () => {
     ).mockResolvedValue(false);
 
     await expect(
-      FirebaseFirestoreUtilsService.validateContingentOrThrow(userId)
+      FirebaseFirestoreUtilsService.validateContingentOrThrow(collection, userId)
     ).resolves.toBeUndefined();
   });
 });

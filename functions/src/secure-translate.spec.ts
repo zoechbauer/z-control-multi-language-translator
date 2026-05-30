@@ -40,8 +40,11 @@ import { secureTranslate } from './secure-translate.js';
 import { SecureTranslateData } from './shared/firebase-firestore.interfaces.js';
 
 describe('secureTranslate', () => {
+  const COLLECTION = 'MLT_translations_statistics';
   const USER_ID = 'user1';
+  const appId = 'translator';
   const VALID_DATA: SecureTranslateData = {
+    appId,
     text: 'Hallo',
     baseLang: 'de',
     selectedLanguages: ['en'],
@@ -82,46 +85,60 @@ describe('secureTranslate', () => {
       });
     });
 
+    it('throws invalid-argument when appId is missing', async () => {
+      await expect(
+        invoke({ ...VALID_DATA, appId: '' }, USER_ID)
+      ).rejects.toMatchObject({
+        code: 'invalid-argument',
+        message: 'appId must be provided.',
+      });
+    });
+
+    it('throws internal when unsupported appId is provided', async () => {
+      await expect(
+        invoke({ ...VALID_DATA, appId: 'unsupportedAppId' }, USER_ID)
+      ).rejects.toMatchObject({
+        code: 'internal',
+        message: 'Unsupported appId: unsupportedAppId',
+      });
+    });
+
     const invalidCases: Array<{ name: string; data: SecureTranslateData }> = [
       {
         name: 'empty text and base language and empty selected languages',
-        data: { text: '', baseLang: '', selectedLanguages: [] },
+        data: { appId, text: '', baseLang: '', selectedLanguages: [] },
       },
       {
         name: 'missing base language',
-        data: { text: 'Hallo', baseLang: '', selectedLanguages: [] },
+        data: { appId, text: 'Hallo', baseLang: '', selectedLanguages: [] },
       },
       {
         name: 'empty selected languages',
-        data: { text: 'Hallo', baseLang: 'de', selectedLanguages: [] },
+        data: { appId, text: 'Hallo', baseLang: 'de', selectedLanguages: [] },
       },
       {
         name: 'missing base language with selected language present',
-        data: { text: 'Hallo', baseLang: '', selectedLanguages: ['en'] },
+        data: { appId, text: 'Hallo', baseLang: '', selectedLanguages: ['en'] },
       },
       {
         name: 'missing text',
-        data: { text: '', baseLang: 'de', selectedLanguages: [] },
+        data: { appId, text: '', baseLang: 'de', selectedLanguages: [] },
       },
       {
         name: 'selectedLanguages is not an array',
-        data: {
-          text: 'Hallo',
-          baseLang: 'de',
-          selectedLanguages: 'en' as unknown as string[],
-        },
+        data: { appId, text: 'Hallo', baseLang: 'de', selectedLanguages: 'en' as unknown as string[] },
       },
       {
         name: 'payload object is empty',
-        data: {} as SecureTranslateData,
+        data: { appId } as SecureTranslateData,
       },
       {
         name: 'selectedLanguages is missing',
-        data: { text: 'Hallo', baseLang: 'de' } as SecureTranslateData,
+        data: { appId, text: 'Hallo', baseLang: 'de' } as SecureTranslateData,
       },
       {
         name: 'baseLang and selectedLanguages are missing',
-        data: { text: 'Hallo' } as SecureTranslateData,
+        data: { appId, text: 'Hallo' } as SecureTranslateData,
       },
     ];
 
@@ -143,7 +160,7 @@ describe('secureTranslate', () => {
 
       expect(
         vi.mocked(FirebaseFirestoreUtilsService.validateContingentOrThrow)
-      ).toHaveBeenCalledWith(USER_ID);
+      ).toHaveBeenCalledWith(COLLECTION, USER_ID);
     });
 
     it('calls addTranslatedChars with computed count and selected languages', async () => {
@@ -159,10 +176,10 @@ describe('secureTranslate', () => {
       );
 
       await expect(
-        invoke({ text, baseLang: 'de', selectedLanguages }, USER_ID)
+        invoke({ appId, text, baseLang: 'de', selectedLanguages }, USER_ID)
       ).rejects.toThrow();
 
-      expect(vi.mocked(FirebaseFirestoreService)).toHaveBeenCalledWith(USER_ID);
+      expect(vi.mocked(FirebaseFirestoreService)).toHaveBeenCalledWith(COLLECTION, USER_ID);
       expect(addTranslatedChars).toHaveBeenCalledWith(
         expectedCharCount,
         selectedLanguages
@@ -211,7 +228,7 @@ describe('secureTranslate', () => {
       vi.stubGlobal('fetch', fetchMock);
 
       await expect(
-        invoke({ text, baseLang, selectedLanguages }, USER_ID)
+        invoke({ appId, text, baseLang, selectedLanguages }, USER_ID)
       ).resolves.toEqual({
         translations: {
           en: 'Translated Hallo from de to en',
@@ -219,7 +236,7 @@ describe('secureTranslate', () => {
           nl: 'Translated Hallo from de to nl',
         },
       });
-      expect(vi.mocked(FirebaseFirestoreService)).toHaveBeenCalledWith(USER_ID);
+      expect(vi.mocked(FirebaseFirestoreService)).toHaveBeenCalledWith(COLLECTION, USER_ID);
       expect(addTranslatedChars).toHaveBeenCalledWith(
         expectedCharCount,
         selectedLanguages
@@ -285,6 +302,7 @@ describe('secureTranslate', () => {
         (secureTranslateNoKey as any)({
           auth: { uid: USER_ID },
           data: {
+            appId,
             text: 'Hallo',
             baseLang: 'de',
             selectedLanguages: ['en', 'fr', 'nl'],
@@ -317,6 +335,7 @@ describe('secureTranslate', () => {
       await expect(
         invoke(
           {
+            appId,
             text: 'Hallo',
             baseLang: 'de',
             selectedLanguages: ['en', 'fr', 'nl'],

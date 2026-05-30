@@ -8,9 +8,11 @@ import {
 describe('FirebaseFirestoreService', () => {
   let FirebaseFirestoreService: any;
   let mockIncrement: any;
+  let collection: string;
 
   beforeEach(async () => {
     vi.resetModules();
+    collection = 'testCollection';
 
     mockIncrement = vi.fn((n: number) => ({ __incrementBy: n }));
 
@@ -36,16 +38,17 @@ describe('FirebaseFirestoreService', () => {
       expect(FirebaseFirestoreService).toBeDefined();
     });
 
-    it('should create an instance with userId', () => {
-      const service = new FirebaseFirestoreService('testUserId');
+    it('should create an instance with userId and collection', () => {
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       expect(service).toBeInstanceOf(FirebaseFirestoreService);
       expect(service.userId).toBe('testUserId');
+      expect(service.collection).toBe(collection);
     });
 
     it('should have all expected methods defined', () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       expect(service.readContingentData).toBeDefined();
-      expect(service.getCharCountForUser).toBeDefined();
+      expect(service.getCharCountAndTargetLangsForUser).toBeDefined();
       expect(service.getTotalCharCount).toBeDefined();
       expect(service.createMissingContingentData).toBeDefined();
       expect(service.updateProgrammerDeviceUIDs).toBeDefined();
@@ -70,14 +73,14 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
       // Override vi.doMock before re-import, or inject directly on the instance:
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const data = await service.readContingentData(); // calls REAL method
 
       expect(data, 'data').toEqual(mockDocData);
       expect(mockDoc, 'mockDoc current month').toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -88,7 +91,7 @@ describe('FirebaseFirestoreService', () => {
         .mockRejectedValue(new Error('Failed to read contingent data'));
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await expect(service.readContingentData()).rejects.toThrow(
@@ -96,13 +99,13 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc, 'mockDoc contingentData').toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
   });
 
-  describe('getCharCountForUser', () => {
+  describe('getCharCountAndTargetLangsForUser', () => {
     it('should return char count and target languages for the user', async () => {
       const mockDocData = {
         charCount: 1234,
@@ -114,10 +117,10 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(mockDocData);
       expect(mockDoc).toHaveBeenCalledWith(
@@ -136,14 +139,14 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
       const expectedResult = {
         charCount: 1234,
         targetLanguages: [],
       };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(expectedResult);
       expect(mockDoc).toHaveBeenCalledWith(
@@ -163,10 +166,10 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
-      const charCount = await service.getCharCountForUser();
+      const charCount = await service.getCharCountAndTargetLangsForUser();
 
       expect(charCount).toEqual(mockDocData);
       expect(mockDoc).toHaveBeenCalledWith(
@@ -185,14 +188,14 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const totalCharCount = await service.getTotalCharCount();
 
       expect(totalCharCount).toEqual(mockDocData.charCount);
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -203,14 +206,14 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const totalCharCount = await service.getTotalCharCount();
 
       expect(totalCharCount).toEqual(0);
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -222,7 +225,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await expect(service.getTotalCharCount()).rejects.toThrow(
@@ -233,7 +236,7 @@ describe('FirebaseFirestoreService', () => {
         expect.any(Error)
       );
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -247,13 +250,13 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.createMissingContingentData();
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledWith(
@@ -271,13 +274,13 @@ describe('FirebaseFirestoreService', () => {
       const mockDocRef = { get: mockGet, set: mockSet };
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.createMissingContingentData();
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalledWith();
       expect(mockSet).not.toHaveBeenCalled();
@@ -290,7 +293,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await expect(service.createMissingContingentData()).rejects.toThrow(
@@ -301,7 +304,7 @@ describe('FirebaseFirestoreService', () => {
         expect.any(Error)
       );
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaContingentDataDocumentPath()
+        FireStoreConstants.getMetaContingentDataDocumentPath(collection)
       );
       expect(mockGet).toHaveBeenCalled();
     });
@@ -319,7 +322,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should throw a type error if programmerDeviceUIDs is not an array', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       const invalidInput: any = 'not-an-array';
       await expect(
         service.updateProgrammerDeviceUIDs(invalidInput)
@@ -327,7 +330,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should update user mapping users and create programmer devices', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       (service as any).updateUserMappingUsers = mockUpdateUserMappingUsers;
       (service as any).createUserMappingProgrammerDevices =
         mockCreateUserMappingProgrammerDevices;
@@ -347,7 +350,7 @@ describe('FirebaseFirestoreService', () => {
 
     it('should skip and log invalid programmer devices', async () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn');
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       (service as any).updateUserMappingUsers = mockUpdateUserMappingUsers;
       (service as any).createUserMappingProgrammerDevices =
         mockCreateUserMappingProgrammerDevices;
@@ -397,7 +400,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should log and throw an error if updateUserMappingUsers fails', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       const error = new Error('Failed to update user mapping users');
       (service as any).updateUserMappingUsers = vi
         .fn()
@@ -446,7 +449,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDocRef = { get: mockGet, set: mockSet };
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const mockGetUserName = vi.fn().mockResolvedValue('P-2');
@@ -462,7 +465,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -487,7 +490,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const programmerDevice: ProgrammerDeviceUID = {
@@ -500,7 +503,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -517,7 +520,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const mockGetUserName = vi.fn().mockResolvedValue('P-2');
@@ -533,7 +536,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -563,7 +566,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const programmerDevice: ProgrammerDeviceUID = {
@@ -575,7 +578,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -601,7 +604,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const programmerDevice: ProgrammerDeviceUID = {
@@ -613,7 +616,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()}/${
+        `${FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)}/${
           programmerDevice.userId
         }`
       );
@@ -634,37 +637,33 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toEqual(mockCollectionData);
     });
 
-    it('should log and return empty array if collection is empty', async () => {
+    it('should return empty array if collection is empty', async () => {
       const mockGet = vi.fn().mockResolvedValue({
         empty: true,
         docs: [],
       });
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
-      const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       const result = await service.getProgrammerDeviceUIDs();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toEqual([]);
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        'No programmer devices found in Firestore.'
-      );
     });
 
     it('should log and throw an error if get fails', async () => {
@@ -674,7 +673,7 @@ describe('FirebaseFirestoreService', () => {
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       await expect(service.getProgrammerDeviceUIDs()).rejects.toThrow(
@@ -704,14 +703,14 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
       service.userId = 'user1';
 
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(true);
     });
@@ -723,38 +722,34 @@ describe('FirebaseFirestoreService', () => {
       });
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
       service.userId = 'user3';
 
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(false);
     });
 
-    it('should log and return false if programmer device mapping does not exist', async () => {
+    it('should return false if programmer device mapping does not exist', async () => {
       const mockGet = vi.fn().mockResolvedValue({
         empty: true,
       });
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
-      const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
       service.userId = 'user1';
 
       const result = await service.isProgrammerDevice();
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(result).toBe(false);
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        'No programmer devices found in Firestore.'
-      );
     });
 
     it('should throw and log if get fails', async () => {
@@ -764,7 +759,7 @@ describe('FirebaseFirestoreService', () => {
       const mockCollection = vi.fn().mockReturnValue({ get: mockGet });
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
       service.userId = 'user1';
 
@@ -773,7 +768,7 @@ describe('FirebaseFirestoreService', () => {
       );
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath()
+        FireStoreConstants.getUserMappingProgrammerDevicesCollectionPath(collection)
       );
       expect(mockConsoleError).toHaveBeenCalledWith(
         'Error checking if device is a programmer device from Firestore:',
@@ -816,14 +811,14 @@ describe('FirebaseFirestoreService', () => {
       const mockConsoleLog = vi.spyOn(console, 'log');
       const mockGetUserName = vi.fn().mockResolvedValue('Test User');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
       (service as any).getUserName = mockGetUserName;
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo, isNative);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -856,14 +851,14 @@ describe('FirebaseFirestoreService', () => {
       const mockConsoleLog = vi.spyOn(console, 'log');
       const mockGetUserName = vi.fn().mockResolvedValue('Test User');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
       (service as any).getUserName = mockGetUserName;
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -896,14 +891,14 @@ describe('FirebaseFirestoreService', () => {
       const mockConsoleLog = vi.spyOn(console, 'log');
       const mockGetUserName = vi.fn().mockResolvedValue('Test User');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
       (service as any).getUserName = mockGetUserName;
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo, isNative);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -926,7 +921,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should throw if userId is missing', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
 
       await expect(
         service.addUser('', programmerDeviceUIDs, deviceInfo, isNative)
@@ -955,13 +950,13 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -1001,13 +996,13 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).toHaveBeenCalledExactlyOnceWith(
@@ -1043,13 +1038,13 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleLog = vi.spyOn(console, 'log');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUserMappingUsersCollectionPath()}/${userId}`
+        `${FireStoreConstants.getUserMappingUsersCollectionPath(collection)}/${userId}`
       );
       expect(mockGet).toHaveBeenCalled();
       expect(mockSet).not.toHaveBeenCalled();
@@ -1065,7 +1060,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
@@ -1098,7 +1093,7 @@ describe('FirebaseFirestoreService', () => {
       const mockDoc = vi.fn().mockReturnValue(mockDocRef);
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       await service.addUser(userId, programmerDeviceUIDs, deviceInfo);
@@ -1121,7 +1116,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should return user name for user device', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       const mockCountUser = vi.fn().mockResolvedValue(1);
       (service as any).countUser = mockCountUser;
 
@@ -1135,7 +1130,7 @@ describe('FirebaseFirestoreService', () => {
     });
 
     it('should return user name for programmer device', async () => {
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       const mockCountUser = vi.fn().mockResolvedValue(1);
       (service as any).countUser = mockCountUser;
 
@@ -1155,13 +1150,13 @@ describe('FirebaseFirestoreService', () => {
       const mockWhere = vi.fn().mockReturnValue({ get: mockGet });
       const mockCollection = vi.fn().mockReturnValue({ where: mockWhere });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       const result = await (service as any).countUser(UserType.Programmer);
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingUsersCollectionPath()
+        FireStoreConstants.getUserMappingUsersCollectionPath(collection)
       );
       expect(mockWhere).toHaveBeenCalledWith('type', '==', UserType.Programmer);
       expect(result).toBe(3);
@@ -1172,13 +1167,13 @@ describe('FirebaseFirestoreService', () => {
       const mockWhere = vi.fn().mockReturnValue({ get: mockGet });
       const mockCollection = vi.fn().mockReturnValue({ where: mockWhere });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       const result = await (service as any).countUser(UserType.User);
 
       expect(mockCollection).toHaveBeenCalledWith(
-        FireStoreConstants.getUserMappingUsersCollectionPath()
+        FireStoreConstants.getUserMappingUsersCollectionPath(collection)
       );
       expect(mockWhere).toHaveBeenCalledWith('type', '==', UserType.User);
       expect(result).toBe(0);
@@ -1192,7 +1187,7 @@ describe('FirebaseFirestoreService', () => {
       const mockCollection = vi.fn().mockReturnValue({ where: mockWhere });
       const mockConsoleError = vi.spyOn(console, 'error');
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { collection: mockCollection };
 
       await expect((service as any).countUser(UserType.User)).rejects.toThrow(
@@ -1218,7 +1213,7 @@ describe('FirebaseFirestoreService', () => {
       mockUpdateUserCharCount = vi.fn().mockResolvedValue(undefined);
       mockUpdateTotalCharCount = vi.fn().mockResolvedValue(undefined);
 
-      service = new FirebaseFirestoreService('testUserId');
+      service = new FirebaseFirestoreService(collection, 'testUserId');
 
       (service as any).updateUserCharCount = mockUpdateUserCharCount;
       (service as any).updateTotalCharCount = mockUpdateTotalCharCount;
@@ -1280,7 +1275,7 @@ describe('FirebaseFirestoreService', () => {
       const mockSet = vi.fn().mockResolvedValue(undefined);
       const mockDoc = vi.fn().mockReturnValue({ set: mockSet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
       service.userId = 'user1';
 
@@ -1290,7 +1285,7 @@ describe('FirebaseFirestoreService', () => {
       await (service as any).updateUserCharCount(count, selectedLanguages);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        `${FireStoreConstants.getUsersCollectionPath()}/${service.userId}`
+        `${FireStoreConstants.getUsersCollectionPath(collection)}/${service.userId}`
       );
       expect(mockIncrement).toHaveBeenCalledWith(count);
       expect(mockSet).toHaveBeenCalledWith(
@@ -1309,7 +1304,7 @@ describe('FirebaseFirestoreService', () => {
       const mockSet = vi.fn().mockResolvedValue(undefined);
       const mockDoc = vi.fn().mockReturnValue({ set: mockSet });
 
-      const service = new FirebaseFirestoreService('testUserId');
+      const service = new FirebaseFirestoreService(collection, 'testUserId');
       service.db = { doc: mockDoc };
 
       const count = 25;
@@ -1317,7 +1312,7 @@ describe('FirebaseFirestoreService', () => {
       await (service as any).updateTotalCharCount(count);
 
       expect(mockDoc).toHaveBeenCalledWith(
-        FireStoreConstants.getMetaTotalCharsDocumentPath()
+        FireStoreConstants.getMetaTotalCharsDocumentPath(collection)
       );
       expect(mockIncrement).toHaveBeenCalledWith(count);
       expect(mockSet).toHaveBeenCalledWith(

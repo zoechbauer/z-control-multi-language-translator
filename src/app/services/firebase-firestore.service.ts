@@ -29,7 +29,7 @@ import {
   UserType,
   ProgrammerDeviceUID,
   DeviceInfo,
-  CharCountResult,
+  CharCountAndTargetLangsResult,
 } from '../shared/firebase-firestore.interfaces';
 import { ToastService } from './toast.service';
 import { AllMonthsOption, ToastAnchor } from '../shared/enums';
@@ -215,14 +215,13 @@ export class FirebaseFirestoreService {
 
   /**
    * Retrieves all user mappings from Firestore for a given month.
-   * User mappings are stored in the collection: .../MLT_translations_statistics/userMapping/users
+   * User mappings are stored in {collection}/userMapping/users
    * Each document contains: userId, name, type ('P' or 'U'), createdAt
    *
    * @param selectedMonth The month for which to retrieve user translation statistics.
    * @returns An array of UserType objects representing users in the user mapping collection for the specified month.
    */
   public async getUsers(selectedMonth: string): Promise<UserType[]> {
-    // Path: .../MLT_translations_statistics/userMapping/users
     const usersCollectionPath = `${FireStoreConstants.getUserMappingUsersCollectionPath()}`;
     try {
       const usersRef = this.getCollection(usersCollectionPath);
@@ -260,7 +259,7 @@ export class FirebaseFirestoreService {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.ERROR_LOADING_USERS'
         ),
-        ToastAnchor.SETTINGS_PAGE
+        ToastAnchor.SettingsPage
       );
       return [];
     }
@@ -284,13 +283,13 @@ export class FirebaseFirestoreService {
    * @param userId The UID of the user to add.
    */
   public async addUser(userId: string) {
-    // Path: .../MLT_translations_statistics/userMapping/users
     try {
       const callable = runInInjectionContext(this.injector, () =>
         this.getHttpsCallable('addUser')
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
+          appId: FireStoreConstants.APP_ID,
           userId,
           programmerDeviceUIDs: this.getEnvironmentProgrammerDeviceUIDs(),
           deviceInfo: this.deviceInfo,
@@ -303,7 +302,7 @@ export class FirebaseFirestoreService {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.ERROR_ADDING_USER'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     }
   }
@@ -322,7 +321,9 @@ export class FirebaseFirestoreService {
         this.getHttpsCallable('getProgrammerDeviceUIDs')
       );
       const result = await runInInjectionContext(this.injector, () =>
-        (callable as any)({})
+        (callable as any)({
+          appId: FireStoreConstants.APP_ID,
+        })
       );
       return result.data.programmerDevices as ProgrammerDeviceUID[];
     } catch (error) {
@@ -331,7 +332,7 @@ export class FirebaseFirestoreService {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICES'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       return [];
     }
@@ -343,7 +344,9 @@ export class FirebaseFirestoreService {
         this.getHttpsCallable('isProgrammerDevice')
       );
       const result = await runInInjectionContext(this.injector, () =>
-        (callable as any)({})
+        (callable as any)({
+          appId: FireStoreConstants.APP_ID,
+        })
       );
       return result.data.isProgrammerDevice as boolean;
     } catch (error) {
@@ -352,7 +355,7 @@ export class FirebaseFirestoreService {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.ERROR_GETTING_PROGRAMMER_DEVICE_STATUS'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       return false;
     }
@@ -381,6 +384,7 @@ export class FirebaseFirestoreService {
       );
       await runInInjectionContext(this.injector, () =>
         (callable as any)({
+          appId: FireStoreConstants.APP_ID,
           programmerDeviceUIDs: this.getEnvironmentProgrammerDeviceUIDs(),
         })
       );
@@ -390,12 +394,22 @@ export class FirebaseFirestoreService {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.ERROR_UPDATING_PROGRAMMER_DEVICES'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     }
   }
 
+  /**
+   * Retrieves a list of programmer device UIDs from the environment configuration.
+   * The environment variable should be an array of objects with a single key-value pair,
+   * where the key is the device name and the value is the user ID.
+   * If updating programmer devices is disabled, returns an empty array.
+   */
   private getEnvironmentProgrammerDeviceUIDs(): ProgrammerDeviceUID[] {
+    if (!environment.app.programmerDevices.updateUsermap) {
+      return [];
+    }
+
     const programmerDeviceUIDs: ProgrammerDeviceUID[] = [];
     const devices = environment.app.programmerDevices.devices;
 
@@ -418,16 +432,17 @@ export class FirebaseFirestoreService {
    */
   async createMissingContingentData(): Promise<void> {
     try {
-      // Path: .../MLT_translations_statistics/{yyyy-mm}/meta/contingentData
       const callable = runInInjectionContext(this.injector, () =>
         this.getHttpsCallable('createMissingContingentData')
       );
-      await runInInjectionContext(this.injector, () => (callable as any)({}));
+      await runInInjectionContext(this.injector, () => (callable as any)({
+        appId: FireStoreConstants.APP_ID,
+      }));
     } catch (error) {
       console.error('Error creating missing contingent data:', error);
       this.toastService.showToast(
         'Error creating missing contingent data.',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
     }
   }
@@ -452,7 +467,6 @@ export class FirebaseFirestoreService {
       if (selectedMonth === AllMonthsOption.SelectOptionValue) {
         return {};  // contingent data is not displayed for 'all months' option
       }
-      // Path: .../MLT_translations_statistics/{yyyy-mm}/control/control
       const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath(
         selectedMonth
       )}`;
@@ -470,7 +484,7 @@ export class FirebaseFirestoreService {
       console.error('Error reading contingent data:', error);
       this.toastService.showToast(
         'Error reading contingent data.',
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       return {};
     }
@@ -490,7 +504,7 @@ export class FirebaseFirestoreService {
    * Retrieves the current character count and last selected target languages for the authenticated user from Firestore.
    * @returns Promise resolving to the user's current character count and target languages.
    */
-  async getCharCountForUser(): Promise<CharCountResult> {
+  async getCharCountAndTargetLangsForUser(): Promise<CharCountAndTargetLangsResult> {
     try {
       if (!this.user) {
         return { charCount: 0, targetLanguages: [] };
@@ -501,7 +515,7 @@ export class FirebaseFirestoreService {
         );
         return this.getFirestoreDocSnapshot(usageRef);
       });
-      const charCountResult: CharCountResult = usageSnap.exists()
+      const charCountResult: CharCountAndTargetLangsResult = usageSnap.exists()
         ? {
             charCount: (usageSnap.data() as any)['charCount'] || 0,
             targetLanguages: (usageSnap.data() as any)['targetLanguages'] || [],

@@ -238,7 +238,7 @@ describe('TabTranslationPage', () => {
 
         expect(toastServiceSpy.showToast).toHaveBeenCalledWith(
           'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
         expect(
           googleTranslateServiceSpy.secureTranslateCloudFunction
@@ -251,7 +251,7 @@ describe('TabTranslationPage', () => {
 
         expect(toastServiceSpy.showToast).toHaveBeenCalledWith(
           'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
         expect(
           googleTranslateServiceSpy.secureTranslateCloudFunction
@@ -423,7 +423,7 @@ describe('TabTranslationPage', () => {
         expect(component['simulateTranslateText']).toHaveBeenCalled();
         expect(toastServiceSpy.showToast).toHaveBeenCalledWith(
           'TRANSLATE.CARD_RESULTS.TOAST.CONTINGENT_EXCEEDED',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
       });
     });
@@ -450,7 +450,7 @@ describe('TabTranslationPage', () => {
         expect(consoleErrorSpy).toHaveBeenCalled();
         expect(toastServiceSpy.showToast).toHaveBeenCalledWith(
           'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
       });
 
@@ -490,7 +490,7 @@ describe('TabTranslationPage', () => {
           .toBeFalse();
         expect(toastServiceSpy.showToast).toHaveBeenCalledWith(
           'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED',
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
       });
     });

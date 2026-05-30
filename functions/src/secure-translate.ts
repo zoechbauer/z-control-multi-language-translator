@@ -11,6 +11,7 @@ import {
   TranslationResult,
 } from './shared/firebase-firestore.interfaces.js';
 import { FirebaseFirestoreService } from './firebase-firestore.service.js';
+import { FireStoreConstants } from './shared/app.constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +29,16 @@ export const secureTranslate = onCall(
   { secrets: [GOOGLE_TRANSLATE_API_KEY] },
   async (request) => {
     const { data, auth } = request;
-    const { text, baseLang, selectedLanguages } = data as SecureTranslateData;
+    if (!auth) {
+      throw new HttpsError('unauthenticated', 'User must be authenticated.');
+    }
+
+    const { appId, text, baseLang, selectedLanguages } =
+      data as SecureTranslateData;
+
+    if (typeof appId !== 'string' || appId.trim() === '') {
+      throw new HttpsError('invalid-argument', 'appId must be provided.');
+    }
 
     await validateSecureTranslateRequest(
       auth,
@@ -37,20 +47,34 @@ export const secureTranslate = onCall(
       selectedLanguages
     );
 
-    await FirebaseFirestoreUtilsService.validateContingentOrThrow(auth!.uid);
+    try {
+      const collection = FireStoreConstants.getCollectionByAppId(appId);
+      await FirebaseFirestoreUtilsService.validateContingentOrThrow(
+        collection,
+        auth!.uid
+      );
 
-    const firestoreService = new FirebaseFirestoreService(auth!.uid);
-    await firestoreService.addTranslatedChars(
-      text.length * selectedLanguages.length,
-      selectedLanguages
-    );
+      const firestoreService = new FirebaseFirestoreService(
+        collection,
+        auth!.uid
+      );
+      await firestoreService.addTranslatedChars(
+        text.length * selectedLanguages.length,
+        selectedLanguages
+      );
 
-    const translationResult = await translateTextOrThrow(
-      text,
-      baseLang,
-      selectedLanguages
-    );
-    return translationResult;
+      const translationResult = await translateTextOrThrow(
+        text,
+        baseLang,
+        selectedLanguages
+      );
+      return translationResult;
+    } catch (error: any) {
+      throw new HttpsError(
+        'internal',
+        error.message || 'Error translating text.'
+      );
+    }
   }
 );
 

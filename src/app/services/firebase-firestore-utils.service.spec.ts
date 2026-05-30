@@ -50,7 +50,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       'FirebaseFirestoreService',
       [
         'readContingentData',
-        'getCharCountForUser',
+        'getCharCountAndTargetLangsForUser',
         'getTotalCharCount',
         'getAllUserTranslationStatistics',
         'getUsers',
@@ -114,7 +114,7 @@ describe('FirebaseFirestoreUtilsService', () => {
           environment.app.maxFreeTranslateCharsBufferPerMonth +
           1
       );
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 0,
         targetLanguages: [],
       });
@@ -125,7 +125,7 @@ describe('FirebaseFirestoreUtilsService', () => {
     it('should return true if user contingent is exceeded', async () => {
       firestoreServiceMock.readContingentData.and.resolveTo({});
       firestoreServiceMock.getTotalCharCount.and.resolveTo(0);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: environment.app.maxFreeTranslateCharsPerMonthForUser + 1,
         targetLanguages: [],
       });
@@ -136,7 +136,7 @@ describe('FirebaseFirestoreUtilsService', () => {
     it('should return false if no contingent is exceeded and translation is not stopped', async () => {
       firestoreServiceMock.readContingentData.and.resolveTo({});
       firestoreServiceMock.getTotalCharCount.and.resolveTo(0);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 0,
         targetLanguages: [],
       });
@@ -153,7 +153,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       };
       firestoreServiceMock.readContingentData.and.resolveTo(flags);
       firestoreServiceMock.getTotalCharCount.and.resolveTo(101);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 11,
         targetLanguages: [],
       });
@@ -162,7 +162,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       expect(result).toBeTrue();
       // Now test user contingent exceeded
       firestoreServiceMock.getTotalCharCount.and.resolveTo(0);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 11,
         targetLanguages: [],
       });
@@ -208,7 +208,7 @@ describe('FirebaseFirestoreUtilsService', () => {
 
     it('should return contingent data with user char count', async () => {
       firestoreServiceMock.readContingentData.and.resolveTo(contingentData);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 1000,
         targetLanguages: ['en', 'nl'],
       });
@@ -230,7 +230,7 @@ describe('FirebaseFirestoreUtilsService', () => {
 
     it('should return contingent data with char count of all users', async () => {
       firestoreServiceMock.readContingentData.and.resolveTo(contingentData);
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 1000,
         targetLanguages: ['en', 'nl'],
       });
@@ -255,7 +255,7 @@ describe('FirebaseFirestoreUtilsService', () => {
 
     it('should use environment data if contingent data fields are missing', async () => {
       firestoreServiceMock.readContingentData.and.resolveTo({});
-      firestoreServiceMock.getCharCountForUser.and.resolveTo({
+      firestoreServiceMock.getCharCountAndTargetLangsForUser.and.resolveTo({
         charCount: 500,
         targetLanguages: ['en'],
       });

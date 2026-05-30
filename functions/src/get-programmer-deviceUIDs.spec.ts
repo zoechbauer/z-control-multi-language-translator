@@ -21,8 +21,10 @@ import { getProgrammerDeviceUIDs } from './get-programmer-deviceUIDs.js';
 import { FirebaseFirestoreService } from './firebase-firestore.service.js';
 
 describe('getProgrammerDeviceUIDs', () => {
-  const makeRequest = (uid?: string) => ({
+  const appId = 'translator';
+  const makeRequest = (uid?: string, appId?: string) => ({
     auth: uid ? { uid } : undefined,
+    data: appId !== undefined ? { appId } : undefined,
   });
 
   beforeEach(() => {
@@ -35,6 +37,26 @@ describe('getProgrammerDeviceUIDs', () => {
     const expected = {
       code: 'unauthenticated',
       message: 'User must be authenticated.',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw invalid-argument HttpsError if appId is missing', async () => {
+    const request = makeRequest('user1'); // { auth: { uid: 'user1' }, data: undefined }
+    const call = (getProgrammerDeviceUIDs as any)(request);
+    const expected = {
+      code: 'invalid-argument',
+      message: 'appId must be provided.',
+    };
+    await expect(call).rejects.toMatchObject(expected);
+  });
+
+  it('should throw internal HttpsError if wrong appId is provided', async () => {
+    const request = makeRequest('user1', 'wrongAppId'); // { auth: { uid: 'user1' }, data: { appId: 'wrongAppId' } }
+    const call = (getProgrammerDeviceUIDs as any)(request);
+    const expected = {
+      code: 'internal',
+      message: 'Unsupported appId: wrongAppId',
     };
     await expect(call).rejects.toMatchObject(expected);
   });
@@ -58,7 +80,7 @@ describe('getProgrammerDeviceUIDs', () => {
         .mockResolvedValue(mockProgrammerDevices);
     } as any);
 
-    const request = makeRequest('user1');
+    const request = makeRequest('user1', appId);
     const call = (getProgrammerDeviceUIDs as any)(request);
     const expected = { programmerDevices: mockProgrammerDevices };
     await expect(call).resolves.toMatchObject(expected);
@@ -72,7 +94,7 @@ describe('getProgrammerDeviceUIDs', () => {
       this.getProgrammerDeviceUIDs = vi.fn().mockRejectedValue(error);
     } as any);
 
-    const request = makeRequest('user1');
+    const request = makeRequest('user1', appId);
     const call = (getProgrammerDeviceUIDs as any)(request);
     const expected = {
       code: 'internal',
@@ -89,7 +111,7 @@ describe('getProgrammerDeviceUIDs', () => {
       this.getProgrammerDeviceUIDs = vi.fn().mockRejectedValue(error);
     } as any);
 
-    const request = makeRequest('user1');
+    const request = makeRequest('user1', appId);
     const call = (getProgrammerDeviceUIDs as any)(request);
     const expected = {
       code: 'internal',

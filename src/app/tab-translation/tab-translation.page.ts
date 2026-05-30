@@ -173,7 +173,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.NO_TEXT_OR_LANGUAGES'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       this.isLoading = false;
       return;
@@ -223,7 +223,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         console.error('Translation error:', error);
         this.toastService.showToast(
           this.translate.instant('TRANSLATE.CARD_RESULTS.TOAST.ERROR'),
-          ToastAnchor.TRANSLATE_PAGE
+          ToastAnchor.TranslatePage
         );
       }
     } finally {
@@ -236,7 +236,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
       this.translate.instant(
         'TRANSLATE.CARD_RESULTS.TOAST.CONTINGENT_EXCEEDED'
       ),
-      ToastAnchor.TRANSLATE_PAGE
+      ToastAnchor.TranslatePage
     );
     this.simulateTranslateText();
   }
@@ -276,7 +276,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
         this.translate.instant(
           'TRANSLATE.CARD_RESULTS.TOAST.SPEAK_NOT_SUPPORTED'
         ),
-        ToastAnchor.TRANSLATE_PAGE
+        ToastAnchor.TranslatePage
       );
       console.error('TTS error:', err);
     } finally {

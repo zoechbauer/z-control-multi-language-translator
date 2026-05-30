@@ -2,6 +2,14 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
+## [1.16] – 2026-05-30
+
+### 🔧 Internal
+
+- Refactored the backend to support upcoming new apps: the app now sends an appId with every request, allowing multiple apps to share the same Firebase backend while keeping their data organized and secure.
+- Improved reliability by validating appId in all backend requests and providing clear error messages if an unsupported appId is used.
+- Updated all unit tests to ensure the app remains stable and compatible with this new multi-app structure. Test coverage: 136 backend tests (99.6%) and 767 frontend tests (99.4%).
+
 ## [1.15] – 2026-05-18
 
 ### 🚀 Improvements

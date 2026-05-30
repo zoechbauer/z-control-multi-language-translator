@@ -22,9 +22,6 @@ export const environment = {
       updateUsermap: __PROGRAMMER_DEVICES_UPDATE_USERMAP__,
       devices: [
         {
-          GalaxyA33LUid: __PROGRAMMER_GALAXY_A33_L_UID__,
-        },
-        {
           GalaxyA33Uid: __PROGRAMMER_GALAXY_A33_UID__,
         },
         {
