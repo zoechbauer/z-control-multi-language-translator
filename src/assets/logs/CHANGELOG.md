@@ -10,7 +10,7 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
-## [2.1] – YYYY-MM-DD
+## [2.1] – 2026-06-07
 
 ### 🚀 Improvements
 
