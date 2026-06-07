@@ -49,17 +49,25 @@ export const appConfig: ApplicationConfig = {
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    // DRY: Helper to get emulator host or undefined if not using emulator
+    // DRY: Helper to get emulator host if using emulator from ionic_setup
     (() => {
       const getEmulatorHost = () => {
-        const allowedHosts = ['localhost', '10.0.0.68']; // Add more if needed
         const host = globalThis.location.hostname;
-        if (
-          allowedHosts.includes(host) &&
-          environment.app.useFirebaseEmulator
-        ) {
-          return host === 'localhost' ? 'localhost' : '10.0.0.68'; // Replace with your IP if needed
+
+        if (!environment.app.useFirebaseEmulator) {
+          return undefined;
         }
+
+        // Browser running on same machine as emulator
+        if (host === 'localhost' || host === '127.0.0.1') {
+          return '127.0.0.1';
+        }
+
+        // Browser/device running on LAN (example IP of your dev machine)
+        if (host === '10.0.0.68') {
+          return '10.0.0.68';
+        }
+
         return undefined;
       };
 
@@ -70,7 +78,7 @@ export const appConfig: ApplicationConfig = {
           if (emulatorHost) {
             console.log(
               'Connecting to Firestore emulator with host:',
-              emulatorHost,
+              emulatorHost
             );
             connectFirestoreEmulator(firestore, emulatorHost, 8080);
           }
@@ -82,7 +90,7 @@ export const appConfig: ApplicationConfig = {
           if (emulatorHost) {
             console.log(
               'Connecting to Functions emulator with host:',
-              emulatorHost,
+              emulatorHost
             );
             connectFunctionsEmulator(functions, emulatorHost, 5001);
           }

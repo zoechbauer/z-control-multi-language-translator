@@ -116,6 +116,12 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     return this._statisticsData;
   }
 
+  get displayModeTooltip(): string {
+    return this.displayMode === DisplayMode.Programmer
+      ? this.translate.instant('SETTINGS.STATISTICS.DISPLAY_MODE_PROGRAMMER_TOOLTIP')
+      : this.translate.instant('SETTINGS.STATISTICS.DISPLAY_MODE_USER_TOOLTIP');
+  }
+
   set statisticsData(value: StatisticsData | null) {
     this._statisticsData = value;
     this.allUserStatsRows = (value?.displayedUserStatistics ?? []).map(

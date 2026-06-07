@@ -4,6 +4,7 @@
     [selectedTargetLanguages]="selectedLanguages"
   ></app-header>
 </div>
+<h6 class="ion-text-center">{{'APP.NAME' | translate}}</h6>
 <ion-content
   #content
   class="translation-content"
@@ -52,12 +53,9 @@
   } @if(cardInputVisible) {
   <!-- show input card before translation results-->
   <ion-card class="translation-input-card" color="light">
-    <ion-card-header>
-      <ion-card-title>{{ 'APP.NAME' | translate }}</ion-card-title>
-      <p>
-        {{ 'TRANSLATE.CARD.INFO' | translate:{ maxInputLength: maxInputLength,
-        maxTargetLanguages: maxTargetLanguages } }}
-      </p>
+    <ion-card-header class="header-description">
+      {{ 'TRANSLATE.CARD.INFO' | translate:{ maxInputLength: maxInputLength,
+      maxTargetLanguages: maxTargetLanguages } }}
     </ion-card-header>
     <ion-card-content>
       <ion-textarea

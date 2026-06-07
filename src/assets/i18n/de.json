@@ -229,12 +229,14 @@
           "FILTER_MONTH_DATA": "Monatsdaten filtern",
           "FILTER_MONTH_DATA_ALL": "Alle Monate",
           "FILTER_DATA": "Daten filtern",
-          "DISPLAY_MODE_USER": "Benutzer-Ansicht",
-          "DISPLAY_MODE_PROGRAMMER": "Programmierer-Ansicht"
+          "DISPLAY_MODE_USER": "Benutzer",
+          "DISPLAY_MODE_PROGRAMMER": "Programmierer"
         },
-        "TITLE": {
-          "FILTER_MONTH_DATA": "Daten des Monats filtern oder alle Daten anzeigen",
-          "FILTER_DATA": "Daten mit ausgewähltem Monat neu laden"
+        "TOOLTIP": {
+          "FILTER_MONTH_DATA": "Daten des ausgewählten Monats anzeigen oder alle Daten anzeigen",
+          "FILTER_DATA": "Daten mit ausgewähltem Monat und Anzeigemodus neu laden",
+          "DISPLAY_MODE_USER": "Statistik als Benutzer anzeigen",
+          "DISPLAY_MODE_PROGRAMMER": "Statistik als Programmierer anzeigen"
         }
       },
       "GRID": {

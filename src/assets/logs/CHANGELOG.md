@@ -2,11 +2,36 @@
 
 Welcome to our updates and improvements of the **z-control Translator** app!
 
-## [1.16] – 2026-05-30
+## Versioning
+
+This project uses a simplified major.minor versioning scheme:
+
+- Major versions indicate significant milestones or breaking changes.
+- Minor versions indicate new features, improvements, and bug fixes.
+- Patch numbers are intentionally omitted; all changes are released as major or minor versions.
+
+## [2.1] – YYYY-MM-DD
+
+### 🚀 Improvements
+
+- Improved Styling of the App Title: The app title is now displayed on the same place at the top of the screen on both the Translation and Settings pages, providing a more polished and visually appealing layout.
+- Improved Styling of the Statistics Display Mode Toggle: The display mode toggle in the statistics accordion has been restyled for better visual consistency and usability, making it easier for users to switch between programmer and user views.
+- Changed Version Numbering from 1.16 to 2.0 to reflect the significant new features and improvements added in version 2.0, including the multi-app backend support and independent maintenance of Firebase Functions.
 
 ### 🔧 Internal
 
+- Improved emulator host resolution to reliably support both local emulator and production environments, enabling smoother development, testing, and deployment workflows.
+- Firebase Functions are now maintained and deployed independently from the z-control IONIC Setup app, allowing more flexible backend releases and simpler multi-app operations.
+- Updated README.md with new information about the independent maintenance of Firebase Functions and a link to the z-control IONIC Setup project for backend updates.
+
+## [2.0] – 2026-05-30
+
+### ✨ New Features
+
 - Refactored the backend to support upcoming new apps: the app now sends an appId with every request, allowing multiple apps to share the same Firebase backend while keeping their data organized and secure.
+- Without updating the app, the app crashes due to the new required appId parameter in backend requests, so this version update is necessary to ensure users receive the latest features and fixes.
+
+### 🔧 Internal
 - Improved reliability by validating appId in all backend requests and providing clear error messages if an unsupported appId is used.
 - Updated all unit tests to ensure the app remains stable and compatible with this new multi-app structure. Test coverage: 136 backend tests (99.6%) and 767 frontend tests (99.4%).
 

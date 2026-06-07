@@ -288,6 +288,8 @@ Backend logic is implemented in Firebase Cloud Functions (located in `functions/
 
 See [firebase-functions-esm-build-guide.md](docs/firebase-functions-esm-build-guide.md) for deployment instructions.
 
+**Note: Future changes of Cloud Functions are not maintained any more in this project. The [z-control Ionic Setup Project](https://github.com/zoechbauer/z-control-ionic-setup) will be used to maintain the cloud functions of all z-control apps, including this one.**
+
 ## Documentation
 
 All documentation, deployment guides, setup instructions, and troubleshooting tips are located in the [`docs/`](docs/) folder.

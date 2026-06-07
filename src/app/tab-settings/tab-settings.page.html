@@ -6,12 +6,12 @@
   class="settings-content"
   [class.landscape]="!utilsService.isPortrait"
 >
+  <h6 class="ion-text-center">{{'APP.NAME' | translate}}</h6>
   <ion-accordion-group
     [value]="openAccordion"
     (ionValueChange)="onAccordionGroupChange($event, content)"
     title="{{this.showAllAccordions ? ('SETTINGS.TOOLTIPS.OPEN_ACCORDION' | translate) : ('SETTINGS.TOOLTIPS.CLOSE_ACCORDION' | translate) }}"
   >
-    <h6 class="ion-text-center">{{'APP.NAME' | translate}}</h6>
     <app-spinner *ngIf="isLoading"></app-spinner>
     <!-- Show all accordions and section title  -->
     @if (showAllAccordions && !openAccordion) {
