@@ -235,9 +235,9 @@ export class FirebaseFirestoreService {
         const userCreatedYYYYMM =
           this.utilsService.formatDateTimeFirestoreSearchString(userCreated);
         if (
-          selectedMonth === AllMonthsOption.localStorageValue ||            // all months
-          userCreatedYYYYMM === selectedMonth ||                            // created in selected month
-          this.userHasTranslationsInMonth(data['userId'], selectedMonth)    // has translations in selected month
+          selectedMonth === AllMonthsOption.localStorageValue || // all months
+          userCreatedYYYYMM === selectedMonth || // created in selected month
+          this.userHasTranslationsInMonth(data['userId'], selectedMonth) // has translations in selected month
         ) {
           users.push({
             userId: data['userId'],
@@ -435,9 +435,11 @@ export class FirebaseFirestoreService {
       const callable = runInInjectionContext(this.injector, () =>
         this.getHttpsCallable('createMissingContingentData')
       );
-      await runInInjectionContext(this.injector, () => (callable as any)({
-        appId: FireStoreConstants.APP_ID,
-      }));
+      await runInInjectionContext(this.injector, () =>
+        (callable as any)({
+          appId: FireStoreConstants.APP_ID,
+        })
+      );
     } catch (error) {
       console.error('Error creating missing contingent data:', error);
       this.toastService.showToast(
@@ -465,7 +467,7 @@ export class FirebaseFirestoreService {
   ): Promise<FirestoreContingentData> {
     try {
       if (selectedMonth === AllMonthsOption.SelectOptionValue) {
-        return {};  // contingent data is not displayed for 'all months' option
+        return {}; // contingent data is not displayed for 'all months' option
       }
       const dataDocPath = `${FireStoreConstants.getMetaContingentDataDocumentPath(
         selectedMonth
@@ -506,6 +508,10 @@ export class FirebaseFirestoreService {
    */
   async getCharCountAndTargetLangsForUser(): Promise<CharCountAndTargetLangsResult> {
     try {
+      console.log(
+        'FE: Fetching char count and target languages for user:',
+        this.user?.uid
+      );
       if (!this.user) {
         return { charCount: 0, targetLanguages: [] };
       }
@@ -521,6 +527,10 @@ export class FirebaseFirestoreService {
             targetLanguages: (usageSnap.data() as any)['targetLanguages'] || [],
           }
         : { charCount: 0, targetLanguages: [] };
+      console.log(
+        'FE: Retrieved char count and target languages:',
+        charCountResult
+      );
       return charCountResult;
     } catch (error) {
       console.error('Error fetching char count for user:', error);

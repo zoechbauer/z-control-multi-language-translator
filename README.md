@@ -40,7 +40,7 @@ Download now for free and translate, listen, and learn with ease!
 - **Framework**: Ionic 8 with Angular 20
 - **Language**: TypeScript
 - **Styling**: SCSS with Ionic CSS Variables
-- **Backend**: Firebase (Firestore, Cloud Functions, Hosting)
+- **Backend**: Firebase (Firestore, Cloud Functions, Hosting) managed in the separate [z-control Backend Functions](https://github.com/zoechbauer/z-control-backend-functions) project
 - **Translation API**: Google Cloud Translation API (Basic variant)
 - **Text-to-Speech**: Web Speech API (browser) + native platform APIs (mobile)
 - **Build Tool**: Angular CLI
@@ -73,13 +73,6 @@ multi-language-translator/
 │   ├── why-use-runInInjectionContext.md
 │   ├── unit-testing/
 │   └── upload-to-google-playstore/
-│
-├── functions/                   # Firebase Cloud Functions (backend)
-│   ├── src/
-│   │   └── [backend logic for translations & statistics]
-│   ├── package.json
-│   ├── tsconfig.dev.json
-│   └── tsconfig.json
 │
 ├── resources/                   # Android icons & splash screens
 │
@@ -195,7 +188,6 @@ multi-language-translator/
 - [Node.js](https://nodejs.org/) (v18+)
 - [Ionic CLI](https://ionicframework.com/docs/cli)
 - [Angular CLI](https://angular.io/cli)
-- [Firebase CLI](https://firebase.google.com/docs/cli)
 - [Android Studio](https://developer.android.com/studio) (for Android builds)
 
 ### Installation
@@ -213,14 +205,12 @@ The app will open at `http://localhost:4200/` in your browser.
 
 For local testing with Firestore emulator:
 
-```bash
-# 1. Update environment.ts to use Firestore emulator
-# 2. Start Firebase emulator suite
-firebase emulators:start
+*Backend*
+- Start Firebase emulator suite in [z-control Backend Functions](https://github.com/zoechbauer/z-control-backend-functions) repository
 
-# 3. In another terminal, run the app
-ionic serve
-```
+*Frontend*
+- Update environment.ts in this app to use Firestore emulator
+- Run ionic serve
 
 See [local-testing-guide-secureTranslate.md](docs/local-testing-guide-secureTranslate.md) for detailed instructions.
 
@@ -240,19 +230,7 @@ npm run test:coverage
 ```
 #### Backend Tests (Vitest + Istanbul)
 
-```bash
-# Run backend tests
-npm --prefix functions run test
-
-# Run backend tests with Vitest UI (browser dashboard)
-cd functions && npm run test:ui
-
-# Run backend tests with Vitest UI and coverage
-cd functions && npm run test:ui:coverage
-
-# Run backend tests with coverage and auto-exit
-npm --prefix functions run test:coverage
-```
+See [z-control Backend Functions](https://github.com/zoechbauer/z-control-backend-functions) repository documentation for backend testing instructions, as the backend code and tests are maintained there.
 
 ### Building for Android
 
@@ -277,19 +255,6 @@ The app tracks monthly translation usage:
 
 When the monthly quota is reached, translations continue to work in **simulated mode** without consuming additional quota.
 
-## Cloud Functions
-
-Backend logic is implemented in Firebase Cloud Functions (located in `functions/src/`):
-
-- Atomic character count updates using `FieldValue.increment()`
-- User statistics aggregation
-- Firestore rules enforcement
-- Secure translation request processing
-
-See [firebase-functions-esm-build-guide.md](docs/firebase-functions-esm-build-guide.md) for deployment instructions.
-
-**Note: Future changes of Cloud Functions are not maintained any more in this project. The [z-control Ionic Setup Project](https://github.com/zoechbauer/z-control-ionic-setup) will be used to maintain the cloud functions of all z-control apps, including this one.**
-
 ## Documentation
 
 All documentation, deployment guides, setup instructions, and troubleshooting tips are located in the [`docs/`](docs/) folder.
@@ -299,7 +264,6 @@ All documentation, deployment guides, setup instructions, and troubleshooting ti
 - [Getting Started Guide](docs/README.md)
 - [Local Testing Guide](docs/local-testing-guide-secureTranslate.md)
 - [Mobile Installation](docs/mobile-installation-guide.md)
-- [Google Cloud Translation API Pricing](docs/google-cloud-translation-api-pricing.md)
 - [Coding Guidelines](docs/coding-guidelines.md)
 
 ## Privacy Policy

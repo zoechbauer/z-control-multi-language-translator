@@ -10,6 +10,13 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
+## [2.2] - 2026-06-11
+
+### 🔧 Internal
+
+- Removed functions folder from the project because functions are never implemented in frontend projects but only in the **z-control Backend Functions** project. This cleanup ensures that the frontend project remains focused on UI and client-side logic, while all backend functionality is centralized in the new **z-control Backend Functions** project.
+- Updated the README to reflect the new app structure and provide instructions for using the **z-control Backend Functions** project for backend functionality.
+
 ## [2.1] – 2026-06-07
 
 ### 🚀 Improvements
