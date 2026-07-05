@@ -2,8 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["jasmine", "node"],
-    "composite": true,
-    "moduleResolution": "node"
   },
   "files": ["src/polyfills.ts", "src/main.ts", "src/test.ts"],
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]

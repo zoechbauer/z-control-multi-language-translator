@@ -21,9 +21,9 @@ import { Subscription } from 'rxjs';
 import {
   GoogleLanguage,
   TranslationGoogleTranslateService,
-} from 'src/app/services/translation-google-translate.service';
-import { AppConstants } from 'src/app/shared/app.constants';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+} from '@app/services/translation-google-translate.service';
+import { AppConstants } from '@app/shared/app.constants';
+import { LocalStorageService } from '@app/services/local-storage.service';
 import { LanguageMultiSelectComponent } from '../language-multi-select/language-multi-select.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
 

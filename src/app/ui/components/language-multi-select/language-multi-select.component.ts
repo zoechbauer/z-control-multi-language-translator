@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GoogleLanguage } from 'src/app/services/translation-google-translate.service';
+import { GoogleLanguage } from '@app/services/translation-google-translate.service';
 import {
   IonItem,
   IonCheckbox,
@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
 import { ModalController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { AppConstants } from 'src/app/shared/app.constants';
+import { AppConstants } from '@app/shared/app.constants';
 
 @Component({
   selector: 'app-language-multi-select',
@@ -76,7 +76,13 @@ export class LanguageMultiSelectComponent implements OnInit {
   }
 
   getCheckboxTooltip(language: string): string {
-    return this.isChecked(language) ? this.translate.instant('SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.DESELECT_TARGET_LANG') : this.translate.instant('SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.SELECT_TARGET_LANG');
+    return this.isChecked(language)
+      ? this.translate.instant(
+          'SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.DESELECT_TARGET_LANG'
+        )
+      : this.translate.instant(
+          'SETTINGS.TARGET_LANGUAGES.MODAL.SEARCH.TOOLTIPS.SELECT_TARGET_LANG'
+        );
   }
 
   filter(ev: any) {

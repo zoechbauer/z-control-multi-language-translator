@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { LanguageAccordionComponent } from './language-accordion.component';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
 
 describe('LanguageAccordionComponent', () => {
   let component: LanguageAccordionComponent;

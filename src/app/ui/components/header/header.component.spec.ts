@@ -3,8 +3,8 @@ import { IonicModule, ModalController } from '@ionic/angular';
 
 import { HeaderComponent } from './header.component';
 import { TranslateService } from '@ngx-translate/core';
-import { UtilsService } from 'src/app/services/utils.service';
-import { Tab } from 'src/app/shared/enums';
+import { UtilsService } from '@app/services/utils.service';
+import { Tab } from '@app/shared/enums';
 import { Subject } from 'rxjs';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
 

@@ -6,18 +6,18 @@ import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 
 import { GetStatisticsComponent } from './get-statistics.component';
-import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
-import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firestore-utils.service';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { UtilsService } from 'src/app/services/utils.service';
-import { AllMonthsOption, DisplayMode } from 'src/app/shared/enums';
+import { FirebaseFirestoreService } from '@app/services/firebase-firestore.service';
+import { FirebaseFirestoreUtilsService } from '@app/services/firebase-firestore-utils.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
+import { UtilsService } from '@app/services/utils.service';
+import { AllMonthsOption, DisplayMode } from '@app/shared/enums';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { environment } from '@env/environment';
 import {
   DisplayedUserStatistics,
   DisplayedUserStatisticsRow,
   StatisticsData,
-} from 'src/app/shared/firebase-firestore.interfaces';
+} from '@app/shared/firebase-firestore.interfaces';
 
 function createUserStat(
   userId = 'U-1',

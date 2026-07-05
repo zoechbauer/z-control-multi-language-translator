@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { LogoComponent } from './logo.component';
-import { LogoType } from 'src/app/shared/enums';
+import { LogoType } from '@app/shared/enums';
 
 describe('LogoComponent', () => {
   let component: LogoComponent;

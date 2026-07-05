@@ -11,8 +11,8 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { TextToSpeechValues } from 'src/app/shared/app.interfaces';
+import { LocalStorageService } from '@app/services/local-storage.service';
+import { TextToSpeechValues } from '@app/shared/app.interfaces';
 
 @Component({
   selector: 'app-text-to-speech-accordion',
@@ -39,13 +39,13 @@ export class TextToSpeechAccordionComponent {
 
   constructor(
     public translate: TranslateService,
-    private readonly localStorageService: LocalStorageService,
+    private readonly localStorageService: LocalStorageService
   ) {}
 
   getTtsRateLabel(): string {
     return this.ngModel?.rate
       ? `${this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE',
+          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE'
         )} : ${this.ngModel.rate}`
       : this.translate.instant('SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_RATE');
   }
@@ -53,7 +53,7 @@ export class TextToSpeechAccordionComponent {
   getTtsPitchLabel(): string {
     return this.ngModel?.pitch
       ? `${this.translate.instant(
-          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH',
+          'SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH'
         )} : ${this.ngModel.pitch}`
       : this.translate.instant('SETTINGS.TEXT_TO_SPEECH.LABEL.TTS_PITCH');
   }

@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LanguageMultiSelectComponent } from './language-multi-select.component';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
-import { AppConstants } from 'src/app/shared/app.constants';
-import { GoogleLanguage } from 'src/app/services/translation-google-translate.service';
+import { AppConstants } from '@app/shared/app.constants';
+import { GoogleLanguage } from '@app/services/translation-google-translate.service';
 
 describe('LanguageMultiSelectComponent', () => {
   let component: LanguageMultiSelectComponent;

@@ -15,10 +15,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { DisplayedUserStatistics } from 'src/app/shared/firebase-firestore.interfaces';
-import { UtilsService } from 'src/app/services/utils.service';
-import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
-import { DisplayMode } from 'src/app/shared/enums';
+import { DisplayedUserStatistics } from '@app/shared/firebase-firestore.interfaces';
+import { UtilsService } from '@app/services/utils.service';
+import { TranslationGoogleTranslateService } from '@app/services/translation-google-translate.service';
+import { DisplayMode } from '@app/shared/enums';
 
 @Component({
   selector: 'app-user-detail-modal',

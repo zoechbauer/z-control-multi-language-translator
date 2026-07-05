@@ -13,9 +13,9 @@ import {
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
-import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { UtilsService } from 'src/app/services/utils.service';
-import { AppConstants } from 'src/app/shared/app.constants';
+import { LocalStorageService } from '@app/services/local-storage.service';
+import { UtilsService } from '@app/services/utils.service';
+import { AppConstants } from '@app/shared/app.constants';
 
 @Component({
   selector: 'app-get-help',

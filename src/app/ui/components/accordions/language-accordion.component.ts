@@ -1,8 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonAccordion,
@@ -13,7 +10,7 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
 
 @Component({
   selector: 'app-language-accordion',
@@ -35,7 +32,6 @@ export class LanguageAccordionComponent {
 
   constructor(
     public translate: TranslateService,
-    public localStorage: LocalStorageService,
+    public localStorage: LocalStorageService
   ) {}
-
 }

@@ -4,8 +4,8 @@ import { DecimalPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LogoComponent } from '../logo/logo.component';
-import { LogoType } from 'src/app/shared/enums';
-import { AppConstants } from 'src/app/shared/app.constants';
+import { LogoType } from '@app/shared/enums';
+import { AppConstants } from '@app/shared/app.constants';
 @Component({
   selector: 'app-get-mobile-app',
   templateUrl: './get-mobile-app.component.html',

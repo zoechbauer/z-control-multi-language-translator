@@ -4,10 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { TargetLanguagesAccordionComponent } from './target-languages-accordion.component';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
-import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { TranslationGoogleTranslateService } from '@app/services/translation-google-translate.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
 import { of, Subject } from 'rxjs';
-import { AppConstants } from 'src/app/shared/app.constants';
+import { AppConstants } from '@app/shared/app.constants';
 
 describe('TargetLanguagesAccordionComponent', () => {
   let component: TargetLanguagesAccordionComponent;

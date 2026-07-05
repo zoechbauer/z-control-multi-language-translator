@@ -1,5 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild, SecurityContext } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  SecurityContext,
+} from '@angular/core';
 import { MarkdownComponent, MarkdownService, SANITIZE } from 'ngx-markdown';
 import {
   IonContent,
@@ -14,7 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { NgIf } from '@angular/common';
 
-import { UtilsService } from 'src/app/services/utils.service';
+import { UtilsService } from '@app/services/utils.service';
 
 @Component({
   selector: 'app-markdown-viewer',

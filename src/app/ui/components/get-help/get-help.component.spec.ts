@@ -9,10 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { HelpModalComponent } from './get-help.component';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { UtilsService } from 'src/app/services/utils.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
+import { UtilsService } from '@app/services/utils.service';
 import { createTranslateServiceMock } from '@testing/translate-service.mock';
-import { AppConstants } from 'src/app/shared/app.constants';
+import { AppConstants } from '@app/shared/app.constants';
 
 describe('HelpModalComponent', () => {
   let component: HelpModalComponent;

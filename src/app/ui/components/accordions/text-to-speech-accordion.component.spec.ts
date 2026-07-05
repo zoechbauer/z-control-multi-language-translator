@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { LocalStorageService } from '@app/services/local-storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import { By } from '@angular/platform-browser';
 

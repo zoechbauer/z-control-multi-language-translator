@@ -11,7 +11,7 @@ import { NgIf } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { LogoType, Tab } from './../../../shared/enums';
-import { UtilsService } from 'src/app/services/utils.service';
+import { UtilsService } from '@app/services/utils.service';
 import { LogoComponent } from '../logo/logo.component';
 
 @Component({
