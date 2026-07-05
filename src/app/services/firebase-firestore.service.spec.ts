@@ -18,7 +18,7 @@ import {
 import { LocalStorageService } from './local-storage.service';
 import { ToastService } from './toast.service';
 import { ToastAnchor, AllMonthsOption } from '../shared/enums';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
 import { FirebaseFirestoreAuthWrapperService } from './firebase-firestore-auth-wrapper.service';
 import { DeviceUtils } from './device-utils.service';

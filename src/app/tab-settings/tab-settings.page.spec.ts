@@ -11,7 +11,7 @@ import { UtilsService } from '../services/utils.service';
 import { TextSpeechService } from '../services/text-to-speech.service';
 import { FirebaseFirestoreService } from '../services/firebase-firestore.service';
 import { createTranslateServiceMock } from '../testing/translate-service.mock';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { GetStatisticsAccordionComponent } from '../ui/components/accordions/get-statistics-accordion.component';
 import { TranslationGoogleTranslateService } from '../services/translation-google-translate.service';
 import { TargetLanguagesAccordionComponent } from '../ui/components/accordions/target-languages-accordion.component';
@@ -150,7 +150,7 @@ describe('TabSettingsPage', () => {
 
     const firebaseFirestoreUtilsServiceSpy = jasmine.createSpyObj(
       'FirebaseFirestoreUtilsService',
-      [ 'requestStatisticsRefresh']
+      ['requestStatisticsRefresh']
     );
 
     textSpeechServiceSpy = jasmine.createSpyObj('TextSpeechService', [
@@ -308,7 +308,9 @@ describe('TabSettingsPage', () => {
       });
 
       it('should refresh statistics when statistics accordion is opened', () => {
-        const requestStatisticsRefreshSpy = TestBed.inject(FirebaseFirestoreUtilsService).requestStatisticsRefresh as jasmine.Spy;
+        const requestStatisticsRefreshSpy = TestBed.inject(
+          FirebaseFirestoreUtilsService
+        ).requestStatisticsRefresh as jasmine.Spy;
         const event = {
           detail: { value: 'get-statistics' },
         } as CustomEvent;

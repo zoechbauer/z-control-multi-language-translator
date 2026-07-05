@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { FirebaseFirestoreService } from './firebase-firestore.service';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import {
   DisplayedUserContingentData,
   DisplayedUserStatistics,
@@ -75,7 +75,9 @@ export class FirebaseFirestoreUtilsService {
    *          displayed user statistics, raw user translation statistics, all users,
    *          and programmer device UIDs (empty if not a programmer device).
    */
-  async getDisplayedUserStatistics(isProgrammerDevice: boolean): Promise<StatisticsData> {
+  async getDisplayedUserStatistics(
+    isProgrammerDevice: boolean
+  ): Promise<StatisticsData> {
     let statisticsData: StatisticsData = {
       displayedUserStatistics: [],
       userTranslationStatistics: [],
@@ -504,7 +506,9 @@ export class FirebaseFirestoreUtilsService {
   > {
     // Read all control flags from Firestore
     const contingentData: FirestoreContingentData =
-      await this.firestoreService.readContingentData(this.utilsService.getCurrentMonth());
+      await this.firestoreService.readContingentData(
+        this.utilsService.getCurrentMonth()
+      );
     const displayedContingentData: DisplayedUserContingentData[] = [];
     // calculate data for current user
     const { charCount: userCharCount } =
@@ -566,7 +570,9 @@ export class FirebaseFirestoreUtilsService {
 
     // Read all control flags from Firestore
     const flags: FirestoreContingentData =
-      await this.firestoreService.readContingentData(this.utilsService.getCurrentMonth());
+      await this.firestoreService.readContingentData(
+        this.utilsService.getCurrentMonth()
+      );
 
     // 1. If translation is globally stopped for all users
     if (flags.StopTranslationForAllUsers) {
@@ -589,7 +595,8 @@ export class FirebaseFirestoreUtilsService {
     const limit =
       flags.maxFreeTranslateCharsPerMonthForUser ??
       environment.app.maxFreeTranslateCharsPerMonthForUser;
-    const { charCount } = await this.firestoreService.getCharCountAndTargetLangsForUser();
+    const { charCount } =
+      await this.firestoreService.getCharCountAndTargetLangsForUser();
     return charCount >= limit;
   }
 

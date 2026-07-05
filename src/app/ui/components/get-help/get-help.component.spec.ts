@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { HelpModalComponent } from './get-help.component';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { AppConstants } from 'src/app/shared/app.constants';
 
 describe('HelpModalComponent', () => {

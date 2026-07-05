@@ -1,4 +1,4 @@
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { DeviceInfo, UserType } from '../shared/firebase-firestore.interfaces';
 import { AppleDeviceTypeEnum, WebPlatformTypeEnum } from '../shared/enums';
 
@@ -9,7 +9,7 @@ export class DeviceUtils {
 
     if (DeviceUtils.isAndroidPhone(ua)) return true;
     if (DeviceUtils.isAndroidTablet(ua)) return true;
-    
+
     if (DeviceUtils.isIPhone(ua, pf)) return true;
     if (DeviceUtils.isIPad(ua, pf)) return true;
 

@@ -1,11 +1,9 @@
-import { SplashScreen } from '@capacitor/splash-screen';
 import { Capacitor } from '@capacitor/core';
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { StatusBar } from '@capacitor/status-bar';
 
 import { SafeAreaInsetsService } from './services/safe-area-insets.service';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { SystemBarsService } from './services/system-bars.service';
 import { FirebaseFirestoreService } from './services/firebase-firestore.service';
 import { TextSpeechService } from './services/text-to-speech.service';

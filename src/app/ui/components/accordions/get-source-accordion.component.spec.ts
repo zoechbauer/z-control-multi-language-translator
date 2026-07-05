@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 
 import { GetSourceAccordionComponent } from './get-source-accordion.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('GetSourceAccordionComponent', () => {
   let component: GetSourceAccordionComponent;

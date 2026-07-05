@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { UtilsService } from 'src/app/services/utils.service';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { UserDetailComponent } from './user-detail.component';
 import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
 import { DisplayMode } from 'src/app/shared/enums';

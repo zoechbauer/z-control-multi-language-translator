@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TargetLanguagesAccordionComponent } from './target-languages-accordion.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { TranslationGoogleTranslateService } from 'src/app/services/translation-google-translate.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { of, Subject } from 'rxjs';

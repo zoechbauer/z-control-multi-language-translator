@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { By } from '@angular/platform-browser';
 
 import { TextToSpeechAccordionComponent } from './text-to-speech-accordion.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('TextToSpeechAccordionComponent', () => {
   let component: TextToSpeechAccordionComponent;

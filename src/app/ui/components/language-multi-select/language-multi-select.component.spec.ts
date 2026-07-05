@@ -3,7 +3,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { LanguageMultiSelectComponent } from './language-multi-select.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { AppConstants } from 'src/app/shared/app.constants';
 import { GoogleLanguage } from 'src/app/services/translation-google-translate.service';
 

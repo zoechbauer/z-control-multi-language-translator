@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PrivacyPolicyComponent } from './privacy-policy.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('PrivacyPolicyComponent', () => {
   let component: PrivacyPolicyComponent;

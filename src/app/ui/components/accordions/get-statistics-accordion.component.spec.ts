@@ -5,7 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 
 import { GetStatisticsAccordionComponent } from './get-statistics-accordion.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 

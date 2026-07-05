@@ -24,7 +24,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LogoComponent } from '../logo/logo.component';
 import { AllMonthsOption, DisplayMode, LogoType } from 'src/app/shared/enums';
 import { FirebaseFirestoreService } from 'src/app/services/firebase-firestore.service';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import {
   FirestoreContingentData,
   DisplayedUserStatistics,
@@ -118,7 +118,9 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
 
   get displayModeTooltip(): string {
     return this.displayMode === DisplayMode.Programmer
-      ? this.translate.instant('SETTINGS.STATISTICS.DISPLAY_MODE_PROGRAMMER_TOOLTIP')
+      ? this.translate.instant(
+          'SETTINGS.STATISTICS.DISPLAY_MODE_PROGRAMMER_TOOLTIP'
+        )
       : this.translate.instant('SETTINGS.STATISTICS.DISPLAY_MODE_USER_TOOLTIP');
   }
 

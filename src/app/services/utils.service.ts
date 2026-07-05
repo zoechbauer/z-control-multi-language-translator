@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 
 import { AllMonthsOption, DisplayMode, Tab } from '../shared/enums';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { DisplayedUserStatistics } from '../shared/firebase-firestore.interfaces';
 import { UserDetailComponent } from '../ui/components/user-detail/user-detail.component';
 import { HelpModalComponent } from '../ui/components/get-help/get-help.component';

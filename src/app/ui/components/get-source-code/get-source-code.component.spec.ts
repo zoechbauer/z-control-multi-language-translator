@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { GetSourceCodeComponent } from './get-source-code.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('GetSourceCodeComponent', () => {
   let component: GetSourceCodeComponent;

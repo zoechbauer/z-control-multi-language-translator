@@ -27,7 +27,7 @@ import {
 
 import { routes } from './app-routes';
 import { ServicesModule } from './services.module';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [

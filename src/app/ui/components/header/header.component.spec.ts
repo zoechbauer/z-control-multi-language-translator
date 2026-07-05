@@ -6,12 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Tab } from 'src/app/shared/enums';
 import { Subject } from 'rxjs';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  
+
   const modalControllerSpy = jasmine.createSpyObj('ModalController', [
     'create',
   ]);

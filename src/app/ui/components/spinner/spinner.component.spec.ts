@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SpinnerComponent } from './spinner.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('SpinnerComponent', () => {
   let component: SpinnerComponent;

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ChangeLogAccordionComponent } from './change-log-accordion.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('ChangeLogAccordionComponent', () => {
   let component: ChangeLogAccordionComponent;

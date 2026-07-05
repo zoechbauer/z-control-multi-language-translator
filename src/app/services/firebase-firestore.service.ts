@@ -19,7 +19,7 @@ import {
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Subject } from 'rxjs';
 
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { FireStoreConstants } from '../shared/app.constants';
 import { UtilsService } from './utils.service';
 import { LocalStorageService } from './local-storage.service';
@@ -503,10 +503,6 @@ export class FirebaseFirestoreService {
    */
   async getCharCountAndTargetLangsForUser(): Promise<CharCountAndTargetLangsResult> {
     try {
-      console.log(
-        'FE: Fetching char count and target languages for user:',
-        this.user?.uid
-      );
       if (!this.user) {
         return { charCount: 0, targetLanguages: [] };
       }
@@ -522,10 +518,6 @@ export class FirebaseFirestoreService {
             targetLanguages: (usageSnap.data() as any)['targetLanguages'] || [],
           }
         : { charCount: 0, targetLanguages: [] };
-      console.log(
-        'FE: Retrieved char count and target languages:',
-        charCountResult
-      );
       return charCountResult;
     } catch (error) {
       console.error('Error fetching char count for user:', error);

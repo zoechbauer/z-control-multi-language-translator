@@ -5,7 +5,7 @@ import { ModalController } from '@ionic/angular';
 
 import { UtilsService } from './utils.service';
 import { DisplayMode, Tab } from '../shared/enums';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 import { HelpModalComponent } from '../ui/components/get-help/get-help.component';
 import { MarkdownViewerComponent } from '../ui/components/markdown-viewer/markdown-viewer.component';
 import { UserDetailComponent } from '../ui/components/user-detail/user-detail.component';

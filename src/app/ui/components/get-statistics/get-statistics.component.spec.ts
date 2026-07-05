@@ -11,8 +11,8 @@ import { FirebaseFirestoreUtilsService } from 'src/app/services/firebase-firesto
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { AllMonthsOption, DisplayMode } from 'src/app/shared/enums';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
-import { environment } from 'src/environments/environment';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
+import { environment } from '@env/environment';
 import {
   DisplayedUserStatistics,
   DisplayedUserStatisticsRow,

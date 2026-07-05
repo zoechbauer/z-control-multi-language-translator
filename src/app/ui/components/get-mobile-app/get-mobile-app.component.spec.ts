@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { GetMobileAppComponent } from './get-mobile-app.component';
-import { createTranslateServiceMock } from 'src/app/testing/translate-service.mock';
+import { createTranslateServiceMock } from '@testing/translate-service.mock';
 
 describe('GetMobileAppComponent', () => {
   let component: GetMobileAppComponent;
