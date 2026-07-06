@@ -10,7 +10,7 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
-## [2.4] - 2026-07-05
+## [2.4] - 2026-07-06
 
 ### 🔧 Internal
 
@@ -18,6 +18,7 @@ This project uses a simplified major.minor versioning scheme:
 - Updated the import path of the environment file in all TypeScript files to use the new `@env` alias, ensuring consistent and maintainable imports across the project.
 - Updated the import path of the `createTranslateServiceMock` function in all unit test files to use the new `@testing` alias, improving test code organization and maintainability.
 - Updated the import path `src/app/...` to `@app` in all TypeScript files, standardizing import paths and improving code readability and maintainability.
+- Removed firebase configuration files because they are no longer needed in this app, as Firebase is now only used in the backend functions project.
 
 ## [2.3] - 2026-06-30
 
