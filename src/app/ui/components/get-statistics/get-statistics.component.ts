@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   IonGrid,
   IonCol,
@@ -67,6 +67,12 @@ import { FormsModule } from '@angular/forms';
   ],
 })
 export class GetStatisticsComponent implements OnInit, OnDestroy {
+  private readonly translate = inject(TranslateService);
+  private readonly firestoreService = inject(FirebaseFirestoreService);
+  private readonly firestoreUtilsService = inject(FirebaseFirestoreUtilsService);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly utilsService = inject(UtilsService);
+
   @Input() lang!: string;
 
   LogoType = LogoType;
@@ -103,14 +109,6 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private _statisticsData: StatisticsData | null = null;
   private isPortrait = true;
-
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly firestoreService: FirebaseFirestoreService,
-    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService,
-    private readonly localStorageService: LocalStorageService,
-    private readonly utilsService: UtilsService
-  ) {}
 
   get statisticsData(): StatisticsData | null {
     return this._statisticsData;

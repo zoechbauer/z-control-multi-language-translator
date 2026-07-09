@@ -31,17 +31,17 @@ export interface GoogleLanguage {
 
 @Injectable({ providedIn: 'root' })
 export class TranslationGoogleTranslateService {
+  private readonly http = inject(HttpClient);
+  private readonly translate = inject(TranslateService);
+  private readonly functions = inject(Functions);
+
   private readonly injector: Injector;
   private readonly GOOGLE_TRANSLATE_API_KEY =
     environment.googleTranslate.apiKey;
   private readonly GOOGLE_TRANSLATE_API_URL = `https://translation.googleapis.com/language/translate/v2?key=${this.GOOGLE_TRANSLATE_API_KEY}`;
   private supportedLanguagesCache: { [lang: string]: GoogleLanguage[] } = {};
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly translate: TranslateService,
-    private readonly functions: Functions
-  ) {
+  constructor() {
     this.injector = inject(Injector);
   }
 

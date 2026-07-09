@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -9,11 +9,10 @@ import { ToastAnchor } from '../shared/enums';
   providedIn: 'root',
 })
 export class ToastService {
-  constructor(
-    public translate: TranslateService,
-    private readonly toastController: ToastController,
-    private readonly utilsService: UtilsService
-  ) {}
+  translate = inject(TranslateService);
+  private readonly toastController = inject(ToastController);
+  private readonly utilsService = inject(UtilsService);
+
 
   /**
    * Shows a toast with a translated message, typically used for disabled actions.

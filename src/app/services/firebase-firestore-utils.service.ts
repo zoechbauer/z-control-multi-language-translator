@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { FirebaseFirestoreService } from './firebase-firestore.service';
@@ -25,16 +25,16 @@ import { UtilsService } from './utils.service';
   providedIn: 'root',
 })
 export class FirebaseFirestoreUtilsService {
+  private readonly firestoreService = inject(FirebaseFirestoreService);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly utilsService = inject(UtilsService);
+
   private readonly statisticsRefreshSubject = new Subject<void>();
   readonly statisticsRefresh$ = this.statisticsRefreshSubject.asObservable();
   private statisticsDisplayMode: DisplayMode = DisplayMode.User;
   private statisticsSelectedMonth: string = '';
 
-  constructor(
-    private readonly firestoreService: FirebaseFirestoreService,
-    private readonly localStorageService: LocalStorageService,
-    private readonly utilsService: UtilsService
-  ) {
+  constructor() {
     this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
       this.localStorageService
         .getStatisticsDisplayMode()

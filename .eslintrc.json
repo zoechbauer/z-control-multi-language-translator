@@ -3,23 +3,17 @@
   "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
-      "files": ["*.ts"],
+      "files": ["**/*.ts"],
       "parserOptions": {
-        "project": ["tsconfig.json"],
-        "createDefaultProgram": true
+        "project": ["./tsconfig.eslint.json"]
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "@angular-eslint/prefer-standalone": "off",
-        "@angular-eslint/component-class-suffix": [
-          "error",
-          {
-            "suffixes": ["Page", "Component"]
-          }
-        ],
+        "@angular-eslint/prefer-standalone": "error",
+        "@angular-eslint/component-class-suffix": "off",
         "@angular-eslint/component-selector": [
           "error",
           {
@@ -39,7 +33,7 @@
       }
     },
     {
-      "files": ["*.html"],
+      "files": ["**/*.html"],
       "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }

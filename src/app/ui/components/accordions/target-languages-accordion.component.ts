@@ -1,12 +1,5 @@
 import { CommonModule, NgIf } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonAccordion,
@@ -44,6 +37,11 @@ import { SpinnerComponent } from '../spinner/spinner.component';
   ],
 })
 export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
+  translate = inject(TranslateService);
+  readonly localStorage = inject(LocalStorageService);
+  private readonly googleTranslateService = inject(TranslationGoogleTranslateService);
+  private readonly modalController = inject(ModalController);
+
   @Input() lang!: string;
   @Output() ionChange = new EventEmitter<string[]>();
 
@@ -51,13 +49,6 @@ export class TargetLanguagesAccordionComponent implements OnInit, OnDestroy {
   selectedTargetLanguageCodes: string[] = [];
   isLoading = false;
   private readonly subscriptions: Subscription[] = [];
-
-  constructor(
-    public translate: TranslateService,
-    public readonly localStorage: LocalStorageService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService,
-    private readonly modalController: ModalController
-  ) {}
 
   get maxTargetLanguages(): number {
     return AppConstants.maxTargetLanguages;

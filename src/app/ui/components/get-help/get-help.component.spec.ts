@@ -193,12 +193,8 @@ describe('HelpModalComponent', () => {
 
   describe('initialization', () => {
     it('should initialize isPortrait based on current orientation', () => {
-      const newComponent = new HelpModalComponent(
-        mockUtilsService,
-        mockModalController,
-        mockTranslateService,
-        mockLocalStorageService
-      );
+      const newFixture = TestBed.createComponent(HelpModalComponent);
+      const newComponent = newFixture.componentInstance;
 
       expect(newComponent.isPortrait).toBe(true);
     });

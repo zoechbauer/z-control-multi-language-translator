@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -73,6 +73,14 @@ interface Translation {
   ],
 })
 export class TabTranslationPage implements OnInit, OnDestroy {
+  translate = inject(TranslateService);
+  localStorage = inject(LocalStorageService);
+  readonly utilsService = inject(UtilsService);
+  readonly ttsService = inject(TextSpeechService);
+  private readonly googleTranslateService = inject(TranslationGoogleTranslateService);
+  private readonly toastService = inject(ToastService);
+  private readonly firestoreUtilsService = inject(FirebaseFirestoreUtilsService);
+
   Tab = Tab;
   text: string = '';
   baseLang: string = 'de';
@@ -89,16 +97,6 @@ export class TabTranslationPage implements OnInit, OnDestroy {
   isLoading = false;
 
   private readonly subscriptions: Subscription[] = [];
-
-  constructor(
-    public translate: TranslateService,
-    public localStorage: LocalStorageService,
-    public readonly utilsService: UtilsService,
-    public readonly ttsService: TextSpeechService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService,
-    private readonly toastService: ToastService,
-    private readonly firestoreUtilsService: FirebaseFirestoreUtilsService
-  ) {}
 
   get maxInputLength(): number {
     return AppConstants.maxInputLength;

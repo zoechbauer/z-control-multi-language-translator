@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -10,9 +10,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   imports: [IonIcon, TranslateModule],
 })
 export class FooterComponent {
-  showDetails = false;
+  translate = inject(TranslateService);
 
-  constructor(public translate: TranslateService) {}
+  showDetails = false;
 
   get mailtoLink() {
     return 'mailto:zcontrol.app.qr@gmail.com?subject=z-control%20Multi%20Translator%20App%20Feedback';

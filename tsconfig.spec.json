@@ -1,8 +1,9 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["jasmine", "node"],
+    "types": ["jasmine", "node"]
   },
   "files": ["src/polyfills.ts", "src/main.ts", "src/test.ts"],
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/app/testing/**/*.ts"]
 }

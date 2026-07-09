@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { GoogleLanguage } from '@app/services/translation-google-translate.service';
 import {
   IonItem,
@@ -42,6 +42,9 @@ import { AppConstants } from '@app/shared/app.constants';
   ],
 })
 export class LanguageMultiSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly translate = inject(TranslateService);
+
   @Input() baseLang!: string;
   @Input() allLanguages: GoogleLanguage[] = [];
   @Input() selectedCodes: string[] = [];
@@ -49,11 +52,6 @@ export class LanguageMultiSelectComponent implements OnInit {
   searchTerm = '';
   filteredLanguages: GoogleLanguage[] = [];
   selection = new Set<string>();
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly translate: TranslateService
-  ) {}
 
   ngOnInit() {
     this.filteredLanguages = [...this.allLanguages];

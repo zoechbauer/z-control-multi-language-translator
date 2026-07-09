@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import {
   IonAccordion,
   IonItem,
@@ -24,11 +24,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   ],
 })
 export class ChangeLogAccordionComponent {
+  translate = inject(TranslateService);
+
   @Input() versionInfo!: string;
   @Input() lang!: string;
   @Output() ionChange = new EventEmitter<void>();
-
-  constructor(public translate: TranslateService) {}
 
   openChangelog() {
     this.ionChange.emit();

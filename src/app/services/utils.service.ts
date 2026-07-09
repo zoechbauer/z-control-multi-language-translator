@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -16,6 +16,10 @@ import { HelpModalComponent } from '../ui/components/get-help/get-help.component
   providedIn: 'root',
 })
 export class UtilsService {
+  private readonly translate = inject(TranslateService);
+  private readonly modalController = inject(ModalController);
+  private readonly router = inject(Router);
+
   /**
    * Emits when the logo is clicked (used for feedback or navigation triggers).
    */
@@ -26,11 +30,7 @@ export class UtilsService {
   logoClicked$ = this.logoClickedSub.asObservable();
   private currentModal: HTMLIonModalElement | null = null;
 
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly modalController: ModalController,
-    private readonly router: Router
-  ) {
+  constructor() {
     globalThis.addEventListener('orientationchange', () => {
       if (this.currentModal) {
         this.setModalLandscapeClasses(this.currentModal);

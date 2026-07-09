@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
@@ -20,6 +20,10 @@ enum LocalStorage {
   providedIn: 'root',
 })
 export class LocalStorageService {
+  private readonly storage = inject(Storage);
+  private readonly googleTranslateService = inject(TranslationGoogleTranslateService);
+  private readonly utilsService = inject(UtilsService);
+
   /**
    * Emits the firestore UID of the user (e.g. anonymous user).
    */
@@ -98,12 +102,6 @@ export class LocalStorageService {
    * Observable for the currently selected month for statistics filtering.
    */
   statisticsSelectedMonth$ = this.statisticsSelectedMonthSubject.asObservable();
-
-  constructor(
-    private readonly storage: Storage,
-    private readonly googleTranslateService: TranslationGoogleTranslateService,
-    private readonly utilsService: UtilsService
-  ) {}
 
   private async initStorage() {
     await this.storage.create();

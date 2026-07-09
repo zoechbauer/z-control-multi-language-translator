@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   IonTabs,
@@ -23,6 +23,6 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
   ],
 })
-export class TabsPage {
-  constructor(public translate: TranslateService) {}
+export class TabsPage {  translate = inject(TranslateService);
+
 }

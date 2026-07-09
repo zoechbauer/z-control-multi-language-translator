@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { IonAccordion, IonItem, IonLabel } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -18,8 +18,8 @@ import { PrivacyPolicyComponent } from './../privacy-policy/privacy-policy.compo
   ],
 })
 export class PrivacyPolicyAccordionComponent {
+  translate = inject(TranslateService);
+
   @Input() lang!: string;
   LogoType = LogoType;
-
-  constructor(public translate: TranslateService) {}
 }

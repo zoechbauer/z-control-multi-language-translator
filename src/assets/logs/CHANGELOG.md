@@ -10,6 +10,14 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
+## [2.5] - 2026-07-09
+
+### 🔧 Internal
+
+- **All ESLint errors have been resolved**, and the codebase now adheres to the latest Angular ESLint best practices.
+- Fixed the ESLint rule `@angular-eslint/prefer-inject` by **migrating constructor-based dependency injection to field-based inject() usage**. This reduces boilerplate and makes dependencies more explicit.
+- **Improved the ESLint setup** by introducing `tsconfig.eslint.json` and pointing `.eslintrc.json` to it. Added `src/**/*.d.ts` to the linting project so declaration files are included in typed linting across the codebase.
+
 ## [2.4] - 2026-07-06
 
 ### 🔧 Internal

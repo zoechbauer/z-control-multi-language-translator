@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -41,18 +41,16 @@ import { DisplayMode } from '@app/shared/enums';
   ],
 })
 export class UserDetailComponent implements OnInit {
+  translate = inject(TranslateService);
+  private readonly googleTranslateService = inject(TranslationGoogleTranslateService);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly utilsService = inject(UtilsService);
+
   @Input() lang!: string;
   @Input() userStatistic!: DisplayedUserStatistics;
   @Input() displayMode!: DisplayMode;
   DisplayMode = DisplayMode;
   targetLanguagesDisplay: string = '';
-
-  constructor(
-    public translate: TranslateService,
-    private readonly googleTranslateService: TranslationGoogleTranslateService,
-    private readonly modalCtrl: ModalController,
-    private readonly utilsService: UtilsService
-  ) {}
 
   ngOnInit() {
     this.getTargetLanguagesWithLineBreak();

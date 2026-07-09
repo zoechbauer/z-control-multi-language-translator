@@ -39,6 +39,15 @@ import { DeviceUtils } from './device-utils.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseFirestoreService {
+  private readonly auth = inject(angularFireAuth.Auth);
+  private readonly authWrapper = inject(FirebaseFirestoreAuthWrapperService);
+  private readonly translate = inject(TranslateService);
+  private readonly firestore = inject(Firestore);
+  private readonly functions = inject(Functions);
+  private readonly utilsService = inject(UtilsService);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly toastService = inject(ToastService);
+
   private readonly programmerDeviceRefreshSubject = new Subject<void>();
   readonly programmerDeviceRefresh$ =
     this.programmerDeviceRefreshSubject.asObservable();
@@ -51,16 +60,7 @@ export class FirebaseFirestoreService {
     UserTranslationStatistics[]
   >();
 
-  constructor(
-    private readonly auth: angularFireAuth.Auth,
-    private readonly authWrapper: FirebaseFirestoreAuthWrapperService,
-    private readonly translate: TranslateService,
-    private readonly firestore: Firestore,
-    private readonly functions: Functions,
-    private readonly utilsService: UtilsService,
-    private readonly localStorageService: LocalStorageService,
-    private readonly toastService: ToastService
-  ) {
+  constructor() {
     this.injector = inject(Injector);
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 
@@ -10,6 +10,9 @@ declare const window: any;
 
 @Injectable({ providedIn: 'root' })
 export class TextSpeechService {
+  private readonly platform = inject(Platform);
+  private readonly localStorageService = inject(LocalStorageService);
+
   /**
    * Map of supported TTS languages for the current platform and selected languages.
    * Key: language code, Value: true if supported, false otherwise.
@@ -50,10 +53,7 @@ export class TextSpeechService {
   private ttsSupportedLanguagesforMobilesCache: { [lang: string]: boolean } =
     {};
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly localStorageService: LocalStorageService
-  ) {
+  constructor() {
     this.isNative =
       this.platform.is('capacitor') || this.platform.is('cordova');
     this.localStorageService.textToSpeechValues$.subscribe((ttsValues) => {

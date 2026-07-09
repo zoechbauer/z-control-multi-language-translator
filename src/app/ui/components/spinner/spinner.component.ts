@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { IonSpinner } from "@ionic/angular/standalone";
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
@@ -11,10 +11,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   imports: [IonSpinner, TranslatePipe, NgIf],
 })
 export class SpinnerComponent {
-  @Input() showText: boolean = false;
+  translate = inject(TranslateService);
 
-  constructor(
-    public translate: TranslateService,
-  ) { }
+  @Input() showText: boolean = false;
 
 }

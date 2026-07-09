@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonAccordion,
@@ -28,10 +28,8 @@ import { LocalStorageService } from '@app/services/local-storage.service';
   ],
 })
 export class LanguageAccordionComponent {
-  @Input() lang?: string;
+  translate = inject(TranslateService);
+  localStorage = inject(LocalStorageService);
 
-  constructor(
-    public translate: TranslateService,
-    public localStorage: LocalStorageService
-  ) {}
+  @Input() lang?: string;
 }

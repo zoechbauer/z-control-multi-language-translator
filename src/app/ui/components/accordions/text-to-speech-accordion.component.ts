@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RangeCustomEvent } from '@ionic/angular';
 import {
@@ -31,16 +31,14 @@ import { TextToSpeechValues } from '@app/shared/app.interfaces';
   ],
 })
 export class TextToSpeechAccordionComponent {
+  translate = inject(TranslateService);
+  private readonly localStorageService = inject(LocalStorageService);
+
   @Input() lang!: string;
   @Input() isNative!: boolean;
 
   @Input() ngModel!: TextToSpeechValues;
   @Output() ngModelChange = new EventEmitter<TextToSpeechValues>();
-
-  constructor(
-    public translate: TranslateService,
-    private readonly localStorageService: LocalStorageService
-  ) {}
 
   getTtsRateLabel(): string {
     return this.ngModel?.rate

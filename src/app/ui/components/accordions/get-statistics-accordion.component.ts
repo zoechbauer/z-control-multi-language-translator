@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import {
   IonAccordion,
   IonItem,
@@ -21,9 +21,9 @@ import { GetStatisticsComponent } from '../get-statistics/get-statistics.compone
   ],
 })
 export class GetStatisticsAccordionComponent {
-  @Input() lang!: string;
-  @Input() yearMonth!: string;  // yyyy-mm, e.g. 2026-02
+  translate = inject(TranslateService);
 
-  constructor(public translate: TranslateService) {}
+  @Input() lang!: string;
+  @Input() yearMonth!: string;
 
 }
