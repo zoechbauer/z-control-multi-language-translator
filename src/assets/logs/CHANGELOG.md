@@ -10,6 +10,16 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
+## [2.6] – 2026-07-10
+
+### 🚀 Improvements
+
+- Treat icon assets as binary in `.gitattributes` so Git no longer applies line-ending normalization to them, ensuring stable handling of image files in version control.
+
+### 🐛 Fixes
+
+- Re-commit correct icon binaries so all app and Android launcher icons render properly after fresh clones and on all target devices.
+
 ## [2.5] - 2026-07-09
 
 ### 🔧 Internal
