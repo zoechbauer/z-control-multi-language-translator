@@ -10,11 +10,13 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
-## [2.6] – 2026-07-10
+## [2.6] – 2026-07-12
 
 ### 🚀 Improvements
 
 - Treat icon assets as binary in `.gitattributes` so Git no longer applies line-ending normalization to them, ensuring stable handling of image files in version control.
+- Improved Typescript configuration by adding an exclude array, preventing unnecessary type checking and improving build performance.
+- Improved Tools/Readme.md documentation for clarity and better guidance on using the backup and environment generation scripts.
 
 ### 🐛 Fixes
 
