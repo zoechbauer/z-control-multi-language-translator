@@ -16,23 +16,28 @@ function createMockUserAgent(ua: string, platform = ''): MockUserAgent {
 describe('DeviceUtils', () => {
   // test data from real IOS devices
   const iPhoneUa =
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 26_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/147.0.7727.47 Mobile/15E148 Safari/604.1';
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 26_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) ' + 
+    'CriOS/147.0.7727.47 Mobile/15E148 Safari/604.1';
 
   const iPadSafariWebUa1 =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7.5 Safari/605.1.15';
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) ' + 
+    'Version/18.7.5 Safari/605.1.15';
 
   const iPadSafariWebUa2 =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6.2 Safari/605.1.15';
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) ' + 
+    'Version/16.6.2 Safari/605.1.15';
 
   // test data from real Android devices
   const SamsungGalaxyA33NativeUa =
-    'Mozilla/5.0 (Linux; Android 16; SM-A336B Build/BP2A.250605.031.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.177 Mobile Safari/537.36';
+    'Mozilla/5.0 (Linux; Android 16; SM-A336B Build/BP2A.250605.031.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+    'Version/4.0 Chrome/146.0.7680.177 Mobile Safari/537.36';
 
   const SamsungGalaxyA33WebUa =
     'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36';
 
   const SamsungGalaxyTabA7NativeUa =
-    'Mozilla/5.0 (Linux; Android 11; SM-T505 Build/RP1A.200720.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.177 Safari/537.36';
+    'Mozilla/5.0 (Linux; Android 11; SM-T505 Build/RP1A.200720.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+    'Version/4.0 Chrome/146.0.7680.177 Safari/537.36';
 
   const SamsungGalaxyTabA7WebUa =
     'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36';
@@ -58,7 +63,8 @@ describe('DeviceUtils', () => {
   describe('isIPad - from user agent', () => {
     it('should detect iPad from iPad UA (classical)', () => {
       const ua =
-        'Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile Safari/604.1';
+        'Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) ' + 
+        'Version/15.0 Mobile Safari/604.1';
       const result = DeviceUtils.isIPad(ua, '');
       expect(result).toBe(true);
     });
@@ -75,7 +81,8 @@ describe('DeviceUtils', () => {
 
     it('should not detect iPad from Chrome Mac UA', () => {
       const ua =
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+        'Chrome/120.0.0.0 Safari/537.36';
       const result = DeviceUtils.isIPad(ua, '');
       expect(result).toBe(false);
     });
@@ -89,14 +96,16 @@ describe('DeviceUtils', () => {
 
     it('should not detect iPad from Electron UA', () => {
       const ua =
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) MyApp Electron/1.0.0 Safari/537.36';
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+        'MyApp Electron/1.0.0 Safari/537.36';
       const result = DeviceUtils.isIPad(ua, '');
       expect(result).toBe(false);
     });
 
     it('should classify Safari Macintosh UA as iPad (intentional heuristic)', () => {
       const ua =
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7.5 Safari/605.1.15';
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) ' + 
+        'Version/18.7.5 Safari/605.1.15';
       const result = DeviceUtils.isIPad(ua, 'MacIntel');
       expect(result).toBe(true);
     });
@@ -152,15 +161,17 @@ describe('DeviceUtils', () => {
 
     it('should detect iPad (classic iPad UA)', () => {
       const ua =
-        'Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile Safari/604.1';
+        'Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) ' +
+        'Version/15.0 Mobile Safari/604.1';
       const result = DeviceUtils.detectAppleDevice(ua, '');
       expect(result).toBe(AppleDeviceTypeEnum.iPad);
     });
 
     it('should classify Safari Macintosh UA as iPad (iPad-first behavior)', () => {
       const ua =
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7.5 Safari/605.1.15';
-      const result = DeviceUtils.detectAppleDevice(ua, 'MacIntel'); // nur für Test; dein UA ist ja dasselbe
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) ' +
+        'Version/18.7.5 Safari/605.1.15';
+      const result = DeviceUtils.detectAppleDevice(ua, 'MacIntel');
       expect(result).toBe(AppleDeviceTypeEnum.iPad);
     });
 
@@ -210,7 +221,8 @@ describe('DeviceUtils', () => {
 
     it('should treat Windows Chrome as desktop web', () => {
       const ua =
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+        'Chrome/120.0.0.0 Safari/537.36';
       const result = DeviceUtils.isPhoneOrTabletWeb(ua, 'Win32');
       expect(result).toBe(false);
     });
@@ -224,7 +236,7 @@ describe('DeviceUtils', () => {
           userAgent: navigator.userAgent,
           language: navigator.language,
           appVersion: environment.version,
-        })
+        }),
       );
     });
 
@@ -287,7 +299,7 @@ describe('DeviceUtils', () => {
     const createMockUserInfo = (
       userAgent: string,
       platform = '',
-      isNative?: boolean
+      isNative?: boolean,
     ): any => ({
       isNative,
       deviceInfo: {
@@ -324,7 +336,8 @@ describe('DeviceUtils', () => {
 
     it('should return web-desktop for Windows Chrome', () => {
       const ua =
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+        'Chrome/120.0.0.0 Safari/537.36';
       const userInfo = createMockUserInfo(ua, 'Win32');
       const result = DeviceUtils.getWebPlatform(userInfo);
       expect(result).toBe('web-desktop');

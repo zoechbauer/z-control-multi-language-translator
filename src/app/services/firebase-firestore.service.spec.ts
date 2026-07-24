@@ -367,7 +367,7 @@ describe('FirebaseFirestoreService', () => {
       expect(result).toEqual({ charCount: 0, targetLanguages: [] });
     });
 
-    it('should log error and return zero character count and empty target languages when snapshot read fails', async () => {
+    it('should log error, return zero char count and empty target languages when snapshot read fails', async () => {
       spyOn(console, 'error');
       (service as any).user = { uid: 'test-uid' } as any;
       const fakeRef = { id: 'fake-ref' } as any;
@@ -1079,7 +1079,7 @@ describe('FirebaseFirestoreService', () => {
       ]);
     });
 
-    it('should return empty array when programmer devices are defined in environment but updateUsermap is false', () => {
+    it('should return empty array when progr.devices are defined in environment but updateUsermap is false', () => {
       (environment as any).app.programmerDevices.devices = [
         { 'Device 1': 'uid1' },
         { 'Device 2': 'uid2' },
@@ -1239,7 +1239,9 @@ describe('FirebaseFirestoreService', () => {
       expect(result).toEqual([users[1]]);
     });
 
-    it('should include user from another creation month when cached translations exist for selected month', async () => {
+    const TEST_NAME =
+      'should include user from another creation month when cached translations exist for selected month';
+    it(TEST_NAME, async () => {
       spyOn<any>(service, 'getDocs').and.resolveTo(
         createSnapshotMock(users) as any
       );
@@ -1582,7 +1584,10 @@ describe('FirebaseFirestoreService', () => {
     });
 
     describe('getCollection and getDocs', () => {
-      it('should execute getCollection path directly in getAllUserTranslationStatisticsForMonth and handle failure', async () => {
+      const TEST_NAME =
+        'should execute getCollection path directly in getAllUserTranslationStatisticsForMonth ' +
+        'and handle failure';
+      it(TEST_NAME, async () => {
         spyOn(console, 'error');
         spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-03');
 
@@ -1598,7 +1603,7 @@ describe('FirebaseFirestoreService', () => {
         );
       });
 
-      it('should execute getDocs path directly in getAllUserTranslationStatisticsForMonth and handle failure', async () => {
+      it('should execute getDocs path in getAllUserTranslationStatisticsForMonth and handle failure', async () => {
         spyOn(console, 'error');
         spyOn(utilsServiceMock, 'getCurrentMonth').and.returnValue('2026-03');
         spyOn<any>(service, 'getCollection').and.returnValue({} as any);

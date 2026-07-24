@@ -10,6 +10,14 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
+## [2.7] – 2026-07-24
+
+### 🔧 Internal
+
+- Added lint:watch script to package.json to enable continuous linting during development, improving code quality and catching issues early.
+- Improved tsconfig.spec.json to include all necessary files for unit testing, ensuring comprehensive test coverage and accurate test results.
+- Fixed max-line-length lint errors in unit-test descriptions to improve readability and adhere to coding standards.
+
 ## [2.6] – 2026-07-12
 
 ### 🚀 Improvements

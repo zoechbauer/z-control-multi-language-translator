@@ -5,5 +5,5 @@
     "types": ["jasmine", "node"]
   },
   "files": ["src/polyfills.ts", "src/main.ts", "src/test.ts"],
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/app/testing/**/*.ts"]
+  "include": ["src/**/*.spec.ts", "src/**/*.ts", "src/app/testing/**/*.ts"]
 }

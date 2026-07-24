@@ -87,13 +87,16 @@ export class TranslationGoogleTranslateService {
   static readonly SIMULATE_TRANSLATION = environment.app.simulateTranslation;
 
   /**
-   * Translates the given text from the base language to each of the selected target languages using the provided translation function.
+   * Translates the given text from the base language to each of the selected target languages using the
+   * provided translation function.
    *
-   * @param translateFunction - A function that translates text from the base language to a target language, returning an Observable of a record mapping language codes to translated text.
+   * @param translateFunction - A function that translates text from the base language to a target language,
+   *                            returning an Observable of a record mapping language codes to translated text.
    * @param text - The text to be translated.
    * @param baseLang - The source language code.
    * @param selectedLanguages - An array of target language codes to translate the text into.
-   * @returns An Observable emitting an array of Translation objects, each containing the language code and the translated text, sorted by language code.
+   * @returns An Observable emitting an array of Translation objects, each containing the language code and
+   *          the translated text, sorted by language code.
    */
   getTranslations(
     translateFunction: (
@@ -244,7 +247,8 @@ export class TranslationGoogleTranslateService {
    *
    * @param baseLang The base language code for the display names.
    * @param targetLangCodes Array of language codes to include in the output.
-   * @returns Promise resolving to a string of language names separated by <br/>, or an empty string if input is invalid.
+   * @returns Promise resolving to a string of language names separated by <br/>, 
+   *          or an empty string if input is invalid.
    */
   async getFormattedTargetLanguageNamesForCodes(
     baseLang: string,

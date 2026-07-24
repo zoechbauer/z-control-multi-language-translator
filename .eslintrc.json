@@ -4,6 +4,8 @@
   "overrides": [
     {
       "files": ["**/*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
       "parserOptions": {
         "project": ["./tsconfig.eslint.json"]
       },
@@ -29,6 +31,21 @@
             "prefix": "app",
             "style": "camelCase"
           }
+        ],
+        "@typescript-eslint/no-empty-function": [
+          "error",
+          {
+            "allow": [
+              "arrowFunctions",
+              "functions",
+              "generatorFunctions",
+              "asyncFunctions"
+            ]
+          }
+        ],
+        "max-len": [
+          "error",
+          { "code": 120, "ignoreComments": false, "ignoreUrls": true }
         ]
       }
     },

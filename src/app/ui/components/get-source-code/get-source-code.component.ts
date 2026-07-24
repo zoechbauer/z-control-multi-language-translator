@@ -16,5 +16,4 @@ export class GetSourceCodeComponent {
   @Input() lang!: string;
   LogoType = LogoType;
 
-  constructor() {}
 }

@@ -47,8 +47,7 @@ export class SafeAreaInsetsService {
     { pattern: /SM-F73\d/i, top: 24, bottom: 50, right: 50 }, // Z Flip5
   ];
 
-  constructor() {}
-
+  
   /**
    * Calculates safe area insets for the device and applies them as CSS variables.
    * Sets --safe-area-top-fix, --safe-area-bottom-fix, and --safe-area-right-fix

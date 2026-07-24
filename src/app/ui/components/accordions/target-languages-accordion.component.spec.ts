@@ -102,7 +102,7 @@ describe('TargetLanguagesAccordionComponent', () => {
         });
       });
 
-      it('should emit ionChange event with selected target language codes when modal is dismissed with data', async () => {
+      it('should emit ionChange event with selected target lang.codes when modal is dismissed with data', async () => {
         const ionChangeSpy = spyOn(component.ionChange, 'emit');
         modalControllerSpy.create.and.returnValue(
           Promise.resolve({

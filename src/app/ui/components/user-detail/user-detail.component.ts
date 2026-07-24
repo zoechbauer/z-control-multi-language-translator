@@ -42,7 +42,9 @@ import { DisplayMode } from '@app/shared/enums';
 })
 export class UserDetailComponent implements OnInit {
   translate = inject(TranslateService);
-  private readonly googleTranslateService = inject(TranslationGoogleTranslateService);
+  private readonly googleTranslateService = inject(
+    TranslationGoogleTranslateService
+  );
   private readonly modalCtrl = inject(ModalController);
   private readonly utilsService = inject(UtilsService);
 
@@ -61,7 +63,11 @@ export class UserDetailComponent implements OnInit {
   }
 
   getAppVersion(): string {
-    return `${this.userStatistic.deviceInfo.appVersion.major}.${this.userStatistic.deviceInfo.appVersion.minor} (${this.userStatistic.deviceInfo.appVersion.date})`;
+    if (!this.userStatistic?.deviceInfo?.appVersion?.date) {
+      return '';
+    }
+    const v = this.userStatistic.deviceInfo.appVersion;
+    return `${v.major}.${v.minor} (${v.date})`;
   }
 
   getFormatDateTime(dateTime: Date | null): string {

@@ -17,5 +17,4 @@ export class PrivacyPolicyComponent {
   @Input() lang!: string;
   LogoType = LogoType;
 
-  constructor() {}
 }

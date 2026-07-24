@@ -272,7 +272,10 @@ describe('TabTranslationPage', () => {
         (console.error as jasmine.Spy).calls.reset();
       });
 
-      it('should not log error but call simulateTranslationOnContingentExceeded if secureTranslateCloudFunction throws an error which includes contingent', async () => {
+      const TEST_NAME =
+        'should not log error but call simulateTranslationOnContingentExceeded ' +
+        'if secureTranslateCloudFunction throws an error which includes contingent';
+      it(TEST_NAME, async () => {
         const consoleErrorSpy = spyOn(console, 'error');
         googleTranslateServiceSpy.secureTranslateCloudFunction.and.throwError(
           new Error('Translation contingent exceeded.')
@@ -324,7 +327,9 @@ describe('TabTranslationPage', () => {
         expect((component as any).simulateTranslateText).toHaveBeenCalled();
       });
 
-      it('should call simulateTranslationOnContingentExceeded if input and languages are set and contingent is exceeded', async () => {
+      const TEST_NAME_2 =
+        'should call simulateTranslationOnContingentExceeded if input & languages are set and contingent is exceeded';
+      it(TEST_NAME_2, async () => {
         firestoreUtilsServiceSpy.isContingentExceeded.and.returnValue(
           Promise.resolve(true)
         );
@@ -634,7 +639,10 @@ describe('TabTranslationPage', () => {
     });
 
     describe('ngOnInit', () => {
-      it('should call showOrHideIonTabBar, setupEventListeners, setupSubscriptions, updateIsContingentExceeded, initFormControls, and getTranslationPlaceholder', async () => {
+      const TEST_NAME =
+        'should call showOrHideIonTabBar, setupEventListeners, setupSubscriptions, ' +
+        'updateIsContingentExceeded, initFormControls, and getTranslationPlaceholder';
+      it(TEST_NAME, async () => {
         const showOrHideIonTabBarSpy = utilsServiceSpy.showOrHideIonTabBar;
         const setupEventListenersSpy = spyOn<any>(
           component,
@@ -664,51 +672,7 @@ describe('TabTranslationPage', () => {
         expect(initFormControlsSpy).toHaveBeenCalled();
         expect(getTranslationPlaceholderSpy).toHaveBeenCalled();
       });
-
-      // Skipped due to side effects in subscriptions, revisit if implementation changes”).
-      xit('should call initFormControls and getTranslationPlaceholder after updateIsContingentExceeded resolves', async () => {
-        // Attach spies BEFORE component is created
-        const initFormControlsSpy = jasmine.createSpy();
-        const getTranslationPlaceholderSpy = jasmine.createSpy();
-
-        // Patch the prototype so the spies are used on instantiation
-        spyOn(
-          TabTranslationPage.prototype as any,
-          'initFormControls'
-        ).and.callFake(initFormControlsSpy);
-        spyOn(
-          TabTranslationPage.prototype,
-          'getTranslationPlaceholder'
-        ).and.callFake(getTranslationPlaceholderSpy);
-        let resolvePromise: () => void;
-        spyOn(
-          TabTranslationPage.prototype as any,
-          'updateIsContingentExceeded'
-        ).and.returnValue(
-          new Promise<void>((res) => {
-            resolvePromise = res;
-          })
-        );
-
-        // Now create the component (spies are already attached)
-        fixture = TestBed.createComponent(TabTranslationPage);
-        component = fixture.componentInstance;
-
-        // Call ngOnInit (will pause at the unresolved promise)
-        component.ngOnInit();
-
-        // Before promise resolves, these should not have been called
-        expect(initFormControlsSpy).not.toHaveBeenCalled();
-        expect(getTranslationPlaceholderSpy).not.toHaveBeenCalled();
-
-        // Resolve the promise to simulate async completion
-        resolvePromise!();
-        await fixture.whenStable();
-
-        expect(initFormControlsSpy).toHaveBeenCalled();
-        expect(getTranslationPlaceholderSpy).toHaveBeenCalled();
       });
-    });
 
     describe('setupEventListeners', () => {
       it('should add resize event listeners', () => {
@@ -1044,7 +1008,9 @@ describe('TabTranslationPage', () => {
         expect(languagesCard).withContext('Languages card').toBeFalsy();
       });
 
-      it('should show only no-languages section and hide other sections if no languages are selected and not loading', () => {
+      const TEST_NAME =
+        'should show only no-languages section and hide other sections if no languages are selected and not loading';
+      it(TEST_NAME, () => {
         component.selectedLanguages = [];
         component.isLoading = false;
         fixture.detectChanges();
@@ -1066,7 +1032,9 @@ describe('TabTranslationPage', () => {
         expect(languagesCard).withContext('Languages card').toBeFalsy();
       });
 
-      it('should show translation input card and languages card and hide no-languages section if languages are selected', () => {
+      const TEST_NAME_2 =
+        'should show translation input card and languages card and hide no-languages section if languages are selected';
+      it(TEST_NAME_2, () => {
         component.selectedLanguages = ['en', 'fr'];
         fixture.detectChanges();
 

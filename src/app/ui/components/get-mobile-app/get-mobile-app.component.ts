@@ -25,8 +25,6 @@ export class GetMobileAppComponent {
   @Input() lang!: string;
   LogoType = LogoType;
 
-  constructor() {}
-
   get maxTranslateCharsLengthPerMonth(): number {
     return AppConstants.maxFreeTranslateCharsPerMonth;
   }

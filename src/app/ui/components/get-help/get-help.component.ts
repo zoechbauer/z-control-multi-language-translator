@@ -38,7 +38,8 @@ export class HelpModalComponent implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly localStorage = inject(LocalStorageService);
 
-  @Input() scrollToSection?: string; // Optional: ID of the section to scroll to when the modal opens (e.g., 'floating-keyboard' or 'web-version')
+  // Optional: ID of the section to scroll to when the modal opens (e.g., 'floating-keyboard' or 'web-version')
+  @Input() scrollToSection?: string;
 
   readonly scrollToTopObj = {
     id: 'toc-DE',

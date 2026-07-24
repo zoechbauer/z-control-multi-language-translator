@@ -561,7 +561,8 @@ export class FirebaseFirestoreService {
 
   /**
    * Retrieves translation statistics for all users for the selected month or all months from Firestore.
-   *  @param selectedMonth The month for which to retrieve user translation statistics or all for all user translation statistics.
+   *  @param selectedMonth The month for which to retrieve user translation statistics or 
+   *                       all for all user translation statistics.
    *  @returns An array of UserTranslationStatistics objects.
    */
   async getAllUserTranslationStatistics(

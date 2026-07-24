@@ -12,6 +12,7 @@
     "test:watch": "ng test --watch",
     "test:coverage": "ng test --code-coverage --watch=false",
     "lint": "ng lint",
+    "lint:watch": "nodemon --exec \"npm run lint || exit 1\" --ext ts,html,scss,json",
     "generate-env": "node ./tools/generate-env.js",
     "emulators:start": "firebase emulators:start",
     "emulators:debug": "firebase emulators:start --inspect-functions=9229"

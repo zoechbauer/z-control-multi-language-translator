@@ -187,7 +187,8 @@ export class TextSpeechService {
    * - 51-100 maps to 1.0 to TTS_MAX
    *
    * The input value is clamped to [0, 100] to prevent out-of-range values from producing unexpected results.
-   * This ensures the returned value is always valid for the plugin, even if the caller passes a value outside the expected range.
+   * This ensures the returned value is always valid for the plugin, even if the caller passes a value outside
+   * the expected range.
    *
    * @param value The input value (expected 0-100, but will be clamped if outside)
    * @returns The converted value for the TTS plugin
