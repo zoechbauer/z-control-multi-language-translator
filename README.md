@@ -257,7 +257,8 @@ When the monthly quota is reached, translations continue to work in **simulated 
 
 ## Documentation
 
-All documentation, deployment guides, setup instructions, and troubleshooting tips are located in the [`docs/`](docs/) folder.
+- [TODO — Open activities](docs/TODO-list-open-activities.md)
+- [Docs index](docs/README.md)
 
 ### Recommended Reading
 

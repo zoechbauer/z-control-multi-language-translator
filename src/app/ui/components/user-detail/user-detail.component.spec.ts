@@ -154,6 +154,15 @@ describe('UserDetailComponent', () => {
         };
         expect(component.getAppVersion()).toBe('2.5 (2026-04-01)');
       });
+
+      it('should return empty string when app version date is not available', () => {
+        component.userStatistic.deviceInfo.appVersion = {
+          major: 2,
+          minor: 5,
+          date: '',
+        };
+        expect(component.getAppVersion()).toBe('');
+      });
     });
 
     describe('formatDateTimeISO()', () => {

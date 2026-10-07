@@ -27,8 +27,13 @@ import {
 
 import { routes } from './app-routes';
 import { ServicesModule } from './services.module';
+import { FirebaseCredentials } from './services/firebase-credentials';
 import { environment } from '@env/environment';
 
+/**
+ * Application configuration, including providers for routing, HTTP client,
+ * translation, markdown, and Firebase services.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -47,7 +52,7 @@ export const appConfig: ApplicationConfig = {
       suffix: '.json',
     }),
 
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirebaseApp(() => initializeApp(FirebaseCredentials.getFirebaseCredentials())),
     provideAuth(() => getAuth()),
     // DRY: Helper to get emulator host if using emulator from ionic_setup
     (() => {

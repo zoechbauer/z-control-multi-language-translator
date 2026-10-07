@@ -44,13 +44,13 @@ function makeEnv(prod = false) {
       maxTargetLanguages: Number(v("MAX_TARGET_LANGUAGES", "3")),
       maxInputLength: Number(v("MAX_INPUT_LENGTH", "100")),
       maxFreeTranslateCharsPerMonthForUser: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH_FOR_USER", "10000"),
+        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH_FOR_USER", "10000")
       ),
       maxFreeTranslateCharsPerMonth: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000"),
+        v("MAX_FREE_TRANSLATE_CHARS_PER_MONTH", "500000")
       ),
       maxFreeTranslateCharsBufferPerMonth: Number(
-        v("MAX_FREE_TRANSLATE_CHARS_BUFFER_PER_MONTH", "5000"),
+        v("MAX_FREE_TRANSLATE_CHARS_BUFFER_PER_MONTH", "5000")
       ),
       textToSpeechMinValue: Number(v("TEXT_TO_SPEECH_MIN_VALUE", "0.5")),
       textToSpeechMaxValue: Number(v("TEXT_TO_SPEECH_MAX_VALUE", "2.0")),
@@ -61,7 +61,8 @@ function makeEnv(prod = false) {
         v("USE_FIREBASE_EMULATOR", "false").toLowerCase() === "true",
       programmerDevices: {
         updateUsermap:
-          v("PROGRAMMER_DEVICES_UPDATE_USERMAP", "false").toLowerCase() === "true",
+          v("PROGRAMMER_DEVICES_UPDATE_USERMAP", "false").toLowerCase() ===
+          "true",
         devices: [
           { GalaxyA33Uid: v("PROGRAMMER_GALAXY_A33_UID", "") },
           { WebChromeUid: v("PROGRAMMER_WEB_CHROME_UID", "") },
@@ -80,6 +81,16 @@ function makeEnv(prod = false) {
       appId: v("FIREBASE_APP_ID", ""),
       measurementId: v("FIREBASE_MEASUREMENT_ID", ""),
     },
+    useStagingFunctions: v("USE_STAGING_FUNCTIONS", "false") === "true",
+    firebaseStaging: {
+      apiKey: v("FIREBASE_STAGING_API_KEY", ""),
+      authDomain: v("FIREBASE_STAGING_AUTH_DOMAIN", ""),
+      projectId: v("FIREBASE_STAGING_PROJECT_ID", ""),
+      storageBucket: v("FIREBASE_STAGING_STORAGE_BUCKET", ""),
+      messagingSenderId: v("FIREBASE_STAGING_MESSAGING_SENDER_ID", ""),
+      appId: v("FIREBASE_STAGING_APP_ID", ""),
+      measurementId: v("FIREBASE_STAGING_MEASUREMENT_ID", ""),
+    },
   };
   return `export const environment = ${JSON.stringify(env, null, 2)};\n`;
 }
@@ -90,10 +101,10 @@ fs.writeFileSync(path.join(outDir, "environment.ts"), makeEnv(false), "utf8");
 fs.writeFileSync(
   path.join(outDir, "environment.prod.ts"),
   makeEnv(true),
-  "utf8",
+  "utf8"
 );
 console.log(
-  "Generated environment files: src/environments/environment.ts(.prod).",
+  "Generated environment files: src/environments/environment.ts(.prod)."
 );
 
 // optional: replace placeholder in src/index.html if present
@@ -102,14 +113,22 @@ try {
   if (fs.existsSync(indexPath)) {
     let index = fs.readFileSync(indexPath, "utf8");
     const placeholder = "__FIREBASE_MEASUREMENT_ID__";
-    const measurementId = v("FIREBASE_MEASUREMENT_ID", "");
+    const isStaging = v("USE_STAGING_FUNCTIONS", "false") === "true";
+    const stagingMeasurementId = v("FIREBASE_STAGING_MEASUREMENT_ID", "");
+    const prodMeasurementId = v("FIREBASE_MEASUREMENT_ID", "");
+    const measurementId = isStaging ? stagingMeasurementId : prodMeasurementId;
     if (index.includes(placeholder) && measurementId) {
-      const replaced = index.replace(
-        new RegExp(placeholder, "g"),
-        measurementId,
-      );
+      const replaced = index.replaceAll(placeholder, measurementId);
       fs.writeFileSync(indexPath, replaced, "utf8");
       console.log("Replaced measurement id placeholder in src/index.html");
+    }
+    if (isStaging) {
+      console.log("Using staging Firebase configuration");
+    }
+    const usingEmulator =
+      v("USE_FIREBASE_EMULATOR", "false").toLowerCase() === "true";
+    if (usingEmulator) {
+      console.log("Using Firebase emulator");
     }
   }
 } catch (e) {

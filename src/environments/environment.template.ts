@@ -42,4 +42,14 @@ export const environment = {
     appId: __FIREBASE_APP_ID__,
     measurementId: __FIREBASE_MEASUREMENT_ID__,
   },
+  useStagingFunctions: __USE_STAGING_FUNCTIONS__,
+  firebaseStaging: {
+    apiKey: '__FIREBASE_STAGING_API_KEY__',
+    authDomain: '__FIREBASE_STAGING_AUTH_DOMAIN__',
+    projectId: '__FIREBASE_STAGING_PROJECT_ID__',
+    storageBucket: '__FIREBASE_STAGING_STORAGE_BUCKET__',
+    messagingSenderId: '__FIREBASE_STAGING_MESSAGING_SENDER_ID__',
+    appId: '__FIREBASE_STAGING_APP_ID__',
+    measurementId: '__FIREBASE_STAGING_MEASUREMENT_ID__',
+  },
 };
