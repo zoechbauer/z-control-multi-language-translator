@@ -52,12 +52,12 @@ export class UserStatisticComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.updateIsContingentExceeded();
-    this.updateTranslationStatistics();
+    void this.updateIsContingentExceeded();
+    void this.updateTranslationStatistics();
     this.subscriptions.push(
       this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
-        this.updateIsContingentExceeded();
-        this.updateTranslationStatistics();
+        void this.updateIsContingentExceeded();
+        void this.updateTranslationStatistics();
       })
     );
   }

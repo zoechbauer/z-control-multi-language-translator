@@ -10,6 +10,13 @@ This project uses a simplified major.minor versioning scheme:
 - Minor versions indicate new features, improvements, and bug fixes.
 - Patch numbers are intentionally omitted; all changes are released as major or minor versions.
 
+## [2.10] – 2026-10-22
+
+### 🔧 Internal
+
+- Improved the code base to fix lint errors and SonarQube issues.
+- Updated tests, suite contains **679 specs with 99.3% statement coverage**.
+
 ## [2.9] - 2026-10-07
 
 ### ✨ New Features
@@ -21,6 +28,12 @@ This project uses a simplified major.minor versioning scheme:
 - Added unit tests for App Metadata service.
 - Updated unit tests to cover the Firebase staging environment handling
 - Test suite now contains **679 specs with 99.3% statement coverage**.
+
+## [2.9] – YYYY-MM-DD
+
+### 🔧 Internal
+
+- Improved the code base to fix lint errors and SonarQube issues.
 
 ## [2.8] – 2026-07-28
 

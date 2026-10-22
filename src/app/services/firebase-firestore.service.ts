@@ -187,7 +187,7 @@ export class FirebaseFirestoreService {
         );
       }
     }
-    this.saveUserIdToLocalStorage(this.user.uid);
+    await this.saveUserIdToLocalStorage(this.user.uid);
   }
 
   /**
@@ -575,12 +575,19 @@ export class FirebaseFirestoreService {
         const allMonths =
           this.utilsService.getAllFirestoreSearchStringsForMonth();
 
-        for (const month of allMonths) {
-          if (month !== AllMonthsOption.localStorageValue) {
-            const statsForMonth =
-              await this.getAllUserTranslationStatisticsForMonth(month);
-            result = result.concat(statsForMonth);
-          }
+        const monthsToFetch = allMonths.filter(
+          (m) => m !== AllMonthsOption.localStorageValue,
+        );
+        if (monthsToFetch.length > 0) {
+          const statsArrays = await Promise.all(
+            monthsToFetch.map((month) =>
+              this.getAllUserTranslationStatisticsForMonth(month),
+            ),
+          );
+          result = statsArrays.reduce(
+            (acc, arr) => acc.concat(arr),
+            [] as UserTranslationStatistics[],
+          );
         }
       } else {
         result = await this.getAllUserTranslationStatisticsForMonth(

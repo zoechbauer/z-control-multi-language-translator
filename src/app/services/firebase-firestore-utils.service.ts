@@ -35,8 +35,8 @@ export class FirebaseFirestoreUtilsService {
   private statisticsSelectedMonth: string = '';
 
   constructor() {
-    this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
-      this.localStorageService
+    this.firestoreService.programmerDeviceRefresh$.subscribe(async () => {
+      await this.localStorageService
         .getStatisticsDisplayMode()
         .then((mode: DisplayMode) => {
           this.statisticsDisplayMode = mode;
@@ -461,7 +461,7 @@ export class FirebaseFirestoreUtilsService {
    * @returns Normalized model name.
    */
   private normalizeModelForCompare(value: string | null | undefined): string {
-    return (value ?? '').split(/\s+/).join('').toUpperCase();
+    return (value ?? '').replace(/\s+/g, '').toUpperCase();
   }
 
   /**

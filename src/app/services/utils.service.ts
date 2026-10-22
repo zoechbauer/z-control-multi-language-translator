@@ -97,8 +97,8 @@ export class UtilsService {
    * Navigates to the specified tab.
    * @param tab The tab to navigate to
    */
-  navigateToTab(tab: Tab): void {
-    this.router.navigate([`/tabs/tab-${tab}`]);
+  async navigateToTab(tab: Tab): Promise<void> {
+    await this.router.navigate([`/tabs/tab-${tab}`]);
   }
 
   /**
@@ -106,8 +106,8 @@ export class UtilsService {
    * @param tab The tab to navigate to
    * @param params Query parameters to include
    */
-  navigateToTabWithParams(tab: Tab, params: any): void {
-    this.router.navigate([`/tabs/tab-${tab}`], { queryParams: params });
+  async navigateToTabWithParams(tab: Tab, params: any): Promise<void> {
+    await this.router.navigate([`/tabs/tab-${tab}`], { queryParams: params });
   }
 
   /**

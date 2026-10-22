@@ -119,7 +119,8 @@ export class TranslationGoogleTranslateService {
 
     return forkJoin(translations$).pipe(
       map((results: Translation[]) =>
-        results.sort((a, b) => a.language.localeCompare(b.language))
+        // avoid mutating the original array returned by forkJoin
+        results.slice().sort((a, b) => a.language.localeCompare(b.language))
       )
     );
   }
@@ -247,7 +248,7 @@ export class TranslationGoogleTranslateService {
    *
    * @param baseLang The base language code for the display names.
    * @param targetLangCodes Array of language codes to include in the output.
-   * @returns Promise resolving to a string of language names separated by <br/>, 
+   * @returns Promise resolving to a string of language names separated by <br/>,
    *          or an empty string if input is invalid.
    */
   async getFormattedTargetLanguageNamesForCodes(

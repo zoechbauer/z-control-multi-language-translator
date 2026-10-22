@@ -198,7 +198,7 @@ export class TextSpeechService {
     const TTS_MAX = AppConstants.textToSpeechMaxValue;
     const clamped = Math.max(0, Math.min(100, value)); // Clamp to [0, 100] for safety
     const mid = 50;
-    const range = TTS_MAX - TTS_MIN;
+    // const range = TTS_MAX - TTS_MIN;
 
     if (clamped <= mid) {
       // Map 0-50 to TTS_MIN to 1.0

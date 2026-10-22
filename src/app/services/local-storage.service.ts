@@ -123,16 +123,16 @@ export class LocalStorageService {
       await this.loadFirestoreUid();
     } catch (error) {
       console.error('App initialization failed:', error);
-      await this.initializeWithDefaults(translate);
+      this.initializeWithDefaults(translate);
     }
   }
 
   /**
    * Fallback: sets default language to 'en' in TranslateService
    */
-  private async initializeWithDefaults(
+  private initializeWithDefaults(
     translate: import('@ngx-translate/core').TranslateService
-  ): Promise<void> {
+  ): void {
     try {
       translate.setDefaultLang('en');
       translate.use('en');
@@ -204,7 +204,7 @@ export class LocalStorageService {
         JSON.stringify(languages)
       );
       this.targetLanguagesSubject.next(languages);
-      this.setTargetLanguageNames(
+      await this.setTargetLanguageNames(
         this.selectedLanguageSubject.value,
         languages
       );
@@ -223,7 +223,7 @@ export class LocalStorageService {
 
     if (targetLanguages) {
       this.targetLanguagesSubject.next(JSON.parse(targetLanguages));
-      this.setTargetLanguageNames(
+      await this.setTargetLanguageNames(
         this.selectedLanguageSubject.value,
         JSON.parse(targetLanguages)
       );

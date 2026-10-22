@@ -59,12 +59,12 @@ export class MarkdownViewerComponent implements OnInit {
     this.loadMarkdownChangelog();
   }
 
-  closeModal() {
-    this.modalController.dismiss();
+  async closeModal() {
+    await this.modalController.dismiss();
   }
 
-  scrollToTop() {
-    this.content.scrollToTop(300);
+  async scrollToTop() {
+    await this.content.scrollToTop(300);
   }
 
   private loadMarkdownChangelog() {

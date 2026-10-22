@@ -99,14 +99,10 @@ export class TabSettingsPage implements OnInit, OnDestroy {
         this.selectedLanguage = lang;
         await this.localStorage.loadTargetLanguages();
         this.isLoading = false;
-      })
-    );
-    this.subscriptions.push(
+      }),
       this.utilsService.logoClicked$.subscribe(() => {
         this.openFeedbackAccordion();
-      })
-    );
-    this.subscriptions.push(
+      }),
       this.localStorage.textToSpeechValues$.subscribe(
         (ttsValues: TextToSpeechValues) => {
           this.textToSpeechValues = ttsValues;
@@ -168,27 +164,27 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     return undefined;
   }
 
-  onLanguageChange(event: any) {
+  async onLanguageChange(event: any) {
     const lang = event.detail?.value;
     if (lang) {
-      this.localStorage.saveSelectedLanguage(lang);
+      await this.localStorage.saveSelectedLanguage(lang);
       this.translate.use(lang);
       this.translate.setDefaultLang(lang);
-      this.removeBaseLangFromTargetLanguages(lang);
+      await this.removeBaseLangFromTargetLanguages(lang);
     }
   }
 
-  private removeBaseLangFromTargetLanguages(baseLang: string) {
+  private async removeBaseLangFromTargetLanguages(baseLang: string) {
     const targetLangs = this.localStorage.targetLanguagesSubject.getValue();
     if (targetLangs.includes(baseLang)) {
       const updatedLangs = targetLangs.filter((lang) => lang !== baseLang);
-      this.localStorage.saveTargetLanguages(updatedLangs);
+      await this.localStorage.saveTargetLanguages(updatedLangs);
     }
   }
 
-  onTargetLanguagesChange(languages: string[]) {
+  async onTargetLanguagesChange(languages: string[]) {
     if (languages) {
-      this.localStorage.saveTargetLanguages(languages);
+      await this.localStorage.saveTargetLanguages(languages);
       this.textToSpeechService.updateTtsSupportedLanguagesMap(
         this.utilsService.isNative,
         languages
@@ -196,8 +192,8 @@ export class TabSettingsPage implements OnInit, OnDestroy {
     }
   }
 
-  onChangeTtsValue(values: any) {
-    this.localStorage.saveTextToSpeechValues(values);
+  async onChangeTtsValue(values: any) {
+    await this.localStorage.saveTextToSpeechValues(values);
   }
 
   showAll() {
@@ -206,7 +202,7 @@ export class TabSettingsPage implements OnInit, OnDestroy {
   }
 
   async openChangelog() {
-    this.utilsService.openChangelog();
+    await this.utilsService.openChangelog();
   }
 
   get versionInfo() {

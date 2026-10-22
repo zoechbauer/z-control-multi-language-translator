@@ -56,16 +56,16 @@ export class HeaderComponent {
     return !this.utilsService.isShowIonTabBar;
   }
 
-  goToSettings() {
-    this.utilsService.navigateToTab(Tab.Settings);
+  async goToSettings() {
+    await this.utilsService.navigateToTab(Tab.Settings);
   }
 
-  goToTranslate() {
-    this.utilsService.navigateToTab(Tab.Translate);
+  async goToTranslate() {
+    await this.utilsService.navigateToTab(Tab.Translate);
   }
 
-  goToSettingsAndOpenFeedback() {
-    this.utilsService.navigateToTabWithParams(Tab.Settings, {
+  async goToSettingsAndOpenFeedback() {
+    await this.utilsService.navigateToTabWithParams(Tab.Settings, {
       open: 'z-control',
     });
     setTimeout(() => {

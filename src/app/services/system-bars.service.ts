@@ -52,7 +52,7 @@ export class SystemBarsService {
    * Returns whether the user's system prefers dark mode.
    * @returns True if dark mode is preferred, false otherwise
    */
-  async getCurrentIsDarkMode(): Promise<boolean> {
+  getCurrentIsDarkMode(): boolean {
     return globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 }

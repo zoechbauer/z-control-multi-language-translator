@@ -643,7 +643,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
         const userTranslResult = result.userTranslationStatistics;
 
-        expect(userTranslResult.length).toBe(3);
+        expect(userTranslResult).toHaveSize(3);
 
         const user1Trans = userTranslResult.find((s) => s.userId === 'U-1');
         const user2Trans = userTranslResult.find((s) => s.userId === 'U-2');
@@ -681,7 +681,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
         const userStatsResult = result.displayedUserStatistics;
 
-        expect(userStatsResult.length).toBe(3);
+        expect(userStatsResult).toHaveSize(3);
 
         const user1Stats = userStatsResult.find((s) => s.userId === 'U-1');
         const user2Stats = userStatsResult.find((s) => s.userId === 'U-2');
@@ -723,7 +723,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
         const usersResult = result.users;
 
-        expect(usersResult.length).toBe(5);
+        expect(usersResult).toHaveSize(5);
 
         const user1Users = usersResult.find((s) => s.userId === 'U-1');
         const user2Users = usersResult.find((s) => s.userId === 'U-2');
@@ -785,7 +785,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
         const programmerDevicesResult = result.programmerDeviceUIDs;
 
-        expect(programmerDevicesResult.length).toBe(2);
+        expect(programmerDevicesResult).toHaveSize(2);
 
         const progDev1Users = programmerDevicesResult.find(
           (s) => s.userId === 'P-1'
@@ -819,7 +819,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
         const programmerDevicesResult = result.programmerDeviceUIDs;
 
-        expect(programmerDevicesResult.length).toBe(0);
+        expect(programmerDevicesResult).toHaveSize(0);
 
         const progDev1Users = programmerDevicesResult.find(
           (s) => s.userId === 'P-1'
@@ -848,10 +848,9 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
 
         // Assert: All users (including those with 0 char count) should be included in displayedUserStatistics
-        expect(result.displayedUserStatistics.length).toBe(
-          5,
-          'All 4 users should be included in programmer view'
-        );
+        expect(result.displayedUserStatistics)
+          .withContext('All 4 users should be included in programmer view')
+          .toHaveSize(5);
         // Specifically check that the user with 0 char count is present
         const userWithNoTranslations = result.displayedUserStatistics.find(
           (u) => u.userId === 'P-2'
@@ -869,10 +868,11 @@ describe('FirebaseFirestoreUtilsService', () => {
         );
 
         // Assert: Only users with translations should be included in displayedUserStatistics
-        expect(result.displayedUserStatistics.length).toBe(
-          3,
-          'Only users with translations should be included in user view'
-        );
+        expect(result.displayedUserStatistics)
+          .withContext(
+            'Only users with translations should be included in user view'
+          )
+          .toHaveSize(3);
         // Specifically check that the user with 0 char count is NOT present
         const userWithNoTranslations = result.displayedUserStatistics.find(
           (u) => u.userId === 'P-2'
@@ -905,7 +905,7 @@ describe('FirebaseFirestoreUtilsService', () => {
         expect(actualOrder).toEqual(
           expectedOrder,
           'Users should be sorted by last translation date desc, ' +
-          'or creation date desc if translation date is not available'
+            'or creation date desc if translation date is not available'
         );
       });
 
@@ -1059,7 +1059,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       const userTypeRows = result.filter(
         (s) => s.category === StatisticsSummaryCategory.UserType
       );
-      expect(userTypeRows.length).toBe(2);
+      expect(userTypeRows).toHaveSize(2);
       const userRow = userTypeRows.find(
         (r) => r.name === StatisticsSummaryName.User
       );
@@ -1145,7 +1145,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       const modelRows = result.filter(
         (s) => s.category === StatisticsSummaryCategory.Model
       );
-      expect(modelRows.length).toBe(3);
+      expect(modelRows).toHaveSize(3);
 
       // Assert
       const model1Row = modelRows.find((r) => r.name === 'Model 1');
@@ -1190,7 +1190,7 @@ describe('FirebaseFirestoreUtilsService', () => {
       const targetLangRows = result.filter(
         (s) => s.category === StatisticsSummaryCategory.Languages
       );
-      expect(targetLangRows.length).toBe(6, 'targetLangRows.length');
+      expect(targetLangRows).withContext('targetLangRows').toHaveSize(6);
 
       // Assert
       const targetLang1Row = targetLangRows.find((r) => r.name === '1');

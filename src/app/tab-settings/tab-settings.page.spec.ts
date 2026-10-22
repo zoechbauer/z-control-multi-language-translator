@@ -371,23 +371,23 @@ describe('TabSettingsPage', () => {
     });
 
     describe('saveTargetLanguages', () => {
-      it('should save target languages', () => {
+      it('should save target languages', async () => {
         const saveTargetLanguagesSpy =
           localStorageServiceSpy.saveTargetLanguages as jasmine.Spy;
         const languages = ['en', 'fr'];
 
-        component.onTargetLanguagesChange(languages);
+        await component.onTargetLanguagesChange(languages);
 
         expect(saveTargetLanguagesSpy).toHaveBeenCalledWith(languages);
       });
 
-      it('should update TTS supported languages map', () => {
+      it('should update TTS supported languages map', async () => {
         const updateTtsSupportedLanguagesMapSpy =
           textSpeechServiceSpy.updateTtsSupportedLanguagesMap as jasmine.Spy;
         const languages = ['en', 'fr'];
         const isNative = utilsServiceSpy.isNative;
 
-        component.onTargetLanguagesChange(languages);
+        await component.onTargetLanguagesChange(languages);
 
         expect(updateTtsSupportedLanguagesMapSpy).toHaveBeenCalledWith(
           isNative,
@@ -397,7 +397,7 @@ describe('TabSettingsPage', () => {
     });
 
     describe('onLanguageChange', () => {
-      it('should save selected language and call removeBaseLangFromTargetLanguages', () => {
+      it('should save selected language and call removeBaseLangFromTargetLanguages', async () => {
         const saveSelectedLanguageSpy =
           localStorageServiceSpy.saveSelectedLanguage as jasmine.Spy;
         const event = {
@@ -408,20 +408,20 @@ describe('TabSettingsPage', () => {
           'removeBaseLangFromTargetLanguages'
         );
 
-        component.onLanguageChange(event);
+        await component.onLanguageChange(event);
 
         expect(saveSelectedLanguageSpy).toHaveBeenCalledWith('en');
         expect(removeBaseLangFromTargetLanguagesSpy).toHaveBeenCalled();
       });
 
-      it('should do nothing if no language is selected', () => {
+      it('should do nothing if no language is selected', async () => {
         const saveSelectedLanguageSpy =
           localStorageServiceSpy.saveSelectedLanguage as jasmine.Spy;
         const event = {
           detail: { value: null },
         } as CustomEvent;
 
-        component.onLanguageChange(event);
+        await component.onLanguageChange(event);
 
         expect(saveSelectedLanguageSpy).not.toHaveBeenCalled();
       });
@@ -518,6 +518,7 @@ describe('TabSettingsPage', () => {
       it('should handle empty subscriptions array on destroy', () => {
         (component as any).subscriptions = [];
         (component as any).ngOnDestroy();
+        expect((component as any).subscriptions).toHaveSize(0);
         // No errors should occur, and the test will pass if it reaches this point without throwing
       });
 
@@ -663,6 +664,50 @@ describe('TabSettingsPage', () => {
     });
 
     describe('accordion visibility flow', () => {
+      let languageAccordion: HTMLElement;
+      let targetLanguagesAccordion: HTMLElement;
+      let ttsAccordion: HTMLElement;
+      let feedbackAccordion: HTMLElement;
+      let statisticsAccordion: HTMLElement;
+      let privacyAccordion: HTMLElement;
+      let changeLogAccordion: HTMLElement;
+      let mobileAppAccordion: HTMLElement;
+      let sourceAccordion: HTMLElement;
+      let closeButtonArea: HTMLElement;
+
+      function queryAccordionsAndCloseButton() {
+        languageAccordion = fixture.nativeElement.querySelector(
+          'app-language-accordion'
+        );
+        targetLanguagesAccordion = fixture.nativeElement.querySelector(
+          'app-target-languages-accordion'
+        );
+        ttsAccordion = fixture.nativeElement.querySelector(
+          'app-text-to-speech-accordion'
+        );
+        feedbackAccordion = fixture.nativeElement.querySelector(
+          'app-feedback-accordion'
+        );
+        statisticsAccordion = fixture.nativeElement.querySelector(
+          'app-get-statistics-accordion'
+        );
+        privacyAccordion = fixture.nativeElement.querySelector(
+          'app-privacy-policy-accordion'
+        );
+        changeLogAccordion = fixture.nativeElement.querySelector(
+          'app-change-log-accordion'
+        );
+        mobileAppAccordion = fixture.nativeElement.querySelector(
+          'app-get-mobile-app-accordion'
+        );
+        sourceAccordion = fixture.nativeElement.querySelector(
+          'app-get-source-accordion'
+        );
+        closeButtonArea = fixture.nativeElement.querySelector(
+          '.accordion-close-button'
+        );
+      }
+
       beforeEach(() => {
         component.isLoading = false;
         component.selectedLanguage = 'de';
@@ -673,33 +718,7 @@ describe('TabSettingsPage', () => {
       });
 
       it('should render all accordion components when no accordion is open', () => {
-        const languageAccordion = fixture.nativeElement.querySelector(
-          'app-language-accordion'
-        );
-        const targetLanguagesAccordion = fixture.nativeElement.querySelector(
-          'app-target-languages-accordion'
-        );
-        const ttsAccordion = fixture.nativeElement.querySelector(
-          'app-text-to-speech-accordion'
-        );
-        const feedbackAccordion = fixture.nativeElement.querySelector(
-          'app-feedback-accordion'
-        );
-        const statisticsAccordion = fixture.nativeElement.querySelector(
-          'app-get-statistics-accordion'
-        );
-        const privacyAccordion = fixture.nativeElement.querySelector(
-          'app-privacy-policy-accordion'
-        );
-        const changeLogAccordion = fixture.nativeElement.querySelector(
-          'app-change-log-accordion'
-        );
-        const sourceAccordion = fixture.nativeElement.querySelector(
-          'app-get-source-accordion'
-        );
-        const closeButtonArea = fixture.nativeElement.querySelector(
-          '.accordion-close-button'
-        );
+        queryAccordionsAndCloseButton();
 
         expect(languageAccordion).toBeTruthy();
         expect(targetLanguagesAccordion).toBeTruthy();
@@ -708,7 +727,9 @@ describe('TabSettingsPage', () => {
         expect(statisticsAccordion).toBeTruthy();
         expect(privacyAccordion).toBeTruthy();
         expect(changeLogAccordion).toBeTruthy();
+        expect(mobileAppAccordion).toBeTruthy();
         expect(sourceAccordion).toBeTruthy();
+
         expect(closeButtonArea).toBeNull();
       });
 
@@ -717,23 +738,19 @@ describe('TabSettingsPage', () => {
         component.showAllAccordions = false;
         fixture.detectChanges();
 
-        const languageAccordion = fixture.nativeElement.querySelector(
-          'app-language-accordion'
-        );
-        const targetLanguagesAccordion = fixture.nativeElement.querySelector(
-          'app-target-languages-accordion'
-        );
-        const feedbackAccordion = fixture.nativeElement.querySelector(
-          'app-feedback-accordion'
-        );
-        const closeButtonArea = fixture.nativeElement.querySelector(
-          '.accordion-close-button'
-        );
+        queryAccordionsAndCloseButton();
 
         expect(languageAccordion).toBeTruthy();
-        expect(targetLanguagesAccordion).toBeNull();
-        expect(feedbackAccordion).toBeNull();
         expect(closeButtonArea).toBeTruthy();
+
+        expect(targetLanguagesAccordion).toBeNull();
+        expect(ttsAccordion).toBeNull();
+        expect(feedbackAccordion).toBeNull();
+        expect(statisticsAccordion).toBeNull();
+        expect(privacyAccordion).toBeNull();
+        expect(changeLogAccordion).toBeNull();
+        expect(mobileAppAccordion).toBeNull();
+        expect(sourceAccordion).toBeNull();
       });
 
       it('should switch to single-accordion mode when ionValueChange emits selected accordion value', () => {
@@ -760,28 +777,36 @@ describe('TabSettingsPage', () => {
       });
 
       it('should show all accordions again when close button is clicked', () => {
+               // Arrange: language accordion is open and single-accordion mode is active
         component.openAccordion = 'language';
         component.showAllAccordions = false;
         fixture.detectChanges();
 
         const closeButton = fixture.nativeElement.querySelector(
-          '.accordion-close-button ion-button'
+          '.accordion-close-button ion-button',
         ) as HTMLElement;
         expect(closeButton).toBeTruthy();
 
+        // Act: click the close button to exit single-accordion mode
         closeButton.dispatchEvent(new Event('click'));
         fixture.detectChanges();
 
-        expect(component.openAccordion).toBeNull();
-        expect(component.showAllAccordions).toBeTrue();
+        queryAccordionsAndCloseButton();
 
-        const feedbackAccordion = fixture.nativeElement.querySelector(
-          'app-feedback-accordion'
-        );
-        const closeButtonArea = fixture.nativeElement.querySelector(
-          '.accordion-close-button'
-        );
+        // Assert: all accordions are shown as closed and close button is not visible
+        expect(component.showAllAccordions).toBeTrue();
+        expect(component.openAccordion).toBeNull();
+
+        expect(languageAccordion).toBeTruthy();
+        expect(targetLanguagesAccordion).toBeTruthy();
+        expect(ttsAccordion).toBeTruthy();
         expect(feedbackAccordion).toBeTruthy();
+        expect(statisticsAccordion).toBeTruthy();
+        expect(privacyAccordion).toBeTruthy();
+        expect(changeLogAccordion).toBeTruthy();
+        expect(mobileAppAccordion).toBeTruthy();
+        expect(sourceAccordion).toBeTruthy();
+        
         expect(closeButtonArea).toBeNull();
       });
     });

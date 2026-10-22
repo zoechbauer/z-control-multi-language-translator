@@ -22,7 +22,7 @@ export class ToastService {
   async showDisabledToast(toastMsg: string, anchorId?: ToastAnchor) {
     const translatedMsg = this.translate.instant(toastMsg);
 
-    this.showToastMessage(translatedMsg, anchorId).catch((error) => {
+    await this.showToastMessage(translatedMsg, anchorId).catch((error) => {
       console.error('Error presenting toast:', error);
     });
   }

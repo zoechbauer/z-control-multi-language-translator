@@ -131,7 +131,7 @@ export class TabTranslationPage implements OnInit, OnDestroy {
     this.utilsService.showOrHideIonTabBar();
     this.setupEventListeners();
     this.setupSubscriptions();
-    this.updateIsContingentExceeded().then(() => {
+    void this.updateIsContingentExceeded().then(() => {
       this.initFormControls();
       this.getTranslationPlaceholder();
       this.isLoading = false;

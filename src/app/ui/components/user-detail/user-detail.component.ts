@@ -55,11 +55,11 @@ export class UserDetailComponent implements OnInit {
   targetLanguagesDisplay: string = '';
 
   ngOnInit() {
-    this.getTargetLanguagesWithLineBreak();
+    void this.getTargetLanguagesWithLineBreak();
   }
 
-  close(): void {
-    this.modalCtrl.dismiss();
+  async close(): Promise<void> {
+    await this.modalCtrl.dismiss();
   }
 
   getAppVersion(): string {

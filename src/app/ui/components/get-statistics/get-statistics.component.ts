@@ -159,15 +159,15 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setupSubscriptions();
     this.setupEventListeners();
-    this.init();
+    void this.init();
   }
 
   private setupSubscriptions(): void {
     this.subscriptions.push(
-      this.firestoreUtilsService.statisticsRefresh$.subscribe(() => {
+      this.firestoreUtilsService.statisticsRefresh$.subscribe(async () => {
         // Only reload if not currently loading
         if (!this.isLoading) {
-          this.init();
+          await this.init();
         }
       }),
       this.firestoreService.programmerDeviceRefresh$.subscribe(() => {
@@ -377,7 +377,7 @@ export class GetStatisticsComponent implements OnInit, OnDestroy {
     lang: string,
     userStatistic: DisplayedUserStatistics
   ): Promise<void> {
-    this.utilsService.openUserDetail(lang, userStatistic, this.displayMode);
+    await this.utilsService.openUserDetail(lang, userStatistic, this.displayMode);
   }
 
   getFormatDateTime(dateTime: Date | null): string {

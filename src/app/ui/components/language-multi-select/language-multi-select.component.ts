@@ -117,7 +117,7 @@ export class LanguageMultiSelectComponent implements OnInit {
     return this.selection.has(language);
   }
 
-  closeModal() {
-    this.modalController.dismiss(Array.from(this.selection));
+  async closeModal() {
+    await this.modalController.dismiss(Array.from(this.selection));
   }
 }

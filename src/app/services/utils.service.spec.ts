@@ -468,7 +468,7 @@ describe('UtilsService', () => {
       jasmine.clock().mockDate(new Date(2026, 3, 15));
 
       const result: string[] = service.getAllFirestoreSearchStringsForMonth();
-      expect(result.length).toBe(4);
+      expect(result).toHaveSize(4);
       expect(result[0]).toBe('2026-02');
       expect(result[1]).toBe('2026-03');
       expect(result[2]).toBe('2026-04');
@@ -481,7 +481,7 @@ describe('UtilsService', () => {
       jasmine.clock().mockDate(new Date(2027, 1, 15));
 
       const result: string[] = service.getAllFirestoreSearchStringsForMonth();
-      expect(result.length).toBe(14);
+      expect(result).toHaveSize(14);
       expect(result[0]).toBe('2026-02');
       expect(result[12]).toBe('2027-02');
       expect(result[13]).toBe(

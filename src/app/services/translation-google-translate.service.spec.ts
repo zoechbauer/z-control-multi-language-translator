@@ -238,7 +238,7 @@ describe('TranslationGoogleTranslateService', () => {
       );
 
       expect(secondResult).toEqual(expectedFormatted);
-      expect(httpTestingController.match(requestMatcher('en')).length).toBe(0);
+      expect(httpTestingController.match(requestMatcher('en'))).toHaveSize(0);
 
       httpTestingController.verify();
     });

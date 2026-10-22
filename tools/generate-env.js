@@ -1,7 +1,7 @@
 // simple generator: reads process.env or .env.local and writes environment.ts/.prod.ts
 // add new variables in function makeEnv()
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 function readDotEnv(file) {
   const env = {};
@@ -25,7 +25,7 @@ function readDotEnv(file) {
 }
 
 const dotEnv = readDotEnv(path.resolve(__dirname, "..", ".env.local"));
-const envSource = Object.assign({}, dotEnv, process.env);
+const envSource = {...dotEnv, ...process.env};
 
 function v(key, fallback = "") {
   return envSource[key] !== undefined ? envSource[key] : fallback;

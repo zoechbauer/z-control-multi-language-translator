@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   IonTabs,
   IonTabBar,
@@ -7,8 +7,6 @@ import {
   IonIcon,
   IonTabButton,
 } from '@ionic/angular/standalone';
-
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tabs',
@@ -23,6 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
   ],
 })
-export class TabsPage {  translate = inject(TranslateService);
+export class TabsPage {
+  translate = inject(TranslateService);
 
 }
